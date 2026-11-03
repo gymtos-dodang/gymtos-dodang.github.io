@@ -402,7 +402,9 @@
       h += '<div class="ex-list">' + d.items.map(function (it, i) {
         var main = it.tag === "메인";
         var sets = it.sets.map(function (s, j) {
-          return '<div class="set"><small>' + (j + 1) + '세트</small><b>' + s[0] + '<i>회</i></b><i>' + s[1] + 'kg</i></div>';
+          var reps = typeof s[0] === "string" ? esc(s[0]) : s[0] + '<i>회</i>';   /* "30초" 같은 글자도 됨 */
+          var kg = s[1] == null ? '맨몸' : s[1] + 'kg';                              /* null = 맨몸 */
+          return '<div class="set"><small>' + (j + 1) + '세트</small><b>' + reps + '</b><i>' + kg + '</i></div>';
         }).join("");
         return '<div class="ex' + (main ? ' main' : '') + '"><div class="ex-top"><span class="ex-ic">' + img(iconOf(it)) + '<span class="ex-no">' + (i + 1) + '</span>' +
           (main ? '<span class="main-badge">메인</span>' : '') + '</span><div>' +
