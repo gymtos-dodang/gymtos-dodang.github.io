@@ -312,3 +312,5 @@ section { display: flex; flex-direction: column; gap: 14px; }
 .jprog { height: 8px; background: var(--paper); border-radius: 99px; overflow: hidden; }
 .jprog div { height: 100%; background: var(--key); border-radius: 99px; }
 .jleft { margin: -4px 0 0; font-size: 12.5px; font-weight: 700; color: var(--key); }
+.tabs a { font-size: 11px; }
+.tabs svg { width: 23px; height: 23px; }

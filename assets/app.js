@@ -62,6 +62,23 @@
   var CHECK = '<span class="ic ok"><svg aria-hidden="true"><use href="#i-check"/></svg></span>';
   var XIC = '<span class="ic no"><svg aria-hidden="true"><use href="#i-x"/></svg></span>';
   var view = document.getElementById("view");
+  /* 아래 탭 (회원 페이지 공통 — 여기서 그림) */
+  var TABS = [
+    ["home", "홈", '<path d="M3.5 10.5 12 4l8.5 6.5V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z" stroke-linejoin="round"/>'],
+    ["goal", "목표", '<path d="M5 21V4" stroke-linecap="round"/><path d="M5 4.5h12.5l-2.5 4 2.5 4H5" stroke-linejoin="round"/>'],
+    ["routine", "루틴", '<path d="M6.5 8v8M17.5 8v8M3.5 10v4M20.5 10v4M6.5 12h11" stroke-linecap="round"/>'],
+    ["forms", "복습지", '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z" fill="currentColor"/>'],
+    ["diet", "식단", '<circle cx="13" cy="13" r="6.5"/><path d="M4 4v6M6.5 4v6M4 7h2.5M5.2 10v10" stroke-linecap="round"/>'],
+    ["notice", "공지", '<path d="M4 10v4h3l6 4V6L7 10z" stroke-linejoin="round"/><path d="M16.5 9.5a3.5 3.5 0 0 1 0 5M19 7a7 7 0 0 1 0 10" stroke-linecap="round"/>']
+  ];
+  var tabsIn = document.querySelector(".tabs-in");
+  if (tabsIn) {
+    tabsIn.innerHTML = TABS.map(function (t) {
+      return '<a href="#' + t[0] + '" data-tab="' + t[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + t[2] + '</svg>' + t[1] + '</a>';
+    }).join("");
+    tabsIn.style.gridTemplateColumns = "repeat(" + TABS.length + ", 1fr)";
+  }
+
 
   function todayKey() { return DAY_KEYS[new Date().getDay()]; }
   function dayByKey(k) {
@@ -162,19 +179,21 @@
   function journeyHome() {
     var now = journeyNow();
     if (!now) return "";
-    return '<section>' + head("", "나의 PT 여정", "함께 가는 12개월", '<a class="more" href="#journey">3단계 보기 →</a>') +
+    return '<section>' + head("", "나의 PT 여정", "함께 가는 12개월", '<a class="more" href="#goal">목표 자세히 →</a>') +
       '<div class="panel jpanel">' + journeyChart(now) + stageCard(now.stage, now, true) + '</div></section>';
   }
-  function renderJourney() {
+  function renderGoal() {
     var now = journeyNow();
-    var h = '<a class="back" href="#home">← 홈</a>';
-    h += '<div class="hero"><div class="hero-main"><div class="hero-l"><div class="eyebrow">MY PT JOURNEY <b>· 함께 가는 12개월</b></div>' +
-      '<h1>' + esc(M.name) + ' 회원님의 여정</h1><div class="en">기초 → 변화 → 자립, 3단계로 함께 가요</div>' +
-      '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계' : '') + '</strong><span>담당 장동욱 트레이너</span></div></div></div>' +
+    var h = '<div class="hero"><div class="hero-main"><div class="hero-l"><div class="eyebrow">MY GOAL <b>· 나의 목표</b></div>' +
+      '<h1>' + esc(M.goal || "나의 목표") + '</h1><div class="en">' + esc(M.name) + ' 회원님 · 기초 → 변화 → 자립, 3단계로 함께 가요</div>' +
+      '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 장동욱 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!</p></div></div>';
+    if (!now) {
+      return h + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
+    }
     h += '<section>' + head("01", "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel">' + journeyChart(now) + '</div></section>';
-    h += '<section>' + head("02", "단계별로 하는 것", "단계마다 목표가 달라요") + '<div class="jlist">' +
-      STAGES.map(function (s) { return stageCard(s, now, false); }).join("") + '</div></section>';
+    h += '<section>' + head("02", "단계별 목표", "단계마다 하는 것이 달라요") + '<div class="jlist">' +
+      STAGES.map(function (st) { return stageCard(st, now, false); }).join("") + '</div></section>';
     return h + remember();
   }
 
@@ -428,7 +447,7 @@
     else if (hsh.indexOf("routine-") === 0 && DAY_KO[hsh.slice(8)]) { html = renderRoutine(hsh.slice(8)); tab = "routine"; scrollDay = true; }
     else if (hsh === "diet") { html = renderDiet(); tab = "diet"; }
     else if (hsh === "notice") { html = renderNotice(); tab = "notice"; }
-    else if (hsh === "journey") { html = renderJourney(); tab = "home"; }
+    else if (hsh === "goal" || hsh === "journey") { html = renderGoal(); tab = "goal"; }
     else { html = renderHome(); }
     var wasRoutine = view.getAttribute("data-tab") === "routine";
     view.innerHTML = html;

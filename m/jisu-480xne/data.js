@@ -4,6 +4,7 @@ window.MEMBER = {
   sex: "F",                       // M = 네이비, F = 핑크
   since: "2026. 11",
   goal: "벌크업 · 주 4회",
+  journey: { start: "2026-06-15" },   // PT 시작일 (장동욱: 6월쯤 → 15일로 둠)
 
   /* 공지 (최신이 위) */
   notices: [

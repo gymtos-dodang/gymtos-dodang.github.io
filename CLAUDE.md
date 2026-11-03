@@ -14,7 +14,7 @@
 index.html            짐토스 안내용 첫 화면 (회원 목록 없음)
 robots.txt, .nojekyll 검색 차단 / Jekyll 끔
 assets/style.css      공통 디자인 (남 네이비 / 여 핑크, data-sex 로 분기)
-assets/app.js         data.js를 읽어 화면을 그림 (홈·복습지·루틴·식단·공지 탭, 해시 주소 #home #forms #form-<id> #routine #routine-mon~sun #diet #notice)
+assets/app.js         data.js를 읽어 화면을 그림 (아래 탭도 app.js가 그림: 홈·목표·루틴·복습지·식단·공지, 해시 주소 #home #goal #forms #form-<id> #routine #routine-mon~sun #diet #notice)
 assets/icons/M|F/     루틴일지 운동 아이콘 (네이비/핑크, 192px). 종목명→아이콘은 app.js의 ICON_BY_NAME
 assets/logo.png       GYMTOS 브러시드 메탈 로고 (무채색)
 m/<이름-랜덤6자>/     회원 한 명의 PT 노트
@@ -34,6 +34,7 @@ _tools/make_logo.py   로고 생성
 | 김지수 | m/jisu-480xne/ | F |
 
 ## 새 회원 PT 노트 만들기
+0. **PT 시작일을 꼭 받기** (장동욱이 말해줌, "10월"처럼 달만 주면 그 달 15일로). 안 알려주면 물어볼 것. → data.js journey.start
 1. 주소: `m/<이름 로마자>-<랜덤 소문자·숫자 6자>/` (예: jisu-k3x9qa). 추측하기 어렵게.
 2. `m/jihun-g9kgdo/index.html` 복사 → 제목·og:title·헤더 문구의 이름, og:image 경로, theme-color(여 #C2185B) 바꾸기.
 3. data.js 작성 (아래 형식). sex "F"면 핑크 테마·핑크 아이콘 자동.
@@ -41,13 +42,14 @@ _tools/make_logo.py   로고 생성
 5. 위 회원 목록 표에 추가.
 
 ## data.js 형식
-- name, sex("M"/"F"), goal, journey{start:"YYYY-MM-DD"} (PT 시작일 — 있으면 홈에 '나의 PT 여정' 그래프·#journey 페이지가 나옴, 없으면 숨김), notices[{date,title,body,link?}] (최신이 위), next_class(문자열 또는 null), diet(null이면 "준비 중")
+- name, sex("M"/"F"), goal, journey{start:"YYYY-MM-DD"} (PT 시작일 — 있으면 홈에 '나의 PT 여정' 요약·목표 탭(#goal) 내용이 나옴, 없으면 숨김), notices[{date,title,body,link?}] (최신이 위), next_class(문자열 또는 null), diet(null이면 "준비 중")
 - forms[] (최신이 위): id, dir("media/form-<id>/"), date, exercise, exercise_en, part, targets[], benefit, key_point, good_points[3]{title,desc}, primary_muscles[{name,where}], secondary_muscles, feel_good, feel_stop, steps[3]{title,desc,chip,media,loop?}, do[3], dont[3]
 - routine: version, updated, title, plan[3], key_point, note, cardio{minutes,options}, days[{day:"월"…"일", part, en, cardio:bool, rest?, cardio_only?(분, 유산소만 하는 날 · items:[] · note?), items[{name,en,tag?("메인"/"워밍업"/"선행"),tip,sets[[횟수,kg],…],form?,icon?}]}]
 - 복습지·루틴을 새로 올리면 notices 맨 위에 공지 한 줄 추가.
 
 ## PT 여정 (2026-11-03 장동욱 요청)
 - 회원과 1~12개월 함께 가는 느낌. 3단계: 1단계 기초(1~2개월: 머신 사용법·스트레칭·근육 이해) / 2단계 변화(2~7개월: 자신감·어느 순간 몸의 변화·머신 투어·반복 숙달) / 3단계 자립(7~12개월: 혼자서도·프리웨이트·다음 목표 또는 졸업).
+- 홈에는 '나의 PT 여정' 요약(그래프+지금 단계), 자세한 건 '목표' 탭(#goal: 회원 goal 문구, 그래프, 3단계 카드).
 - 단계 문구는 app.js의 STAGES. 그래프 선은 '몸의 변화·자신감' 개념 곡선(실측 아님, 회원마다 속도 다름 안내).
 
 ## 자세 복습지 미디어 만들기 (영상 1개 기준)
