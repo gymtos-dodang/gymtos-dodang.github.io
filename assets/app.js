@@ -432,6 +432,42 @@
     return h + '</section>' + remember();
   }
 
+
+  /* 배지·칩 글자 높낮이 자동 보정: 실제로 쓰인 글꼴의 글자 모양을 재서 상자 가운데로 옮김 */
+  var ALIGN_SEL = ".jno, .ex-no, .mini .n, .today-ic > span, .today-day, .num, .tagc, .jb, .breath, .btn, .mchip, .jfocus li, .chip, .loop, .main-badge, .day-tile b, .tag, .oxbox h3";
+  var mctx = null;
+  function alignText(root) {
+    try {
+      mctx = mctx || document.createElement("canvas").getContext("2d");
+      if (!mctx || !("actualBoundingBoxAscent" in mctx.measureText("1"))) return;
+      Array.prototype.forEach.call((root || document).querySelectorAll(ALIGN_SEL), function (el) {
+        var sp = null;
+        for (var n = el.firstChild; n; n = n.nextSibling) {
+          if (n.nodeType === 1 && n.classList.contains("tfix")) { sp = n; break; }
+          if (n.nodeType === 3 && n.textContent.trim()) {
+            sp = document.createElement("span"); sp.className = "tfix";
+            el.insertBefore(sp, n); sp.appendChild(n); break;
+          }
+        }
+        if (!sp) return;
+        sp.style.top = "0px";
+        var txt = sp.textContent.trim(), cs = getComputedStyle(sp);
+        var probe = document.createElement("span");
+        probe.style.cssText = "display:inline-block;width:0;height:0;vertical-align:baseline";
+        sp.insertBefore(probe, sp.firstChild);
+        var base = probe.getBoundingClientRect().top;
+        sp.removeChild(probe);
+        mctx.font = cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
+        var m = mctx.measureText(txt);
+        var ink = base + (m.actualBoundingBoxDescent - m.actualBoundingBoxAscent) / 2;
+        var r = el.getBoundingClientRect();
+        if (!r.height) return;
+        var off = ink - (r.top + r.height / 2);
+        if (Math.abs(off) > 0.3 && Math.abs(off) < 6) sp.style.top = (-Math.round(off * 2) / 2) + "px";
+      });
+    } catch (e) {}
+  }
+
   /* ---------------- 라우터 */
   var TAB_OF = { home: "home", forms: "forms", form: "forms", routine: "routine", diet: "diet", notice: "notice" };
   function route() {
@@ -455,6 +491,7 @@
     Array.prototype.forEach.call(document.querySelectorAll(".tabs a"), function (a) {
       if (a.getAttribute("data-tab") === tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
+    alignText(document);
     if (after) after();
     if (scrollDay && wasRoutine) {
       var el = document.getElementById("day");
@@ -465,4 +502,6 @@
   }
   window.addEventListener("hashchange", route);
   route();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { alignText(document); });
+  window.addEventListener("load", function () { alignText(document); });
 })();
