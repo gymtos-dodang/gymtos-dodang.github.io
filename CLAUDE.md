@@ -31,6 +31,7 @@ _tools/make_logo.py   로고 생성
 |---|---|---|
 | 최지훈 | m/jihun-g9kgdo/ | M |
 | 서경진 | m/kyeongjin-bkwzy9/ | F |
+| 김지수 | m/jisu-480xne/ | F |
 
 ## 새 회원 PT 노트 만들기
 1. 주소: `m/<이름 로마자>-<랜덤 소문자·숫자 6자>/` (예: jisu-k3x9qa). 추측하기 어렵게.
