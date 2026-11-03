@@ -66,5 +66,10 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 워밍업 → 메인(피라미드 15·12·10·8, 금색) → 나머지. 하체 날은 레그 익스텐션 워밍업 → 이너·아웃타이 선행 → 메인.
 - 머신·케이블은 뉴텍 5kg 단위, 덤벨 2kg 단위(한 손 무게).
 
+## "기억해요!" 문구 (2026-11-04 장동욱 요청)
+- 모든 화면 아래 "기억해요!" 띠 문구 = app.js의 QUOTES, 화면 열 때마다 랜덤.
+- 루틴일지 꼬리말 문구(build_log.js FOOTER_MSGS, 메모리 routine-log-code)와 **똑같이 유지**. 루틴일지 문구를 추가·수정하면 여기 QUOTES도 같이 고칠 것.
+- 맨 아래 3개(복습지용)는 PT 노트에만 있는 문구.
+
 ## 커밋
 작성자: gymtos-dodang <gymtos-dodang@users.noreply.github.com>
