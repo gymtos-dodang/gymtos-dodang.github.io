@@ -33,6 +33,7 @@
     for (var i = 0; i < d.items.length; i++) if (d.items[i].tag === "메인") return d.items[i];
     return d.items[0];
   }
+  function dayIcon(d) { return !d || d.rest ? "rest" : d.cardio_only ? "treadmill" : iconOf(mainItem(d)); }
   function img(key, cls) { return '<img class="' + (cls || "icn") + '" src="' + iconSrc(key) + '" alt="" loading="lazy">'; }
   document.documentElement.setAttribute("data-sex", M.sex === "F" ? "F" : "M");
 
@@ -111,6 +112,10 @@
     } else if (d.rest) {
       h += '<div class="panel today"><div class="today-top"><div class="today-ic">' + img("rest") + '<span>' + d.day + '</span></div><div><small>REST DAY</small><h3>오늘은 쉬는 날!</h3></div></div>' +
         '<p style="margin:0;color:var(--sub);font-size:14px">푹 쉬고 잘 먹는 것도 운동이에요</p></div>';
+    } else if (d.cardio_only) {
+      h += '<div class="panel today"><div class="today-top"><div class="today-ic">' + img("treadmill") + '<span>' + d.day + '</span></div><div><small>CARDIO DAY</small><h3>오늘은 유산소만!</h3></div></div>' +
+        '<p style="margin:0;color:var(--sub);font-size:14px">유산소 ' + d.cardio_only + '분' + (M.routine.cardio ? ' · ' + esc(M.routine.cardio.options) : '') + '</p>' +
+        '<a class="btn fill" href="#routine-' + k + '" style="align-self:flex-start">오늘 운동 보기</a></div>';
     } else {
       h += '<div class="panel today"><div class="today-top"><div class="today-ic">' + img(iconOf(mainItem(d))) + '<span>' + d.day + '</span></div><div><small>' + esc(d.en.toUpperCase()) + '</small><h3>' + esc(d.part) + ' 하는 날</h3></div></div>' +
         exMini(d) + (d.cardio && M.routine.cardio ? '<p style="margin:0;font-size:13.5px;color:var(--sub)">+ 마무리 유산소 ' + M.routine.cardio.minutes + '분</p>' : '') +
@@ -269,7 +274,7 @@
       var d = dayByKey(k);
       var cls = "day-tile" + (!d || d.rest ? " rest" : "") + (k === tk ? " today" : "");
       h += '<a class="' + cls + '" href="#routine-' + k + '" role="tab" aria-current="' + (k === sel) + '"><b>' + DAY_KO[k] + '</b>' +
-        img(!d || d.rest ? "rest" : iconOf(mainItem(d)), "wk-ic") + '<span>' +
+        img(dayIcon(d), "wk-ic") + '<span>' +
         esc(d ? d.part : "휴식") + '</span></a>';
     });
     h += '</div></section>';
@@ -278,6 +283,10 @@
     h += '<section id="day">' + head("02", DAY_KO[sel] + "요일 " + (d ? d.part : "휴식"), sel === tk ? "오늘" : (d && !d.rest ? d.en : ""));
     if (!d || d.rest) {
       h += '<div class="rest-card"><b>쉬는 날</b>푹 쉬고 잘 먹기! 근육은 쉬는 동안 자라요</div>';
+    } else if (d.cardio_only) {
+      h += '<div class="ex-list"><div class="ex cardio"><div class="ex-top"><span class="ex-ic">' + img("treadmill") + '</span><div><h3>유산소만 ' + d.cardio_only + '분</h3>' +
+        '<div class="tip">' + esc(R.cardio ? R.cardio.options : "") + '</div></div></div></div></div>' +
+        '<p class="note">' + esc(d.note || "웨이트 없이 유산소만 하는 날이에요") + '</p>';
     } else {
       h += '<div class="flow"><div>' + img("foam_roller", "fl-ic") + '<small>STEP 01</small><b>스트레칭</b><i>폼롤러 10분</i></div><span>›</span>' +
         '<div>' + img("dumbbell", "fl-ic") + '<small>STEP 02</small><b>웨이트</b><i>' + d.items.length + '종목</i></div><span>›</span>' +

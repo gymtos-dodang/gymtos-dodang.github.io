@@ -7,6 +7,7 @@
 - "OO 회원님 자세 복습지 / 루틴 / 식단 만들어줘" → 이제 결과물은 **그 회원의 PT 노트에 최신화**하는 것.
 - 그 회원 PT 노트가 없으면 **새로 만들고** 거기에 적용. 끝나면 회원 주소를 알려줌.
 - 수정 후에는 커밋 → `git push` (main). 반영까지 1~2분.
+- (2026-11-03 요청) PT 노트를 만들거나 고치면 **회원님께 보낼 링크를 항상 같이** 보냄: `https://gymtos-dodang.github.io/m/<주소>/` (특정 화면은 끝에 `#routine`, `#form-<id>` 등).
 
 ## 구조
 ```
@@ -29,6 +30,7 @@ _tools/make_logo.py   로고 생성
 | 회원 | 주소 | 성별 |
 |---|---|---|
 | 최지훈 | m/jihun-g9kgdo/ | M |
+| 서경진 | m/kyeongjin-bkwzy9/ | F |
 
 ## 새 회원 PT 노트 만들기
 1. 주소: `m/<이름 로마자>-<랜덤 소문자·숫자 6자>/` (예: jisu-k3x9qa). 추측하기 어렵게.
@@ -40,7 +42,7 @@ _tools/make_logo.py   로고 생성
 ## data.js 형식
 - name, sex("M"/"F"), goal, notices[{date,title,body,link?}] (최신이 위), next_class(문자열 또는 null), diet(null이면 "준비 중")
 - forms[] (최신이 위): id, dir("media/form-<id>/"), date, exercise, exercise_en, part, targets[], benefit, key_point, good_points[3]{title,desc}, primary_muscles[{name,where}], secondary_muscles, feel_good, feel_stop, steps[3]{title,desc,chip,media,loop?}, do[3], dont[3]
-- routine: version, updated, title, plan[3], key_point, note, cardio{minutes,options}, days[{day:"월"…"일", part, en, cardio:bool, rest?, items[{name,en,tag?("메인"/"워밍업"/"선행"),tip,sets[[횟수,kg],…],form?,icon?}]}]
+- routine: version, updated, title, plan[3], key_point, note, cardio{minutes,options}, days[{day:"월"…"일", part, en, cardio:bool, rest?, cardio_only?(분, 유산소만 하는 날 · items:[] · note?), items[{name,en,tag?("메인"/"워밍업"/"선행"),tip,sets[[횟수,kg],…],form?,icon?}]}]
 - 복습지·루틴을 새로 올리면 notices 맨 위에 공지 한 줄 추가.
 
 ## 자세 복습지 미디어 만들기 (영상 1개 기준)
