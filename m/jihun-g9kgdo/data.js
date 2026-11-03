@@ -7,6 +7,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 3", title: "인클라인 덤벨 프레스 자세 복습지가 올라왔어요",
+      body: "월요일·금요일에 하는 인클라인 덤벨 프레스예요. 운동 전에 한 번 보고 들어가세요!", link: "form-incline-db-press" },
     { date: "2026. 11. 3", title: "루틴이 v3로 바뀌었어요",
       body: "금요일은 인클라인 덤벨 프레스 메인부터 시작해요(워밍업 줄 빠짐). 덤벨 컬·해머 컬은 6kg으로 낮췄어요." },
     { date: "2026. 11. 3", title: "플랫 덤벨프레스 자세 복습지가 올라왔어요",
@@ -17,6 +19,33 @@ window.MEMBER = {
 
   /* 자세 복습지 (최신이 위) */
   forms: [
+    {
+      id: "incline-db-press",
+      dir: "media/form-incline-db-press/",
+      date: "2026. 11. 2 (월)",
+      exercise: "인클라인 덤벨 프레스",
+      exercise_en: "Incline DB Press",
+      part: "가슴",
+      targets: ["윗가슴 (대흉근 상부)", "전면 삼각근 · 삼두근"],
+      benefit: "윗가슴을 채워서 가슴 라인이 꽉 차 보이게 해줘요",
+      key_point: "덤벨은 쇄골 위로, 윗가슴으로 밀어 올린다!",
+      good_points: [
+        { title: "발을 바닥에 단단히 고정했어요", desc: "몸이 벤치에서 밀리지 않아 끝까지 안정적이었어요" },
+        { title: "윗가슴 옆까지 깊게 내렸어요", desc: "가슴이 충분히 늘어나서 자극이 제대로 들어갔어요" },
+        { title: "양손 높이를 맞췄어요", desc: "좌우 덤벨이 같은 높이로 올라가 양쪽 가슴이 고르게 일했어요" }
+      ],
+      primary_muscles: [{ name: "대흉근 상부", where: "쇄골 아래 윗가슴" }],
+      secondary_muscles: "전면 삼각근 · 삼두근",
+      feel_good: "쇄골 아래 윗가슴이 뻐근해요",
+      feel_stop: "어깨 앞만 타거나, 손목이 꺾여서 아파요",
+      steps: [
+        { title: "준비", desc: "등받이는 30도 정도. 등과 엉덩이를 붙이고 날개뼈를 모아 덤벨을 쇄골 위로", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "내리기", desc: "팔꿈치를 몸통에서 45도 정도 벌리며 덤벨을 윗가슴 옆까지 천천히", chip: "3초 · 들이마시며", media: "step2.webp", loop: true },
+        { title: "밀어 올리기", desc: "윗가슴을 모은다는 느낌으로 쇄골 위로! 맨 위에서 팔꿈치는 살짝 굽힌 채", chip: "2초 · 후~ 내쉬며", media: "step3.webp", loop: true }
+      ],
+      do: ["날개뼈를 모으고 가슴을 위로 세우기", "덤벨은 쇄골 위 방향으로 밀기", "손목은 팔꿈치 바로 위에 세우기"],
+      dont: ["등받이를 너무 세워 어깨로만 밀기", "엉덩이를 들어 각도 없애기", "덤벨을 배 쪽으로 내리기"]
+    },
     {
       id: "flat-db-press",
       dir: "media/form-flat-db-press/",
@@ -58,7 +87,7 @@ window.MEMBER = {
     days: [
       { day: "월", part: "가슴", en: "Chest", cardio: true, items: [
         { name: "플랫 덤벨프레스", en: "Flat DB Press", tag: "메인", tip: "덤벨은 가슴 옆까지", sets: [[15, 8], [12, 8], [10, 10], [8, 10]], form: "flat-db-press" },
-        { name: "인클라인 덤벨 프레스", en: "Incline DB Press", tip: "윗가슴으로 밀기", sets: [[12, 8], [12, 8], [12, 8]] },
+        { name: "인클라인 덤벨 프레스", en: "Incline DB Press", tip: "윗가슴으로 밀기", sets: [[12, 8], [12, 8], [12, 8]], form: "incline-db-press" },
         { name: "케이블 푸쉬다운", en: "Cable Pushdown", tip: "팔꿈치 옆구리 고정", sets: [[15, 15], [15, 15], [15, 15]] }
       ]},
       { day: "화", part: "등", en: "Back", cardio: true, items: [
@@ -81,7 +110,7 @@ window.MEMBER = {
         { name: "해머 컬", en: "Hammer Curl", tip: "엄지가 위로", sets: [[12, 6], [12, 6], [12, 6]] }
       ]},
       { day: "금", part: "가슴·등", en: "Chest · Back", cardio: true, items: [
-        { name: "인클라인 덤벨 프레스", en: "Incline DB Press", tag: "메인", tip: "윗가슴으로 밀기", sets: [[15, 6], [12, 6], [10, 8], [8, 8]] },
+        { name: "인클라인 덤벨 프레스", en: "Incline DB Press", tag: "메인", tip: "윗가슴으로 밀기", sets: [[15, 6], [12, 6], [10, 8], [8, 8]], form: "incline-db-press" },
         { name: "플랫 덤벨프레스", en: "Flat DB Press", tip: "덤벨은 가슴 옆까지", sets: [[12, 8], [12, 8], [12, 8]], form: "flat-db-press" },
         { name: "랫풀다운", en: "Lat Pulldown", tip: "팔꿈치로 당기기", sets: [[12, 30], [12, 30], [12, 30]] },
         { name: "시티드 로우 머신", en: "Seated Row Machine", tip: "가슴 패드 붙이고 당기기", sets: [[12, 30], [12, 30], [12, 30]] }
