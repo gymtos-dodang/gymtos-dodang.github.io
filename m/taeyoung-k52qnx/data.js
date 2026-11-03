@@ -8,6 +8,10 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 4", title: "원암 덤벨 로우 자세 복습지가 올라왔어요",
+      body: "화요일 등 운동에 하는 원암 덤벨 로우예요. 운동 전에 한 번 보고 들어가세요!", link: "form-one-arm-row" },
+    { date: "2026. 11. 4", title: "프론트 로우 자세 복습지가 올라왔어요",
+      body: "어제 수업 영상으로 만든 복습지예요. 운동 전에 한 번씩 보고 들어가세요!", link: "form-front-row" },
     { date: "2026. 11. 4", title: "PT 노트가 열렸어요",
       body: "이번 주 루틴이 올라와 있어요. 루틴 탭에서 요일을 누르면 그날 운동과 무게가 나와요. 자세 복습지·식단도 앞으로 여기로 올려드릴게요!" }
   ],
@@ -15,7 +19,62 @@ window.MEMBER = {
   next_class: null,
 
   /* 자세 복습지 (최신이 위) */
-  forms: [],
+  forms: [
+    {
+      id: "one-arm-row",
+      dir: "media/form-one-arm-row/",
+      date: "2026. 11. 3 (화)",
+      exercise: "원암 덤벨 로우",
+      exercise_en: "One Arm DB Row",
+      part: "등",
+      targets: ["광배근 (등 날개)", "능형근 · 후면 삼각근 · 이두근"],
+      benefit: "한쪽씩 집중해서 등 두께와 좌우 균형을 잡아줘요",
+      key_point: "덤벨은 골반 쪽으로, 팔꿈치로 뒤로 당긴다!",
+      good_points: [
+        { title: "반대 손으로 몸을 단단히 받쳤어요", desc: "패드를 짚고 버텨서 당길 때 몸이 흔들리지 않았어요" },
+        { title: "숙인 각도를 끝까지 지켰어요", desc: "상체가 들리지 않아서 등에 자극이 계속 걸려 있었어요" },
+        { title: "끝까지 내려서 등을 늘렸어요", desc: "팔을 쭉 펴서 내려 매 회 등이 충분히 늘어났어요" }
+      ],
+      primary_muscles: [{ name: "광배근", where: "겨드랑이 아래 등 옆 날개" }],
+      secondary_muscles: "능형근 · 중부 승모근 · 대원근 · 후면 삼각근 · 이두근",
+      feel_good: "당기는 쪽 겨드랑이 아래와 날개뼈 안쪽이 뻐근해요",
+      feel_stop: "허리가 찌릿하거나, 등은 그대로고 팔만 아파요",
+      steps: [
+        { title: "준비", desc: "한 손은 패드에 짚고 엉덩이를 뒤로 빼며 상체를 숙여요. 등은 곧게, 덤벨 든 팔은 아래로 쭉", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "당기기", desc: "팔꿈치를 골반 쪽으로 끌어올리며 덤벨을 옆구리까지! 맨 위에서 날개뼈를 꽉 모아요", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "내리기", desc: "무게에 끌려가지 말고 천천히 팔을 펴며 아래로. 등이 쭉 늘어날 때까지", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["등은 곧게, 엉덩이는 뒤로 빼기", "팔꿈치는 몸에 붙여 골반 쪽으로", "내릴 때 끝까지 늘려주기"],
+      dont: ["몸통을 돌려 반동으로 들기", "어깨를 귀 쪽으로 으쓱하기", "허리를 둥글게 말기"]
+    },
+    {
+      id: "front-row",
+      dir: "media/form-front-row/",
+      date: "2026. 11. 3 (화)",
+      exercise: "프론트 로우",
+      exercise_en: "Front Row Machine",
+      part: "등",
+      targets: ["광배근 (등 날개)", "대원근 · 능형근 · 이두근"],
+      benefit: "등 옆 날개를 넓혀서 상체 V라인을 만들어줘요",
+      key_point: "손이 아니라 팔꿈치로, 옆구리 쪽으로 끌어내린다!",
+      good_points: [
+        { title: "다리를 패드에 단단히 고정했어요", desc: "엉덩이가 들리지 않아서 끝까지 등으로만 당겼어요" },
+        { title: "위에서 팔을 끝까지 폈어요", desc: "매 회 등이 쭉 늘어나서 자극 범위가 넓었어요" },
+        { title: "상체가 흔들리지 않았어요", desc: "허리를 젖히지 않고 같은 자세로 반복했어요" }
+      ],
+      primary_muscles: [{ name: "광배근", where: "겨드랑이 아래 등 옆 날개" }],
+      secondary_muscles: "대원근 · 능형근 · 중부 승모근 · 후면 삼각근 · 이두근",
+      feel_good: "겨드랑이 아래 등 옆쪽이 뻐근해요",
+      feel_stop: "어깨 앞이 찌릿하거나, 등은 그대로고 팔만 아파요",
+      steps: [
+        { title: "준비", desc: "허벅지 패드에 다리를 고정하고 가슴을 세워 앉아요. 손잡이를 잡고 팔을 위로 쭉 펴서 등을 늘려요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "당기기", desc: "팔꿈치를 옆구리 쪽으로 끌어내리며 손잡이를 어깨 높이까지! 날개뼈를 아래로 모아요", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "버티며 올리기", desc: "무게에 끌려가지 말고 천천히 팔을 펴며 위로. 등이 쭉 늘어나는 걸 느껴요", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["가슴을 세우고 날개뼈는 아래로", "팔꿈치가 손보다 먼저 내려오게", "올라갈 때 천천히 버티기"],
+      dont: ["허리를 뒤로 젖혀 몸으로 당기기", "어깨를 귀 쪽으로 으쓱하기", "손목을 꺾어 손으로만 당기기"]
+    }
+  ],
 
   /* 주간 루틴 (루틴일지 v2.6 기준, 무게 배수 0.88) */
   routine: {
@@ -36,7 +95,7 @@ window.MEMBER = {
       { day: "화", part: "등", en: "Back", cardio: true, items: [
         { name: "스트레이트 암 풀다운", en: "Straight Arm Pulldown", tag: "워밍업", tip: "팔 펴고 광배로 누르기", sets: [[20, 10], [15, 15]] },
         { name: "랫풀다운", en: "Lat Pulldown", tag: "메인", tip: "팔꿈치로 당기기", sets: [[15, 30], [12, 30], [10, 35], [8, 35]] },
-        { name: "원암 덤벨 로우", en: "One Arm DB Row", tip: "팔꿈치를 골반 쪽으로", sets: [[12, 14], [12, 14], [12, 14]] },
+        { name: "원암 덤벨 로우", en: "One Arm DB Row", tip: "팔꿈치를 골반 쪽으로", sets: [[12, 14], [12, 14], [12, 14]], form: "one-arm-row" },
         { name: "시티드 로우", en: "Seated Row", tip: "가슴 펴고 날개뼈 모으기", sets: [[12, 35], [12, 35], [12, 35]] }
       ]},
       { day: "수", part: "하체", en: "Legs", cardio: true, items: [
