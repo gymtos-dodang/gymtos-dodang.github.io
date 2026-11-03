@@ -280,3 +280,35 @@ section { display: flex; flex-direction: column; gap: 14px; }
 .ex.main .ex-ic .ex-no { box-shadow: 0 0 0 2.5px var(--gold-bg); }
 .main-badge { position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%); background: var(--gold); color: #fff; font-size: 10.5px; font-weight: 700; padding: 1px 8px; border-radius: 99px; white-space: nowrap; }
 .ex.cardio .ex-ic .icn { background: var(--paper); }
+
+/* PT 여정 (12개월 3단계) */
+.jpanel { display: flex; flex-direction: column; gap: 14px; }
+.jchart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.jc-st { font-size: 10.5px; font-weight: 700; fill: var(--faint); font-family: var(--font); }
+.jc-st.cur { fill: var(--primary); }
+.jc-x { font-size: 10px; fill: var(--faint); font-family: var(--font); font-variant-numeric: tabular-nums; }
+.jc-mk { font-size: 10.5px; font-weight: 700; fill: #fff; font-family: var(--font); }
+.jc-cap { margin: 4px 0 0; font-size: 12px; color: var(--faint); line-height: 1.5; }
+.jlist { display: flex; flex-direction: column; gap: 10px; }
+.jcard { background: var(--paper); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 1px 2px rgba(30, 35, 48, .06); }
+.jpanel .jcard { box-shadow: none; padding: 14px; background: var(--tint); }
+.jcard.cur { box-shadow: inset 0 0 0 2px var(--key); }
+.jpanel .jcard.cur { box-shadow: none; }
+.jcard.next { opacity: .72; }
+.jtop { display: flex; align-items: center; gap: 12px; }
+.jtop > div { flex: 1; min-width: 0; }
+.jtop small { font-size: 11.5px; font-weight: 700; color: var(--faint); letter-spacing: .04em; }
+.jtop h3 { margin: 0; font-size: 17px; line-height: 1.3; }
+.jno { width: 34px; height: 34px; border-radius: 50%; background: var(--primary); color: #fff; font-weight: 900; font-size: 16px; display: grid; place-items: center; flex: none; }
+.jcard.done .jno { background: var(--good); }
+.jcard.next .jno { background: #C9CED8; }
+.jb { font-size: 11.5px; font-weight: 700; padding: 2px 9px; border-radius: 99px; background: #EEF0F4; color: var(--sub); white-space: nowrap; }
+.jb.cur { background: var(--key); color: #fff; }
+.jb.done { background: var(--good-tint); color: var(--good); }
+.jfocus { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.jfocus li { font-size: 13px; font-weight: 700; color: var(--primary); background: var(--paper); border: 1.5px solid var(--tint2); padding: 3px 10px; border-radius: 99px; }
+.jlist .jfocus li { background: var(--tint); border-color: var(--tint); }
+.jmsg { margin: 0; font-size: 14px; color: var(--sub); }
+.jprog { height: 8px; background: var(--paper); border-radius: 99px; overflow: hidden; }
+.jprog div { height: 100%; background: var(--key); border-radius: 99px; }
+.jleft { margin: -4px 0 0; font-size: 12.5px; font-weight: 700; color: var(--key); }

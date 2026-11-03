@@ -90,6 +90,94 @@
     return '<span class="tagc ' + cls + '">' + esc(tag) + '</span>';
   }
 
+
+  /* ---------------- PT 여정 (12개월 3단계) */
+  var STAGES = [
+    { no: 1, from: 0, to: 2, name: "기초 다지기", short: "기초", range: "1~2개월",
+      focus: ["머신 사용법", "스트레칭 습관", "내 근육 이해하기"],
+      msg: "무게보다 정확한 사용법이 먼저예요. 모르는 건 다 물어보세요!" },
+    { no: 2, from: 2, to: 7, name: "변화가 시작되는 시기", short: "변화", range: "2~7개월",
+      focus: ["자신감 UP", "어느 순간 오는 몸의 변화", "머신 투어", "반복 숙달"],
+      msg: "어느 순간 몸이 달라져요. 이 시기의 꾸준함이 결과를 만들어요." },
+    { no: 3, from: 7, to: 12, name: "혼자서도 하는 시기", short: "자립", range: "7~12개월",
+      focus: ["혼자서 루틴 소화", "프리웨이트", "다음 목표 또는 졸업"],
+      msg: "이제 혼자서도 할 수 있어요. 다음 목표를 함께 정해요." }
+  ];
+  function journeyNow() {
+    var J = M.journey;
+    if (!J || !J.start) return null;
+    var p = J.start.split("-"), st = new Date(+p[0], +p[1] - 1, +p[2]);
+    var el = (Date.now() - st.getTime()) / (86400000 * 30.44);
+    var m = Math.max(0, Math.min(12, el));
+    var stage = m < 2 ? STAGES[0] : m < 7 ? STAGES[1] : STAGES[2];
+    return { el: el, m: m, month: el < 0 ? 0 : Math.min(12, Math.floor(el) + 1), stage: stage, start: J.start };
+  }
+  function curveY(m) { return 0.06 + 0.86 / (1 + Math.exp(-(m - 4.3) / 1.15)); }
+  function journeyChart(now) {
+    var X = function (m) { return 26 + m * 25; }, Y = function (v) { return 156 - v * 118; };
+    var bands = STAGES.map(function (s, i) {
+      var cur = now && s === now.stage;
+      return '<rect x="' + X(s.from) + '" y="22" width="' + (X(s.to) - X(s.from)) + '" height="134" fill="var(--primary)" opacity="' + (cur ? 0.13 : 0.05 + i * 0.02) + '"/>' +
+        '<text x="' + ((X(s.from) + X(s.to)) / 2) + '" y="15" text-anchor="middle" class="jc-st' + (cur ? ' cur' : '') + '">' + s.no + '단계 ' + s.short + '</text>';
+    }).join("");
+    var pts = function (a, b) {
+      var out = [];
+      for (var m = a; m <= b + 1e-9; m += 0.1) out.push(X(m).toFixed(1) + "," + Y(curveY(m)).toFixed(1));
+      return out.join(" ");
+    };
+    var cm = now ? now.m : 0;
+    var path = '<polyline points="' + pts(0, 12) + '" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-dasharray="5 5" opacity=".35"/>';
+    if (cm > 0) path += '<polyline points="' + pts(0, cm) + '" fill="none" stroke="var(--primary)" stroke-width="4" stroke-linecap="round"/>';
+    var ticks = [0, 2, 7, 12].map(function (m) {
+      return '<line x1="' + X(m) + '" y1="156" x2="' + X(m) + '" y2="161" stroke="var(--faint)"/>' +
+        '<text x="' + X(m) + '" y="174" text-anchor="middle" class="jc-x">' + (m === 0 ? "시작" : m + "개월") + '</text>';
+    }).join("");
+    var mk = "";
+    if (now) {
+      var mx = X(cm), my = Y(curveY(cm)), right = cm > 7.5, below = my < 64, LW = 108;
+      var ly = below ? my + 26 : my - 18;
+      mk = '<circle cx="' + mx + '" cy="' + my + '" r="11" fill="var(--key)" opacity=".2"/><circle cx="' + mx + '" cy="' + my + '" r="6.5" fill="var(--key)" stroke="#fff" stroke-width="2.5"/>' +
+        '<g transform="translate(' + (right ? mx - 6 : mx + 6) + ',' + ly + ')"><rect x="' + (right ? -LW : 0) + '" y="-15" width="' + LW + '" height="22" rx="11" fill="var(--key)"/>' +
+        '<text x="' + (right ? -LW / 2 : LW / 2) + '" y="0.5" text-anchor="middle" class="jc-mk">지금 여기 · ' + (now.month || 1) + '개월차</text></g>';
+    }
+    var flag = '<g transform="translate(' + X(12) + ',' + (Y(curveY(12)) - 2) + ')"><line x1="0" y1="0" x2="0" y2="-20" stroke="var(--gold)" stroke-width="2"/><path d="M0 -20 L13 -15.5 L0 -11 Z" fill="var(--gold)"/></g>';
+    return '<div class="jchart"><svg viewBox="0 0 340 182" role="img" aria-label="12개월 PT 여정 그래프: 1단계 기초(1~2개월), 2단계 변화(2~7개월), 3단계 자립(7~12개월)' + (now ? ', 지금 ' + (now.month || 1) + '개월차' : '') + '">' +
+      bands + '<line x1="26" y1="156" x2="326" y2="156" stroke="var(--rule)" stroke-width="1.5"/>' + ticks + path + flag + mk + '</svg>' +
+      '<p class="jc-cap">선은 "몸의 변화 · 자신감"이에요. 처음엔 천천히, 어느 순간 확 올라가요. 회원님마다 속도는 달라요.</p></div>';
+  }
+  function stageCard(s, now, compact) {
+    var state = !now ? "" : s.no < now.stage.no ? "done" : s === now.stage ? "cur" : "next";
+    var badge = state === "done" ? '<span class="jb done">완료</span>' : state === "cur" ? '<span class="jb cur">지금 여기</span>' : '<span class="jb">' + s.range + '</span>';
+    var prog = "";
+    if (state === "cur") {
+      var pct = Math.round((now.m - s.from) / (s.to - s.from) * 100);
+      var left = Math.max(0, Math.round((s.to - now.m) * 4.35));
+      prog = '<div class="jprog"><div style="width:' + Math.max(4, pct) + '%"></div></div><p class="jleft">' +
+        (s.no === 3 && left === 0 ? '12개월 완주! 졸업 또는 다음 목표를 함께 정해요' : s.no + '단계 남은 기간 약 ' + (left >= 8 ? Math.round(left / 4.35) + '개월' : left + '주')) + '</p>';
+    }
+    return '<div class="jcard ' + state + '"><div class="jtop"><span class="jno">' + s.no + '</span><div><small>' + s.no + '단계 · ' + s.range + '</small><h3>' + esc(s.name) + '</h3></div>' + badge + '</div>' +
+      '<ul class="jfocus">' + s.focus.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join("") + '</ul>' +
+      (compact && state !== "cur" ? '' : '<p class="jmsg">' + esc(s.msg) + '</p>') + prog + '</div>';
+  }
+  function journeyHome() {
+    var now = journeyNow();
+    if (!now) return "";
+    return '<section>' + head("", "나의 PT 여정", "함께 가는 12개월", '<a class="more" href="#journey">3단계 보기 →</a>') +
+      '<div class="panel jpanel">' + journeyChart(now) + stageCard(now.stage, now, true) + '</div></section>';
+  }
+  function renderJourney() {
+    var now = journeyNow();
+    var h = '<a class="back" href="#home">← 홈</a>';
+    h += '<div class="hero"><div class="hero-main"><div class="hero-l"><div class="eyebrow">MY PT JOURNEY <b>· 함께 가는 12개월</b></div>' +
+      '<h1>' + esc(M.name) + ' 회원님의 여정</h1><div class="en">기초 → 변화 → 자립, 3단계로 함께 가요</div>' +
+      '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계' : '') + '</strong><span>담당 장동욱 트레이너</span></div></div></div>' +
+      '<div class="keypoint"><small>KEY POINT</small><p>혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!</p></div></div>';
+    h += '<section>' + head("01", "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel">' + journeyChart(now) + '</div></section>';
+    h += '<section>' + head("02", "단계별로 하는 것", "단계마다 목표가 달라요") + '<div class="jlist">' +
+      STAGES.map(function (s) { return stageCard(s, now, false); }).join("") + '</div></section>';
+    return h + remember();
+  }
+
   /* ---------------- 홈 */
   function exMini(d) {
     return '<ul class="mini">' + d.items.map(function (it, i) {
@@ -106,6 +194,7 @@
       '<div class="who"><span>GYMTOS 도당점 · 담당 장동욱 트레이너</span></div>' +
       '</div></div></div>';
 
+    h += journeyHome();
     h += '<section>' + head("", "오늘의 운동", DAY_KO[k] + "요일", '<a class="more" href="#routine-' + k + '">자세히 →</a>');
     if (!d) {
       h += '<div class="panel empty"><h3>루틴이 아직 없어요</h3><p>선생님이 곧 올려드릴게요</p></div>';
@@ -339,6 +428,7 @@
     else if (hsh.indexOf("routine-") === 0 && DAY_KO[hsh.slice(8)]) { html = renderRoutine(hsh.slice(8)); tab = "routine"; scrollDay = true; }
     else if (hsh === "diet") { html = renderDiet(); tab = "diet"; }
     else if (hsh === "notice") { html = renderNotice(); tab = "notice"; }
+    else if (hsh === "journey") { html = renderJourney(); tab = "home"; }
     else { html = renderHome(); }
     var wasRoutine = view.getAttribute("data-tab") === "routine";
     view.innerHTML = html;
