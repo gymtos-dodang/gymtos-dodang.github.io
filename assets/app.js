@@ -207,12 +207,186 @@
       '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 장동욱 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!</p></div></div>';
     if (!now) {
-      return h + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
+      return h + '<section>' + head("01", "출석률", "얼마나 꾸준히 나왔는지 봐요") + attGauge() + '</section>' +
+        '<section>' + head("02", "출석 달력", "운동하는 날을 채워봐요") + attCalendar() + '</section>' + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
     }
-    h += '<section>' + head("01", "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel">' + journeyChart(now) + '</div></section>';
-    h += '<section>' + head("02", "단계별 목표", "단계마다 하는 것이 달라요") + '<div class="jlist">' +
+    h += '<section>' + head("01", "출석률", "얼마나 꾸준히 나왔는지 봐요") + attGauge() + '</section>';
+    h += '<section>' + head("02", "출석 달력", "운동하는 날을 채워봐요") + attCalendar() + '</section>';
+    h += '<section>' + head("03", "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel">' + journeyChart(now) + '</div></section>';
+    h += '<section>' + head("04", "단계별 목표", "단계마다 하는 것이 달라요") + '<div class="jlist">' +
       STAGES.map(function (st) { return stageCard(st, now, false); }).join("") + '</div></section>';
     return h + remember();
+  }
+
+
+  /* ---------------- 출석 (오늘 출석 체크 · 출석 달력 · 출석률) */
+  var SLUG = window.ATT_SLUG || (location.pathname.match(/\/m\/([^\/]+)\//) || [, M.name])[1];
+  /* 출석 창고(구글 Apps Script 웹 앱) 주소 — 비어 있으면 휴대폰에만 저장 */
+  var ATT_API = window.ATT_API || "https://script.google.com/macros/s/AKfycbwtjTpk88xTWQcKXoaFX2qCYtKSzKoCOs-Us26k6QUbtKvewTaqJutJuA4RJjAmV-6bvA/exec";
+  var attTimes = {};
+  try { attTimes = JSON.parse(localStorage.getItem(ATT_KEY_T()) || "{}") || {}; } catch (e) {}
+  function ATT_KEY_T() { return "ptnote:" + SLUG + ":attT"; }
+  var ATT_KEY = "ptnote:" + SLUG + ":att";
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  function ymd(d) { return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+  var attMem = null;
+  function attLoad() {
+    var a = null;
+    try { var raw = localStorage.getItem(ATT_KEY); if (raw) a = JSON.parse(raw); } catch (e) {}
+    if (!Array.isArray(a)) a = attMem || (window.ATT_DEMO ? window.ATT_DEMO.slice() : []);
+    attMem = a;
+    return a;
+  }
+  function attSave(a) { attMem = a; try { localStorage.setItem(ATT_KEY, JSON.stringify(a)); } catch (e) {} }
+  function attHas(a, key) { return a.indexOf(key) >= 0; }
+  function isWorkoutDay(d) {   /* 루틴에서 운동하는 요일인지 */
+    var day = dayByKey(DAY_KEYS[d.getDay()]);
+    return !!(day && !day.rest);
+  }
+  var ATT_SINCE = new Date(2026, 10, 4);   /* 출석 체크를 시작한 날 (이 전 날짜는 결석으로 세지 않음) */
+  function startDate() {
+    var st = null;
+    if (M.journey && M.journey.start) { var p = M.journey.start.split("-"); st = new Date(+p[0], +p[1] - 1, +p[2]); }
+    if (M.att_since) { var q = M.att_since.split("-"); var s2 = new Date(+q[0], +q[1] - 1, +q[2]); if (!st || s2 > st) st = s2; }
+    if (!st || ATT_SINCE > st) st = ATT_SINCE;
+    return st;
+  }
+  function attStats(a, from, to) {   /* from~to(오늘까지) 운동하는 날 중 출석한 날 */
+    var st = startDate(), plan = 0, done = 0;
+    var d = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+    if (st && d < st) d = new Date(st.getFullYear(), st.getMonth(), st.getDate());
+    for (; d <= to; d.setDate(d.getDate() + 1)) {
+      var k = ymd(d), w = isWorkoutDay(d), on = attHas(a, k);
+      if (w) plan++;
+      if (on) done++;
+    }
+    return { plan: plan, done: done, rate: plan ? Math.min(100, Math.round(done / plan * 100)) : 0 };
+  }
+  function attStreak(a) {   /* 오늘(또는 어제)부터 거꾸로, 운동하는 날을 빠짐없이 나온 횟수 */
+    var d = new Date(), n = 0, today = ymd(d);
+    if (!attHas(a, today)) d.setDate(d.getDate() - 1);
+    for (var i = 0; i < 400; i++) {
+      var k = ymd(d);
+      if (attHas(a, k)) n++;
+      else if (isWorkoutDay(d)) break;
+      d.setDate(d.getDate() - 1);
+      var st = startDate(); if (st && d < st) break;
+    }
+    return n;
+  }
+  function rateWord(r) { return r >= 80 ? ["good", "아주 좋아요!"] : r >= 50 ? ["mid", "조금만 더!"] : ["low", "다시 시작해봐요"]; }
+
+  function attCheckStrip() {   /* 홈 제목 카드 오른쪽에 들어가는 오늘 출석 체크 */
+    var a = attLoad(), now = new Date(), key = ymd(now), on = attHas(a, key);
+    var m = attStats(a, new Date(now.getFullYear(), now.getMonth(), 1), now);
+    return '<button type="button" class="attq' + (on ? ' on' : '') + '" id="attBtn" aria-pressed="' + on + '" aria-label="' +
+      (now.getMonth() + 1) + '월 ' + now.getDate() + '일 출석 ' + (on ? '완료, 누르면 취소' : '체크하기') + '">' +
+      '<span class="qbox" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.2 4.2 8.8-9.4" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>' +
+      '<span class="qlab">' + (on ? '출석 완료' : '오늘 출석') + '</span>' +
+      '<span class="qrate">' + (on && attTimes[key] ? attTimes[key] + ' 체크' : '이번 달 ' + m.rate + '%') + '</span></button>';
+  }
+  function attRefresh() {   /* 출석이 바뀌면 화면의 출석 부분만 다시 그림 */
+    var b = document.getElementById("attBtn");
+    if (b) { b.outerHTML = attCheckStrip(); setupAttCheck(); }
+    var g = document.querySelector(".attgauge"); if (g) g.outerHTML = attGauge();
+    var c = document.querySelector(".cal"); if (c) { c.outerHTML = attCalendar(); setupCal(); }
+    alignText(document);
+  }
+  function attApply(days) {   /* 창고에서 받은 기록으로 바꿔 끼움 */
+    attTimes = days || {};
+    attSave(Object.keys(attTimes));
+    try { localStorage.setItem(ATT_KEY_T(), JSON.stringify(attTimes)); } catch (e) {}
+  }
+  function attCall(q) {
+    return fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + (q || ""), { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (!j || !j.ok) throw new Error("save"); attApply(j.days); return j; });
+  }
+  function attSync() {
+    if (!ATT_API) return;
+    attCall("").then(attRefresh).catch(function () {});
+  }
+  function attToast(msg) {
+    var t = document.createElement("div"); t.className = "atttoast"; t.textContent = msg;
+    document.body.appendChild(t); setTimeout(function () { t.remove(); }, 2600);
+  }
+  function setupAttCheck() {
+    var b = document.getElementById("attBtn");
+    if (!b) return;
+    b.addEventListener("click", function () {
+      var a = attLoad().slice(), now = new Date(), key = ymd(now), i = a.indexOf(key), turnOn = i < 0;
+      var tm = pad2(now.getHours()) + ":" + pad2(now.getMinutes()), prevTm = attTimes[key];
+      if (turnOn) { a.push(key); attTimes[key] = tm; } else { a.splice(i, 1); delete attTimes[key]; }
+      attSave(a);
+      attRefresh();
+      var nb = document.getElementById("attBtn");
+      if (nb && turnOn) nb.classList.add("pop");
+      if (!ATT_API) return;
+      if (nb) nb.classList.add("saving");
+      attCall("&a=" + (turnOn ? "check" : "uncheck") + "&d=" + key + "&t=" + encodeURIComponent(tm) + "&n=" + encodeURIComponent(M.name))
+        .then(function () { attRefresh(); })
+        .catch(function () {
+          var cur = attLoad().slice(), k = cur.indexOf(key);
+          if (turnOn) { if (k >= 0) cur.splice(k, 1); delete attTimes[key]; }
+          else { if (k < 0) cur.push(key); if (prevTm) attTimes[key] = prevTm; }
+          attSave(cur); attRefresh();
+          attToast("인터넷 연결을 확인하고 다시 눌러주세요");
+        });
+    });
+  }
+
+  var calMonth = null;   /* 달력에 보이는 달 (1일) */
+  function attCalendar() {
+    var a = attLoad(), now = new Date(), today = ymd(now), st = startDate();
+    if (!calMonth) calMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    var y = calMonth.getFullYear(), mo = calMonth.getMonth();
+    var first = new Date(y, mo, 1), last = new Date(y, mo + 1, 0);
+    var to = last < now ? last : now;
+    var ms = attStats(a, first, to);
+    var cells = "", lead = first.getDay();
+    for (var i = 0; i < lead; i++) cells += '<span class="cd blank" aria-hidden="true"></span>';
+    for (var dd = 1; dd <= last.getDate(); dd++) {
+      var d = new Date(y, mo, dd), k = ymd(d), on = attHas(a, k), w = isWorkoutDay(d);
+      var past = k < today, before = st && d < st, cls = "cd";
+      if (k === today) cls += " today";
+      if (on) cls += " on";
+      else if (before) cls += " pre";
+      else if (past && w) cls += " miss";
+      else if (!w) cls += " rest";
+      else cls += " plan";
+      cells += '<span class="' + cls + '"><b>' + dd + '</b></span>';
+    }
+    var canPrev = !st || new Date(y, mo, 0) >= new Date(st.getFullYear(), st.getMonth(), 1);
+    var canNext = new Date(y, mo + 1, 1) <= now;
+    return '<div class="panel cal"><div class="cal-head">' +
+      '<button type="button" class="calnav" id="calPrev"' + (canPrev ? '' : ' disabled') + ' aria-label="이전 달">‹</button>' +
+      '<div><b>' + y + '년 ' + (mo + 1) + '월</b><small>' + ms.done + '번 출석 · 출석률 ' + ms.rate + '%</small></div>' +
+      '<button type="button" class="calnav" id="calNext"' + (canNext ? '' : ' disabled') + ' aria-label="다음 달">›</button></div>' +
+      '<div class="cal-grid"><span class="dw sun">일</span><span class="dw">월</span><span class="dw">화</span><span class="dw">수</span><span class="dw">목</span><span class="dw">금</span><span class="dw sat">토</span>' + cells + '</div>' +
+      '<div class="cal-legend"><span><i class="lg on"></i>출석</span><span><i class="lg miss"></i>운동날 결석</span><span><i class="lg plan"></i>운동하는 날</span><span><i class="lg rest"></i>쉬는 날</span></div></div>';
+  }
+  function attGauge() {
+    var a = attLoad(), now = new Date();
+    var m = attStats(a, new Date(now.getFullYear(), now.getMonth(), 1), now);
+    var st = startDate(), all = attStats(a, st || new Date(now.getFullYear(), now.getMonth(), 1), now);
+    var w = (m.plan === 0 || all.done === 0) ? ["none", "오늘부터 채워봐요!"] : rateWord(m.rate), R = 46, C = 2 * Math.PI * R, len = C * m.rate / 100;
+    return '<div class="panel attgauge"><div class="gauge ' + w[0] + '"><svg viewBox="0 0 120 120" aria-hidden="true">' +
+      '<circle cx="60" cy="60" r="' + R + '" fill="none" stroke="var(--tint)" stroke-width="13"/>' +
+      (m.rate > 0 ? '<circle cx="60" cy="60" r="' + R + '" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round" stroke-dasharray="' + len.toFixed(1) + ' ' + C.toFixed(1) + '" transform="rotate(-90 60 60)"/>' : '') + '</svg>' +
+      '<div class="gnum"><b>' + m.rate + '<i>%</i></b><small>이번 달 출석률</small></div></div>' +
+      '<div class="gside"><p class="gword ' + w[0] + '">' + w[1] + '</p>' +
+      '<dl><div><dt>이번 달</dt><dd>' + m.done + ' / ' + m.plan + '회</dd></div>' +
+      '<div><dt>연속 출석</dt><dd>' + attStreak(a) + '회째</dd></div>' +
+      '<div><dt>누적 출석</dt><dd>' + all.done + '회 · ' + all.rate + '%</dd></div></dl></div></div>';
+  }
+  function setupCal() {
+    var p = document.getElementById("calPrev"), n = document.getElementById("calNext");
+    function go(dm) {
+      calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth() + dm, 1);
+      var box = document.querySelector(".cal"); if (box) { box.outerHTML = attCalendar(); setupCal(); }
+    }
+    if (p) p.addEventListener("click", function () { go(-1); });
+    if (n) n.addEventListener("click", function () { go(1); });
   }
 
   /* ---------------- 홈 */
@@ -224,12 +398,12 @@
   }
   function renderHome() {
     var k = todayKey(), d = dayByKey(k);
-    var h = '<div class="hero"><div class="hero-main"><div class="hero-l">' +
+    var h = '<div class="hero"><div class="hero-main"><div class="hero-l hero-home"><div class="hh-text">' +
       '<div class="eyebrow">MY PT NOTE <b>· 나만의 운동 노트</b></div>' +
       '<h1>' + esc(M.name) + ' 회원님</h1>' +
       '<div class="en">' + esc(M.goal || "") + '</div>' +
-      '<div class="who"><span>GYMTOS 도당점 · 담당 장동욱 트레이너</span></div>' +
-      '</div></div></div>';
+      '<div class="who"><span>GYMTOS 도당점 · 장동욱 트레이너</span></div>' +
+      '</div>' + attCheckStrip() + '</div></div></div>';
 
     h += journeyHome();
     h += '<section>' + head("", "오늘의 운동", DAY_KO[k] + "요일", '<a class="more" href="#routine-' + k + '">자세히 →</a>');
@@ -512,6 +686,7 @@
       if (a.getAttribute("data-tab") === tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
     alignText(document);
+    setupAttCheck(); setupCal();
     if (after) after();
     if (scrollDay && wasRoutine) {
       var el = document.getElementById("day");
@@ -523,5 +698,7 @@
   window.addEventListener("hashchange", route);
   route();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { alignText(document); });
+  attSync();
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) attSync(); });
   window.addEventListener("load", function () { alignText(document); });
 })();

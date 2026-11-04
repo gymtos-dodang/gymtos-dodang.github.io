@@ -324,3 +324,117 @@ section { display: flex; flex-direction: column; gap: 14px; }
 .jno, .ex-no, .mini .n, .today-ic > span, .today-day { line-height: 1; }
 .tfix { position: relative; display: inline-block; line-height: 1; }
 .btn { min-height: 40px; }
+
+/* ---- 출석 (2026-11-04 시안) ---- */
+.attcheck {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; cursor: pointer;
+  background: var(--paper); border: 2px dashed var(--rule); border-radius: 16px; padding: 10px 14px; color: var(--ink);
+  -webkit-tap-highlight-color: transparent; transition: border-color .2s, background .2s;
+}
+.attbox { width: 40px; height: 40px; border-radius: 12px; border: 2.5px solid var(--primary); display: grid; place-items: center; flex: none; color: transparent; background: var(--paper); transition: background .2s, color .2s; }
+.attbox svg { width: 26px; height: 26px; }
+.atttxt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.atttxt small { font-size: 11.5px; color: var(--faint); font-weight: 700; }
+.atttxt b { font-size: 16px; color: var(--primary); }
+.attrate { display: flex; flex-direction: column; align-items: flex-end; flex: none; }
+.attrate b { font-size: 22px; font-weight: 900; color: var(--primary); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.attrate b i { font-style: normal; font-size: 13px; margin-left: 1px; }
+.attrate small { font-size: 10.5px; color: var(--faint); font-weight: 700; }
+.attcheck.on { border-style: solid; border-color: var(--good); background: var(--good-tint); }
+.attcheck.on .attbox { background: var(--good); border-color: var(--good); color: #fff; }
+.attcheck.on .atttxt b { color: var(--good); }
+.attcheck.pop .attbox { animation: attpop .35s ease; }
+@keyframes attpop { 0% { transform: scale(.7); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .attcheck.pop .attbox { animation: none; } }
+.attcheck:focus-visible { outline: 3px solid var(--key); outline-offset: 2px; }
+
+.attgauge { display: flex; align-items: center; gap: 18px; }
+.gauge { position: relative; width: 132px; height: 132px; flex: none; }
+.gauge svg { width: 100%; height: 100%; display: block; }
+.gauge.good { color: var(--good); } .gauge.mid { color: #E89A1C; } .gauge.low { color: var(--bad); }
+.gnum { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.gnum b { font-size: 32px; font-weight: 900; color: var(--ink); line-height: 1; font-variant-numeric: tabular-nums; }
+.gnum b i { font-style: normal; font-size: 16px; margin-left: 1px; }
+.gnum small { font-size: 11px; color: var(--faint); font-weight: 700; margin-top: 4px; }
+.gside { flex: 1; min-width: 0; }
+.gword { margin: 0 0 8px; font-size: 17px; font-weight: 900; }
+.gword.good { color: var(--good); } .gword.mid { color: #C77F0A; } .gword.low { color: var(--bad); }
+.gside dl { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.gside dl div { display: flex; justify-content: space-between; gap: 8px; font-size: 13.5px; border-bottom: 1px dashed var(--line); padding-bottom: 5px; }
+.gside dt { color: var(--sub); }
+.gside dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.cal { display: flex; flex-direction: column; gap: 12px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: center; }
+.cal-head b { display: block; font-size: 17px; }
+.cal-head small { font-size: 12.5px; color: var(--faint); font-weight: 700; }
+.calnav { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--paper); color: var(--primary); font-size: 22px; line-height: 1; cursor: pointer; }
+.calnav:disabled { opacity: .3; cursor: default; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; text-align: center; }
+.dw { font-size: 11.5px; font-weight: 700; color: var(--faint); padding-bottom: 2px; }
+.dw.sun { color: var(--bad); } .dw.sat { color: #3D6FD8; }
+.cd { aspect-ratio: 1; width: 100%; min-width: 0; min-height: 0; display: grid; place-items: center; border-radius: 50%; font-size: 13.5px; font-variant-numeric: tabular-nums; position: relative; }
+.cd b { font-weight: 500; }
+.cd.on { background: var(--primary); color: #fff; }
+.cd.on b { font-weight: 900; }
+.cd.miss { color: var(--ink); }
+.cd.miss::after { content: ""; position: absolute; bottom: 12%; left: 50%; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--bad); }
+.cd.plan { color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--tint2); }
+.cd.rest, .cd.pre { color: #B4BAC6; }
+.cd.today { box-shadow: inset 0 0 0 2.5px var(--key); }
+.cd.today.on { box-shadow: inset 0 0 0 2.5px var(--key), inset 0 0 0 4.5px #fff; }
+.cal-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--sub); justify-content: center; }
+.cal-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.lg { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.lg.on { background: var(--primary); }
+.lg.miss { background: var(--bad); width: 6px; height: 6px; }
+.lg.plan { box-shadow: inset 0 0 0 1.5px var(--tint2); }
+.lg.rest { background: #E3E6EC; }
+.view > .attcheck { margin-bottom: -10px; }
+.cd.blank { visibility: hidden; }
+
+/* 홈 제목 카드 안 출석 체크 (공간 아끼기, 2026-11-04) */
+.hero-home { display: flex; align-items: center; gap: 12px; }
+.hh-text { flex: 1; min-width: 0; }
+.attq {
+  flex: none; width: 84px; display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 12px 6px 10px; border-radius: 16px; cursor: pointer; color: #fff; font-family: var(--font);
+  background: rgba(255, 255, 255, .08); border: 1.5px dashed rgba(255, 255, 255, .5);
+  -webkit-tap-highlight-color: transparent; transition: background .2s, border-color .2s;
+}
+.attq .qbox { width: 46px; height: 46px; border-radius: 13px; border: 2.5px solid #fff; display: grid; place-items: center; color: transparent; transition: background .2s, color .2s; }
+.attq .qbox svg { width: 28px; height: 28px; }
+.attq .qlab { font-size: 13px; font-weight: 700; line-height: 1.2; }
+.attq .qrate { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.attq.on { background: rgba(255, 255, 255, .16); border-style: solid; border-color: #6FD49B; }
+.attq.on .qbox { background: #2E9E5B; border-color: #2E9E5B; color: #fff; }
+.attq.on .qlab { color: #B6F0CF; }
+.attq.pop .qbox { animation: attpop .35s ease; }
+@media (prefers-reduced-motion: reduce) { .attq.pop .qbox { animation: none; } }
+.attq:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.hero-home .who span { white-space: nowrap; }
+
+/* 출석 체크 LED 점등 효과: 아직 안 눌렀을 때 은은하게 깜빡여서 "누르는 곳"임을 알려줌 */
+@keyframes attled {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), inset 0 0 0 0 rgba(255, 255, 255, 0); border-color: rgba(255, 255, 255, .7); }
+  50% { box-shadow: 0 0 12px 3px rgba(255, 255, 255, .55), inset 0 0 10px rgba(255, 255, 255, .28); border-color: #fff; }
+}
+@keyframes attledwrap {
+  0%, 100% { border-color: rgba(255, 255, 255, .4); }
+  50% { border-color: rgba(255, 255, 255, .85); }
+}
+.attq:not(.on) .qbox { animation: attled 1.8s ease-in-out infinite; }
+.attq:not(.on) { animation: attledwrap 1.8s ease-in-out infinite; }
+.attq.on .qbox { box-shadow: 0 0 10px 2px rgba(111, 212, 155, .55); }
+@media (prefers-reduced-motion: reduce) {
+  .attq:not(.on) .qbox, .attq:not(.on) { animation: none; }
+  .attq:not(.on) .qbox { box-shadow: 0 0 8px 2px rgba(255, 255, 255, .45); }
+}
+.attq.saving .qbox { opacity: .75; }
+.atttoast {
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); z-index: 50;
+  background: var(--ink); color: #fff; font-size: 13.5px; font-weight: 700; padding: 10px 16px; border-radius: 99px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .2); max-width: calc(100% - 32px); text-align: center;
+}
+.gword.none { color: var(--primary); }
+.gauge.none { color: var(--primary); }
