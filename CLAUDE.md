@@ -23,7 +23,7 @@ m/<이름-랜덤6자>/     회원 한 명의 PT 노트
   og.jpg              카톡 미리보기 그림 (얼굴 없음, 네이비/핑크 배경 + "OOO 회원님")
   media/form-<id>/    복습지 영상·그림
 _tools/make_icons.py  아이콘 생성 (python3 make_icons.py assets/icons/M "#1F3864" / F "#C2185B")
-_tools/make_icons_smith.py 스미스 아이콘 3종(smith_bench_press·smith_row·smith_shoulder_press)만 추가로 그림 (2026-11-05)
+_tools/make_icons_smith.py 추가 아이콘만 그림: smith_bench_press·smith_row·smith_shoulder_press·smith_shrug·band_push_up (2026-11-05)
 _tools/make_logo.py   로고 생성
 _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 강조, 뒤 강조, sex="M"/"F")
 ```
