@@ -10,6 +10,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 5", title: "고은성님 식단표가 올라왔어요",
+      body: "아래 '식단' 탭에서 언제든 볼 수 있어요. 아침·저녁은 탄수 1종 + 단백 1종, 점심은 일반식 그대로예요!", link: "diet" },
     { date: "2026. 11. 5", title: "루틴이 v2로 바뀌었어요",
       body: "월: 메인이 스미스 인클라인 프레스, 삼두는 케이블 푸쉬다운 / 화: 메인이 시티드 로우 머신, 스미스 슈러그 / 수: 리버스 펙덱 워밍업, 덤벨 숄더 프레스 추가 / 목: 인클라인 덤벨 컬 추가 / 금: 메인이 스미스 벤치프레스, 랫풀다운, 랙 밴드 푸쉬업", link: "routine" },
     { date: "2026. 11. 5", title: "그룹 PT 노트가 열렸어요",
@@ -68,6 +70,64 @@ window.MEMBER = {
     ]
   },
 
-  /* 식단표 (없으면 null) */
-  diet: null
+  /* 식단표 (없으면 null) — 고은성님만 식단 진행. 2026-10-21 종이 다이어트 식단표(80kg대 남성)와 같은 내용 */
+  diet: {
+    member: "고은성",
+    updated: "2026. 11. 5",
+    title: "다이어트 식단",
+    title_en: "Diet Meal Plan · 골라 먹는 식단 · 80kg대 남성",
+    rules: ["아침·저녁 탄수화물 1종", "아침·저녁 단백질 1종", "점심은 일반식, 밥 2/3공기"],
+    rules_note: "양만 지키면 메뉴는 끼니마다 바꿔도 OK",
+    key_point: "점심은 편하게, 아침·저녁은 정확하게!",
+    stats: [
+      { label: "하루 칼로리", value: "2,050", unit: "kcal" },
+      { label: "하루 단백질", value: "160", unit: "g" },
+      { label: "하루 식사", value: "3끼", unit: "+ 1잔" },
+      { label: "하루 물", value: "2~3", unit: "L" }
+    ],
+    formula: [
+      { icon: "rice_white", title: "탄수화물", sub: "1종" },
+      { icon: "chicken", title: "단백질", sub: "1종" },
+      { icon: "veg", title: "채소", sub: "듬뿍" }
+    ],
+    formula_result: { title: "한 끼 완성", sub: "아침 · 저녁 2번" },
+    carbs: [
+      { icon: "sweet_potato", name: "고구마", amount: "240g" },
+      { icon: "rice_white", name: "쌀밥", amount: "200g (1공기)" },
+      { icon: "rice_brown", name: "현미밥", amount: "200g (1공기)" },
+      { icon: "potato", name: "감자", amount: "400g" },
+      { icon: "oatmeal", name: "오트밀", amount: "80g" }
+    ],
+    prots: [
+      { icon: "chicken", name: "닭가슴살", amount: "200g" },
+      { icon: "beef", name: "우둔·홍두깨살", amount: "200g" },
+      { icon: "fish", name: "흰살생선", amount: "240g" },
+      { icon: "egg", name: "계란", amount: "전란 2개 + 흰자 8개" },
+      { icon: "pork", name: "돼지 안심", amount: "200g" },
+      { icon: "tofu", name: "두부", amount: "1모 (500g)" },
+      { icon: "shrimp", name: "새우", amount: "240g" }
+    ],
+    day_sub: "3끼 + 프로틴 1잔",
+    day: [
+      { icon: "ic_sun", name: "아침", line1: "탄수 1종 + 단백 1종", line2: "+ 채소 듬뿍" },
+      { icon: "ic_tray", name: "점심", line1: "일반식", line2: "밥은 2/3공기만" },
+      { icon: "ic_moon", name: "저녁", line1: "탄수 1종 + 단백 1종", line2: "자기 3시간 전까지" },
+      { icon: "ic_shaker", name: "프로틴", line1: "물에 1스쿱", line2: "운동 끝나고 바로 마셔요", line3: "쉬는 날엔 오후 간식 대신" }
+    ],
+    lunch_do: ["밥은 2/3공기만, 남겨도 괜찮아요", "제육·생선구이·불고기처럼 고기 반찬 메뉴", "채소 반찬부터 먼저 먹기", "국은 건더기 위주로 떠먹기"],
+    lunch_dont: ["짜장·짬뽕·라면 같은 면 메뉴", "돈가스·튀김 정식", "공기밥 추가, 국에 밥 말기", "식후 믹스커피·단 음료"],
+    extras: [
+      { icon: "veg", name: "채소", tag: "매 끼 듬뿍", lines: ["양배추·브로콜리·상추 등", "김치도 OK (조금만)", "아침·저녁 한 접시씩"] },
+      { icon: "ic_water", name: "음료", tag: "물 2~3L", lines: ["물·탄산수·블랙커피 OK", "주스·라떼·탄산음료 X"] },
+      { icon: "salt", name: "염분 조절", tag: "조금은 OK", lines: ["소금·소스는 찍어 먹기", "김치·국물은 조금만"] }
+    ],
+    notes_title: "참고사항",
+    notes_sub: "식단 양은 혼자 바꾸지 말고 트레이너와 함께 정해요",
+    notes: [
+      { icon: "ic_scale", title: "인바디 측정", chip: "한 달에 1번", desc: "매달 같은 시기, 아침 공복에 재요" },
+      { icon: "talk", title: "트레이너와 상담", chip: "결과 같이 보기", desc: "체지방·근육량 변화를 함께 확인해요" },
+      { icon: "clipboard", title: "식단 수정", chip: "새 식단표", desc: "결과에 맞춰 탄수·단백 양을 다시 정해요" }
+    ],
+    safety: "끼니를 굶지 마세요. 굶으면 저녁에 폭식해요. 어지럽거나 힘이 빠지면 바로 트레이너에게 알려 주세요"
+  }
 };

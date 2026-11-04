@@ -721,15 +721,67 @@
   }
 
   /* ---------------- 식단 */
+  /* M.diet: null = 준비 중 / 문자열 = 그대로 / 객체 = 종이 다이어트 식단표(2026-10-21 표준 틀)와 같은 구성 (2026-11-05) */
+  function foodImg(key, cls) {
+    var src = /^ic_/.test(key) ? BASE + "food/" + THEME + "/" + key + ".png" : BASE + "food/" + key + ".png";
+    return '<img class="' + (cls || "fd-img") + '" src="' + src + '" alt="" loading="lazy">';
+  }
   function renderDiet() {
-    var h = '<section>' + head("", "식단표", "");
-    if (!M.diet) {
-      h += '<div class="panel empty"><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="25" fill="var(--tint)"/><circle cx="27" cy="29" r="12" fill="#fff" stroke="var(--primary)" stroke-width="3"/><path d="M12 14v12M15 14v12M12 20h3M41 14c-3 2-3 8 0 10v12" stroke="var(--primary)" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>' +
-        '<h3>식단표 준비 중이에요</h3><p>선생님이 회원님 식단을 짜면 여기에 올려드릴게요</p></div>';
-    } else {
-      h += M.diet;
+    var D = M.diet;
+    if (!D || typeof D === "string") {
+      var h = '<section>' + head("", "식단표", "");
+      if (!D) {
+        h += '<div class="panel empty"><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="25" fill="var(--tint)"/><circle cx="27" cy="29" r="12" fill="#fff" stroke="var(--primary)" stroke-width="3"/><path d="M12 14v12M15 14v12M12 20h3M41 14c-3 2-3 8 0 10v12" stroke="var(--primary)" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>' +
+          '<h3>식단표 준비 중이에요</h3><p>선생님이 회원님 식단을 짜면 여기에 올려드릴게요</p></div>';
+      } else h += D;
+      return h + '</section>' + remember();
     }
-    return h + '</section>' + remember();
+    var who = D.member || M.name;
+    var h = '<div class="hero"><div class="hero-main split"><div class="hero-l">' +
+      '<div class="eyebrow">MY MEAL NOTE <b>· 식단</b></div><h1>' + esc(D.title) + '</h1><div class="en">' + esc(D.title_en || "") + '</div>' +
+      '<div class="who"><strong>' + esc(who) + ' 회원님</strong>' + (D.updated ? '<span>' + esc(D.updated) + ' 업데이트</span>' : '') + '</div></div>' +
+      '<div class="hero-r"><div class="eyebrow">식단 규칙</div><ul class="dots small">' +
+      D.rules.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join("") + '</ul>' +
+      (D.rules_note ? '<p class="benefit">' + esc(D.rules_note) + '</p>' : '') + '</div></div>' +
+      '<div class="keypoint"><small>KEY POINT</small><p>' + esc(D.key_point) + '</p></div></div>';
+    if (D.stats) h += '<div class="dt-stats">' + D.stats.map(function (s) {
+      return '<div><small>' + esc(s.label) + '</small><b>' + esc(s.value) + '</b><i>' + esc(s.unit) + '</i></div>';
+    }).join("") + '</div>';
+
+    var n = 0;
+    function no() { n++; return (n < 10 ? "0" : "") + n; }
+    if (D.formula) {
+      h += '<section>' + head(no(), "한 끼는 이렇게", "아침·저녁은 이 공식대로 차려요") + '<div class="dt-formula">' +
+        D.formula.map(function (f, i) {
+          return (i ? '<span class="op">+</span>' : '') + '<div class="fm">' + foodImg(f.icon, "fm-img") + '<div><b>' + esc(f.title) + '</b><i>' + esc(f.sub) + '</i></div></div>';
+        }).join("") + '<span class="op eq">=</span><div class="fm res"><b>' + esc(D.formula_result.title) + '</b><i>' + esc(D.formula_result.sub) + '</i></div></div></section>';
+    }
+    function foods(list, gold) {
+      return '<div class="food-grid">' + list.map(function (f) {
+        return '<div class="food">' + foodImg(f.icon) + '<b>' + esc(f.name) + '</b><span class="pill">' + esc(f.amount) + '</span></div>';
+      }).join("") + (gold ? '<div class="food gold"><span class="g1">1종</span><b>한 끼에 딱 1종만</b><i>끼니마다 바꿔도 OK</i></div>' : '') + '</div>';
+    }
+    h += '<section>' + head(no(), "탄수화물 고르기", "이 중 1종만, 적힌 양만큼") + foods(D.carbs) + '</section>';
+    h += '<section>' + head(no(), "단백질 고르기", "이 중 1종만, 적힌 양만큼") + foods(D.prots, true) + '</section>';
+    if (D.day) h += '<section>' + head(no(), "하루는 이렇게", D.day_sub || "") + '<div class="meal-grid">' + D.day.map(function (d) {
+      return '<div class="meal"><div class="meal-h">' + foodImg(d.icon, "meal-ic") + '<b>' + esc(d.name) + '</b></div><p>' + esc(d.line1) + '</p>' +
+        '<i>' + esc(d.line2) + '</i>' + (d.line3 ? '<i>' + esc(d.line3) + '</i>' : '') + '</div>';
+    }).join("") + '</div></section>';
+    if (D.lunch_do) h += '<section>' + head(no(), "점심 일반식 가이드", "회사 밥·외식은 이렇게 골라요") + '<div class="ox">' +
+      '<div class="oxbox o"><h3><svg class="mark" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.6" fill="none" stroke="currentColor" stroke-width="3.2"/></svg>이렇게 고르세요</h3><ul>' +
+      D.lunch_do.map(function (t) { return '<li>' + CHECK + esc(t) + '</li>'; }).join("") + '</ul></div>' +
+      '<div class="oxbox x"><h3><svg class="mark" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 3.5l13 13M16.5 3.5l-13 13" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg>이건 피하세요</h3><ul>' +
+      D.lunch_dont.map(function (t) { return '<li>' + XIC + esc(t) + '</li>'; }).join("") + '</ul></div></div></section>';
+    if (D.extras) h += '<section>' + head(no(), "같이 먹어도 OK", "이건 더해도 괜찮아요") + '<div class="extra-list">' + D.extras.map(function (x) {
+      return '<div class="extra">' + foodImg(x.icon, "ex-img") + '<div><div class="extra-h"><b>' + esc(x.name) + '</b><span class="pill">' + esc(x.tag) + '</span></div>' +
+        x.lines.map(function (l) { return '<p>' + esc(l) + '</p>'; }).join("") + '</div></div>';
+    }).join("") + '</div></section>';
+    if (D.notes) h += '<section>' + head(no(), D.notes_title || "참고사항", D.notes_sub || "") + '<div class="dnotes">' + D.notes.map(function (s, i) {
+      return (i ? '<span class="arr" aria-hidden="true">›</span>' : '') + '<div class="dnote"><div class="dn-h">' + foodImg(s.icon, "dn-ic") + '<small>STEP</small><b>0' + (i + 1) + '</b></div>' +
+        '<h3>' + esc(s.title) + '</h3><span class="dchip">' + esc(s.chip) + '</span><p>' + esc(s.desc) + '</p></div>';
+    }).join("") + '</div></section>';
+    if (D.safety) h += '<div class="dsafety">' + XIC + '<b>잠깐!</b><span>' + esc(D.safety) + '</span></div>';
+    return h + remember();
   }
 
 
