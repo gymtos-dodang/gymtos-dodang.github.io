@@ -8,6 +8,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 5", title: "시티드 페이스풀 자세 복습지가 올라왔어요",
+      body: "루틴에도 넣었어요(루틴 v4). 화요일 등·목요일 어깨·팔 하는 날 맨 앞 워밍업으로 해요. 운동 전에 한 번 보고 들어가세요!", link: "form-seated-face-pull" },
     { date: "2026. 11. 3", title: "인클라인 덤벨 프레스 자세 복습지가 올라왔어요",
       body: "월요일·금요일에 하는 인클라인 덤벨 프레스예요. 운동 전에 한 번 보고 들어가세요!", link: "form-incline-db-press" },
     { date: "2026. 11. 3", title: "루틴이 v3로 바뀌었어요",
@@ -20,6 +22,33 @@ window.MEMBER = {
 
   /* 자세 복습지 (최신이 위) */
   forms: [
+    {
+      id: "seated-face-pull",
+      dir: "media/form-seated-face-pull/",
+      date: "2026. 10. 29 (목)",
+      exercise: "시티드 페이스풀",
+      exercise_en: "Seated Face Pull",
+      part: "어깨·등",
+      targets: ["후면 삼각근", "중부 승모근 · 능형근"],
+      benefit: "굽은 어깨를 펴주고 어깨 뒤쪽을 탄탄하게 만들어줘요",
+      key_point: "팔꿈치를 높게, 로프를 얼굴 양옆으로 벌려 당긴다!",
+      good_points: [
+        { title: "상체를 세우고 버텼어요", desc: "몸이 뒤로 젖혀지지 않아서 반동 없이 어깨로만 당겼어요" },
+        { title: "팔꿈치를 높게 들었어요", desc: "팔꿈치가 어깨 높이까지 올라가 어깨 뒤쪽에 자극이 갔어요" },
+        { title: "같은 속도로 반복했어요", desc: "당길 때와 돌아갈 때 속도가 일정해서 자극이 끊기지 않았어요" }
+      ],
+      primary_muscles: [{ name: "후면 삼각근", where: "어깨 뒤쪽" }, { name: "중부 승모근 · 능형근", where: "날개뼈 사이" }],
+      secondary_muscles: "회전근개(극하근 · 소원근) · 하부 승모근",
+      feel_good: "어깨 뒤쪽과 날개뼈 사이가 뻐근해요",
+      feel_stop: "목·승모근이 뻐근하게 올라오거나, 팔만 아파요",
+      steps: [
+        { title: "준비", desc: "의자에 앉아 가슴을 세우고, 로프를 손등이 위로 오게 잡아 팔을 앞으로 뻗어요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "당기기", desc: "팔꿈치를 어깨 높이로 들고, 로프를 얼굴 양옆으로 벌리며 당겨요. 날개뼈를 모으고 1초!", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "돌아가기", desc: "어깨가 앞으로 끌려가지 않게 버티면서 천천히 팔을 펴요", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["가슴 세우고 상체는 고정", "팔꿈치는 손보다 높게", "당긴 끝에서 날개뼈 모으고 1초 멈춤"],
+      dont: ["몸을 뒤로 젖혀 반동 쓰기", "어깨를 귀 쪽으로 으쓱 올리기", "로프를 턱·목 아래로 당기기"]
+    },
     {
       id: "incline-db-press",
       dir: "media/form-incline-db-press/",
@@ -78,8 +107,8 @@ window.MEMBER = {
 
   /* 주간 루틴 */
   routine: {
-    version: "v3",
-    updated: "2026. 11. 3",
+    version: "v4",
+    updated: "2026. 11. 5",
     title: "주 6회 · 근비대",
     plan: ["가슴·등·하체 주 2번씩", "같은 종목, 무게만 조금씩 ↑", "일요일은 푹 쉬고 잘 먹기"],
     key_point: "지금 방향 맞아요! 루틴대로 하고 무게만 조금씩 올리기",
@@ -92,6 +121,7 @@ window.MEMBER = {
         { name: "케이블 푸쉬다운", en: "Cable Pushdown", tip: "팔꿈치 옆구리 고정", sets: [[15, 15], [15, 15], [15, 15]] }
       ]},
       { day: "화", part: "등", en: "Back", cardio: true, items: [
+        { name: "시티드 페이스풀", en: "Seated Face Pull", tag: "워밍업", tip: "팔꿈치 높게 얼굴 쪽으로", sets: [[20, 10], [15, 15]], form: "seated-face-pull" },
         { name: "랫풀다운", en: "Lat Pulldown", tag: "메인", tip: "팔꿈치로 당기기", sets: [[15, 25], [12, 25], [10, 30], [8, 30]] },
         { name: "시티드 로우 머신", en: "Seated Row Machine", tip: "가슴 패드 붙이고 당기기", sets: [[12, 30], [12, 30], [12, 30]] },
         { name: "리버스 펙덱", en: "Reverse Pec Deck", tip: "날개뼈 모으며 옆으로", sets: [[15, 15], [15, 15], [15, 15]] }
@@ -104,6 +134,7 @@ window.MEMBER = {
         { name: "핵스쿼트", en: "Hack Squat", tag: "메인", tip: "등 패드에 붙이고", sets: [[15, 15], [12, 15], [10, 20], [8, 20]] }
       ]},
       { day: "목", part: "어깨·팔", en: "Shoulder · Arm", cardio: true, items: [
+        { name: "시티드 페이스풀", en: "Seated Face Pull", tag: "워밍업", tip: "팔꿈치 높게 얼굴 쪽으로", sets: [[20, 10], [15, 15]], form: "seated-face-pull" },
         { name: "사이드 레터럴 레이즈", en: "Lateral Raise", tag: "워밍업", tip: "어깨 으쓱 금지", sets: [[20, 4], [15, 4]] },
         { name: "숄더 프레스 머신", en: "Shoulder Press", tag: "메인", tip: "허리 등받이에 붙이기", sets: [[15, 20], [12, 20], [10, 25], [8, 25]] },
         { name: "레터럴 레이즈 머신", en: "Standing Machine", tip: "팔꿈치로 들어 올리기", sets: [[15, 10], [15, 10], [15, 10]] },
