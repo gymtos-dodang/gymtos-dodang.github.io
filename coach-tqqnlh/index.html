@@ -52,6 +52,20 @@
 .qlinks a.F { color: #C2185B; background: #FCE4EC; }
 .qlinks a:focus-visible, .mtop:focus-visible { outline: 3px solid var(--key); outline-offset: 2px; }
 .refresh { font: inherit; font-size: 13px; font-weight: 700; color: var(--primary); background: none; border: 0; cursor: pointer; margin-left: auto; padding: 4px; }
+.sbar { position: sticky; top: var(--barh, 51px); z-index: 10; background: var(--page); padding: 8px 0 10px; margin: -8px 0 -4px; display: flex; flex-direction: column; gap: 8px; }
+.sbox { display: flex; align-items: center; gap: 8px; background: var(--paper); border: 1.5px solid var(--rule); border-radius: 14px; padding: 0 12px; height: 46px; color: var(--faint); }
+.sbox:focus-within { border-color: var(--primary); color: var(--primary); }
+.sbox svg { width: 20px; height: 20px; flex: none; }
+.sbox input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 16px; color: var(--ink); height: 100%; }
+.sbox input::-webkit-search-cancel-button { display: none; }
+.sbox button { border: 0; background: #E3E6EC; color: var(--sub); width: 24px; height: 24px; border-radius: 50%; font-size: 12px; cursor: pointer; flex: none; }
+.fchips { display: flex; gap: 6px; }
+.fchips button { font: inherit; font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 99px; border: 1.5px solid var(--rule); background: var(--paper); color: var(--sub); cursor: pointer; }
+.fchips button b { font-variant-numeric: tabular-nums; margin-left: 2px; }
+.fchips button[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: #fff; }
+.fchips button[data-f="on"][aria-pressed="true"] { background: var(--good); border-color: var(--good); }
+.fchips button[data-f="off"][aria-pressed="true"] { background: var(--bad); border-color: var(--bad); }
+.nores { text-align: center; color: var(--faint); font-size: 14px; margin: 8px 0; }
 .howto { font-size: 13px; color: var(--sub); line-height: 1.6; }
 .howto b { color: var(--ink); }
 </style>
@@ -76,6 +90,17 @@
 
   <section>
     <div class="head"><h2>회원 목록</h2><p>이름을 누르면 그 회원님 PT 노트로</p></div>
+    <div class="sbar" id="sbar">
+      <label class="sbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 20 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <input type="search" id="q" placeholder="회원 이름 검색 (초성도 돼요 · ㅊㅈㅎ)" autocomplete="off" aria-label="회원 이름 검색">
+        <button type="button" id="qclear" aria-label="검색어 지우기" hidden>✕</button></label>
+      <div class="fchips" role="group" aria-label="출석으로 거르기">
+        <button type="button" data-f="all" aria-pressed="true">전체 <b id="cAll">0</b></button>
+        <button type="button" data-f="on" aria-pressed="false">출석 <b id="cOn">0</b></button>
+        <button type="button" data-f="off" aria-pressed="false">미출석 <b id="cOff">0</b></button>
+      </div>
+    </div>
+    <p class="nores" id="nores" hidden>찾는 회원님이 없어요</p>
     <div class="mlist" id="list"><div class="panel empty"><h3>불러오는 중…</h3></div></div>
   </section>
 
@@ -139,12 +164,50 @@
     var R = M.routine || {};
     info += '<span>루틴 <b>' + esc(R.version || "–") + '</b></span><span>복습지 <b>' + (M.forms || []).length + '개</b></span>';
     var jt = journeyText(M);
-    return '<div class="mcard"><a class="mtop" href="' + base + '#home"><span class="av ' + sex + '">' + esc(M.name.charAt(0)) + '</span>' +
+    var stKey = !days ? "wait" : on ? "on" : rest ? "rest" : "off";
+    return '<div class="mcard" data-name="' + esc(M.name) + '" data-cho="' + esc(cho(M.name)) + '" data-st="' + stKey + '"><a class="mtop" href="' + base + '#home"><span class="av ' + sex + '">' + esc(M.name.charAt(0)) + '</span>' +
       '<div><h3>' + esc(M.name) + ' 회원님</h3><p>' + esc(M.goal || "") + (jt ? ' · ' + jt : '') + '</p></div>' + st + '</a>' +
       '<div class="mrow2">' + info + '</div>' +
       '<div class="qlinks"><a class="' + sex + '" href="' + base + '#home">홈</a><a class="' + sex + '" href="' + base + '#goal">출석·목표</a>' +
       '<a class="' + sex + '" href="' + base + '#routine">루틴</a><a class="' + sex + '" href="' + base + '#forms">복습지</a></div></div>';
   }
+  /* 초성 검색: "최지훈" → "ㅊㅈㅎ" */
+  var CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
+  function cho(t) {
+    return String(t).split("").map(function (c) {
+      var k = c.charCodeAt(0) - 0xAC00;
+      return k >= 0 && k < 11172 ? CHO.charAt(Math.floor(k / 588)) : c;
+    }).join("");
+  }
+  function barH() { var b = document.querySelector(".bar"); if (b) document.documentElement.style.setProperty("--barh", (b.getBoundingClientRect().height - 1) + "px"); }
+  barH(); window.addEventListener("resize", barH); if (document.fonts && document.fonts.ready) document.fonts.ready.then(barH);
+  var FILTER = "all";
+  function applyFilter() {
+    var q = document.getElementById("q").value.replace(/\s+/g, ""), n = 0, on = 0, off = 0, all = 0;
+    document.getElementById("qclear").hidden = !q;
+    var onlyCho = q && /^[ㄱ-ㅎ]+$/.test(q);
+    Array.prototype.forEach.call(document.querySelectorAll(".mcard"), function (el) {
+      var name = el.getAttribute("data-name") || "", st = el.getAttribute("data-st");
+      var hit = !q || name.indexOf(q) >= 0 || (onlyCho && (el.getAttribute("data-cho") || "").indexOf(q) >= 0);
+      if (hit) { all++; if (st === "on") on++; if (st === "off") off++; }
+      var show = hit && (FILTER === "all" || st === FILTER);
+      el.hidden = !show; if (show) n++;
+    });
+    document.getElementById("cAll").textContent = all;
+    document.getElementById("cOn").textContent = on;
+    document.getElementById("cOff").textContent = off;
+    document.getElementById("nores").hidden = n > 0 || !document.querySelector(".mcard");
+  }
+  document.getElementById("q").addEventListener("input", applyFilter);
+  document.getElementById("qclear").addEventListener("click", function () { var i = document.getElementById("q"); i.value = ""; applyFilter(); i.focus(); });
+  Array.prototype.forEach.call(document.querySelectorAll(".fchips button"), function (b) {
+    b.addEventListener("click", function () {
+      FILTER = b.getAttribute("data-f");
+      Array.prototype.forEach.call(document.querySelectorAll(".fchips button"), function (o) { o.setAttribute("aria-pressed", String(o === b)); });
+      applyFilter();
+    });
+  });
+
   function render() {
     var box = document.getElementById("list");
     Promise.all(LIST.map(function (slug) {
@@ -152,12 +215,14 @@
     })).then(function (rows) {
       rows = rows.filter(Boolean);
       box.innerHTML = rows.map(function (r) { return card(r.slug, r.M, null); }).join("");
+      applyFilter();
       var done = 0, onN = 0, restN = 0;
       rows.forEach(function (r, i) {
         fetch(API + "?m=" + encodeURIComponent(r.slug), { cache: "no-store" }).then(function (x) { return x.json(); })
           .then(function (j) { return j && j.ok ? j.days : {}; }).catch(function () { return {}; })
           .then(function (days) {
             var el = box.children[i]; if (el) el.outerHTML = card(r.slug, r.M, days);
+            applyFilter();
             if (days[today] != null) onN++; else if (isRestToday(r.M)) restN++;
             done++;
             document.getElementById("sOn").textContent = onN;
