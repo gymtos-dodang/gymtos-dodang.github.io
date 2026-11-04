@@ -89,6 +89,18 @@
     ["diet", "식단", '<circle cx="13" cy="13" r="6.5"/><path d="M4 4v6M6.5 4v6M4 7h2.5M5.2 10v10" stroke-linecap="round"/>'],
     ["notice", "공지", '<path d="M4 10v4h3l6 4V6L7 10z" stroke-linejoin="round"/><path d="M16.5 9.5a3.5 3.5 0 0 1 0 5M19 7a7 7 0 0 1 0 10" stroke-linecap="round"/>']
   ];
+  var COACH_MODE = false;
+  /* 선생님 페이지에서 들어왔으면 위 막대에 "← 회원 목록" 버튼 (선생님 휴대폰에만 보임) */
+  try {
+    var coachPath = sessionStorage.getItem("ptcoach") || localStorage.getItem("ptcoach");
+    if (coachPath) COACH_MODE = true;
+    var barIn = document.querySelector(".bar-in");
+    if (coachPath && barIn && /^\/coach-[a-z0-9]+\/$/.test(coachPath)) {
+      var cb = document.createElement("a");
+      cb.href = coachPath; cb.className = "coachback"; cb.textContent = "← 회원 목록";
+      barIn.insertBefore(cb, barIn.children[1] || null);
+    }
+  } catch (e) {}
   var tabsIn = document.querySelector(".tabs-in");
   if (tabsIn) {
     tabsIn.innerHTML = TABS.map(function (t) {
@@ -330,6 +342,11 @@
   function setupAttCheck() {
     var b = document.getElementById("attBtn");
     if (!b) return;
+    if (COACH_MODE) {   /* 선생님 휴대폰에서는 보기만 (실수로 눌러 회원 출석이 바뀌지 않게) */
+      b.classList.add("view");
+      b.addEventListener("click", function () { attToast("선생님 보기에서는 출석을 바꿀 수 없어요"); });
+      return;
+    }
     b.addEventListener("click", function () {
       var a = attLoad().slice(), now = new Date(), key = ymd(now), i = a.indexOf(key), turnOn = i < 0;
       var tm = pad2(now.getHours()) + ":" + pad2(now.getMinutes()), prevTm = attTimes[key];

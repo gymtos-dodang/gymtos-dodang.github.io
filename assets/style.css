@@ -493,3 +493,7 @@ div.day-tile { cursor: default; }
 /* 팝업 눌러서 들어온 공지 반짝 */
 .notice.flash { outline: 3px solid transparent; outline-offset: 2px; animation: nflash 2.4s ease-out; }
 @keyframes nflash { 0%, 40% { background-color: var(--tint); outline-color: var(--key); } 100% { outline-color: transparent; } }
+.coachback { font-size: 12.5px; font-weight: 700; color: #fff; background: var(--primary); text-decoration: none; padding: 5px 11px; border-radius: 99px; white-space: nowrap; margin-right: auto; margin-left: 4px; }
+.bar-in .coachback + span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.attq.view, .attq.view .qbox { animation: none !important; }
+.attq.view:not(.on) { border-style: dashed; opacity: .85; }

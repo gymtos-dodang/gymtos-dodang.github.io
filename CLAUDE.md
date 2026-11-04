@@ -42,7 +42,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 2. `m/jihun-g9kgdo/index.html` 복사 → 제목·og:title·헤더 문구의 이름, og:image 경로, theme-color(여 #C2185B) 바꾸기.
 3. data.js 작성 (아래 형식). sex "F"면 핑크 테마·핑크 아이콘 자동.
 4. og.jpg 생성 (1200×630, 테마색 배경 + 로고 + "MY PT NOTE · 나만의 운동 노트" + "OOO 회원님" + 아래 띠 "GYMTOS 도당점 · 담당 장동욱 트레이너").
-5. 위 회원 목록 표에 추가.
+5. 위 회원 목록 표에 추가하고, coach-tqqnlh/members.js에도 주소 추가.
 
 ## data.js 형식
 - name, sex("M"/"F"), goal, journey{start:"YYYY-MM-DD"} (PT 시작일 — 있으면 홈에 '나의 PT 여정' 요약·목표 탭(#goal) 내용이 나옴, 없으면 숨김), notices[{date,title,body,link?}] (최신이 위), next_class(문자열 또는 null), diet(null이면 "준비 중")
@@ -72,6 +72,13 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - data.js notices 맨 위에 새 공지를 올리면, 회원이 PT 노트를 열 때 화면 위에서 팝업이 내려왔다가 약 5초 뒤 사라짐(위로 밀어도 닫힘). 누르면 공지 탭의 그 공지로 이동해 반짝 표시.
 - 공지 하나당 팝업은 한 번만. 공지 탭을 열기 전까지 아래 '공지' 탭에 빨간 점. 14일 넘은 공지는 새 공지로 안 침.
 - 공지 구분은 date + title. 기록은 회원 휴대폰(localStorage)에만 → 다른 폰·브라우저로 열면 다시 뜸. 코드는 app.js의 showNoticePop.
+
+## 선생님 페이지 (2026-11-05 장동욱 요청)
+- 주소: https://gymtos-dodang.github.io/coach-tqqnlh/ (선생님만 아는 주소, 회원에게 보내지 말 것). 홈 화면에 추가하면 앱 하나("PT노트 쌤")로 모든 회원 PT 노트에 들어감.
+- 구성: 오늘 한눈에(오늘 출석·아직·담당 회원 수) → 회원 카드(오늘 출석 ✓시간/아직/쉬는 날, 이번 달 출석 횟수, 마지막 출석, 루틴 버전, 복습지 수, 바로가기 홈·출석·목표·루틴·복습지).
+- 회원 목록은 coach-tqqnlh/members.js — **새 회원 PT 노트를 만들면 여기에도 주소 추가**.
+- 선생님 페이지를 한 번 연 휴대폰(localStorage ptcoach)에서는 회원 페이지 위에 "← 회원 목록" 버튼이 생기고, 출석 상자는 보기 전용(눌러도 안 바뀜).
+- 출석 창고 주소(ATT_API)가 app.js와 coach-tqqnlh/index.html 두 곳에 있음 — 바꾸면 둘 다.
 
 ## 자세 복습지 미디어 만들기 (영상 1개 기준)
 - 웹 영상: `ffmpeg -i in.mov -an -vf "scale=540:-2,fps=30" -c:v libx264 -preset veryfast -crf 27 -pix_fmt yuv420p -movflags +faststart form.mp4`
