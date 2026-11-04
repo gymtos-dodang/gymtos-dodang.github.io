@@ -438,3 +438,9 @@ section { display: flex; flex-direction: column; gap: 14px; }
 }
 .gword.none { color: var(--primary); }
 .gauge.none { color: var(--primary); }
+
+/* 순환 루틴 (DAY 1~N) */
+.day-tile b.rot { display: flex; flex-direction: column; align-items: center; line-height: 1; font-size: 17px; }
+.day-tile b.rot small { font-size: 8.5px; letter-spacing: .6px; font-weight: 800; margin-bottom: 2px; opacity: .8; }
+div.day-tile { cursor: default; }
+.rot-hint { margin: 2px 0 0; font-size: 12px; color: var(--faint); line-height: 1.5; }

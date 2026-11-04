@@ -34,6 +34,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 | 서경진 | m/kyeongjin-bkwzy9/ | F |
 | 김지수 | m/jisu-480xne/ | F |
 | 김태영 | m/taeyoung-k52qnx/ | M |
+| 임애란 | m/aeran-bsq16i/ | F (순환 루틴) |
 
 ## 새 회원 PT 노트 만들기
 0. **PT 시작일을 꼭 받기** (장동욱이 말해줌, "10월"처럼 달만 주면 그 달 15일로). 안 알려주면 물어볼 것. → data.js journey.start
@@ -48,6 +49,11 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - forms[] (최신이 위): id, dir("media/form-<id>/"), date, exercise, exercise_en, part, targets[], benefit, key_point, good_points[3]{title,desc}, primary_muscles[{name,where}], secondary_muscles, feel_good, feel_stop, steps[3]{title,desc,chip,media,loop?}, do[3], dont[3]
 - routine: version, updated, title, plan[3], key_point, note, cardio{minutes,options}, days[{day:"월"…"일", part, en, cardio:bool, rest?, cardio_only?(분, 유산소만 하는 날 · items:[] · note?), items[{name,en,tag?("메인"/"워밍업"/"선행"),tip,sets[[횟수,kg],…],form?,icon?}]}] — 횟수 자리에 "30초" 같은 글자, kg 자리에 null(=맨몸)도 됨
 - 복습지·루틴을 새로 올리면 notices 맨 위에 공지 한 줄 추가.
+- **순환 루틴** (2026-11-04, 교대근무 등 쉬는 요일이 매주 다른 회원): routine.rotation: true, rotation_start:"YYYY-MM-DD", days[].day = "DAY 1"…"DAY N" (rest 날 없이 운동하는 날만).
+  - 주소 #routine-d1 … dN. 루틴 탭 01 '순서 한눈에'(DAY 타일 + 7칸 채우는 '휴 · 근무표 따라' 타일).
+  - 홈 '오늘 할 운동' = rotation_start부터 오늘 전까지 출석 체크한 날 수 ÷ N 의 나머지 + 1 → DAY 번호.
+  - 출석률 = 출석 ÷ (지난 날 수 × N/7). 달력은 결석 표시 없이 출석 / 쉰 날만. 연속 출석은 3일 넘게 비면 끊김.
+  - 종이 루틴일지도 같은 순서(DAY 1~N + 쉬는 날 타일, spec.rotation)로 만듦.
 
 ## PT 여정 (2026-11-03 장동욱 요청)
 - 회원과 1~12개월 함께 가는 느낌. 3단계: 1단계 기초(1~2개월: 머신 사용법·스트레칭·근육 이해) / 2단계 변화(2~7개월: 자신감·어느 순간 몸의 변화·머신 투어·반복 숙달) / 3단계 자립(7~12개월: 혼자서도·프리웨이트·다음 목표 또는 졸업).

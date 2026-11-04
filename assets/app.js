@@ -98,8 +98,22 @@
   }
 
 
-  function todayKey() { return DAY_KEYS[new Date().getDay()]; }
+  /* 순환 루틴 (2026-11-04 임애란님, 교대근무라 쉬는 요일이 매주 다름): routine.rotation = true
+     → 요일 대신 DAY 1~N 순서대로. 주소 #routine-d1 … / 오늘 할 차례 = 순환 시작일부터 출석 체크한 날 수 ÷ N 의 나머지 */
+  var ROT = !!(M.routine && M.routine.rotation);
+  function rotDays() { return (M.routine && M.routine.days) || []; }
+  function rotKeys() { return rotDays().map(function (_, i) { return "d" + (i + 1); }); }
+  function isRotKey(k) { return ROT && /^d\d+$/.test(k) && !!rotDays()[+k.slice(1) - 1]; }
+  function dayName(k) { return isRotKey(k) ? "DAY " + k.slice(1) : DAY_KO[k] + "요일"; }
+  function turnKey() {
+    var n = rotDays().length; if (!n) return "d1";
+    var since = (M.routine.rotation_start || "2000-01-01"), today = ymd(new Date());
+    var done = attLoad().filter(function (k) { return k >= since && k < today; }).length;
+    return "d" + (done % n + 1);
+  }
+  function todayKey() { return ROT ? turnKey() : DAY_KEYS[new Date().getDay()]; }
   function dayByKey(k) {
+    if (isRotKey(k)) return rotDays()[+k.slice(1) - 1];
     var days = (M.routine && M.routine.days) || [];
     for (var i = 0; i < days.length; i++) if (KO_KEY[days[i].day] === k) return days[i];
     return null;
@@ -239,7 +253,8 @@
   }
   function attSave(a) { attMem = a; try { localStorage.setItem(ATT_KEY, JSON.stringify(a)); } catch (e) {} }
   function attHas(a, key) { return a.indexOf(key) >= 0; }
-  function isWorkoutDay(d) {   /* 루틴에서 운동하는 요일인지 */
+  function isWorkoutDay(d) {   /* 루틴에서 운동하는 요일인지 (순환 루틴은 어느 날이든 운동할 수 있음) */
+    if (ROT) return true;
     var day = dayByKey(DAY_KEYS[d.getDay()]);
     return !!(day && !day.rest);
   }
@@ -260,14 +275,16 @@
       if (w) plan++;
       if (on) done++;
     }
+    if (ROT) plan = Math.max(done ? 1 : 0, Math.round(plan * rotDays().length / 7));   /* 순환: 주 N회 기준으로 운동할 날 수 */
     return { plan: plan, done: done, rate: plan ? Math.min(100, Math.round(done / plan * 100)) : 0 };
   }
   function attStreak(a) {   /* 오늘(또는 어제)부터 거꾸로, 운동하는 날을 빠짐없이 나온 횟수 */
-    var d = new Date(), n = 0, today = ymd(d);
+    var d = new Date(), n = 0, today = ymd(d), gap = 0;
     if (!attHas(a, today)) d.setDate(d.getDate() - 1);
     for (var i = 0; i < 400; i++) {
       var k = ymd(d);
-      if (attHas(a, k)) n++;
+      if (attHas(a, k)) { n++; gap = 0; }
+      else if (ROT) { if (++gap > 2) break; }   /* 순환: 쉬는 날이 들쭉날쭉해서 3일 넘게 비면 끊김 */
       else if (isWorkoutDay(d)) break;
       d.setDate(d.getDate() - 1);
       var st = startDate(); if (st && d < st) break;
@@ -351,6 +368,7 @@
       if (k === today) cls += " today";
       if (on) cls += " on";
       else if (before) cls += " pre";
+      else if (ROT) cls += past ? " rest" : "";
       else if (past && w) cls += " miss";
       else if (!w) cls += " rest";
       else cls += " plan";
@@ -363,7 +381,8 @@
       '<div><b>' + y + '년 ' + (mo + 1) + '월</b><small>' + ms.done + '번 출석 · 출석률 ' + ms.rate + '%</small></div>' +
       '<button type="button" class="calnav" id="calNext"' + (canNext ? '' : ' disabled') + ' aria-label="다음 달">›</button></div>' +
       '<div class="cal-grid"><span class="dw sun">일</span><span class="dw">월</span><span class="dw">화</span><span class="dw">수</span><span class="dw">목</span><span class="dw">금</span><span class="dw sat">토</span>' + cells + '</div>' +
-      '<div class="cal-legend"><span><i class="lg on"></i>출석</span><span><i class="lg miss"></i>운동날 결석</span><span><i class="lg plan"></i>운동하는 날</span><span><i class="lg rest"></i>쉬는 날</span></div></div>';
+      (ROT ? '<div class="cal-legend"><span><i class="lg on"></i>출석</span><span><i class="lg rest"></i>쉰 날</span></div></div>'
+        : '<div class="cal-legend"><span><i class="lg on"></i>출석</span><span><i class="lg miss"></i>운동날 결석</span><span><i class="lg plan"></i>운동하는 날</span><span><i class="lg rest"></i>쉬는 날</span></div></div>');
   }
   function attGauge() {
     var a = attLoad(), now = new Date();
@@ -406,7 +425,7 @@
       '</div>' + attCheckStrip() + '</div></div></div>';
 
     h += journeyHome();
-    h += '<section>' + head("", "오늘의 운동", DAY_KO[k] + "요일", '<a class="more" href="#routine-' + k + '">자세히 →</a>');
+    h += '<section>' + head("", ROT ? "오늘 할 운동" : "오늘의 운동", ROT ? dayName(k) + " 차례" : DAY_KO[k] + "요일", '<a class="more" href="#routine-' + k + '">자세히 →</a>');
     if (!d) {
       h += '<div class="panel empty"><h3>루틴이 아직 없어요</h3><p>선생님이 곧 올려드릴게요</p></div>';
     } else if (d.rest) {
@@ -417,9 +436,10 @@
         '<p style="margin:0;color:var(--sub);font-size:14px">유산소 ' + d.cardio_only + '분' + (M.routine.cardio ? ' · ' + esc(M.routine.cardio.options) : '') + '</p>' +
         '<a class="btn fill" href="#routine-' + k + '" style="align-self:flex-start">오늘 운동 보기</a></div>';
     } else {
-      h += '<div class="panel today"><div class="today-top"><div class="today-ic">' + img(iconOf(mainItem(d))) + '<span>' + d.day + '</span></div><div><small>' + esc(d.en.toUpperCase()) + '</small><h3>' + esc(d.part) + ' 하는 날</h3></div></div>' +
+      h += '<div class="panel today"><div class="today-top"><div class="today-ic">' + img(iconOf(mainItem(d))) + '<span>' + (ROT ? k.slice(1) : d.day) + '</span></div><div><small>' + esc(d.en.toUpperCase()) + '</small><h3>' + esc(d.part) + ' 하는 날</h3></div></div>' +
         exMini(d) + (d.cardio && M.routine.cardio ? '<p style="margin:0;font-size:13.5px;color:var(--sub)">+ 마무리 유산소 ' + M.routine.cardio.minutes + '분</p>' : '') +
-        '<a class="btn fill" href="#routine-' + k + '" style="align-self:flex-start">오늘 운동 보기</a></div>';
+        '<a class="btn fill" href="#routine-' + k + '" style="align-self:flex-start">오늘 운동 보기</a>' +
+        (ROT ? '<p class="rot-hint">출석 체크한 날을 세서 다음 순서를 알려줘요. 순서가 다르면 루틴 탭에서 그날 DAY를 눌러요</p>' : '') + '</div>';
     }
     h += '</section>';
 
@@ -563,13 +583,21 @@
     var tk = todayKey();
     sel = sel || tk;
     var h = '<div class="hero"><div class="hero-main split"><div class="hero-l">' +
-      '<div class="eyebrow">WEEKLY ROUTINE <b>· 주간 루틴 ' + esc(R.version) + '</b></div><h1>' + esc(R.title) + '</h1>' +
+      '<div class="eyebrow">' + (ROT ? 'ROTATION ROUTINE <b>· 순환 루틴 ' : 'WEEKLY ROUTINE <b>· 주간 루틴 ') + esc(R.version) + '</b></div><h1>' + esc(R.title) + '</h1>' +
       '<div class="who"><strong>' + esc(M.name) + ' 회원님</strong><span>' + esc(R.updated) + ' 업데이트</span></div></div>' +
       '<div class="hero-r"><div class="eyebrow">이번 주 계획</div><ul class="dots small">' +
       R.plan.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join("") + '</ul></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + esc(R.key_point) + '</p></div></div>';
 
-    h += '<section>' + head("01", "일주일 한눈에", "요일을 누르면 그날 운동이 나와요") + '<div class="week" role="tablist">';
+    h += '<section>' + (ROT ? head("01", "순서 한눈에", "DAY 1부터 순서대로, 쉬고 오면 다음 DAY") : head("01", "일주일 한눈에", "요일을 누르면 그날 운동이 나와요")) + '<div class="week" role="tablist">';
+    if (ROT) {
+      rotKeys().forEach(function (k) {
+        var d = dayByKey(k);
+        h += '<a class="day-tile' + (k === tk ? " today" : "") + '" href="#routine-' + k + '" role="tab" aria-current="' + (k === sel) + '"><b class="rot"><small>DAY</small>' + k.slice(1) + '</b>' +
+          img(dayIcon(d), "wk-ic") + '<span>' + esc(d.part) + '</span></a>';
+      });
+      if (rotKeys().length < 7) h += '<div class="day-tile rest"><b class="rot"><small>OFF</small>휴</b>' + img("rest", "wk-ic") + '<span>근무표 따라</span></div>';
+    } else
     ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].forEach(function (k) {
       var d = dayByKey(k);
       var cls = "day-tile" + (!d || d.rest ? " rest" : "") + (k === tk ? " today" : "");
@@ -580,7 +608,7 @@
     h += '</div></section>';
 
     var d = dayByKey(sel);
-    h += '<section id="day">' + head("02", DAY_KO[sel] + "요일 " + (d ? d.part : "휴식"), sel === tk ? "오늘" : (d && !d.rest ? d.en : ""));
+    h += '<section id="day">' + head("02", dayName(sel) + " " + (d ? d.part : "휴식"), sel === tk ? (ROT ? "오늘 할 차례" : "오늘") : (d && !d.rest ? d.en : ""));
     if (!d || d.rest) {
       h += '<div class="rest-card"><b>쉬는 날</b>푹 쉬고 잘 먹기! 근육은 쉬는 동안 자라요</div>';
     } else if (d.cardio_only) {
@@ -674,7 +702,7 @@
       html = f ? renderForm(f) : renderForms(); tab = "forms"; if (f) after = setupPlayer;
     }
     else if (hsh === "routine") { html = renderRoutine(); tab = "routine"; }
-    else if (hsh.indexOf("routine-") === 0 && DAY_KO[hsh.slice(8)]) { html = renderRoutine(hsh.slice(8)); tab = "routine"; scrollDay = true; }
+    else if (hsh.indexOf("routine-") === 0 && (DAY_KO[hsh.slice(8)] || isRotKey(hsh.slice(8)))) { html = renderRoutine(hsh.slice(8)); tab = "routine"; scrollDay = true; }
     else if (hsh === "diet") { html = renderDiet(); tab = "diet"; }
     else if (hsh === "notice") { html = renderNotice(); tab = "notice"; }
     else if (hsh === "goal" || hsh === "journey") { html = renderGoal(); tab = "goal"; }
