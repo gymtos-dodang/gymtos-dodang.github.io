@@ -4,5 +4,6 @@ window.COACH_MEMBERS = [
   "kyeongjin-bkwzy9",
   "jisu-480xne",
   "taeyoung-k52qnx",
-  "aeran-bsq16i"
+  "aeran-bsq16i",
+  "yongmin-eunseong-1mwau5"
 ];

@@ -23,6 +23,7 @@ m/<이름-랜덤6자>/     회원 한 명의 PT 노트
   og.jpg              카톡 미리보기 그림 (얼굴 없음, 네이비/핑크 배경 + "OOO 회원님")
   media/form-<id>/    복습지 영상·그림
 _tools/make_icons.py  아이콘 생성 (python3 make_icons.py assets/icons/M "#1F3864" / F "#C2185B")
+_tools/make_icons_smith.py 스미스 아이콘 3종(smith_bench_press·smith_row·smith_shoulder_press)만 추가로 그림 (2026-11-05)
 _tools/make_logo.py   로고 생성
 _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 강조, 뒤 강조, sex="M"/"F")
 ```
@@ -35,6 +36,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 | 김지수 | m/jisu-480xne/ | F |
 | 김태영 | m/taeyoung-k52qnx/ | M |
 | 임애란 | m/aeran-bsq16i/ | F (순환 루틴) |
+| 최용민 · 고은성 | m/yongmin-eunseong-1mwau5/ | M (그룹 PT — 두 분이 한 페이지·출석 공유) |
 
 ## 새 회원 PT 노트 만들기
 0. **PT 시작일을 꼭 받기** (장동욱이 말해줌, "10월"처럼 달만 주면 그 달 15일로). 안 알려주면 물어볼 것. → data.js journey.start
@@ -54,6 +56,11 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
   - 홈 '오늘 할 운동' = rotation_start부터 오늘 전까지 출석 체크한 날 수 ÷ N 의 나머지 + 1 → DAY 번호.
   - 출석률 = 출석 ÷ (지난 날 수 × N/7). 달력은 결석 표시 없이 출석 / 쉰 날만. 연속 출석은 3일 넘게 비면 끊김.
   - 종이 루틴일지도 같은 순서(DAY 1~N + 쉬는 날 타일, spec.rotation)로 만듦.
+
+## 그룹 PT (2026-11-05 장동욱 요청)
+- 그룹 PT는 페이지 하나를 같이 씀: name "A · B", 주소 m/<이름1>-<이름2>-<랜덤6>/, 출석도 한 줄(같이 오니까).
+- og.jpg 문구 "MY PT NOTE · 함께하는 그룹 PT 노트", 위 막대는 "A·B 그룹 PT 노트"로 짧게.
+- 루틴 tip에 파트너 운동 느낌(번갈아 1세트씩, 쉬는 쪽이 보조·횟수 세기). routine.cardio: null이면 유산소 줄이 안 나옴.
 
 ## PT 여정 (2026-11-03 장동욱 요청)
 - 회원과 1~12개월 함께 가는 느낌. 3단계: 1단계 기초(1~2개월: 머신 사용법·스트레칭·근육 이해) / 2단계 변화(2~7개월: 자신감·어느 순간 몸의 변화·머신 투어·반복 숙달) / 3단계 자립(7~12개월: 혼자서도·프리웨이트·다음 목표 또는 졸업).
