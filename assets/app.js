@@ -462,7 +462,7 @@
 
   /* ---------------- 공지 */
   function noticeCard(n) {
-    return '<div class="panel notice"><time>' + esc(n.date) + '</time><h3>' + esc(n.title) + '</h3><p>' + esc(n.body) + '</p>' +
+    return '<div class="panel notice" data-nkey="' + esc(nKey(n)) + '"><time>' + esc(n.date) + '</time><h3>' + esc(n.title) + '</h3><p>' + esc(n.body) + '</p>' +
       (n.link ? '<a class="btn" href="#' + esc(n.link) + '">바로 보기</a>' : '') + '</div>';
   }
   function renderNotice() {
@@ -470,6 +470,64 @@
     h += (M.notices && M.notices.length) ? M.notices.map(noticeCard).join("") :
       '<div class="panel empty"><h3>아직 공지가 없어요</h3></div>';
     return h + '</section>' + remember();
+  }
+
+  /* ---------------- 새 공지 팝업 (2026-11-05 장동욱 요청)
+     안 본 새 공지가 있으면 페이지를 열 때 위에서 내려왔다가 몇 초 뒤 올라가며 사라짐. 누르면 공지 탭의 그 공지로 이동(반짝 표시).
+     - 공지 하나당 팝업은 한 번만(npop). 공지 탭을 열기 전까지 아래 '공지' 탭에 빨간 점(nseen).
+     - 날짜가 NOTICE_DAYS일 넘은 공지는 새 공지로 치지 않음. 기록은 회원 휴대폰(localStorage)에만. */
+  var NSEEN_KEY = "ptnote:" + SLUG + ":nseen", NPOP_KEY = "ptnote:" + SLUG + ":npop";
+  var NOTICE_DAYS = 14, NPOP_MS = 5500, pendingNotice = null;
+  function nKey(n) { return (n.date || "") + "|" + (n.title || ""); }
+  function lsArr(k) { try { var a = JSON.parse(localStorage.getItem(k) || "[]"); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function lsAdd(k, add) {
+    var a = lsArr(k);
+    add.forEach(function (x) { if (a.indexOf(x) < 0) a.push(x); });
+    try { localStorage.setItem(k, JSON.stringify(a.slice(-80))); } catch (e) {}
+  }
+  function nDate(n) { var m = String(n.date || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; }
+  function nUnseen() {
+    var seen = lsArr(NSEEN_KEY), d0 = Date.now() - NOTICE_DAYS * 86400000;
+    return (M.notices || []).filter(function (n) { var d = nDate(n); return (!d || d.getTime() >= d0) && seen.indexOf(nKey(n)) < 0; });
+  }
+  function nDot() {
+    var a = document.querySelector('.tabs a[data-tab="notice"]');
+    if (a) a.classList.toggle("has-new", nUnseen().length > 0);
+  }
+  function nMarkSeen() { lsAdd(NSEEN_KEY, (M.notices || []).map(nKey)); lsAdd(NPOP_KEY, (M.notices || []).map(nKey)); nDot(); }
+  function openNotice(key) {
+    pendingNotice = key;
+    if ((location.hash || "").replace(/^#/, "") === "notice") route(); else location.hash = "notice";
+  }
+  function showNoticePop() {
+    var popped = lsArr(NPOP_KEY);
+    var list = nUnseen().filter(function (n) { return popped.indexOf(nKey(n)) < 0; });
+    if (!list.length) return;
+    var n = list[0], extra = list.length - 1, d = nDate(n);
+    lsAdd(NPOP_KEY, list.map(nKey));
+    var box = document.createElement("div");
+    box.className = "npop-wrap"; box.setAttribute("role", "status"); box.setAttribute("aria-live", "polite");
+    box.innerHTML = '<button type="button" class="npop" style="--dur:' + NPOP_MS + 'ms" aria-label="새 공지: ' + esc(n.title) + '. 누르면 공지로 이동">' +
+      '<span class="nic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 10v4h3l6 4V6L7 10z" stroke-linejoin="round"/><path d="M16.5 9.5a3.5 3.5 0 0 1 0 5M19 7a7 7 0 0 1 0 10" stroke-linecap="round"/></svg></span>' +
+      '<span class="ntx"><small><i>NEW</i>선생님 공지' + (d ? ' · ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일' : '') + (extra ? ' · 외 ' + extra + '개' : '') + '</small>' +
+      '<b>' + esc(n.title) + '</b>' + (n.body ? '<span class="nbody">' + esc(n.body) + '</span>' : '') + '</span>' +
+      '<svg class="ngo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m9 6 6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      '<span class="nbar" aria-hidden="true"></span></button>';
+    document.body.appendChild(box);
+    var btn = box.firstChild, gone = false, sy = null, swiped = false, timer;
+    function hide() {
+      if (gone) return; gone = true; clearTimeout(timer);
+      btn.classList.remove("in"); btn.classList.add("out");
+      setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 500);
+    }
+    requestAnimationFrame(function () { requestAnimationFrame(function () { btn.classList.add("in"); }); });
+    timer = setTimeout(hide, NPOP_MS + 450);
+    btn.addEventListener("click", function () { if (swiped) return; hide(); openNotice(nKey(n)); });
+    /* 위로 밀면 바로 닫힘 */
+    btn.addEventListener("touchstart", function (e) { sy = e.touches[0].clientY; }, { passive: true });
+    btn.addEventListener("touchmove", function (e) {
+      if (sy != null && e.touches[0].clientY - sy < -24) { swiped = true; sy = null; hide(); }
+    }, { passive: true });
   }
 
   /* ---------------- 복습지 목록 */
@@ -716,7 +774,20 @@
     alignText(document);
     setupAttCheck(); setupCal();
     if (after) after();
-    if (scrollDay && wasRoutine) {
+    var flashEl = null;
+    if (tab === "notice") {
+      nMarkSeen();
+      if (pendingNotice) {
+        Array.prototype.forEach.call(document.querySelectorAll(".notice[data-nkey]"), function (el) {
+          if (!flashEl && el.getAttribute("data-nkey") === pendingNotice) flashEl = el;
+        });
+        pendingNotice = null;
+      }
+    }
+    if (flashEl) {
+      flashEl.scrollIntoView({ block: "center" });
+      flashEl.classList.add("flash");
+    } else if (scrollDay && wasRoutine) {
       var el = document.getElementById("day");
       if (el) el.scrollIntoView({ block: "start" });
     } else {
@@ -725,6 +796,8 @@
   }
   window.addEventListener("hashchange", route);
   route();
+  nDot();
+  setTimeout(showNoticePop, 800);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { alignText(document); });
   attSync();
   document.addEventListener("visibilitychange", function () { if (!document.hidden) attSync(); });

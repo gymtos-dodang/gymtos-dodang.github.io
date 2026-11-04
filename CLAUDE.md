@@ -68,6 +68,11 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
   - 선생님은 회원 주소로 들어가면 회원이 누른 출석이 그대로 보임(선생님이 누르면 그 회원 출석으로 기록됨).
   - 창고에 못 닿으면 휴대폰에만 임시 저장 후 "인터넷 연결 확인" 안내.
 
+## 새 공지 팝업 (2026-11-05 장동욱 요청)
+- data.js notices 맨 위에 새 공지를 올리면, 회원이 PT 노트를 열 때 화면 위에서 팝업이 내려왔다가 약 5초 뒤 사라짐(위로 밀어도 닫힘). 누르면 공지 탭의 그 공지로 이동해 반짝 표시.
+- 공지 하나당 팝업은 한 번만. 공지 탭을 열기 전까지 아래 '공지' 탭에 빨간 점. 14일 넘은 공지는 새 공지로 안 침.
+- 공지 구분은 date + title. 기록은 회원 휴대폰(localStorage)에만 → 다른 폰·브라우저로 열면 다시 뜸. 코드는 app.js의 showNoticePop.
+
 ## 자세 복습지 미디어 만들기 (영상 1개 기준)
 - 웹 영상: `ffmpeg -i in.mov -an -vf "scale=540:-2,fps=30" -c:v libx264 -preset veryfast -crf 27 -pix_fmt yuv420p -movflags +faststart form.mp4`
 - 카톡 대비 움직이는 그림: `-vf "scale=324:-2,fps=10" -c:v libwebp_anim -loop 0 -quality 40 form.webp`
