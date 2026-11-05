@@ -85,8 +85,8 @@ window.MEMBER = {
     key_point: "바프 근육은 먹은 만큼 만들어져요! 4끼 꽉 채우기",
     meals: [
       { no: "1식", options: [
-        { label: "간장계란밥", foods: [{ icon: "rice_white", name: "쌀밥" }, { icon: "egg", name: "계란", amount: "6개" }] },
-        { foods: [{ icon: "bagel", name: "베이글" }, { icon: "shaker", name: "프로틴 음료" }] }
+        { label: "간장계란밥", foods: [{ icon: "rice_white", name: "쌀밥", amount: "400g" }, { icon: "egg", name: "계란", amount: "6개" }] },
+        { foods: [{ icon: "bagel", name: "베이글", amount: "2개" }, { icon: "shaker", name: "프로틴", amount: "2스쿱" }] }
       ]},
       { no: "2식", options: [
         { foods: [{ icon: "rice_white", name: "쌀밥", amount: "400g" }, { icon: "chicken", name: "닭가슴살", amount: "200g" }, { icon: "egg", name: "계란", amount: "5개" }] }
