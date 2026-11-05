@@ -608,7 +608,40 @@
       })
       .catch(function () { if (!ibData) { ibErr = true; ibRefresh(); } });
   }
-  function ibShrink(file) {   /* 사진을 긴 변 1400px JPEG로 줄여 base64 (글자만) */
+  /* 결과지 글자(OCR, Apps Script가 구글 드라이브로 읽어 글자만 돌려줌) → 숫자 찾기. 규칙은 여기서 고치면 됨(창고 재배포 필요 없음) */
+  function ibParse(text) {
+    var t = String(text || "").replace(/[\u00a0\t]/g, " ").replace(/(\d),(\d)/g, "$1.$2");
+    function grab(re, lo, hi, skipBefore) {
+      var rx = new RegExp(re.source, "gi"), m;
+      while ((m = rx.exec(t))) {
+        if (skipBefore && skipBefore.test(t.slice(Math.max(0, m.index - 3), m.index))) continue;
+        var st = m.index + m[0].length, rest = t.slice(st, st + 70), nr = /\d{1,3}\.\d/g, k;
+        while ((k = nr.exec(rest))) {
+          var before = rest.slice(Math.max(0, k.index - 2), k.index), after = rest.slice(k.index + k[0].length, k.index + k[0].length + 3);
+          if (/[~～]/.test(before) || /^\s*[~～\-]\s*\d/.test(after)) continue;   /* 표준 범위(55.7~75.3)는 건너뜀 */
+          var v = parseFloat(k[0]);
+          if (v >= lo && v <= hi) return v;
+        }
+      }
+      return null;
+    }
+    var r = {
+      w: grab(/체\s*중(?!\s*(조절|관리))|weight/, 20, 300, /(적정|표준|목표)\s*$/),
+      smm: grab(/골\s*격\s*근\s*량|skeletal\s*muscle\s*mass|SMM/, 3, 90),
+      bfm: grab(/체\s*지\s*방\s*량|body\s*fat\s*mass/, 0.5, 200),
+      pbf: grab(/체\s*지\s*방\s*률|percent\s*body\s*fat|PBF/, 1, 75)
+    };
+    if (r.smm !== null && r.w !== null && r.smm >= r.w) r.smm = null;
+    if (r.w !== null && r.pbf !== null && r.bfm !== null && Math.abs(r.w * r.pbf / 100 - r.bfm) > Math.max(1.5, r.bfm * 0.15)) r.bfm = null;
+    if (r.w !== null && r.bfm !== null && r.pbf === null) r.pbf = Math.round(r.bfm / r.w * 1000) / 10;
+    var dm = t.match(/(20\d{2})\s*[.\-\/년]\s*(\d{1,2})\s*[.\-\/월]\s*(\d{1,2})/);
+    if (dm) {
+      var dd = new Date(+dm[1], +dm[2] - 1, +dm[3]), now = new Date();
+      if (dd <= now && now - dd < 400 * 86400000) r.d = ymd(dd);
+    }
+    return r;
+  }
+  function ibShrink(file, max) {   /* 사진을 긴 변 max(기본 1400)px JPEG로 줄여 base64 (글자만) */
     return new Promise(function (res, rej) {
       var fr = new FileReader();
       fr.onerror = rej;
@@ -616,7 +649,7 @@
         var im = new Image();
         im.onerror = rej;
         im.onload = function () {
-          var s = Math.min(1, 1400 / Math.max(im.width, im.height)), c = document.createElement("canvas");
+          var s = Math.min(1, (max || 1400) / Math.max(im.width, im.height)), c = document.createElement("canvas");
           c.width = Math.round(im.width * s); c.height = Math.round(im.height * s);
           c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
           res(c.toDataURL("image/jpeg", 0.82).split(",")[1]);
@@ -631,7 +664,7 @@
     wrap.className = "ibsheet";
     wrap.innerHTML = '<div class="ibs-back" data-close></div><form class="ibs-card" novalidate>' +
       '<div class="ibs-top"><h3>인바디 올리기</h3><button type="button" class="ibs-x" data-close aria-label="닫기">×</button></div>' +
-      '<label class="ibs-file"><input type="file" id="ibFile" accept="image/*"><span class="ibs-ph"><b>결과지 사진 찍기 · 고르기</b><small>사진 없이 숫자만 넣어도 돼요</small></span><img alt="" hidden></label>' +
+      '<label class="ibs-file"><input type="file" id="ibFile" accept="image/*"><span class="ibs-ph"><b>결과지 사진 찍기 · 고르기</b><small>사진을 올리면 숫자를 자동으로 읽어 채워요</small></span><img alt="" hidden></label>' +
       '<label class="ibs-f"><span>측정한 날</span><input type="date" id="ibDate" value="' + ymd(new Date()) + '" max="' + ymd(new Date()) + '"></label>' +
       '<p class="ibs-hint">결과지 맨 위 <b>체성분분석 · 골격근·지방분석</b> 칸의 숫자를 넣어요</p>' +
       '<div class="ibs-nums">' +
@@ -644,22 +677,48 @@
     document.body.appendChild(wrap);
     document.documentElement.classList.add("ib-lock");
     var form = wrap.querySelector("form"), file = wrap.querySelector("#ibFile"), pv = wrap.querySelector(".ibs-file img"), msg = wrap.querySelector(".ibs-msg");
-    var b64 = null, busy = false;
+    var b64 = null, busy = false, ocrRun = 0;
     function close() { wrap.remove(); document.documentElement.classList.remove("ib-lock"); }
     Array.prototype.forEach.call(wrap.querySelectorAll("[data-close]"), function (x) { x.addEventListener("click", close); });
     file.addEventListener("change", function () {
       var f = file.files && file.files[0];
       if (!f) return;
       msg.textContent = "사진 준비 중…";
-      ibShrink(f).then(function (d) {
+      ibShrink(f, 1800).then(function (d) {
         b64 = d; pv.src = "data:image/jpeg;base64," + d; pv.hidden = false;
         wrap.querySelector(".ibs-ph").hidden = true; msg.textContent = "";
-      }).catch(function () { msg.textContent = "이 사진은 못 읽었어요. 다른 사진으로 해 주세요"; });
+        if (!ATT_API) return;
+        var my = ++ocrRun;
+        msg.className = "ibs-msg info"; msg.textContent = "결과지 숫자 읽는 중… (몇 초 걸려요)";
+        fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "inbody_ocr", m: SLUG, img: d }) })
+          .then(function (r) { return r.json(); })
+          .then(function (j) {
+            if (my !== ocrRun || !wrap.isConnected) return;
+            if (!j || !j.ok) throw new Error(j && j.error || "ocr");
+            var r = ibParse(j.text), got = 0;
+            [["#ibW", "w"], ["#ibS", "smm"], ["#ibB", "bfm"], ["#ibP", "pbf"]].forEach(function (x) {
+              var inp = wrap.querySelector(x[0]);
+              if (r[x[1]] !== null && r[x[1]] !== undefined && !inp.value) { inp.value = ibFmt(r[x[1]]); inp.classList.add("auto"); got++; }
+            });
+            if (r.d) { var di = wrap.querySelector("#ibDate"); di.value = r.d; di.classList.add("auto"); }
+            msg.className = "ibs-msg " + (got ? "info" : "");
+            msg.textContent = got ? "결과지에서 숫자 " + got + "개를 읽었어요. 분홍 칸이 결과지와 맞는지 꼭 확인해 주세요"
+              : "숫자를 못 읽었어요. 직접 넣어 주세요 (결과지를 평평하게 놓고 위에서 정면으로 찍으면 더 잘 읽어요)";
+          })
+          .catch(function () {
+            if (my !== ocrRun || !wrap.isConnected) return;
+            msg.className = "ibs-msg"; msg.textContent = "자동 읽기가 안 됐어요. 숫자를 직접 넣어 주세요";
+          });
+      }).catch(function () { msg.className = "ibs-msg"; msg.textContent = "이 사진은 못 읽었어요. 다른 사진으로 해 주세요"; });
+    });
+    Array.prototype.forEach.call(wrap.querySelectorAll(".ibs-f input"), function (inp) {
+      inp.addEventListener("input", function () { inp.classList.remove("auto"); });
     });
     function n(id) { var v = String(wrap.querySelector(id).value || "").replace(",", ".").trim(); return v === "" ? null : Number(v); }
     form.addEventListener("submit", function (ev) {
       ev.preventDefault();
       if (busy) return;
+      msg.className = "ibs-msg";
       var w = n("#ibW"), s = n("#ibS"), bf = n("#ibB"), pf = n("#ibP"), d = wrap.querySelector("#ibDate").value;
       if (!d) { msg.textContent = "측정한 날을 골라 주세요"; return; }
       if (!(w >= 20 && w <= 300)) { msg.textContent = "체중을 확인해 주세요 (예 72.4)"; return; }
@@ -667,14 +726,14 @@
       if (!(pf >= 1 && pf <= 75)) { msg.textContent = "체지방률을 확인해 주세요 (예 21.5)"; return; }
       if (bf !== null && !(bf > 0 && bf < w)) { msg.textContent = "체지방량을 확인해 주세요 (모르면 비워 두세요)"; return; }
       if (!ATT_API) { msg.textContent = "저장할 곳이 아직 준비 안 됐어요"; return; }
-      busy = true; form.classList.add("saving"); msg.textContent = "저장하는 중…";
+      busy = true; form.classList.add("saving"); msg.className = "ibs-msg info"; msg.textContent = "저장하는 중…";
       fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "inbody_add", m: SLUG, n: M.name, d: d, w: w, smm: s, bfm: bf, pbf: pf, img: b64 || "" }) })
         .then(function (r) { return r.json(); })
         .then(function (j) {
           if (!j || !j.ok) throw new Error(j && j.error || "save");
           ibSet(j.inbody); close(); ibRefresh(); attToast("인바디 기록을 저장했어요");
         })
-        .catch(function () { busy = false; form.classList.remove("saving"); msg.textContent = "저장 못 했어요. 인터넷 연결을 확인하고 다시 눌러 주세요"; });
+        .catch(function () { busy = false; form.classList.remove("saving"); msg.className = "ibs-msg"; msg.textContent = "저장 못 했어요. 인터넷 연결을 확인하고 다시 눌러 주세요"; });
     });
   }
   function ibPhotoOpen(id) {

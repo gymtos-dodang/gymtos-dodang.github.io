@@ -1,5 +1,6 @@
 // GYMTOS PT 노트 창고 (출석 + 인바디) — 이 코드를 Apps Script에 그대로 붙여넣고 "웹 앱"으로 배포하세요.
 // 2026-11-06 인바디 추가: 시트 "인바디" 탭에 숫자, 구글 드라이브 "PT노트 인바디 사진" 폴더에 결과지 사진.
+// 2026-11-06 결과지 자동 읽기(OCR): 왼쪽 "서비스 +" 에서 "Drive API"를 추가해야 동작 (없으면 회원이 숫자를 직접 넣으면 됨).
 const SHEET = '출석';
 const IB_SHEET = '인바디';
 const IB_FOLDER = 'PT노트 인바디 사진';
@@ -137,12 +138,33 @@ function doGet(e) {
   }
 }
 
-/* ---------------- POST: 인바디 올리기 (본문 = JSON 글자) */
+/* 결과지 사진 → 글자 (구글 드라이브 OCR: 사진을 구글 문서로 바꿔 글자만 읽고 바로 휴지통) */
+function ocr_(b64) {
+  const blob = Utilities.newBlob(Utilities.base64Decode(b64), 'image/jpeg', 'inbody_ocr.jpg');
+  let id = null;
+  try {
+    id = Drive.Files.create({ name: 'inbody_ocr_tmp', mimeType: 'application/vnd.google-apps.document' }, blob, { ocrLanguage: 'ko' }).id;   // Drive API v3
+  } catch (e3) {
+    id = Drive.Files.insert({ title: 'inbody_ocr_tmp', mimeType: 'application/vnd.google-apps.document' }, blob, { ocr: true, ocrLanguage: 'ko' }).id;   // v2
+  }
+  try {
+    return DocumentApp.openById(id).getBody().getText();
+  } finally {
+    try { DriveApp.getFileById(id).setTrashed(true); } catch (e) {}
+  }
+}
+
+/* ---------------- POST: 인바디 올리기 · 결과지 읽기 (본문 = JSON 글자) */
 function doPost(e) {
   let b;
   try { b = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (err) { return json_({ ok: false, error: 'body' }); }
   const m = String(b.m || '').trim();
   if (!memberOk_(m)) return json_({ ok: false, error: 'member' });
+  if (b.a === 'inbody_ocr') {
+    if (!b.img || String(b.img).length > 8000000) return json_({ ok: false, error: 'img' });
+    try { return json_({ ok: true, text: ocr_(String(b.img)) }); }
+    catch (err) { return json_({ ok: false, error: 'ocr', msg: String(err) }); }
+  }
   if (b.a !== 'inbody_add') return json_({ ok: false, error: 'action' });
   const d = String(b.d || '');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return json_({ ok: false, error: 'date' });

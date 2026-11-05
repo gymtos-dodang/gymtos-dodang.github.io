@@ -95,6 +95,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 저장: 출석과 같은 Apps Script(ATT_API) — 시트 "인바디" 탭(회원주소·이름·측정일·숫자 4개·사진ID·기록ID), 사진은 구글 드라이브 "PT노트 인바디 사진" 폴더. 업로드는 POST(본문 JSON), 보기 a=inbody, 사진 a=inbody_img, 삭제 a=inbody_del. 코드 _tools/attendance_apps_script.gs (doPost 추가) — **코드를 바꾸면 Apps Script에서 '배포 관리 → 수정 → 새 버전'으로 다시 배포해야 반영**.
 - 창고가 옛 버전이면(응답에 inbody 없음) "곧 열려요"로 표시. 그룹 PT 페이지(이름에 ·)와 data.js inbody:false 인 회원은 숨김.
 - 선생님 보기에서도 올리기·삭제 가능(수업 때 대신 올려줄 수 있게).
+- 결과지 자동 읽기(OCR, 2026-11-06): 사진을 고르면 창고에 POST a=inbody_ocr → Apps Script가 구글 드라이브 OCR(Drive API 고급 서비스 — 편집기 왼쪽 '서비스 +'에서 Drive API 추가 필요)로 글자만 돌려줌 → app.js ibParse가 체중·골격근량·체지방량·체지방률·검사일 찾아 빈 칸만 채움(분홍 테두리 = 자동, 회원이 확인 후 저장). 표준 범위(a~b)는 건너뛰고 체지방량은 체중×체지방률로 검산. 숫자 찾는 규칙은 ibParse만 고치면 됨(창고 재배포 불필요).
 
 ## 새 공지 팝업 (2026-11-05 장동욱 요청)
 - data.js notices 맨 위에 새 공지를 올리면, 회원이 PT 노트를 열 때 화면 위에서 팝업이 내려왔다가 약 5초 뒤 사라짐(위로 밀어도 닫힘). 누르면 공지 탭의 그 공지로 이동해 반짝 표시.

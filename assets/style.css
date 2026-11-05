@@ -695,3 +695,6 @@ html.ib-lock, html.ib-lock body { overflow: hidden; }
 .ibview img { max-width: 100%; max-height: 100%; border-radius: 8px; }
 .ibview .ibs-x { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); background: rgba(255, 255, 255, .15); color: #fff; }
 @media (prefers-reduced-motion: reduce) { .ibs-card { animation: none; } }
+/* 인바디 자동 읽기 (2026-11-06) */
+.ibs-msg.info { color: var(--primary); }
+.ibs-f input.auto { border-color: var(--key); background: #FFF4F8; box-shadow: 0 0 0 3px rgba(219, 76, 140, .14); }
