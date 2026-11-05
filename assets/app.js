@@ -259,8 +259,11 @@
       return out.join(" ");
     };
     var cm = now ? now.m : 0;
-    var path = '<polyline points="' + pts(0, 12) + '" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-dasharray="5 5" opacity=".35"/>';
-    if (cm > 0) path += '<polyline points="' + pts(0, cm) + '" fill="none" stroke="var(--primary)" stroke-width="4" stroke-linecap="round"/>';
+    /* 2026-11-06 움직임 시안 D "목표까지 흐르는 길": 지금까지 선이 그려지고 → 점이 톡 → 앞으로 갈 점선이 깃발 쪽으로 계속 흐름,
+       깃발 펄럭, 점에서 물결. 애니메이션은 style.css의 .jc-* (화면 다시 그릴 때마다 처음부터) */
+    var path = '<polyline points="' + pts(0, 12) + '" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-dasharray="5 5" opacity="' + (cm > 0 ? '.12' : '.35') + '"/>';
+    if (cm > 0 && cm < 12) path += '<polyline class="jc-ahead" points="' + pts(cm, 12) + '" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-dasharray="5 5"/>';
+    if (cm > 0) path += '<polyline class="jc-done" pathLength="1" points="' + pts(0, cm) + '" fill="none" stroke="var(--primary)" stroke-width="4" stroke-linecap="round"/>';
     var ticks = [0, 2, 7, 12].map(function (m) {
       return '<line x1="' + X(m) + '" y1="156" x2="' + X(m) + '" y2="161" stroke="var(--faint)"/>' +
         '<text x="' + X(m) + '" y="174" text-anchor="middle" class="jc-x">' + (m === 0 ? "시작" : m + "개월") + '</text>';
@@ -269,11 +272,12 @@
     if (now) {
       var mx = X(cm), my = Y(curveY(cm)), right = cm > 7.5, below = my < 64, LW = 108;
       var ly = below ? my + 26 : my - 18;
-      mk = '<circle cx="' + mx + '" cy="' + my + '" r="11" fill="var(--key)" opacity=".2"/><circle cx="' + mx + '" cy="' + my + '" r="6.5" fill="var(--key)" stroke="#fff" stroke-width="2.5"/>' +
-        '<g transform="translate(' + (right ? mx - 6 : mx + 6) + ',' + ly + ')"><rect x="' + (right ? -LW : 0) + '" y="-15" width="' + LW + '" height="22" rx="11" fill="var(--key)"/>' +
-        '<text x="' + (right ? -LW / 2 : LW / 2) + '" y="0.5" text-anchor="middle" class="jc-mk">지금 여기 · ' + (now.month || 1) + '개월차</text></g>';
+      mk = '<circle class="jc-sonar" cx="' + mx + '" cy="' + my + '" r="7" fill="none" stroke="var(--key)" stroke-width="2"/>' +
+        '<g class="jc-pop"><circle cx="' + mx + '" cy="' + my + '" r="11" fill="var(--key)" opacity=".2"/><circle cx="' + mx + '" cy="' + my + '" r="6.5" fill="var(--key)" stroke="#fff" stroke-width="2.5"/></g>' +
+        '<g transform="translate(' + (right ? mx - 6 : mx + 6) + ',' + ly + ')"><g class="jc-lab' + (right ? ' r' : '') + '"><rect x="' + (right ? -LW : 0) + '" y="-15" width="' + LW + '" height="22" rx="11" fill="var(--key)"/>' +
+        '<text x="' + (right ? -LW / 2 : LW / 2) + '" y="0.5" text-anchor="middle" class="jc-mk">지금 여기 · ' + (now.month || 1) + '개월차</text></g></g>';
     }
-    var flag = '<g transform="translate(' + X(12) + ',' + (Y(curveY(12)) - 2) + ')"><line x1="0" y1="0" x2="0" y2="-20" stroke="var(--gold)" stroke-width="2"/><path d="M0 -20 L13 -15.5 L0 -11 Z" fill="var(--gold)"/></g>';
+    var flag = '<g transform="translate(' + X(12) + ',' + (Y(curveY(12)) - 2) + ')"><line x1="0" y1="0" x2="0" y2="-20" stroke="var(--gold)" stroke-width="2"/><path class="jc-wave" d="M0 -20 L13 -15.5 L0 -11 Z" fill="var(--gold)"/></g>';
     return '<div class="jchart"><svg viewBox="0 0 340 182" role="img" aria-label="12개월 PT 여정 그래프: 1단계 기초(1~2개월), 2단계 변화(2~7개월), 3단계 자립(7~12개월)' + (now ? ', 지금 ' + (now.month || 1) + '개월차' : '') + '">' +
       bands + '<line x1="26" y1="156" x2="326" y2="156" stroke="var(--rule)" stroke-width="1.5"/>' + ticks + path + flag + mk + '</svg>' +
       '<p class="jc-cap">선은 "몸의 변화 · 자신감"이에요. 처음엔 천천히, 어느 순간 확 올라가요. 회원님마다 속도는 달라요.</p></div>';
@@ -312,14 +316,17 @@
       '<h1>' + esc(M.goal || "나의 목표") + '</h1><div class="en">' + esc(M.name) + ' 회원님 · ' + (BP ? '기초 → 벌크 → 컷팅, 바프 촬영까지 함께 가요' : '기초 → 변화 → 자립, 3단계로 함께 가요') + '</div>' +
       '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 장동욱 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + (BP ? '목표는 하나, 바프 촬영날! 그 의지라면 충분해요. 단계마다 함께 넘어가요!' : '혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!') + '</p></div></div>';
+    var ibSec = IB_ON ? '<section id="inbody">' + head("03", "몸 변화 기록", "인바디로 지난달과 비교해요") + ibPanel() + '</section>' : "";
+    var n4 = IB_ON ? "04" : "03", n5 = IB_ON ? "05" : "04";
     if (!now) {
       return h + '<section>' + head("01", "출석률", "얼마나 꾸준히 나왔는지 봐요") + attGauge() + '</section>' +
-        '<section>' + head("02", "출석 달력", "운동하는 날을 채워봐요") + attCalendar() + '</section>' + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
+        '<section>' + head("02", "출석 달력", "운동하는 날을 채워봐요") + attCalendar() + '</section>' + ibSec + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
     }
     h += '<section>' + head("01", "출석률", "얼마나 꾸준히 나왔는지 봐요") + attGauge() + '</section>';
     h += '<section>' + head("02", "출석 달력", "운동하는 날을 채워봐요") + attCalendar() + '</section>';
-    h += '<section>' + head("03", BP ? "바프까지 12개월" : "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel' + (BP ? ' bp">' + bpStrip() : '">') + journeyChart(now) + '</div></section>';
-    h += '<section>' + head("04", "단계별 목표", BP ? "기초 → 벌크 → 컷팅" : "단계마다 하는 것이 달라요") + '<div class="jlist' + (BP ? ' bp' : '') + '">' +
+    h += ibSec;
+    h += '<section>' + head(n4, BP ? "바프까지 12개월" : "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel' + (BP ? ' bp">' + bpStrip() : '">') + journeyChart(now) + '</div></section>';
+    h += '<section>' + head(n5, "단계별 목표", BP ? "기초 → 벌크 → 컷팅" : "단계마다 하는 것이 달라요") + '<div class="jlist' + (BP ? ' bp' : '') + '">' +
       JST.map(function (st) { return stageCard(st, now, false); }).join("") + '</div></section>';
     return h + remember();
   }
@@ -505,6 +512,207 @@
     if (n) n.addEventListener("click", function () { go(1); });
   }
 
+  /* ---------------- 몸 변화 기록 (인바디) — 2026-11-06
+     회원이 인바디 결과지 사진 + 숫자 4개(체중·골격근량·체지방량·체지방률)를 올리면
+     지난달 마지막 기록 vs 이번 달 마지막 기록을 비교. 저장은 출석 창고(ATT_API)와 같은 Apps Script
+     (시트 "인바디" 탭 + 드라이브 "PT노트 인바디 사진" 폴더). 그룹 PT 페이지(이름에 ·)는 숨김 */
+  var IB_ON = !/·/.test(M.name || "") && M.inbody !== false;
+  var IB_KEY = "ptib_" + SLUG;
+  var ibData = null, ibErr = false, ibReady = null;
+  try { ibData = JSON.parse(localStorage.getItem(IB_KEY) || "null"); } catch (e) {}
+  var IB_ROWS = [
+    { k: "w", name: "체중", unit: "kg", good: 0 },
+    { k: "smm", name: "골격근량", unit: "kg", good: 1 },
+    { k: "bfm", name: "체지방량", unit: "kg", good: -1 },
+    { k: "pbf", name: "체지방률", unit: "%", good: -1 }
+  ];
+  function ibFmt(n) { return (Math.round(n * 10) / 10).toFixed(1); }
+  function ibDate(d) { var p = d.split("-"); return (+p[1]) + ". " + (+p[2]); }
+  function ibPair() {   /* [이전, 이번] — 이번 = 가장 최근 기록, 이전 = 그보다 앞선 달의 마지막 기록 */
+    var a = ibData || [];
+    if (!a.length) return null;
+    var cur = a[a.length - 1], prev = null;
+    for (var i = a.length - 2; i >= 0; i--) { if (a[i].d.slice(0, 7) < cur.d.slice(0, 7)) { prev = a[i]; break; } }
+    return { cur: cur, prev: prev };
+  }
+  function ibSummary(p) {
+    var ds = p.cur.smm - p.prev.smm, df = p.cur.bfm - p.prev.bfm;
+    if (ds > 0.05 && df < -0.05) return "근육은 늘고 지방은 줄었어요! 가장 좋은 변화예요";
+    if (ds > 0.05) return "근육이 늘었어요! 지금처럼 꾸준히 가요";
+    if (df < -0.05) return "체지방이 줄었어요! 근육 지키면서 계속 가요";
+    if (Math.abs(ds) <= 0.05 && Math.abs(df) <= 0.05) return "몸이 잘 유지되고 있어요. 다음 달에 한 칸 더!";
+    return "이번 달은 숨 고르기. 루틴·식단 같이 점검해요";
+  }
+  function ibPanel() {
+    if (!IB_ON) return "";
+    var p = ibPair();
+    var btn = '<button class="btn fill ib-add" type="button">' + (p && p.cur.d.slice(0, 7) === ymd(new Date()).slice(0, 7) ? "인바디 다시 올리기" : "이번 달 인바디 올리기") + '</button>';
+    if (ibReady === false) return '<div class="panel ibpanel ib-empty"><div class="ib-empty-ic" aria-hidden="true"><span>InBody</span></div><h3>곧 열려요</h3><p>인바디 결과지를 올려 지난달과 비교하는 기능을 준비 중이에요</p></div>';
+    if (!ibData && !ibErr) return '<div class="panel ibpanel ib-loading"><p class="ib-empty-t">기록을 불러오는 중이에요…</p></div>';
+    if (!p) {
+      return '<div class="panel ibpanel ib-empty"><div class="ib-empty-ic" aria-hidden="true"><span>InBody</span></div>' +
+        '<h3>인바디 결과지를 올려 보세요</h3><p>한 달에 한 번, 결과지 사진과 숫자 4개만 넣으면 지난달과 비교해 드려요</p>' + btn +
+        (ibErr ? '<p class="ib-err">지금은 기록을 못 불러왔어요. 인터넷 연결을 확인해 주세요</p>' : '') + '</div>';
+    }
+    var head2, rows;
+    if (p.prev) {
+      head2 = '<div class="ib-when"><span><small>' + (+p.prev.d.slice(5, 7)) + '월</small>' + ibDate(p.prev.d) + '</span><b aria-hidden="true">→</b><span class="now"><small>' + (+p.cur.d.slice(5, 7)) + '월</small>' + ibDate(p.cur.d) + '</span></div>';
+      rows = IB_ROWS.map(function (r) {
+        var a = p.prev[r.k], b = p.cur[r.k], dlt = Math.round((b - a) * 10) / 10;
+        var cls = dlt === 0 || !r.good ? "same" : (dlt > 0) === (r.good > 0) ? "up" : "down";
+        var sign = dlt > 0 ? "▲ +" : dlt < 0 ? "▼ −" : "";
+        return '<div class="ib-row"><span class="ib-name">' + r.name + '</span><span class="ib-prev">' + ibFmt(a) + '</span>' +
+          '<span class="ib-cur">' + ibFmt(b) + '<small>' + r.unit + '</small></span>' +
+          '<span class="ib-d ' + cls + '">' + (dlt === 0 ? "그대로" : sign + ibFmt(Math.abs(dlt)) + r.unit) + '</span></div>';
+      }).join("");
+      rows = '<div class="ib-grid"><div class="ib-row ib-hd"><span></span><span>지난달</span><span>이번 달</span><span>변화</span></div>' + rows + '</div>' +
+        '<p class="ib-sum">' + ibSummary(p) + '</p>';
+    } else {
+      head2 = '<div class="ib-when"><span class="now"><small>' + (+p.cur.d.slice(5, 7)) + '월 첫 기록</small>' + ibDate(p.cur.d) + '</span></div>';
+      rows = '<div class="ib-first">' + IB_ROWS.map(function (r) {
+        return '<div><small>' + r.name + '</small><b>' + ibFmt(p.cur[r.k]) + '<em>' + r.unit + '</em></b></div>';
+      }).join("") + '</div><p class="ib-sum">첫 기록 완료! 다음 달에 올리면 지난달과 비교해 드려요</p>';
+    }
+    var hist = (ibData || []).slice().reverse().map(function (r) {
+      return '<li><span class="ib-hd8">' + r.d.replace(/-/g, ". ") + '</span><span>' + ibFmt(r.w) + 'kg · 근육 ' + ibFmt(r.smm) + ' · 지방 ' + ibFmt(r.pbf) + '%</span>' +
+        (r.img ? '<button type="button" class="ib-photo" data-id="' + esc(r.id) + '">결과지</button>' : '') +
+        '<button type="button" class="ib-del" data-id="' + esc(r.id) + '">삭제</button></li>';
+    }).join("");
+    return '<div class="panel ibpanel">' + head2 + rows + btn +
+      '<details class="ib-hist"><summary>지난 기록 ' + ibData.length + '개 보기</summary><ul>' + hist + '</ul></details></div>';
+  }
+  function ibHomeStrip() {
+    if (!IB_ON || !ibData || ibReady === false) return "";
+    var p = ibPair();
+    var txt = !p ? "인바디 결과지 올리고 지난달과 비교해 봐요" :
+      !p.prev ? "첫 인바디 기록 완료! 다음 달에 비교해 드려요" :
+      "지난달보다 골격근 " + (p.cur.smm - p.prev.smm >= 0 ? "+" : "−") + ibFmt(Math.abs(p.cur.smm - p.prev.smm)) + "kg · 체지방 " +
+        (p.cur.bfm - p.prev.bfm >= 0 ? "+" : "−") + ibFmt(Math.abs(p.cur.bfm - p.prev.bfm)) + "kg";
+    return '<a class="ibstrip" href="#goal"><span class="ibs-tag">InBody</span><span class="ibs-t">' + txt + '</span><span class="ibs-go" aria-hidden="true">›</span></a>';
+  }
+  function ibRefresh() {
+    var b = document.querySelector(".ibpanel"); if (b) { b.outerHTML = ibPanel(); setupIb(); }
+    var s = document.querySelector(".ibstrip, .ibstrip-slot");
+    if (s) { var h = ibHomeStrip(); s.outerHTML = h || '<span class="ibstrip-slot"></span>'; }
+    alignText(document);
+  }
+  function ibSet(list) { ibData = list || []; ibErr = false; try { localStorage.setItem(IB_KEY, JSON.stringify(ibData)); } catch (e) {} }
+  function ibSync() {
+    if (!IB_ON || !ATT_API) return;
+    fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + "&a=inbody", { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j || !j.ok) throw new Error("ib");
+        if (!("inbody" in j)) { ibReady = false; ibRefresh(); return; }   /* 창고가 아직 옛 버전(인바디 없음) */
+        ibReady = true; ibSet(j.inbody); ibRefresh();
+      })
+      .catch(function () { if (!ibData) { ibErr = true; ibRefresh(); } });
+  }
+  function ibShrink(file) {   /* 사진을 긴 변 1400px JPEG로 줄여 base64 (글자만) */
+    return new Promise(function (res, rej) {
+      var fr = new FileReader();
+      fr.onerror = rej;
+      fr.onload = function () {
+        var im = new Image();
+        im.onerror = rej;
+        im.onload = function () {
+          var s = Math.min(1, 1400 / Math.max(im.width, im.height)), c = document.createElement("canvas");
+          c.width = Math.round(im.width * s); c.height = Math.round(im.height * s);
+          c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+          res(c.toDataURL("image/jpeg", 0.82).split(",")[1]);
+        };
+        im.src = fr.result;
+      };
+      fr.readAsDataURL(file);
+    });
+  }
+  function ibSheetOpen() {
+    var wrap = document.createElement("div");
+    wrap.className = "ibsheet";
+    wrap.innerHTML = '<div class="ibs-back" data-close></div><form class="ibs-card" novalidate>' +
+      '<div class="ibs-top"><h3>인바디 올리기</h3><button type="button" class="ibs-x" data-close aria-label="닫기">×</button></div>' +
+      '<label class="ibs-file"><input type="file" id="ibFile" accept="image/*"><span class="ibs-ph"><b>결과지 사진 찍기 · 고르기</b><small>사진 없이 숫자만 넣어도 돼요</small></span><img alt="" hidden></label>' +
+      '<label class="ibs-f"><span>측정한 날</span><input type="date" id="ibDate" value="' + ymd(new Date()) + '" max="' + ymd(new Date()) + '"></label>' +
+      '<p class="ibs-hint">결과지 맨 위 <b>체성분분석 · 골격근·지방분석</b> 칸의 숫자를 넣어요</p>' +
+      '<div class="ibs-nums">' +
+      '<label class="ibs-f"><span>체중 <em>kg</em></span><input id="ibW" inputmode="decimal" placeholder="예 72.4" autocomplete="off"></label>' +
+      '<label class="ibs-f"><span>골격근량 <em>kg</em></span><input id="ibS" inputmode="decimal" placeholder="예 31.2" autocomplete="off"></label>' +
+      '<label class="ibs-f"><span>체지방량 <em>kg</em></span><input id="ibB" inputmode="decimal" placeholder="비우면 자동" autocomplete="off"></label>' +
+      '<label class="ibs-f"><span>체지방률 <em>%</em></span><input id="ibP" inputmode="decimal" placeholder="예 21.5" autocomplete="off"></label>' +
+      '</div><p class="ibs-msg" role="alert"></p>' +
+      '<button class="btn fill ibs-save" type="submit">저장하기</button></form>';
+    document.body.appendChild(wrap);
+    document.documentElement.classList.add("ib-lock");
+    var form = wrap.querySelector("form"), file = wrap.querySelector("#ibFile"), pv = wrap.querySelector(".ibs-file img"), msg = wrap.querySelector(".ibs-msg");
+    var b64 = null, busy = false;
+    function close() { wrap.remove(); document.documentElement.classList.remove("ib-lock"); }
+    Array.prototype.forEach.call(wrap.querySelectorAll("[data-close]"), function (x) { x.addEventListener("click", close); });
+    file.addEventListener("change", function () {
+      var f = file.files && file.files[0];
+      if (!f) return;
+      msg.textContent = "사진 준비 중…";
+      ibShrink(f).then(function (d) {
+        b64 = d; pv.src = "data:image/jpeg;base64," + d; pv.hidden = false;
+        wrap.querySelector(".ibs-ph").hidden = true; msg.textContent = "";
+      }).catch(function () { msg.textContent = "이 사진은 못 읽었어요. 다른 사진으로 해 주세요"; });
+    });
+    function n(id) { var v = String(wrap.querySelector(id).value || "").replace(",", ".").trim(); return v === "" ? null : Number(v); }
+    form.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      if (busy) return;
+      var w = n("#ibW"), s = n("#ibS"), bf = n("#ibB"), pf = n("#ibP"), d = wrap.querySelector("#ibDate").value;
+      if (!d) { msg.textContent = "측정한 날을 골라 주세요"; return; }
+      if (!(w >= 20 && w <= 300)) { msg.textContent = "체중을 확인해 주세요 (예 72.4)"; return; }
+      if (!(s >= 3 && s <= 90)) { msg.textContent = "골격근량을 확인해 주세요 (예 31.2)"; return; }
+      if (!(pf >= 1 && pf <= 75)) { msg.textContent = "체지방률을 확인해 주세요 (예 21.5)"; return; }
+      if (bf !== null && !(bf > 0 && bf < w)) { msg.textContent = "체지방량을 확인해 주세요 (모르면 비워 두세요)"; return; }
+      if (!ATT_API) { msg.textContent = "저장할 곳이 아직 준비 안 됐어요"; return; }
+      busy = true; form.classList.add("saving"); msg.textContent = "저장하는 중…";
+      fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "inbody_add", m: SLUG, n: M.name, d: d, w: w, smm: s, bfm: bf, pbf: pf, img: b64 || "" }) })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          if (!j || !j.ok) throw new Error(j && j.error || "save");
+          ibSet(j.inbody); close(); ibRefresh(); attToast("인바디 기록을 저장했어요");
+        })
+        .catch(function () { busy = false; form.classList.remove("saving"); msg.textContent = "저장 못 했어요. 인터넷 연결을 확인하고 다시 눌러 주세요"; });
+    });
+  }
+  function ibPhotoOpen(id) {
+    var wrap = document.createElement("div");
+    wrap.className = "ibview";
+    wrap.innerHTML = '<button type="button" class="ibs-x" aria-label="닫기">×</button><p>결과지 불러오는 중…</p>';
+    document.body.appendChild(wrap);
+    wrap.addEventListener("click", function () { wrap.remove(); });
+    fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + "&a=inbody_img&id=" + encodeURIComponent(id), { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j || !j.ok) throw new Error("img");
+        var p = wrap.querySelector("p"); var im = document.createElement("img"); im.alt = "인바디 결과지"; im.src = j.data; p.replaceWith(im);
+      })
+      .catch(function () { var p = wrap.querySelector("p"); if (p) p.textContent = "사진을 못 불러왔어요"; });
+  }
+  function setupIb() {
+    var add = document.querySelector(".ib-add");
+    if (add) add.addEventListener("click", ibSheetOpen);
+    Array.prototype.forEach.call(document.querySelectorAll(".ib-photo"), function (b) {
+      b.addEventListener("click", function () { ibPhotoOpen(b.getAttribute("data-id")); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".ib-del"), function (b) {
+      b.addEventListener("click", function () {
+        if (!b.classList.contains("arm")) {   /* 한 번 더 눌러야 삭제 */
+          b.classList.add("arm"); b.textContent = "한 번 더 누르면 삭제";
+          setTimeout(function () { if (b.isConnected) { b.classList.remove("arm"); b.textContent = "삭제"; } }, 3000);
+          return;
+        }
+        b.disabled = true; b.textContent = "삭제 중…";
+        fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + "&a=inbody_del&id=" + encodeURIComponent(b.getAttribute("data-id")), { cache: "no-store" })
+          .then(function (r) { return r.json(); })
+          .then(function (j) { if (!j || !j.ok) throw new Error("del"); ibSet(j.inbody); ibRefresh(); })
+          .catch(function () { b.disabled = false; b.classList.remove("arm"); b.textContent = "삭제"; attToast("인터넷 연결을 확인하고 다시 눌러주세요"); });
+      });
+    });
+  }
+
   /* ---------------- 홈 */
   function exMini(d) {
     return '<ul class="mini">' + d.items.map(function (it, i) {
@@ -522,6 +730,7 @@
       '</div>' + attCheckStrip() + '</div></div></div>';
 
     h += journeyHome();
+    if (IB_ON) h += ibHomeStrip() || '<span class="ibstrip-slot"></span>';
     h += '<section>' + head("", ROT ? "오늘 할 운동" : "오늘의 운동", ROT ? dayName(k) + " 차례" : DAY_KO[k] + "요일", '<a class="more" href="#routine-' + k + '">자세히 →</a>');
     if (!d) {
       h += '<div class="panel empty"><h3>루틴이 아직 없어요</h3><p>선생님이 곧 올려드릴게요</p></div>';
@@ -933,7 +1142,7 @@
       if (a.getAttribute("data-tab") === tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
     alignText(document);
-    setupAttCheck(); setupCal();
+    setupAttCheck(); setupCal(); setupIb();
     if (after) after();
     var flashEl = null;
     if (tab === "notice") {
@@ -960,7 +1169,7 @@
   nDot();
   setTimeout(showNoticePop, 800);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { alignText(document); });
-  attSync();
-  document.addEventListener("visibilitychange", function () { if (!document.hidden) attSync(); });
+  attSync(); ibSync();
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) { attSync(); ibSync(); } });
   window.addEventListener("load", function () { alignText(document); });
 })();
