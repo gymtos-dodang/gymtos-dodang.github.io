@@ -93,7 +93,7 @@ window.MEMBER = {
         { name: "플랫 덤벨프레스", en: "Flat DB Press", tip: "덤벨은 가슴 옆까지", sets: [[12, 18], [12, 18], [12, 18]] },
         { name: "랫풀다운", en: "Lat Pulldown", tip: "팔꿈치로 당기기", sets: [[12, 45], [12, 45], [12, 45]] },
         { name: "원암 덤벨 로우", en: "One Arm DB Row", tip: "파트너가 한쪽씩 횟수 세기", sets: [[12, 22], [12, 22], [12, 22]] },
-        { name: "랙 밴드 푸쉬업", en: "Rack Band Push-up", tip: "밴드 등에 걸고, 몸통 일자로", sets: [[15, null], [15, null], [15, null]] }
+        { name: "랙 밴드 푸쉬업", en: "Rack Band Push-up", tip: "안전바에 건 밴드 끝을 양손에 쥐고, 몸통 일자로", sets: [[15, null], [15, null], [15, null]] }
       ]},
       { day: "토", part: "휴식", en: "Rest", rest: true, items: [] },
       { day: "일", part: "휴식", en: "Rest", rest: true, items: [] }

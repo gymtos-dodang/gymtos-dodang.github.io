@@ -23,7 +23,7 @@ m/<이름-랜덤6자>/     회원 한 명의 PT 노트
   og.jpg              카톡 미리보기 그림 (얼굴 없음, 네이비/핑크 배경 + "OOO 회원님")
   media/form-<id>/    복습지 영상·그림
 _tools/make_icons.py  아이콘 생성 (python3 make_icons.py assets/icons/M "#1F3864" / F "#C2185B")
-_tools/make_icons_smith.py 추가 아이콘만 그림: smith_bench_press·smith_row·smith_shoulder_press·smith_shrug·band_push_up(랙 안전바에 밴드)·incline_db_curl (2026-11-05)
+_tools/make_icons_smith.py 추가 아이콘만 그림: smith_bench_press·smith_row·smith_shoulder_press·smith_shrug·band_push_up(랙 안전바에 건 밴드를 손으로 쥐고)·incline_db_curl (2026-11-05)
 _tools/make_food.py   종이 식단표 음식 그림 코드 (메모리 diet-log-code-2와 같음)
 _tools/make_diet_web.py PT 노트 식단 탭 그림 → assets/food/<음식>.png + assets/food/M|F/ic_<끼니>.png
 _tools/make_logo.py   로고 생성

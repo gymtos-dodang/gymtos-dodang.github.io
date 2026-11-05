@@ -103,31 +103,32 @@ def incline_db_curl(c):
 
 
 def band_push_up(c):
-    # 스쿼트 랙 안전바에 밴드를 걸고, 밴드를 등에 두른 채 바닥 푸쉬업 (2026-11-05 다시 그림)
+    # 스쿼트 랙 안전바에 밴드를 걸고, 밴드 끝을 양손에 쥔 채 바닥 푸쉬업 (2026-11-05 다시 그림 — 등에 거는 게 아님)
     c.oy = 6
     fy = 8.4
-    W = (72, fy + 1.4)
-    E = (72, W[1] + FA)
-    S = (72, E[1] + UA)
-    A = (16, fy + 4.6)
+    W = (66, fy + 1.4)
+    E = (66, W[1] + FA)
+    S = (66, E[1] + UA)
+    A = (12, fy + 4.6)
     ux, uy = A[0] - S[0], A[1] - S[1]
     L = math.hypot(ux, uy); ux, uy = ux / L, uy / L
     H = (S[0] + TORSO * ux, S[1] + TORSO * uy)
     K = (H[0] + TH * ux, H[1] + TH * uy)
-    T = (20.5, fy + 0.2)
+    T = (16.5, fy + 0.2)
     floor(c, fy - 1.4, 4, 96)
-    # 랙 기둥 2개 + 낮게 건 안전바
-    for x in (8, 92):
-        c.stroke([(x, fy - 1.4), (x, 92)], 3.0, GRAYL)
-    bar_y = fy + 14
-    c.stroke([(8, bar_y), (92, bar_y)], 3.0, GRAYL)
+    # 랙 기둥 + 낮게 건 안전바 (머리 앞쪽)
+    c.stroke([(95, fy - 1.4), (95, 92)], 3.0, GRAYL)
+    c.stroke([(84, fy - 1.4), (84, 92)], 3.0, GRAYL)
+    bar = (89, fy + 17)
+    c.stroke([(80, bar[1]), (98, bar[1])], 3.4, GRAY)
+    # 밴드: 안전바에 감아서 두 가닥이 손으로
+    c.stroke([(W[0] + 1.5, W[1] + 1), (bar[0] - 2.4, bar[1] - 1.6)], 2.4, mi.ARROW)
+    c.stroke([(W[0] + 2.5, W[1] - 0.5), (bar[0] + 0.6, bar[1] - 2.4)], 2.4, mi.ARROW)
+    c.circle(bar, 2.6, outline=mi.ARROW, w=1.8)
     p = {"H": H, "S": S, "head": fk(S, 17, NECKH), "arm": [E, W], "leg": [K, A, T]}
     draw_side(c, p)
-    # 밴드: 양쪽 안전바에 걸고 등 위로 아치처럼 넘어감 (몸 위에 그려서 잘 보이게)
-    c.stroke([(57, bar_y), (58, 37), (61, 42.6), (69, 44.6), (77, 42.6), (80, 37), (81, bar_y)], 2.6, mi.ARROW)
-    c.circle((57, bar_y), 2.0, fill=GRAY)
-    c.circle((81, bar_y), 2.0, fill=GRAY)
-    c.arrow((40, 44), (40, 59))
+    c.circle(W, 2.6, fill=mi.BODY)
+    c.arrow((38, 42), (38, 57))
 
 
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
