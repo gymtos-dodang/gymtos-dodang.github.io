@@ -232,6 +232,40 @@ def shaker(path):
     save(img, path)
 
 
+def bagel(path):
+    """베이글 (2026-11-05 이지환님 식단): 위에서 본 링 + 깨"""
+    img = new(); d = ImageDraw.Draw(img)
+    P(d, blob(0.5, 0.54, 0.40, 0.34, 0.03, 5, 7), hex2rgb("#D9964A"))
+    m = Image.new("L", img.size, 0); dm = ImageDraw.Draw(m)
+    dm.polygon([(x * N, y * N) for x, y in blob(0.5, 0.50, 0.34, 0.27, 0.03, 5, 7)], fill=255)
+    top = Image.new("RGBA", img.size, hex2rgb("#E8B06A")); img.paste(top, (0, 0), m)
+    d = ImageDraw.Draw(img)
+    E(d, (0.42, 0.44, 0.58, 0.58), hex2rgb("#B87534"))
+    E(d, (0.435, 0.455, 0.565, 0.565), (0, 0, 0, 0), 0)
+    d.ellipse((0.44 * N, 0.46 * N, 0.56 * N, 0.56 * N), fill=(0, 0, 0, 0))
+    rng = np.random.default_rng(3)
+    for _ in range(14):
+        a = rng.uniform(0, 6.28); r = rng.uniform(0.15, 0.27)
+        x, y = 0.5 + np.cos(a) * r * 1.15, 0.50 + np.sin(a) * r * 0.9
+        L(d, [(x - 0.012, y), (x + 0.012, y + 0.006)], hex2rgb("#FFF6E3"), N * 0.018)
+    save(img, path)
+
+
+def carbo(path):
+    """카보린 (탄수화물 보충제): 스탠딩 파우치 + CARB 라벨"""
+    img = new(); d = ImageDraw.Draw(img)
+    P(d, [(0.24, 0.12), (0.76, 0.12), (0.80, 0.90), (0.20, 0.90)], hex2rgb("#F2A23A"))
+    d.rectangle((0.26 * N, 0.13 * N, 0.74 * N, 0.20 * N), fill=hex2rgb("#D98C1E"))
+    L(d, [(0.25, 0.21), (0.75, 0.21)], OUT, N * 0.014)
+    RR(d, (0.28, 0.38, 0.72, 0.66), 0.04, hex2rgb("#FFFFFF"), int(N * 0.014))
+    f = ImageFont.truetype(F_BLACK, int(N * 0.12), index=1)
+    bb = f.getbbox("CARB")
+    d.text((0.5 * N - (bb[0] + bb[2]) / 2, 0.52 * N - (bb[1] + bb[3]) / 2), "CARB", font=f, fill=hex2rgb("#D98C1E"))
+    for x in (0.38, 0.5, 0.62):
+        d.ellipse(((x - 0.02) * N, 0.74 * N, (x + 0.02) * N, 0.78 * N), fill=(255, 255, 255, 200))
+    save(img, path)
+
+
 def salt(path):
     img = new(); d = ImageDraw.Draw(img)
     RR(d, (0.30, 0.10, 0.70, 0.30), 0.06, hex2rgb("#A8B0BE"))
@@ -299,7 +333,8 @@ def gold_badge(path, text="1종"):
 
 FOODS = {"sweet_potato": sweet_potato, "rice_white": rice_white, "rice_brown": rice_brown, "oatmeal": oatmeal,
          "potato": potato, "chicken": chicken, "beef": beef, "fish": fish, "egg": egg, "pork": pork,
-         "tofu": tofu, "shrimp": shrimp, "veg": veg, "shaker": shaker, "salt": salt, "talk": talk, "clipboard": clipboard}
+         "tofu": tofu, "shrimp": shrimp, "veg": veg, "shaker": shaker, "salt": salt, "talk": talk, "clipboard": clipboard,
+         "bagel": bagel, "carbo": carbo}
 
 
 def main(spec_path):

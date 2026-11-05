@@ -8,6 +8,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 5", title: "바프 벌크업 식단이 올라왔어요", link: "diet",
+      body: "식단 탭에서 하루 4끼를 확인하세요! '또는'은 둘 중 하나만 골라 먹으면 돼요. 3식(프로틴 + 카보린)은 운동 끝나고 바로 — 바프 근육은 먹은 만큼 만들어져요!" },
     { date: "2026. 11. 5", title: "PT 노트가 열렸어요",
       body: "바프까지 가는 노트예요! 목표 탭에서 기초 → 벌크 → 컷팅 3단계와 지금 위치를 볼 수 있어요. 이번 주 루틴(v10)은 루틴 탭에서 요일을 누르면 그날 운동과 무게가 나와요. 지금은 근육을 채우는 시기 — 등 2번 · 하체 2번 꼭 챙겨요!" }
   ],
@@ -73,6 +75,29 @@ window.MEMBER = {
     ]
   },
 
-  /* 식단표 (없으면 null) */
-  diet: null
+  /* 식단표 (없으면 null) — 끼니별로 정해진 벌크업 식단 (meals 형식) */
+  diet: {
+    updated: "2026. 11. 5",
+    title: "바프 벌크업 식단",
+    title_en: "Bulk-up Meal Plan · 하루 4끼",
+    rules: ["하루 4끼 빠짐없이", "'또는'은 둘 중 하나만", "3식은 운동 끝나고 바로"],
+    rules_note: "적힌 양은 꼭 채워 먹기 — 지금은 근육을 채우는 시기예요",
+    key_point: "바프 근육은 먹은 만큼 만들어져요! 4끼 꽉 채우기",
+    meals: [
+      { no: "1식", options: [
+        { label: "간장계란밥", foods: [{ icon: "rice_white", name: "쌀밥" }, { icon: "egg", name: "계란", amount: "6개" }] },
+        { foods: [{ icon: "bagel", name: "베이글" }, { icon: "shaker", name: "프로틴 음료" }] }
+      ]},
+      { no: "2식", options: [
+        { foods: [{ icon: "rice_white", name: "쌀밥", amount: "400g" }, { icon: "chicken", name: "닭가슴살", amount: "200g" }, { icon: "egg", name: "계란", amount: "5개" }] }
+      ]},
+      { no: "3식", tag: "운동 후", options: [
+        { foods: [{ icon: "shaker", name: "프로틴", amount: "2스쿱" }, { icon: "carbo", name: "카보린" }] }
+      ], note: "운동 끝나고 바로 섞어 마시기" },
+      { no: "4식", options: [
+        { foods: [{ icon: "rice_white", name: "쌀밥", amount: "200g" }, { icon: "chicken", name: "닭가슴살", amount: "200g" }] },
+        { foods: [{ icon: "sweet_potato", name: "고구마", amount: "400g" }, { icon: "shaker", name: "프로틴", amount: "2스쿱" }] }
+      ]}
+    ]
+  }
 };

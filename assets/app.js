@@ -818,7 +818,7 @@
       '<div class="eyebrow">MY MEAL NOTE <b>· 식단</b></div><h1>' + esc(D.title) + '</h1><div class="en">' + esc(D.title_en || "") + '</div>' +
       '<div class="who"><strong>' + esc(who) + ' 회원님</strong>' + (D.updated ? '<span>' + esc(D.updated) + ' 업데이트</span>' : '') + '</div></div>' +
       '<div class="hero-r"><div class="eyebrow">식단 규칙</div><ul class="dots small">' +
-      D.rules.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join("") + '</ul>' +
+      (D.rules || []).map(function (r) { return '<li>' + esc(r) + '</li>'; }).join("") + '</ul>' +
       (D.rules_note ? '<p class="benefit">' + esc(D.rules_note) + '</p>' : '') + '</div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + esc(D.key_point) + '</p></div></div>';
     if (D.stats) h += '<div class="dt-stats">' + D.stats.map(function (s) {
@@ -838,8 +838,20 @@
         return '<div class="food">' + foodImg(f.icon) + '<b>' + esc(f.name) + '</b><span class="pill">' + esc(f.amount) + '</span></div>';
       }).join("") + (gold ? '<div class="food gold"><span class="g1">1종</span><b>한 끼에 딱 1종만</b><i>끼니마다 바꿔도 OK</i></div>' : '') + '</div>';
     }
-    h += '<section>' + head(no(), "탄수화물 고르기", "이 중 1종만, 적힌 양만큼") + foods(D.carbs) + '</section>';
-    h += '<section>' + head(no(), "단백질 고르기", "이 중 1종만, 적힌 양만큼") + foods(D.prots, true) + '</section>';
+    /* 끼니별로 정해진 식단 (2026-11-05 이지환님): meals[{no, name?, tag?, note?, options[{label?, foods[{icon,name,amount?}]}]}] */
+    if (D.meals) h += '<section>' + head(no(), D.meals_title || "하루 " + D.meals.length + "끼", D.meals_sub || "'또는'은 둘 중 하나만 골라요") + '<div class="mp-list">' +
+      D.meals.map(function (ml) {
+        return '<div class="mp' + (ml.tag ? ' hl' : '') + '"><div class="mp-h"><span class="mp-no">' + esc(ml.no) + '</span>' + (ml.name ? '<b>' + esc(ml.name) + '</b>' : '') +
+          (ml.tag ? '<span class="mp-tag">' + esc(ml.tag) + '</span>' : '') + '</div>' +
+          ml.options.map(function (op, i) {
+            return (i ? '<div class="mp-or"><span>또는</span></div>' : '') + '<div class="mp-opt">' + (op.label ? '<small>' + esc(op.label) + '</small>' : '') +
+              '<div class="mp-foods">' + op.foods.map(function (f) {
+                return '<div class="mp-f">' + foodImg(f.icon, "mp-img") + '<b>' + esc(f.name) + '</b>' + (f.amount ? '<span class="pill">' + esc(f.amount) + '</span>' : '') + '</div>';
+              }).join("") + '</div></div>';
+          }).join("") + (ml.note ? '<p class="mp-note">' + esc(ml.note) + '</p>' : '') + '</div>';
+      }).join("") + '</div></section>';
+    if (D.carbs) h += '<section>' + head(no(), "탄수화물 고르기", "이 중 1종만, 적힌 양만큼") + foods(D.carbs) + '</section>';
+    if (D.prots) h += '<section>' + head(no(), "단백질 고르기", "이 중 1종만, 적힌 양만큼") + foods(D.prots, true) + '</section>';
     if (D.day) h += '<section>' + head(no(), "하루는 이렇게", D.day_sub || "") + '<div class="meal-grid">' + D.day.map(function (d) {
       return '<div class="meal"><div class="meal-h">' + foodImg(d.icon, "meal-ic") + '<b>' + esc(d.name) + '</b></div><p>' + esc(d.line1) + '</p>' +
         '<i>' + esc(d.line2) + '</i>' + (d.line3 ? '<i>' + esc(d.line3) + '</i>' : '') + '</div>';
