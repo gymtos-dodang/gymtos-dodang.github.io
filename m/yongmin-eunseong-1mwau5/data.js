@@ -10,6 +10,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 5", title: "스미스 인클라인 프레스 자세 복습지가 올라왔어요",
+      body: "어제 수업 영상으로 만든 복습지예요. 월요일 메인 종목이에요. 운동 전에 한 번 보고 들어가세요!", link: "form-smith-incline-press" },
     { date: "2026. 11. 5", title: "고은성님 식단표가 올라왔어요",
       body: "아래 '식단' 탭에서 언제든 볼 수 있어요. 아침·저녁은 탄수 1종 + 단백 1종, 점심은 일반식 그대로예요!", link: "diet" },
     { date: "2026. 11. 5", title: "루틴이 v2로 바뀌었어요",
@@ -21,7 +23,35 @@ window.MEMBER = {
   next_class: null,
 
   /* 자세 복습지 (최신이 위) */
-  forms: [],
+  forms: [
+    {
+      id: "smith-incline-press",
+      dir: "media/form-smith-incline-press/",
+      date: "2026. 11. 4 (수)",
+      exercise: "스미스 인클라인 프레스",
+      exercise_en: "Smith Incline Press",
+      part: "가슴",
+      targets: ["윗가슴 (대흉근 상부)", "전면 삼각근 · 삼두근"],
+      benefit: "윗가슴을 채워서 가슴 라인이 꽉 차 보이게 해줘요. 봉이 레일을 따라 움직여 무게에 집중하기 좋아요",
+      key_point: "봉은 쇄골 아래 윗가슴으로, 내릴 땐 천천히!",
+      good_points: [
+        { title: "천천히 내렸어요", desc: "내리는 데 2초 가까이 쓰면서 윗가슴이 끝까지 무게를 버텼어요" },
+        { title: "윗가슴까지 깊게 내렸어요", desc: "봉이 쇄골 아래까지 내려와서 가슴이 충분히 늘어났어요" },
+        { title: "등을 벤치에 붙이고 밀었어요", desc: "엉덩이가 뜨지 않아서 인클라인 각도가 그대로 유지됐어요" }
+      ],
+      primary_muscles: [{ name: "대흉근 상부", where: "쇄골 아래 윗가슴" }],
+      secondary_muscles: "전면 삼각근 · 삼두근",
+      feel_good: "쇄골 아래 윗가슴이 뻐근해요",
+      feel_stop: "어깨 앞만 타거나, 손목이 꺾여서 아파요",
+      steps: [
+        { title: "준비", desc: "등받이는 30도 정도, 봉이 쇄골 위에 오게 벤치를 맞춰요. 어깨너비보다 조금 넓게 잡고 날개뼈를 모아 고리를 풀어요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "내리기", desc: "팔꿈치를 몸통에서 45도 정도 벌리며 봉을 쇄골 아래 윗가슴까지 천천히", chip: "3초 · 들이마시며", media: "step2.webp", loop: true },
+        { title: "밀어 올리기", desc: "윗가슴으로 밀어 처음 자리까지! 맨 위에서 팔꿈치는 살짝 굽힌 채", chip: "1~2초 · 후~ 내쉬며", media: "step3.webp", loop: true }
+      ],
+      do: ["날개뼈를 모으고 가슴을 위로 세우기", "봉은 쇄골 아래 윗가슴으로 내리기", "손목은 팔꿈치 바로 위에 세우기"],
+      dont: ["엉덩이를 들어 각도 없애기", "봉을 명치 쪽으로 내리기", "가슴에 닿자마자 튕겨 올리기"]
+    }
+  ],
 
   routine: {
     version: "v2",
@@ -34,7 +64,7 @@ window.MEMBER = {
     days: [
       { day: "월", part: "가슴·삼두", en: "Chest · Triceps", cardio: false, items: [
         { name: "펙덱 플라이", en: "Pec Deck Fly", tag: "워밍업", tip: "가볍게 가슴 풀기", sets: [[20, 25], [15, 30]] },
-        { name: "스미스 인클라인 프레스", en: "Smith Incline Press", tag: "메인", tip: "쇄골 쪽으로 내리기, 파트너 보조", sets: [[15, 25], [12, 25], [10, 30], [8, 30]] },
+        { name: "스미스 인클라인 프레스", en: "Smith Incline Press", tag: "메인", tip: "쇄골 쪽으로 내리기, 파트너 보조", sets: [[15, 25], [12, 25], [10, 30], [8, 30]], form: "smith-incline-press" },
         { name: "인클라인 덤벨 프레스", en: "Incline DB Press", tip: "윗가슴으로 밀기", sets: [[12, 16], [12, 16], [12, 16]] },
         { name: "케이블 푸쉬다운", en: "Cable Pushdown", tip: "팔꿈치 옆구리 고정", sets: [[15, 25], [15, 25], [15, 25]] }
       ]},

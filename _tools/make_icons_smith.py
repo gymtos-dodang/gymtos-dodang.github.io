@@ -2,8 +2,12 @@
 python3 make_icons_smith.py <폴더> "#1F3864"   — make_icons.py와 같은 그림 규칙, 새 아이콘만 저장"""
 import sys, math
 import make_icons as mi
-from make_icons import Canvas, fk, side, draw_side, draw_front, floor, pill, GRAY, GRAYL, WHITE, LW, TH, SH, FT, UA, FA, NECKH, TORSO
+from make_icons import Canvas, fk, side, draw_side, draw_front, floor, pill, dumbbell, FAR, GRAY, GRAYL, WHITE, LW, TH, SH, FT, UA, FA, NECKH, TORSO
 from PIL import Image
+
+
+def BODYC():
+    return mi.BODY
 
 
 def _bar(c, W):
@@ -64,42 +68,71 @@ def smith_shoulder_press(c):
 
 
 def smith_shrug(c):
-    head, Ls, Rs, Lh, Rh = (50, 84), (40.5, 72), (59.5, 72), (44, 46), (56, 46)
-    floor(c, 5, 8, 92)
-    c.stroke([(12, 5), (12, 98)], 2.6, GRAYL)
-    c.stroke([(88, 5), (88, 98)], 2.6, GRAYL)
-    arms = [((36.5, 57.5), (35.5, 44)), ((63.5, 57.5), (64.5, 44))]
+    # 앞모습, 어깨를 귀 쪽으로 으쓱 (2026-11-05 다시 그림): 레일 2개 + 봉 + 원판, 팔은 쭉 편 채
+    floor(c, 5, 6, 94)
+    for x in (12, 88):
+        c.stroke([(x, 5), (x, 99)], 3.0, GRAYL)
+    head = (50, 85)
+    Ls, Rs, Lh, Rh = (40.5, 74.5), (59.5, 74.5), (44, 47), (56, 47)
+    arms = [((37.4, 59.5), (36.6, 45.2)), ((62.6, 59.5), (63.4, 45.2))]
     legs = [((43.5, 27.5), (43, 9.5), (37.8, 9)), ((56.5, 27.5), (57, 9.5), (62.2, 9))]
-    c.stroke([(12, 42.5), (88, 42.5)], 3.2, GRAY)
-    for x in (19, 81):
-        c.rrect(x - 2.6, 33.5, x + 2.6, 51.5, 1.4, fill=GRAY)
+    c.stroke([(12, 44), (88, 44)], 3.0, GRAY)
+    for x in (21, 79):
+        c.rrect(x - 3.2, 33, x + 3.2, 55, 1.6, fill=GRAY)
     draw_front(c, head, Ls, Rs, Lh, Rh, arms, legs)
-    c.arrow((24, 64), (24, 78))
-    c.arrow((76, 64), (76, 78))
+    c.arrow((28.5, 66), (28.5, 82))
+    c.arrow((71.5, 66), (71.5, 82))
+
+
+def incline_db_curl(c):
+    # 인클라인 벤치에 등 기대고 앉아, 팔을 바닥 쪽으로 쭉 늘어뜨린 데서 감아 올리기 (2026-11-05)
+    c.ox, c.oy = -2, 10
+    p = side((54, 30), 132, 125, leg=(0, -90, 0))
+    S = p["S"]
+    floor(c, 6, 8, 88)
+    hb, sb = fk(p["H"], 222, 6.6), fk(S, 222, 6.6)
+    pill(c, fk(hb, 132, -3), fk(sb, 132, 6), 5.2)
+    pill(c, (45, 23.4), (65, 23.4), 5.2)
+    c.stroke([(54, 23), (54, 6)], 3, GRAY)
+    E = fk(S, -90, UA)
+    W = fk(E, -90, FA)
+    p["arm"] = [E, W]
+    draw_side(c, p)
+    dumbbell(c, (W[0], W[1] - 0.8), 0, 12)
+    c.arc_arrow(E, 19, -100, -8)
 
 
 def band_push_up(c):
-    c.oy = 18
+    # 스쿼트 랙 안전바에 밴드를 걸고, 밴드를 등에 두른 채 바닥 푸쉬업 (2026-11-05 다시 그림)
+    c.oy = 6
     fy = 8.4
-    W = (74, fy + 1.4)
-    E = (74, W[1] + FA)
-    S = (74, E[1] + UA)
-    A = (14, fy + 4.6)
+    W = (72, fy + 1.4)
+    E = (72, W[1] + FA)
+    S = (72, E[1] + UA)
+    A = (16, fy + 4.6)
     ux, uy = A[0] - S[0], A[1] - S[1]
     L = math.hypot(ux, uy); ux, uy = ux / L, uy / L
     H = (S[0] + TORSO * ux, S[1] + TORSO * uy)
     K = (H[0] + TH * ux, H[1] + TH * uy)
-    T = (18.5, fy + 0.2)
-    pill(c, (6, fy - 1.4), (96, fy - 1.4), 3.0, GRAYL)
+    T = (20.5, fy + 0.2)
+    floor(c, fy - 1.4, 4, 96)
+    # 랙 기둥 2개 + 낮게 건 안전바
+    for x in (8, 92):
+        c.stroke([(x, fy - 1.4), (x, 92)], 3.0, GRAYL)
+    bar_y = fy + 14
+    c.stroke([(8, bar_y), (92, bar_y)], 3.0, GRAYL)
     p = {"H": H, "S": S, "head": fk(S, 17, NECKH), "arm": [E, W], "leg": [K, A, T]}
-    band = [W, (79.5, 18), (79.5, 33), (74, S[1] + 6.2), (66, S[1] + 4.6), (59, S[1] + 1.6)]
-    c.stroke(band, 2.2, mi.ARROW)
     draw_side(c, p)
-    c.arrow((44, 37), (44, 52))
+    # 밴드: 양쪽 안전바에 걸고 등 위로 아치처럼 넘어감 (몸 위에 그려서 잘 보이게)
+    c.stroke([(57, bar_y), (58, 37), (61, 42.6), (69, 44.6), (77, 42.6), (80, 37), (81, bar_y)], 2.6, mi.ARROW)
+    c.circle((57, bar_y), 2.0, fill=GRAY)
+    c.circle((81, bar_y), 2.0, fill=GRAY)
+    c.arrow((40, 44), (40, 59))
 
 
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
-       "smith_shrug": smith_shrug, "band_push_up": band_push_up}
+       "smith_shrug": smith_shrug, "band_push_up": band_push_up,
+       "incline_db_curl": incline_db_curl}
 
 
 if __name__ == "__main__":
