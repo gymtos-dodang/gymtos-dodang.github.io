@@ -167,17 +167,86 @@
       focus: ["혼자서 루틴 소화", "프리웨이트", "다음 목표 또는 졸업"],
       msg: "이제 혼자서도 할 수 있어요. 다음 목표를 함께 정해요." }
   ];
+  /* 바디프로필 목표 회원 전용 여정 (data.js journey.mode: "bodyprofile", 2026-11-05 이지환님부터)
+     기초 0~2개월 → 근육 채우기(벌크) 2~8개월 → 컷팅·촬영 8~12개월(16주 컷팅) */
+  var STAGES_BP = [
+    { no: 1, from: 0, to: 2, name: "바프 몸의 뼈대 세우기", short: "기초", range: "1~2개월",
+      focus: ["정확한 자세 · 머신 사용법", "바른 등 만들기", "식사 기록 습관"],
+      msg: "바프는 기초가 탄탄해야 끝까지 가요. 지금은 무게보다 자세가 먼저!" },
+    { no: 2, from: 2, to: 8, name: "근육 꽉 채우기", short: "벌크", range: "2~8개월",
+      focus: ["매주 조금씩 증량", "등 · 하체 볼륨 UP", "단백질 꽉 채우기", "인바디 · 눈바디 체크"],
+      msg: "이 시기에 쌓은 근육이 바프 사진의 선이 돼요. 잘 먹고 무겁게!" },
+    { no: 3, from: 8, to: 12, name: "컷팅 · 바프 완성", short: "컷팅", range: "8~12개월",
+      focus: ["16주 컷팅 식단", "유산소 늘리기", "포징 연습", "촬영 D-DAY"],
+      msg: "근육은 지키고 지방만 걷어내요. 마지막 한 달이 사진을 바꿔요." }
+  ];
+  var BP = !!(M.journey && M.journey.mode === "bodyprofile");
+  var JST = BP ? STAGES_BP : STAGES;
   function journeyNow() {
     var J = M.journey;
     if (!J || !J.start) return null;
     var p = J.start.split("-"), st = new Date(+p[0], +p[1] - 1, +p[2]);
     var el = (Date.now() - st.getTime()) / (86400000 * 30.44);
     var m = Math.max(0, Math.min(12, el));
-    var stage = m < 2 ? STAGES[0] : m < 7 ? STAGES[1] : STAGES[2];
+    var stage = m < JST[1].from ? JST[0] : m < JST[2].from ? JST[1] : JST[2];
     return { el: el, m: m, month: el < 0 ? 0 : Math.min(12, Math.floor(el) + 1), stage: stage, start: J.start };
+  }
+  function bpDday() {   /* 촬영일(journey.shoot)이 있으면 D-day */
+    var s = M.journey && M.journey.shoot;
+    if (!s) return null;
+    var p = s.split("-"), d = new Date(+p[0], +p[1] - 1, +p[2]), t = new Date(); t.setHours(0, 0, 0, 0);
+    return { n: Math.round((d - t) / 86400000), label: p[0] + ". " + (+p[1]) + ". " + (+p[2]) };
+  }
+  function ss(a, b, m) { var t = Math.max(0, Math.min(1, (m - a) / (b - a))); return t * t * (3 - 2 * t); }
+  function bpMuscle(m) { return 0.1 + 0.72 / (1 + Math.exp(-(m - 4) / 1.2)) - 0.03 * ss(8, 12, m); }
+  function bpFat(m) { return 0.5 + 0.08 * ss(0, 8, m) - 0.44 * ss(8, 11.6, m); }
+  function journeyChartBP(now) {
+    var X = function (m) { return 26 + m * 25; }, Y = function (v) { return 168 - v * 124; };
+    var bands = JST.map(function (s, i) {
+      var cur = now && s === now.stage;
+      return '<rect x="' + X(s.from) + '" y="34" width="' + (X(s.to) - X(s.from)) + '" height="134" fill="#fff" opacity="' + (cur ? 0.12 : 0.03 + i * 0.015) + '"/>' +
+        (i ? '<line x1="' + X(s.from) + '" y1="34" x2="' + X(s.from) + '" y2="168" stroke="#fff" stroke-opacity=".14" stroke-dasharray="2 3"/>' : '') +
+        '<text x="' + ((X(s.from) + X(s.to)) / 2) + '" y="26" text-anchor="middle" class="bp-st' + (cur ? ' cur' : '') + '">' + s.no + '단계 ' + s.short + '</text>';
+    }).join("");
+    var pts = function (f, a, b) {
+      var out = [];
+      for (var m = a; m <= b + 1e-9; m += 0.1) out.push(X(m).toFixed(1) + "," + Y(f(m)).toFixed(1));
+      return out.join(" ");
+    };
+    var cm = now ? now.m : 0;
+    /* 체지방(분홍 점선) 먼저, 근육(금색) 위에 */
+    var path = '<polyline points="' + pts(bpFat, 0, 12) + '" fill="none" stroke="var(--dot)" stroke-width="2.5" stroke-dasharray="1 5" stroke-linecap="round" opacity=".9"/>' +
+      '<polyline points="' + pts(bpMuscle, 0, 12) + '" fill="none" stroke="var(--gold-line)" stroke-width="2.5" stroke-dasharray="5 5" opacity=".4"/>';
+    if (cm > 0) path += '<polyline points="' + pts(bpMuscle, 0, cm) + '" fill="none" stroke="var(--gold-line)" stroke-width="4.5" stroke-linecap="round"/>';
+    /* 두 선이 만나는 곳 = 몸이 선명해지는 순간 */
+    var cx = 8;
+    for (var m = 8; m <= 12; m += 0.05) { if (bpMuscle(m) - bpFat(m) > 0.12) { cx = m; break; } }
+    var sharp = '<g transform="translate(' + X(cx) + ',' + Y(bpMuscle(cx)) + ')"><path d="M0 -9 L2.2 -2.2 L9 0 L2.2 2.2 L0 9 L-2.2 2.2 L-9 0 L-2.2 -2.2 Z" fill="#fff" opacity=".9"/></g>' +
+      '<text x="' + (X(cx) - 6) + '" y="' + (Y(bpMuscle(cx)) - 13) + '" text-anchor="end" class="bp-note">몸이 선명해지는 순간</text>';
+    var ticks = [0, 2, 8, 12].map(function (m) {
+      return '<line x1="' + X(m) + '" y1="168" x2="' + X(m) + '" y2="173" stroke="#fff" stroke-opacity=".35"/>' +
+        '<text x="' + X(m) + '" y="186" text-anchor="' + (m === 12 ? "end" : "middle") + '" class="bp-x">' + (m === 0 ? "시작" : m === 12 ? "촬영" : m + "개월") + '</text>';
+    }).join("");
+    var mk = "";
+    if (now) {
+      var mx = X(cm), my = Y(bpMuscle(cm)), right = cm > 7.5, LW = 108, ly = my - 18;
+      mk = '<circle cx="' + mx + '" cy="' + my + '" r="12" fill="var(--gold-line)" opacity=".25"/><circle cx="' + mx + '" cy="' + my + '" r="6.5" fill="var(--gold-line)" stroke="#fff" stroke-width="2.5"/>' +
+        '<g transform="translate(' + (right ? mx - 6 : mx + 6) + ',' + ly + ')"><rect x="' + (right ? -LW : 0) + '" y="-15" width="' + LW + '" height="22" rx="11" fill="var(--key)"/>' +
+        '<text x="' + (right ? -LW / 2 : LW / 2) + '" y="0.5" text-anchor="middle" class="jc-mk">지금 여기 · ' + (now.month || 1) + '개월차</text></g>';
+    }
+    /* 끝: 금색 카메라 = 바프 촬영 D-DAY */
+    var ex = X(12), ey = Y(bpMuscle(12));
+    var cam = '<g transform="translate(' + ex + ',' + (ey - 22) + ')"><circle r="14" fill="var(--gold-line)"/>' +
+      '<path d="M-7 -3.5 h3.5 l1.6 -2.4 h3.8 l1.6 2.4 h3.5 v9 h-14 Z" fill="none" stroke="#17294B" stroke-width="1.8" stroke-linejoin="round"/><circle cy="1" r="2.6" fill="none" stroke="#17294B" stroke-width="1.8"/></g>' +
+      '<text x="' + (ex - 19) + '" y="' + (ey - 18) + '" text-anchor="end" class="bp-dd">D-DAY</text>';
+    return '<div class="jchart bp-chart"><svg viewBox="0 0 340 194" role="img" aria-label="바디프로필 12개월 여정 그래프: 1단계 기초(1~2개월), 2단계 근육 채우기(2~8개월), 3단계 컷팅과 촬영(8~12개월)' + (now ? ', 지금 ' + (now.month || 1) + '개월차' : '') + '">' +
+      bands + '<line x1="26" y1="168" x2="326" y2="168" stroke="#fff" stroke-opacity=".3" stroke-width="1.5"/>' + ticks + path + sharp + cam + mk + '</svg>' +
+      '<div class="bp-legend"><span><i class="lg-m"></i>근육</span><span><i class="lg-f"></i>체지방</span></div>' +
+      '<p class="bp-cap">2단계에 근육을 꽉 채우고, 3단계에 지방만 걷어내 촬영날 가장 선명한 몸을 만들어요. 선은 개념 그래프예요 (실측 아님).</p></div>';
   }
   function curveY(m) { return 0.06 + 0.86 / (1 + Math.exp(-(m - 4.3) / 1.15)); }
   function journeyChart(now) {
+    if (BP) return journeyChartBP(now);
     var X = function (m) { return 26 + m * 25; }, Y = function (v) { return 156 - v * 118; };
     var bands = STAGES.map(function (s, i) {
       var cur = now && s === now.stage;
@@ -217,33 +286,41 @@
       var pct = Math.round((now.m - s.from) / (s.to - s.from) * 100);
       var left = Math.max(0, Math.round((s.to - now.m) * 4.35));
       prog = '<div class="jprog"><div style="width:' + Math.max(4, pct) + '%"></div></div><p class="jleft">' +
-        (s.no === 3 && left === 0 ? '12개월 완주! 졸업 또는 다음 목표를 함께 정해요' : s.no + '단계 남은 기간 약 ' + (left >= 8 ? Math.round(left / 4.35) + '개월' : left + '주')) + '</p>';
+        (s.no === 3 && left === 0 ? (BP ? '바프 촬영 완주! 정말 멋져요' : '12개월 완주! 졸업 또는 다음 목표를 함께 정해요') : s.no + '단계 남은 기간 약 ' + (left >= 8 ? Math.round(left / 4.35) + '개월' : left + '주')) + '</p>';
     }
     return '<div class="jcard ' + state + '"><div class="jtop"><span class="jno">' + s.no + '</span><div><small>' + s.no + '단계 · ' + s.range + '</small><h3>' + esc(s.name) + '</h3></div>' + badge + '</div>' +
       '<ul class="jfocus">' + s.focus.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join("") + '</ul>' +
       (compact && state !== "cur" ? '' : '<p class="jmsg">' + esc(s.msg) + '</p>') + prog + '</div>';
   }
+  function bpStrip() {   /* 바프 회원: 그래프 위 금색 띠 (촬영일 있으면 D-day) */
+    var d = bpDday();
+    return '<div class="bp-strip"><span class="bp-tag">BODY PROFILE</span>' +
+      (d ? '<b>' + (d.n > 0 ? 'D-' + d.n : d.n === 0 ? 'D-DAY' : '촬영 완료') + '</b><small>촬영 ' + esc(d.label) + '</small>'
+         : '<b>목표는 바프 촬영!</b><small>촬영 날짜는 선생님과 정해요</small>') + '</div>';
+  }
   function journeyHome() {
     var now = journeyNow();
     if (!now) return "";
+    if (BP) return '<section>' + head("", "나의 바프 여정", "촬영날까지 함께 가는 12개월", '<a class="more" href="#goal">목표 자세히 →</a>') +
+      '<div class="panel jpanel bp">' + bpStrip() + journeyChart(now) + stageCard(now.stage, now, true) + '</div></section>';
     return '<section>' + head("", "나의 PT 여정", "함께 가는 12개월", '<a class="more" href="#goal">목표 자세히 →</a>') +
       '<div class="panel jpanel">' + journeyChart(now) + stageCard(now.stage, now, true) + '</div></section>';
   }
   function renderGoal() {
     var now = journeyNow();
     var h = '<div class="hero"><div class="hero-main"><div class="hero-l"><div class="eyebrow">MY GOAL <b>· 나의 목표</b></div>' +
-      '<h1>' + esc(M.goal || "나의 목표") + '</h1><div class="en">' + esc(M.name) + ' 회원님 · 기초 → 변화 → 자립, 3단계로 함께 가요</div>' +
+      '<h1>' + esc(M.goal || "나의 목표") + '</h1><div class="en">' + esc(M.name) + ' 회원님 · ' + (BP ? '기초 → 벌크 → 컷팅, 바프 촬영까지 함께 가요' : '기초 → 변화 → 자립, 3단계로 함께 가요') + '</div>' +
       '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 장동욱 트레이너</span></div></div></div>' +
-      '<div class="keypoint"><small>KEY POINT</small><p>혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!</p></div></div>';
+      '<div class="keypoint"><small>KEY POINT</small><p>' + (BP ? '목표는 하나, 바프 촬영날! 그 의지라면 충분해요. 단계마다 함께 넘어가요!' : '혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!') + '</p></div></div>';
     if (!now) {
       return h + '<section>' + head("01", "출석률", "얼마나 꾸준히 나왔는지 봐요") + attGauge() + '</section>' +
         '<section>' + head("02", "출석 달력", "운동하는 날을 채워봐요") + attCalendar() + '</section>' + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
     }
     h += '<section>' + head("01", "출석률", "얼마나 꾸준히 나왔는지 봐요") + attGauge() + '</section>';
     h += '<section>' + head("02", "출석 달력", "운동하는 날을 채워봐요") + attCalendar() + '</section>';
-    h += '<section>' + head("03", "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel">' + journeyChart(now) + '</div></section>';
-    h += '<section>' + head("04", "단계별 목표", "단계마다 하는 것이 달라요") + '<div class="jlist">' +
-      STAGES.map(function (st) { return stageCard(st, now, false); }).join("") + '</div></section>';
+    h += '<section>' + head("03", BP ? "바프까지 12개월" : "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel' + (BP ? ' bp">' + bpStrip() : '">') + journeyChart(now) + '</div></section>';
+    h += '<section>' + head("04", "단계별 목표", BP ? "기초 → 벌크 → 컷팅" : "단계마다 하는 것이 달라요") + '<div class="jlist' + (BP ? ' bp' : '') + '">' +
+      JST.map(function (st) { return stageCard(st, now, false); }).join("") + '</div></section>';
     return h + remember();
   }
 

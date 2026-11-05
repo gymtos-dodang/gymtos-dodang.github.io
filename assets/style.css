@@ -312,6 +312,25 @@ section { display: flex; flex-direction: column; gap: 14px; }
 .jprog { height: 8px; background: var(--paper); border-radius: 99px; overflow: hidden; }
 .jprog div { height: 100%; background: var(--key); border-radius: 99px; }
 .jleft { margin: -4px 0 0; font-size: 12.5px; font-weight: 700; color: var(--key); }
+/* 바디프로필 여정 (journey.mode "bodyprofile") — 진한 네이비 + 금색 */
+.jpanel.bp { background: linear-gradient(160deg, #22406F 0%, #17294B 55%, #0F1D38 100%); color: #fff; box-shadow: inset 0 0 0 1.5px rgba(232, 194, 90, .35); }
+.bp-strip { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, .14); }
+.bp-tag { font-size: 10.5px; font-weight: 900; letter-spacing: .14em; color: #17294B; background: var(--gold-line); padding: 0 9px; border-radius: 99px; height: 22px; display: inline-flex; align-items: center; line-height: 1; }
+.bp-strip b { font-size: 16px; font-weight: 900; color: var(--gold-line); }
+.bp-strip small { font-size: 12px; color: rgba(255, 255, 255, .62); margin-left: auto; }
+.bp-st { font-size: 10.5px; font-weight: 700; fill: rgba(255, 255, 255, .5); font-family: var(--font); }
+.bp-st.cur { fill: var(--gold-line); }
+.bp-x { font-size: 10px; fill: rgba(255, 255, 255, .55); font-family: var(--font); font-variant-numeric: tabular-nums; }
+.bp-note { font-size: 10px; font-weight: 700; fill: #fff; font-family: var(--font); opacity: .85; }
+.bp-dd { font-size: 11px; font-weight: 900; fill: var(--gold-line); font-family: var(--font); letter-spacing: .06em; }
+.bp-legend { display: flex; gap: 16px; margin-top: 6px; font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, .8); }
+.bp-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.bp-legend i { display: inline-block; width: 20px; height: 0; border-top: 3.5px solid var(--gold-line); border-radius: 2px; }
+.bp-legend i.lg-f { border-top: 3px dotted var(--dot); }
+.bp-cap { margin: 4px 0 0; font-size: 12px; color: rgba(255, 255, 255, .6); line-height: 1.5; }
+.jpanel.bp .jcard { background: rgba(255, 255, 255, .96); color: var(--ink); }
+.jpanel.bp .jcard.cur, .jlist.bp .jcard.cur { box-shadow: inset 0 0 0 2px var(--gold-line); }
+.jlist.bp .jcard.cur .jno, .jpanel.bp .jcard.cur .jno { background: var(--gold); }
 .tabs a { font-size: 11px; }
 .tabs svg { width: 23px; height: 23px; }
 
