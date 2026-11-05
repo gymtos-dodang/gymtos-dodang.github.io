@@ -87,11 +87,14 @@
   var TABS = [
     ["home", "홈", '<path d="M3.5 10.5 12 4l8.5 6.5V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z" stroke-linejoin="round"/>'],
     ["goal", "목표", '<path d="M5 21V4" stroke-linecap="round"/><path d="M5 4.5h12.5l-2.5 4 2.5 4H5" stroke-linejoin="round"/>'],
+    ["body", "몸변화", '<path d="M4 18l5-5.5 4 3L20 8" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.5 8H20v4.5" stroke-linecap="round" stroke-linejoin="round"/>'],
     ["routine", "루틴", '<path d="M6.5 8v8M17.5 8v8M3.5 10v4M20.5 10v4M6.5 12h11" stroke-linecap="round"/>'],
     ["forms", "복습지", '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z" fill="currentColor"/>'],
     ["diet", "식단", '<circle cx="13" cy="13" r="6.5"/><path d="M4 4v6M6.5 4v6M4 7h2.5M5.2 10v10" stroke-linecap="round"/>'],
     ["notice", "공지", '<path d="M4 10v4h3l6 4V6L7 10z" stroke-linejoin="round"/><path d="M16.5 9.5a3.5 3.5 0 0 1 0 5M19 7a7 7 0 0 1 0 10" stroke-linecap="round"/>']
   ];
+  /* 2026-11-06 몸변화 탭 (인바디) — 그룹 PT 페이지(이름에 ·)·inbody:false 회원은 탭 없음 */
+  if (/·/.test(M.name || "") || M.inbody === false) TABS = TABS.filter(function (t) { return t[0] !== "body"; });
   var COACH_MODE = false;
   /* 선생님 페이지에서 들어왔으면 위 막대에 "← 회원 목록" 버튼 (선생님 휴대폰에만 보임) */
   try {
@@ -316,8 +319,7 @@
       '<h1>' + esc(M.goal || "나의 목표") + '</h1><div class="en">' + esc(M.name) + ' 회원님 · ' + (BP ? '기초 → 벌크 → 컷팅, 바프 촬영까지 함께 가요' : '기초 → 변화 → 자립, 3단계로 함께 가요') + '</div>' +
       '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 장동욱 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + (BP ? '목표는 하나, 바프 촬영날! 그 의지라면 충분해요. 단계마다 함께 넘어가요!' : '혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!') + '</p></div></div>';
-    var ibSec = IB_ON ? '<section id="inbody">' + head("03", "몸 변화 기록", "인바디로 지난달과 비교해요") + ibPanel() + '</section>' : "";
-    var n4 = IB_ON ? "04" : "03", n5 = IB_ON ? "05" : "04";
+    var ibSec = "", n4 = "03", n5 = "04";   /* 몸 변화 기록은 2026-11-06 '몸변화' 탭(#body)으로 이동 */
     if (!now) {
       return h + '<section>' + head("01", "출석률", "얼마나 꾸준히 나왔는지 봐요") + attGauge() + '</section>' +
         '<section>' + head("02", "출석 달력", "운동하는 날을 채워봐요") + attCalendar() + '</section>' + ibSec + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
@@ -588,10 +590,11 @@
       !p.prev ? "첫 인바디 기록 완료! 다음 달에 비교해 드려요" :
       "지난달보다 골격근 " + (p.cur.smm - p.prev.smm >= 0 ? "+" : "−") + ibFmt(Math.abs(p.cur.smm - p.prev.smm)) + "kg · 체지방 " +
         (p.cur.bfm - p.prev.bfm >= 0 ? "+" : "−") + ibFmt(Math.abs(p.cur.bfm - p.prev.bfm)) + "kg";
-    return '<a class="ibstrip" href="#goal"><span class="ibs-tag">InBody</span><span class="ibs-t">' + txt + '</span><span class="ibs-go" aria-hidden="true">›</span></a>';
+    return '<a class="ibstrip" href="#body"><span class="ibs-tag">InBody</span><span class="ibs-t">' + txt + '</span><span class="ibs-go" aria-hidden="true">›</span></a>';
   }
   function ibRefresh() {
     var b = document.querySelector(".ibpanel"); if (b) { b.outerHTML = ibPanel(); setupIb(); }
+    var tr = document.querySelector(".ibtrend"); if (tr) tr.outerHTML = ibTrend();
     var s = document.querySelector(".ibstrip, .ibstrip-slot");
     if (s) { var h = ibHomeStrip(); s.outerHTML = h || '<span class="ibstrip-slot"></span>'; }
     alignText(document);
@@ -770,6 +773,45 @@
           .catch(function () { b.disabled = false; b.classList.remove("arm"); b.textContent = "삭제"; attToast("인터넷 연결을 확인하고 다시 눌러주세요"); });
       });
     });
+  }
+
+  /* 몸변화 탭 (#body) — 2026-11-06 목표 탭에서 따로 뺌 */
+  function ibSpark(list, k, good) {
+    var W = 230, H = 46, n = list.length, vs = list.map(function (r) { return r[k]; });
+    var lo = Math.min.apply(null, vs), hi = Math.max.apply(null, vs), pad = Math.max(0.6, (hi - lo) * 0.25);
+    lo -= pad; hi += pad;
+    var X = function (i) { return n === 1 ? W / 2 : 8 + i * (W - 16) / (n - 1); }, Y = function (v) { return 6 + (hi - v) / (hi - lo) * (H - 12); };
+    var pts = list.map(function (r, i) { return X(i).toFixed(1) + "," + Y(r[k]).toFixed(1); }).join(" ");
+    var dots = list.map(function (r, i) {
+      var last = i === n - 1;
+      return '<circle cx="' + X(i).toFixed(1) + '" cy="' + Y(r[k]).toFixed(1) + '" r="' + (last ? 4.5 : 3) + '" fill="' + (last ? "var(--key)" : "var(--primary)") + '"' + (last ? ' stroke="#fff" stroke-width="2"' : '') + '/>';
+    }).join("");
+    var d = vs[n - 1] - vs[0], cls = Math.abs(d) < 0.05 || !good ? "same" : (d > 0) === (good > 0) ? "up" : "down";
+    return { svg: '<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true"><polyline points="' + pts + '" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/>' + dots + '</svg>',
+             d: d, cls: cls };
+  }
+  function ibTrend() {
+    var a = (ibData || []).slice(-12);
+    if (a.length < 2) return '<div class="ibtrend panel ib-trend-empty"><p>기록이 2개 이상 쌓이면 여기에 흐름 그래프가 나와요</p></div>';
+    var rows = [["smm", "골격근량", "kg", 1], ["bfm", "체지방량", "kg", -1], ["pbf", "체지방률", "%", -1], ["w", "체중", "kg", 0]].map(function (r) {
+      var sp = ibSpark(a, r[0], r[3]);
+      return '<div class="ibt-row"><div class="ibt-l"><b>' + r[1] + '</b><small>' + ibFmt(a[a.length - 1][r[0]]) + r[2] + '</small></div>' + sp.svg +
+        '<span class="ib-d ' + sp.cls + '">' + (Math.abs(sp.d) < 0.05 ? "그대로" : (sp.d > 0 ? "▲ +" : "▼ −") + ibFmt(Math.abs(sp.d)) + r[2]) + '</span></div>';
+    }).join("");
+    return '<div class="ibtrend panel"><p class="ibt-when">' + a[0].d.replace(/-/g, ". ") + ' → ' + a[a.length - 1].d.replace(/-/g, ". ") + ' · 기록 ' + a.length + '개</p>' + rows + '</div>';
+  }
+  function renderBody() {
+    var h = '<div class="hero"><div class="hero-main"><div class="hero-l"><div class="eyebrow">MY BODY <b>· 몸 변화 기록</b></div>' +
+      '<h1>몸 변화 기록</h1><div class="en">' + esc(M.name) + ' 회원님 · 인바디로 지난달과 비교해요</div>' +
+      '<div class="who"><strong>한 달에 한 번</strong><span>담당 장동욱 트레이너</span></div></div></div>' +
+      '<div class="keypoint"><small>KEY POINT</small><p>숫자는 한 달에 한 번! 같은 시간 · 같은 조건으로 재요</p></div></div>';
+    h += '<section>' + head("01", "지난달 vs 이번 달", "결과지 찍어 올리면 비교해 드려요") + ibPanel() + '</section>';
+    h += '<section>' + head("02", "한눈에 보는 흐름", "처음 기록부터 지금까지") + ibTrend() + '</section>';
+    h += '<section>' + head("03", "정확하게 재는 법", "조건이 같아야 비교가 정확해요") + '<div class="panel ibtips"><ul>' +
+      ['아침 공복, 화장실 다녀온 뒤에 재요', '운동 · 샤워 · 사우나 직후는 피해요', '양말 벗고, 시계 · 반지 같은 금속은 빼요', '매번 같은 시간대, 같은 기계로 재요', '결과지는 평평하게 놓고 위에서 정면으로 찍어요'].map(function (x) {
+        return '<li>' + esc(x) + '</li>';
+      }).join("") + '</ul></div></section>';
+    return h + remember();
   }
 
   /* ---------------- 홈 */
@@ -1193,6 +1235,7 @@
     else if (hsh === "diet") { html = renderDiet(); tab = "diet"; }
     else if (hsh === "notice") { html = renderNotice(); tab = "notice"; }
     else if (hsh === "goal" || hsh === "journey") { html = renderGoal(); tab = "goal"; }
+    else if ((hsh === "body" || hsh === "inbody") && IB_ON) { html = renderBody(); tab = "body"; }
     else { html = renderHome(); }
     var wasRoutine = view.getAttribute("data-tab") === "routine";
     view.innerHTML = html;
