@@ -35,7 +35,8 @@ html, body { margin: 0; height: 100%; background: var(--navy2); color: var(--ink
   padding: calc(10px + env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) 10px max(14px, env(safe-area-inset-left, 0px)); pointer-events: none; }
 .top > * { pointer-events: auto; }
 .tbtn { font: inherit; font-size: 13px; font-weight: 700; border: 0; border-radius: 99px; padding: 7px 12px; cursor: pointer; text-decoration: none; background: rgba(255, 255, 255, .9); color: var(--navy); box-shadow: 0 1px 4px rgba(15, 22, 40, .12); }
-.tbtn.ghost { font-size: 12px; padding: 7px 10px; }
+.tbtn.ic { width: 34px; height: 34px; padding: 0; display: grid; place-items: center; }
+.tbtn.ic svg { width: 17px; height: 17px; }
 .top .cnt { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--faint); font-variant-numeric: tabular-nums; background: rgba(255, 255, 255, .85); border-radius: 99px; padding: 5px 10px; }
 .bot { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; align-items: center; justify-content: center; gap: 14px;
   padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(14px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); pointer-events: none; }
@@ -194,7 +195,7 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
 <body>
 <div class="top">
   <a class="tbtn" href="./" id="back">← 선생님 페이지</a>
-  <button class="tbtn ghost" type="button" id="editBtn" aria-label="숫자·문구 고치기">✎ 고치기</button>
+  <button class="tbtn ic" type="button" id="editBtn" aria-label="숫자·문구 고치기" title="숫자·문구 고치기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg></button>
   <span class="cnt" id="cnt">1 / 6</span>
 </div>
 
