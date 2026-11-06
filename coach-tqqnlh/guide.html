@@ -177,6 +177,68 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
 .endcta b { font-size: 20px; line-height: 1.4; } .endcta span { font-size: 13px; color: var(--pinkT); }
 .loading { color: var(--faint); font-size: 13px; text-align: center; padding: 14px 0; margin: 0; }
 
+/* 트레이너 소개 (2026-11-06 소개 PPT를 안내서에 합침) */
+.pg.dark .kick .n { background: var(--pink); }
+.pf-hero { position: relative; border-radius: 20px; overflow: hidden; height: 300px; flex: none; background: #14161c; }
+.pf-hero img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; display: block; }
+.pf-hero div { position: absolute; left: 0; right: 0; bottom: 0; padding: 40px 16px 14px; background: linear-gradient(180deg, rgba(23, 41, 75, 0), rgba(23, 41, 75, .92)); display: flex; flex-direction: column; gap: 2px; }
+.pf-hero small { font-size: 11px; font-weight: 700; letter-spacing: .16em; color: var(--pink2); }
+.pf-hero b { font-size: 26px; font-weight: 900; } .pf-hero span { font-size: 13px; color: #D3DCEE; }
+.pg.dark h2 { color: #fff; }
+.quals { display: flex; flex-direction: column; gap: 8px; }
+.quals div { background: var(--navy2); border-radius: 14px; padding: 12px 14px; border-left: 4px solid var(--muted); }
+.quals div.p { border-left-color: var(--pink2); } .quals div.g { border-left-color: #E3B341; }
+.quals em { font-style: normal; font-size: 12px; font-weight: 700; letter-spacing: .04em; color: var(--muted); }
+.quals div.p em { color: var(--pink2); } .quals div.g em { color: #E3B341; }
+.quals ul { margin: 6px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.quals li { font-size: 14px; line-height: 1.45; color: #E6ECF7; }
+.career { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13.5px; color: var(--muted); }
+.career i { font-style: normal; color: var(--pink2); font-weight: 900; } .career b { color: #fff; }
+
+/* 이런 고민 */
+.chat { display: flex; flex-direction: column; gap: 14px; }
+.chat > div { display: flex; flex-direction: column; gap: 6px; }
+.chat q, .chat p { margin: 0; font-size: 14.5px; line-height: 1.45; padding: 10px 14px; max-width: 82%; }
+.chat q { quotes: none; align-self: flex-start; background: var(--paper); color: var(--ink); border-radius: 18px 18px 18px 4px; box-shadow: 0 1px 3px rgba(31, 56, 100, .08); }
+.chat p { align-self: flex-end; background: var(--pink); color: #fff; border-radius: 18px 18px 4px 18px; }
+.chat p b { color: #fff; }
+
+/* 여정 계단 */
+.stair { position: relative; height: 214px; display: flex; align-items: flex-end; padding: 0 2px; }
+.stair > div { display: flex; flex-direction: column; gap: 1px; padding: 8px 8px; color: #fff; }
+.stair .s1 { flex: 2; height: 74px; background: #DCE3F0; color: var(--navy); border-radius: 12px 0 0 0; }
+.stair .s2 { flex: 5; height: 134px; background: #4C6696; border-radius: 12px 0 0 0; }
+.stair .s3 { flex: 5; height: 194px; background: var(--navy); border-radius: 12px 12px 0 0; }
+.stair small { font-size: 10.5px; font-weight: 700; opacity: .85; } .stair b { font-size: 14px; line-height: 1.3; }
+.stair .s3 em { margin-top: auto; align-self: flex-start; font-style: normal; font-size: 11px; font-weight: 900; color: var(--navy); background: #E3B341; border-radius: 99px; padding: 3px 9px; }
+.stair .tag { position: absolute; font-size: 11px; font-weight: 900; border-radius: 99px; padding: 4px 9px; white-space: nowrap; }
+.stair .t1 { left: 2px; bottom: 82px; background: var(--pink); color: #fff; }
+.stair .t2 { left: 18%; bottom: 142px; background: #fff; color: var(--pink); border: 2px solid var(--pink); }
+.months { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); padding: 6px 2px 0; font-size: 10px; font-weight: 700; color: var(--faint); text-align: center; font-variant-numeric: tabular-nums; }
+.months span:nth-child(-n+2) { color: var(--navy); } .months span:last-child { color: var(--gold); }
+
+/* 실제 변화 */
+.bah { font-size: 13px; font-weight: 700; letter-spacing: .06em; color: var(--pink2); margin: 6px 0 -6px; }
+.ba { position: relative; border-radius: 16px; overflow: hidden; flex: none; }
+.ba img { width: 100%; height: auto; display: block; }
+.ba i { position: absolute; top: 8px; font-style: normal; font-size: 10.5px; font-weight: 900; letter-spacing: .1em; border-radius: 99px; padding: 3px 9px; }
+.ba i.b { left: 8px; background: rgba(255, 255, 255, .92); color: var(--navy); } .ba i.a { left: calc(50% + 8px); background: var(--pink); color: #fff; }
+.ibst { background: var(--navy2); border-radius: 16px; padding: 12px; display: flex; gap: 12px; align-items: center; }
+.ibst img { width: 46%; border-radius: 10px; display: block; flex: none; }
+.ibst div { display: flex; flex-direction: column; gap: 2px; }
+.ibst small { font-size: 11.5px; color: var(--muted); } .ibst b { font-size: 24px; font-weight: 900; color: var(--pink2); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.ibst b s { text-decoration: none; color: #8796B5; } .ibst span { font-size: 13px; font-weight: 700; color: #fff; }
+
+/* 후기 */
+.stars { font-size: 18px; letter-spacing: 2px; color: var(--pink); }
+.quotes { display: flex; flex-direction: column; gap: 8px; }
+.quotes p { margin: 0; background: var(--paper); border-radius: 14px; padding: 12px 14px; font-size: 14.5px; font-weight: 700; line-height: 1.45; color: var(--navy); border-left: 4px solid var(--pink); }
+.rvs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.rvs button { border: 0; padding: 0; background: var(--paper); border-radius: 12px; overflow: hidden; cursor: zoom-in; box-shadow: 0 2px 8px rgba(31, 56, 100, .1); }
+.rvs img { width: 100%; height: auto; display: block; }
+.zoom { position: fixed; inset: 0; z-index: 50; background: rgba(15, 22, 40, .88); display: flex; align-items: center; justify-content: center; padding: 24px; cursor: zoom-out; }
+.zoom img { max-width: 100%; max-height: 100%; border-radius: 12px; }
+
 /* 편집 창 (선생님만) */
 .sheet { position: fixed; inset: 0; z-index: 40; display: flex; align-items: flex-end; justify-content: center; background: rgba(15, 22, 40, .5); }
 .sheet form { width: 100%; max-width: 480px; background: #fff; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; gap: 12px;
@@ -196,7 +258,7 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
 <div class="top">
   <a class="tbtn" href="./" id="back">← 선생님 페이지</a>
   <button class="tbtn ic" type="button" id="editBtn" aria-label="숫자·문구 고치기" title="숫자·문구 고치기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg></button>
-  <span class="cnt" id="cnt">1 / 6</span>
+  <span class="cnt" id="cnt">1 / 10</span>
 </div>
 
 <main class="deck" id="deck">
@@ -221,9 +283,36 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
     </div>
   </div></section>
 
-  <!-- 2 관리 방식 -->
-  <section class="pg" aria-label="2쪽 관리 방식"><div class="in">
-    <div class="kick"><span class="n">01</span><span class="t">관리 방식</span></div>
+  <!-- 2 트레이너 소개 -->
+  <section class="pg dark" aria-label="2쪽 트레이너 소개"><div class="in">
+    <div class="kick"><span class="n">01</span><span class="t">트레이너 소개</span></div>
+    <div class="pf-hero"><img src="guide/trainer.jpg" alt="장동욱 트레이너" loading="lazy"><div><small>PERSONAL TRAINER</small><b>장동욱 트레이너</b><span>FISAF 국제트레이너 · RTS 재활트레이닝전문가</span></div></div>
+    <h2>운동 · 재활 · 영양까지<br>공부했어요</h2>
+    <div class="quals">
+      <div><em>트레이닝</em><ul><li><b>FISAF 국제트레이너 2급</b></li><li>케틀벨 트레이닝 교육과정 수료</li></ul></div>
+      <div class="p"><em>재활 · 통증 관리</em><ul><li><b>한국인재교육원 RTS 재활트레이닝전문가 LEVEL.1 · 2 수료</b></li><li>마인드바디 아카데미 red재활기능운동 과정 수료</li><li>디스크 케어 전문 과정 수료</li><li>스포츠 테이핑 수료</li></ul></div>
+      <div class="g"><em>몸 이론</em><ul><li>스포츠 영양학 교육 이수</li><li>스포츠 생리학 교육 이수</li></ul></div>
+    </div>
+    <div class="career"><span>전) 짐토스 답십리점</span><i>→</i><b>현) 짐토스24 도당점 트레이너</b></div>
+  </div></section>
+
+  <!-- 3 이런 고민 -->
+  <section class="pg" aria-label="3쪽 이런 고민"><div class="in">
+    <div class="kick"><span class="n">02</span><span class="t">이런 고민</span></div>
+    <h2>혹시 이런 고민<br>있으세요?</h2>
+    <div class="chat">
+      <div><q>헬스장 가면 뭘 해야 할지 모르겠어요</q><p>요일별 <b>루틴일지</b>에 종목·세트·무게까지 다 적어 드려요</p></div>
+      <div><q>이 자세가 맞는 건지 늘 헷갈려요</q><p>수업 영상으로 <b>자세 복습지</b>를 만들어 언제든 다시 봐요</p></div>
+      <div><q>혼자 하면 늘 작심삼일이에요</q><p><b>출석 체크</b> 한 번이면 선생님이 매일 확인해요</p></div>
+      <div><q>열심히 하는데 변화가 안 보여요</q><p>달마다 <b>인바디</b>를 올려 지난달과 숫자로 비교해요</p></div>
+      <div><q>허리·무릎이 아파서 운동이 겁나요</q><p><b>재활 트레이닝</b>을 공부한 선생님이 아프지 않은 동작부터 잡아 드려요</p></div>
+    </div>
+    <p class="swipe">어떻게 하는지 넘겨서 볼게요 →</p>
+  </div></section>
+
+  <!-- 4 관리 방식 -->
+  <section class="pg" aria-label="4쪽 관리 방식"><div class="in">
+    <div class="kick"><span class="n">03</span><span class="t">관리 방식</span></div>
     <h2>회원님 한 분 한 분,<br>이렇게 관리해요</h2>
     <p class="lead">수업 시간만이 아니라, 혼자 운동하는 날까지</p>
     <div class="feat">
@@ -237,9 +326,9 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
     <div class="cta"><small>KEY POINT</small><b>이 모든 게 회원님 폰 하나에<br>나만의 PT 노트로 들어가요</b></div>
   </div></section>
 
-  <!-- 3 PT 노트 미리보기 -->
-  <section class="pg blue" aria-label="3쪽 나만의 PT 노트"><div class="in">
-    <div class="kick"><span class="n">02</span><span class="t">나만의 PT 노트</span></div>
+  <!-- 5 PT 노트 미리보기 -->
+  <section class="pg blue" aria-label="5쪽 나만의 PT 노트"><div class="in">
+    <div class="kick"><span class="n">04</span><span class="t">나만의 PT 노트</span></div>
     <h2>등록하면 회원님 폰에<br>이런 노트가 생겨요</h2>
     <div class="phone" aria-hidden="true"><div class="scr">
       <div class="hd">GYMTOS<small>MY PT NOTE</small></div>
@@ -263,22 +352,21 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
     <p class="note3">앱 설치 없이 카톡으로 받은 링크 하나면 끝.<br><b>상담 당일 회원님 전용 노트가 만들어져요</b></p>
   </div></section>
 
-  <!-- 4 12개월 여정 -->
-  <section class="pg" aria-label="4쪽 12개월 여정"><div class="in">
-    <div class="kick"><span class="n">03</span><span class="t">PT 여정</span></div>
-    <h2>12개월,<br>끝까지 같이 갑니다</h2>
+  <!-- 6 12개월 여정 -->
+  <section class="pg" aria-label="6쪽 12개월 여정"><div class="in">
+    <div class="kick"><span class="n">05</span><span class="t">PT 여정</span></div>
+    <h2>12개월,<br>계단처럼 한 단계씩</h2>
     <p class="lead">처음엔 천천히, 어느 순간 몸이 확 바뀌어요</p>
-    <div class="card jsvg"><svg viewBox="0 0 340 182" role="img" aria-label="12개월 PT 여정 그래프: 1단계 기초, 2단계 변화, 3단계 자립">
-      <rect x="26" y="22" width="50" height="134" fill="#1F3864" opacity=".05"/><rect x="76" y="22" width="125" height="134" fill="#1F3864" opacity=".1"/><rect x="201" y="22" width="125" height="134" fill="#1F3864" opacity=".07"/>
-      <g font-family="Noto Sans KR, sans-serif" font-weight="700" font-size="10.5" text-anchor="middle"><text x="51" y="15" fill="#5B6170">1단계 기초</text><text x="138" y="15" fill="#1F3864">2단계 변화</text><text x="263" y="15" fill="#5B6170">3단계 자립</text></g>
-      <line x1="26" y1="156" x2="326" y2="156" stroke="#D5DCE8" stroke-width="1.5"/>
-      <g font-family="Noto Sans KR, sans-serif" font-size="10" fill="#8A90A0" text-anchor="middle"><text x="26" y="174">시작</text><text x="76" y="174">2개월</text><text x="201" y="174">7개월</text><text x="326" y="174">12개월</text></g>
-      <path d="M26 147 C 80 146, 108 124, 133 98 C 160 70, 205 50, 326 47" fill="none" stroke="#1F3864" stroke-width="4" stroke-linecap="round"/>
-      <circle cx="26" cy="147" r="6.5" fill="#DB4C8C" stroke="#fff" stroke-width="2.5"/>
-      <rect x="34" y="114" width="78" height="22" rx="11" fill="#DB4C8C"/><text x="73" y="129" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff" font-family="Noto Sans KR, sans-serif">등록하는 날</text>
-      <rect x="112" y="64" width="98" height="22" rx="11" fill="#fff" stroke="#1F3864" stroke-width="1.5"/><text x="161" y="79" text-anchor="middle" font-size="10" font-weight="700" fill="#1F3864" font-family="Noto Sans KR, sans-serif">몸이 바뀌는 순간</text>
-      <line x1="326" y1="45" x2="326" y2="25" stroke="#A87508" stroke-width="2"/><path d="M326 25 L339 29.5 L326 34 Z" fill="#A87508"/>
-    </svg></div>
+    <div class="card jsvg" role="img" aria-label="12개월 PT 여정 계단: 1단계 기초 1~2개월, 2단계 몸이 바뀌는 시기 2~7개월, 3단계 혼자서도 하는 몸 7~12개월">
+      <div class="stair">
+        <div class="s1"><small>1단계</small><b>기초</b></div>
+        <div class="s2"><small>2단계</small><b>몸이 바뀌는 시기</b></div>
+        <div class="s3"><small>3단계</small><b>혼자서도 하는 몸</b><em>12개월 · 졸업 또는 다음 목표</em></div>
+        <span class="tag t1">오늘 시작!</span>
+        <span class="tag t2">어느 순간, 몸이 확!</span>
+      </div>
+      <div class="months" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div>
+    </div>
     <div class="stg">
       <div><i>1</i><p style="margin:0"><b>기초 다지기 <small>1~2개월</small></b><span>머신 사용법 · 스트레칭 습관 · 내 근육 이해하기</span></p></div>
       <div class="now"><i>2</i><p style="margin:0"><b>몸이 바뀌는 시기 <small>2~7개월</small></b><span>자신감이 붙고 어느 순간 몸이 달라져요 · 머신 투어 · 반복 숙달</span></p></div>
@@ -286,9 +374,42 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
     </div>
   </div></section>
 
-  <!-- 5 첫 달 -->
-  <section class="pg" aria-label="5쪽 첫 달"><div class="in">
-    <div class="kick"><span class="n">04</span><span class="t">첫 달</span></div>
+  <!-- 7 실제 변화 -->
+  <section class="pg dark" aria-label="7쪽 실제 변화"><div class="in">
+    <div class="kick"><span class="n">06</span><span class="t">BEFORE · AFTER</span></div>
+    <h2>회원님들의<br>실제 변화</h2>
+    <div class="bah">남성 회원님</div>
+    <div class="ba"><img src="guide/ba-m1.jpg" alt="남성 회원님 비포 애프터 사진" loading="lazy"><i class="b">BEFORE</i><i class="a">AFTER</i></div>
+    <div class="ba"><img src="guide/ba-m2.jpg" alt="남성 회원님 비포 애프터 사진" loading="lazy"><i class="b">BEFORE</i><i class="a">AFTER</i></div>
+    <div class="ibst"><img src="guide/inbody.jpg" alt="인바디 체지방률 기록 그래프: 4월 20.5%에서 6월 13.3%로" loading="lazy"><div><small>인바디 체지방률 · 약 11주</small><b><s>20.5</s> → 13.3%</b><span>체지방률 7.2%p 감소</span></div></div>
+    <div class="bah">여성 회원님</div>
+    <div class="ba"><img src="guide/ba-w1.jpg" alt="여성 회원님 전신 비포 애프터 사진, 얼굴은 가림" loading="lazy"><i class="b">BEFORE</i><i class="a">AFTER</i></div>
+    <div class="ba"><img src="guide/ba-w2.jpg" alt="여성 회원님 힙 라인 비포 애프터 뒷모습" loading="lazy"><i class="b">BEFORE</i><i class="a">AFTER</i></div>
+  </div></section>
+
+  <!-- 8 후기 -->
+  <section class="pg blue" aria-label="8쪽 회원님 후기"><div class="in">
+    <div class="kick"><span class="n">07</span><span class="t">회원님 후기</span></div>
+    <h2>먼저 시작한<br>회원님들의 한마디</h2>
+    <div class="stars" aria-label="별점 5점">★★★★★</div>
+    <div class="quotes">
+      <p>“지금은 운동하는 하루가 기다려 지내요”</p>
+      <p>“근육량은 늘고 체지방은 줄었어요”</p>
+      <p>“자세 하나하나, 동작 하나하나까지 디테일하게”</p>
+    </div>
+    <div class="rvs" id="rvs">
+      <button type="button"><img src="guide/rv017.jpg" alt="회원님 후기: 처음 접하는 운동이었는데 지금은 운동하는 하루가 기다려 지내요" loading="lazy"></button>
+      <button type="button"><img src="guide/rv019.jpg" alt="회원님 후기: 운동을 즐기면서 할 수 있게 도와주시는 분, 근육량은 늘고 체지방은 줄었어요" loading="lazy"></button>
+      <button type="button"><img src="guide/rv023.jpg" alt="회원님 후기: 자세 하나하나 동작 하나하나까지 디테일하게 잡아 주시고 식단까지" loading="lazy"></button>
+      <button type="button"><img src="guide/rv020.jpg" alt="회원님 후기: 궁금했던 점, 부족했던 점 꼼꼼하고 친절하게 봐주십니다" loading="lazy"></button>
+      <button type="button"><img src="guide/rv026.jpg" alt="회원님 후기: 포인트를 정확하게 찾아 자극을 느낄 수 있게 알려주십니다" loading="lazy"></button>
+    </div>
+    <p class="swipe">후기를 누르면 크게 볼 수 있어요</p>
+  </div></section>
+
+  <!-- 9 첫 달 -->
+  <section class="pg" aria-label="9쪽 첫 달"><div class="in">
+    <div class="kick"><span class="n">08</span><span class="t">첫 달</span></div>
     <h2>첫 달은<br>이렇게 시작해요</h2>
     <div class="card tl">
       <div class="p"><div class="rail"><i></i><u></u></div><div class="tx"><small>상담 당일</small><b>인바디 · 목표 정하기</b><span>회원님 전용 PT 노트 주소를 카톡으로 보내드려요</span></div></div>
@@ -304,8 +425,8 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
     </div>
   </div></section>
 
-  <!-- 6 지금 관리 현황 -->
-  <section class="pg" aria-label="6쪽 지금 관리 현황"><div class="in">
+  <!-- 10 지금 관리 현황 -->
+  <section class="pg" aria-label="10쪽 지금 관리 현황"><div class="in">
     <div class="st-head">
       <span class="live"><i></i>실제 관리 기록 · 자동 업데이트</span>
       <h2>지금 이렇게<br>관리하고 있어요</h2>
@@ -491,6 +612,18 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
     setTimeout(function () { w.querySelector("#eTotal").focus(); }, 50);
   }
   $("editBtn").addEventListener("click", openEdit);
+
+  /* ---------- 후기 크게 보기 */
+  $("rvs").addEventListener("click", function (e) {
+    var img = e.target.closest("button") && e.target.closest("button").querySelector("img");
+    if (!img) return;
+    var z = document.createElement("div");
+    z.className = "zoom"; z.setAttribute("role", "dialog"); z.setAttribute("aria-label", "후기 크게 보기");
+    z.innerHTML = '<img src="' + img.getAttribute("src") + '" alt="' + esc(img.alt) + '">';
+    z.addEventListener("click", function () { z.remove(); });
+    document.body.appendChild(z);
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") { var z = document.querySelector(".zoom"); if (z) z.remove(); } });
 })();
 </script>
 </body>
