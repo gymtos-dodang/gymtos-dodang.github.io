@@ -101,6 +101,9 @@
   var DEMO = null;
   try { DEMO = sessionStorage.getItem("ptdemo"); } catch (e) {}
   if (DEMO && !/^\/coach-[a-z0-9]+\/guide\.html#p\d+$/.test(DEMO)) DEMO = null;
+  /* 소개 슬라이드 링크(주소 끝 ?demo)로 열어도 이름을 가림 — 돌아가기 버튼은 없음 */
+  var DEMO_BACK = DEMO;
+  if (!DEMO && /[?&]demo\b/.test(location.search)) DEMO = "link";
   if (DEMO) {
     var REAL = String(M.name || "").split("·").map(function (p) { return p.trim(); }).filter(function (p) { return p.length > 1; });
     var maskName = function (p) { return p.length === 2 ? p.charAt(0) + "O" : p.charAt(0) + new Array(p.length - 1).join("O") + p.charAt(p.length - 1); };
@@ -126,9 +129,9 @@
     var coachPath = sessionStorage.getItem("ptcoach") || localStorage.getItem("ptcoach");
     if (coachPath) COACH_MODE = true;
     var barIn = document.querySelector(".bar-in");
-    if (DEMO && barIn) {
+    if (DEMO_BACK && barIn) {
       var gb = document.createElement("a");
-      gb.href = DEMO; gb.className = "coachback"; gb.textContent = "← PT 안내서";
+      gb.href = DEMO_BACK; gb.className = "coachback"; gb.textContent = "← PT 안내서";
       barIn.insertBefore(gb, barIn.children[1] || null);
     } else if (coachPath && barIn && /^\/coach-[a-z0-9]+\/$/.test(coachPath)) {
       var cb = document.createElement("a");
