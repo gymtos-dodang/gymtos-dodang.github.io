@@ -8,6 +8,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 6", title: "어깨 복습지 2개가 올라왔어요", link: "forms",
+      body: "스탠딩 사이드 레터럴 레이즈 머신 · 바이킹 프레스! 넓은 어깨가 바프 V라인을 만들어요. 금요일 루틴의 레터럴 레이즈 머신에서도 바로 열려요." },
     { date: "2026. 11. 6", title: "자세 복습지 5개가 올라왔어요", link: "forms",
       body: "펙덱 플라이 · 인클라인 덤벨 프레스 · 플랫 덤벨 프레스 · 덤벨 숄더 프레스 · 케이블 풀오버! 내 영상으로 자세를 다시 보고, 운동 전에 KEY POINT 한 번씩 읽어봐요. 루틴 탭 종목에서도 바로 열려요." },
     { date: "2026. 11. 5", title: "바프 벌크업 식단이 올라왔어요", link: "diet",
@@ -20,6 +22,60 @@ window.MEMBER = {
 
   /* 자세 복습지 (최신이 위) */
   forms: [
+    {
+      id: "lateral-raise-machine",
+      dir: "media/form-lateral-raise-machine/",
+      date: "2026. 11. 6 (금)",
+      exercise: "스탠딩 사이드 레터럴 레이즈 머신",
+      exercise_en: "Standing Lateral Raise Machine",
+      part: "어깨",
+      targets: ["측면 삼각근 (옆 어깨)", "전면 삼각근 · 상부 승모근"],
+      benefit: "옆 어깨를 동그랗게 키워서 어깨가 넓어 보이게 해줘요. 바프 사진에서 V라인을 만드는 핵심 종목이에요",
+      key_point: "손이 아니라 팔꿈치로 들고, 어깨 높이에서 멈춘다!",
+      good_points: [
+        { title: "위에서 잠깐 멈췄어요", desc: "어깨 높이에서 1초 가까이 버텨서 옆 어깨가 꽉 수축됐어요" },
+        { title: "어깨 높이까지만 들었어요", desc: "팔을 너무 높이 올리지 않아서 승모근이 아니라 어깨에 자극이 갔어요" },
+        { title: "몸통이 흔들리지 않았어요", desc: "서서 하는데도 반동 없이 팔만 움직여서 어깨로만 들었어요" }
+      ],
+      primary_muscles: [{ name: "측면 삼각근", where: "어깨 옆 동그란 부분" }],
+      secondary_muscles: "전면 삼각근 · 상부 승모근",
+      feel_good: "어깨 옆이 타는 듯 뻐근해요",
+      feel_stop: "목·승모근만 뻐근하거나, 어깨 안쪽이 찌릿해요",
+      steps: [
+        { title: "준비", desc: "기구 옆에 바르게 서서 손잡이를 잡아요. 팔꿈치를 살짝 굽히고 어깨는 아래로 내려요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "들어 올리기", desc: "팔꿈치로 옆으로 크게! 어깨 높이까지 들고 위에서 1초 멈춰요", chip: "1~2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "천천히 내리기", desc: "무게에 끌려가지 말고 버티면서 처음 자리까지", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["어깨는 아래로 내린 채 시작", "팔꿈치가 손보다 먼저 올라가기", "어깨 높이에서 1초 멈추기"],
+      dont: ["어깨를 귀 쪽으로 으쓱하기", "몸을 흔들어 반동 쓰기", "팔을 어깨보다 높이 들기"]
+    },
+    {
+      id: "viking-press",
+      dir: "media/form-viking-press/",
+      date: "2026. 11. 6 (금)",
+      exercise: "바이킹 프레스",
+      exercise_en: "Viking Press",
+      part: "어깨",
+      targets: ["삼각근 (앞·옆 어깨)", "삼두근 · 상부 승모근"],
+      benefit: "서서 머리 위로 미는 묵직한 어깨 운동이에요. 어깨 전체 크기를 키우고 몸통 버티는 힘까지 같이 길러줘요",
+      key_point: "배에 힘 꽉! 귀 옆까지 내리고 머리 위로 곧게 민다",
+      good_points: [
+        { title: "머리 위로 끝까지 밀었어요", desc: "매 회 팔을 거의 다 펴서 어깨가 마지막까지 일했어요" },
+        { title: "귀 옆까지 충분히 내렸어요", desc: "손잡이를 귀 높이까지 내려서 어깨를 넓은 범위로 썼어요" },
+        { title: "상체를 곧게 세웠어요", desc: "허리를 젖히지 않고 서 있는 자세 그대로 밀었어요" }
+      ],
+      primary_muscles: [{ name: "삼각근 전면·측면", where: "어깨 앞과 옆" }],
+      secondary_muscles: "삼두근 · 상부 승모근 · 전거근",
+      feel_good: "어깨 앞·옆이 뻐근하고 꽉 차요",
+      feel_stop: "허리가 찌릿하거나, 목만 뻐근해요",
+      steps: [
+        { title: "준비", desc: "발을 골반 너비로 서서 손잡이를 귀 옆에 잡아요. 배에 힘을 주고 갈비뼈를 내려요", chip: "숨 들이마시고 배에 힘", media: "step1.jpg" },
+        { title: "밀어 올리기", desc: "어깨로 밀어 머리 위로 곧게! 맨 위에서 팔꿈치는 살짝 굽힌 채", chip: "1~2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "내리기", desc: "버티면서 귀 옆까지 천천히. 어깨가 늘어나는 걸 느껴요", chip: "2~3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["배에 힘 주고 갈비뼈 내리기", "손잡이는 귀 옆까지 내리기", "무릎은 살짝 풀고 서기"],
+      dont: ["허리를 뒤로 젖혀서 밀기", "무릎 반동으로 밀어 올리기", "어깨를 귀 쪽으로 으쓱하기"]
+    },
     {
       id: "pec-deck",
       dir: "media/form-pec-deck/",
@@ -197,7 +253,7 @@ window.MEMBER = {
       { day: "금", part: "어깨 · 팔", en: "Shoulder & Arms", cardio: false, items: [
         { name: "사이드 레터럴 레이즈", en: "Lateral Raise", tag: "워밍업", tip: "어깨 으쓱 금지", sets: [[20, 4], [15, 4]] },
         { name: "숄더 프레스 머신", en: "Shoulder Press", tag: "메인", tip: "허리 등받이에 붙이기", sets: [[15, 25], [12, 25], [10, 30], [8, 30]] },
-        { name: "레터럴 레이즈 머신", en: "Standing Machine", tip: "팔꿈치로 들어 올리기", sets: [[15, 15], [15, 15], [15, 15]] },
+        { name: "레터럴 레이즈 머신", en: "Standing Machine", form: "lateral-raise-machine", tip: "팔꿈치로 들어 올리기", sets: [[15, 15], [15, 15], [15, 15]] },
         { name: "시티드 페이스풀", en: "Seated Face Pull", tip: "팔꿈치 높게 얼굴 쪽으로", sets: [[15, 15], [15, 15], [15, 15]] },
         { name: "덤벨 컬", en: "DB Curl", tip: "팔꿈치 고정, 반동 금지", sets: [[12, 10], [12, 10], [12, 10]] },
         { name: "해머 컬", en: "Hammer Curl", tip: "엄지가 위로", sets: [[12, 10], [12, 10], [12, 10]] }
