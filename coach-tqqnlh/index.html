@@ -133,7 +133,7 @@
   var API = "https://script.google.com/macros/s/AKfycbwtjTpk88xTWQcKXoaFX2qCYtKSzKoCOs-Us26k6QUbtKvewTaqJutJuA4RJjAmV-6bvA/exec";
   var LIST = window.COACH_MEMBERS || [];
   var DK = ["일", "월", "화", "수", "목", "금", "토"];
-  try { sessionStorage.setItem("ptcoach", location.pathname); localStorage.setItem("ptcoach", location.pathname); } catch (e) {}
+  try { sessionStorage.setItem("ptcoach", location.pathname); localStorage.setItem("ptcoach", location.pathname); sessionStorage.removeItem("ptdemo"); } catch (e) {}
 
   function pad(n) { return (n < 10 ? "0" : "") + n; }
   function ymd(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }

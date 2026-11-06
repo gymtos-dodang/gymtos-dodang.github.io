@@ -96,12 +96,41 @@
   /* 2026-11-06 몸변화 탭 (인바디) — 그룹 PT 페이지(이름에 ·)·inbody:false 회원은 탭 없음 */
   if (/·/.test(M.name || "") || M.inbody === false) TABS = TABS.filter(function (t) { return t[0] !== "body"; });
   var COACH_MODE = false;
+  /* PT 안내서 "실제로 보기"로 들어왔으면 (2026-11-06, 상담 손님에게 선생님 폰으로 보여주는 중):
+     이름은 가운데 글자를 O로 가리고, 위 막대에 "← PT 안내서" 버튼. 새 공지 팝업은 안 띄움 */
+  var DEMO = null;
+  try { DEMO = sessionStorage.getItem("ptdemo"); } catch (e) {}
+  if (DEMO && !/^\/coach-[a-z0-9]+\/guide\.html#p\d+$/.test(DEMO)) DEMO = null;
+  if (DEMO) {
+    var REAL = String(M.name || "").split("·").map(function (p) { return p.trim(); }).filter(function (p) { return p.length > 1; });
+    var maskName = function (p) { return p.length === 2 ? p.charAt(0) + "O" : p.charAt(0) + new Array(p.length - 1).join("O") + p.charAt(p.length - 1); };
+    var hideReal = function (t) { REAL.forEach(function (n) { t = t.split(n).join(maskName(n)); }); return t; };
+    M._real = M.name;
+    M.name = hideReal(M.name);
+    if (M.diet && typeof M.diet === "object" && M.diet.member) M.diet.member = hideReal(M.diet.member);
+    document.title = hideReal(document.title);
+    var barName = document.querySelector(".bar-in span");
+    if (barName) barName.textContent = hideReal(barName.textContent);
+    /* 공지 제목 같은 데 섞인 이름도 화면에 그려질 때마다 가림 */
+    var viewEl = document.getElementById("view");
+    if (viewEl && window.MutationObserver) {
+      var scrub = function () {
+        var w = document.createTreeWalker(viewEl, NodeFilter.SHOW_TEXT, null), n;
+        while ((n = w.nextNode())) { var t = hideReal(n.nodeValue); if (t !== n.nodeValue) n.nodeValue = t; }
+      };
+      new MutationObserver(scrub).observe(viewEl, { childList: true, subtree: true, characterData: true });
+    }
+  }
   /* 선생님 페이지에서 들어왔으면 위 막대에 "← 회원 목록" 버튼 (선생님 휴대폰에만 보임) */
   try {
     var coachPath = sessionStorage.getItem("ptcoach") || localStorage.getItem("ptcoach");
     if (coachPath) COACH_MODE = true;
     var barIn = document.querySelector(".bar-in");
-    if (coachPath && barIn && /^\/coach-[a-z0-9]+\/$/.test(coachPath)) {
+    if (DEMO && barIn) {
+      var gb = document.createElement("a");
+      gb.href = DEMO; gb.className = "coachback"; gb.textContent = "← PT 안내서";
+      barIn.insertBefore(gb, barIn.children[1] || null);
+    } else if (coachPath && barIn && /^\/coach-[a-z0-9]+\/$/.test(coachPath)) {
       var cb = document.createElement("a");
       cb.href = coachPath; cb.className = "coachback"; cb.textContent = "← 회원 목록";
       barIn.insertBefore(cb, barIn.children[1] || null);
@@ -446,7 +475,7 @@
       if (nb && turnOn) nb.classList.add("pop");
       if (!ATT_API) return;
       if (nb) nb.classList.add("saving");
-      attCall("&a=" + (turnOn ? "check" : "uncheck") + "&d=" + key + "&t=" + encodeURIComponent(tm) + "&n=" + encodeURIComponent(M.name))
+      attCall("&a=" + (turnOn ? "check" : "uncheck") + "&d=" + key + "&t=" + encodeURIComponent(tm) + "&n=" + encodeURIComponent(M._real || M.name))
         .then(function () { attRefresh(); })
         .catch(function () {
           var cur = attLoad().slice(), k = cur.indexOf(key);
@@ -730,7 +759,7 @@
       if (bf !== null && !(bf > 0 && bf < w)) { msg.textContent = "체지방량을 확인해 주세요 (모르면 비워 두세요)"; return; }
       if (!ATT_API) { msg.textContent = "저장할 곳이 아직 준비 안 됐어요"; return; }
       busy = true; form.classList.add("saving"); msg.className = "ibs-msg info"; msg.textContent = "저장하는 중…";
-      fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "inbody_add", m: SLUG, n: M.name, d: d, w: w, smm: s, bfm: bf, pbf: pf, img: b64 || "" }) })
+      fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "inbody_add", m: SLUG, n: M._real || M.name, d: d, w: w, smm: s, bfm: bf, pbf: pf, img: b64 || "" }) })
         .then(function (r) { return r.json(); })
         .then(function (j) {
           if (!j || !j.ok) throw new Error(j && j.error || "save");
@@ -1269,7 +1298,7 @@
   window.addEventListener("hashchange", route);
   route();
   nDot();
-  setTimeout(showNoticePop, 800);
+  if (!DEMO) setTimeout(showNoticePop, 800);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { alignText(document); });
   attSync(); ibSync();
   document.addEventListener("visibilitychange", function () { if (!document.hidden) { attSync(); ibSync(); } });
