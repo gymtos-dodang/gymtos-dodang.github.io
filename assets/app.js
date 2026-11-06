@@ -1002,7 +1002,7 @@
     h += '<div class="hero"><div class="hero-main split"><div class="hero-l">' +
       '<div class="eyebrow">MY FORM NOTE <b>· 자세 복습지</b></div><h1>' + esc(f.exercise) + '</h1>' +
       '<div class="en">' + esc(f.exercise_en) + '</div>' +
-      '<div class="who"><strong>' + esc(M.name) + ' 회원님</strong><span>' + esc(f.date) + '</span></div></div>' +
+      '<div class="who"><strong>' + esc(f.member || M.name) + ' 회원님</strong><span>' + esc(f.date) + '</span></div></div>' +
       '<div class="hero-r"><div class="eyebrow">오늘의 타깃</div><ul class="dots">' +
       f.targets.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") + '</ul>' +
       '<div class="benefit">' + esc(f.benefit) + '</div></div></div>' +

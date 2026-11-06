@@ -10,6 +10,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 6", title: "아이소레터럴 로우 자세 복습지 2개가 올라왔어요",
+      body: "어제(11/5) 수업 영상으로 만들었어요. 최용민님은 양팔 아이소레터럴 로우, 고은성님은 원암 아이소레터럴 로우! 복습지 탭에서 볼 수 있어요.", link: "forms" },
     { date: "2026. 11. 5", title: "루틴이 v3로 바뀌었어요",
       body: "월~금 운동 끝나고 마무리 유산소 15분이 추가됐어요. 경사 걷기나 사이클 중 하나! 최용민님은 무릎 편한 걸로 하고, 천국의 계단은 피해주세요.", link: "routine" },
     { date: "2026. 11. 5", title: "스미스 인클라인 프레스 자세 복습지가 올라왔어요",
@@ -26,6 +28,62 @@ window.MEMBER = {
 
   /* 자세 복습지 (최신이 위) */
   forms: [
+    {
+      id: "iso-row",
+      member: "최용민",
+      dir: "media/form-iso-row/",
+      date: "2026. 11. 5 (목)",
+      exercise: "뉴텍 아이소레터럴 로우",
+      exercise_en: "Newtech Iso-Lateral Row",
+      part: "등",
+      targets: ["광배근 (등 날개)", "등 가운데 · 후면 어깨"],
+      benefit: "양손으로 묵직하게 당겨서 등 전체 두께를 만들어줘요. 앉아서 하니까 무릎·허리 부담 없이 등에만 집중할 수 있어요",
+      key_point: "손이 아니라 팔꿈치로 당기기! 풀 때는 2초 천천히",
+      good_points: [
+        { title: "상체를 세우고 버텼어요", desc: "당길 때 몸을 뒤로 젖히지 않아서 반동 없이 등으로만 당겼어요" },
+        { title: "팔꿈치를 끝까지 뒤로 보냈어요", desc: "손잡이가 옆구리까지 와서 날개뼈가 꽉 모였어요" },
+        { title: "천천히 풀어줬어요", desc: "팔을 펼 때 툭 놓지 않고 버티면서 등이 끝까지 늘어났어요" }
+      ],
+      primary_muscles: [{ name: "광배근", where: "겨드랑이 아래 등 옆" }],
+      secondary_muscles: "능형근 · 승모근 가운데 · 후면 삼각근 · 이두근",
+      feel_good: "겨드랑이 아래와 날개뼈 사이가 뻐근해요",
+      feel_stop: "팔(이두)만 터질 것 같거나, 허리가 아파요",
+      steps: [
+        { title: "준비", desc: "손잡이가 명치 높이에 오게 의자를 맞춰요. 허리 펴고 앉아 팔을 쭉 뻗어 손잡이를 잡아요", chip: "가슴 펴기", media: "step1.jpg" },
+        { title: "당기기", desc: "팔꿈치를 뒤로 보내며 손잡이를 옆구리까지! 끝에서 날개뼈를 꽉 모아 1초 멈춰요", chip: "1초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "풀기", desc: "등이 늘어나는 걸 느끼며 팔을 천천히 펴요. 어깨가 살짝 앞으로 나가도 OK", chip: "2초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["가슴 펴고 허리 세워 앉기", "팔꿈치로 당겨 날개뼈 모으기", "풀 때 2초 버티며 천천히"],
+      dont: ["몸을 뒤로 젖혀 반동 쓰기", "어깨를 귀 쪽으로 으쓱", "손목을 꺾어 손으로만 당기기"]
+    },
+    {
+      id: "one-arm-iso-row",
+      member: "고은성",
+      dir: "media/form-one-arm-iso-row/",
+      date: "2026. 11. 5 (목)",
+      exercise: "뉴텍 원암 아이소레터럴 로우",
+      exercise_en: "Newtech One Arm Iso-Lateral Row",
+      part: "등",
+      targets: ["광배근 (등 날개)", "등 가운데 · 후면 어깨"],
+      benefit: "한쪽씩 당겨서 약한 쪽 등까지 똑같이 키워줘요. 양팔로 할 때보다 더 길게 당기고 늘릴 수 있어요",
+      key_point: "몸통은 정면 고정! 팔꿈치를 뒷주머니 쪽으로",
+      good_points: [
+        { title: "한쪽에 집중했어요", desc: "쉬는 팔은 손잡이를 잡고 버텨서 당기는 쪽 등에만 힘이 들어갔어요" },
+        { title: "팔꿈치를 몸에 붙여 당겼어요", desc: "팔꿈치가 옆구리를 스치듯 지나가서 광배근에 제대로 걸렸어요" },
+        { title: "끝까지 펴줬어요", desc: "팔을 앞으로 쭉 뻗어서 등이 충분히 늘어났어요" }
+      ],
+      primary_muscles: [{ name: "광배근", where: "겨드랑이 아래 등 옆" }],
+      secondary_muscles: "능형근 · 승모근 가운데 · 후면 삼각근 · 이두근",
+      feel_good: "당기는 쪽 겨드랑이 아래가 뻐근해요",
+      feel_stop: "몸이 돌아가면서 허리가 비틀리거나, 팔만 아파요",
+      steps: [
+        { title: "준비", desc: "의자를 맞추고 앉아 한 손은 손잡이를 잡고 버텨요. 당길 손은 팔을 쭉 뻗어 잡아요", chip: "가슴 펴기", media: "step1.jpg" },
+        { title: "당기기", desc: "몸통은 정면 그대로, 팔꿈치를 뒷주머니 쪽으로 끌어오며 날개뼈를 모아요", chip: "1초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "풀기", desc: "등이 늘어나는 걸 느끼며 팔을 천천히 앞으로 쭉! 한쪽 다 끝나면 반대쪽도 같은 횟수로", chip: "2초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["몸통은 정면으로 고정", "팔꿈치를 옆구리 따라 뒤로", "양쪽 같은 횟수·같은 무게로"],
+      dont: ["당길 때 몸통 돌려 당기기", "어깨를 귀 쪽으로 으쓱", "풀 때 툭 놓아버리기"]
+    },
     {
       id: "smith-incline-press",
       dir: "media/form-smith-incline-press/",
