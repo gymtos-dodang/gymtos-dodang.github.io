@@ -8,6 +8,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 6", title: "루틴이 v7로 바뀌었어요", link: "routine-wed",
+      body: "수요일 어깨 메인이 덤벨 숄더 프레스로 바뀌었어요. 사이드 레터럴 레이즈는 2kg로 시작해서 마지막 세트에 4kg로 올려요. 종목을 누르면 자세 복습지가 열려요!" },
     { date: "2026. 11. 6", title: "자세 복습지 3개가 올라왔어요",
       body: "덤벨 사이드 레터럴 레이즈 · 덤벨 숄더 프레스 · 케이블 푸쉬다운! 내 영상으로 자세를 다시 보고, 운동 전에 KEY POINT 한 번씩 읽어봐요. 루틴 탭 종목에서도 바로 열려요.", link: "forms" },
     { date: "2026. 11. 3", title: "PT 노트가 열렸어요",
@@ -103,8 +105,8 @@ window.MEMBER = {
 
   /* 주간 루틴 */
   routine: {
-    version: "v6",
-    updated: "2026. 10. 21",
+    version: "v7",
+    updated: "2026. 11. 6",
     title: "주 4회 · 벌크업",
     plan: ["등·엉덩이·어깨·가슴 4분할", "매주 무게 조금씩 올리기", "금~일은 푹 쉬고 잘 먹기"],
     key_point: "벌크업은 잘 먹고 잘 쉬는 것까지가 운동! 매주 무게를 조금씩 올려봐요",
@@ -125,8 +127,8 @@ window.MEMBER = {
       ]},
       { day: "수", part: "어깨", en: "Shoulder", cardio: true, items: [
         { name: "레터럴 레이즈 머신", en: "Standing Machine", tag: "워밍업", tip: "가볍게 어깨 풀기", sets: [[20, 5], [15, 10]] },
-        { name: "숄더 프레스 머신", en: "Shoulder Press", tag: "메인", tip: "허리 등받이에 붙이기", sets: [[15, 15], [12, 20], [10, 20], [8, 20]] },
-        { name: "사이드 레터럴 레이즈 (덤벨)", en: "Lateral Raise", form: "db-lateral-raise", tip: "어깨 으쓱 금지", sets: [[15, 4], [15, 4], [15, 4]] },
+        { name: "덤벨 숄더 프레스", en: "DB Shoulder Press", form: "db-shoulder-press", tag: "메인", tip: "덤벨은 귀 옆까지 내리기", sets: [[15, 4], [12, 4], [10, 6], [8, 6]] },
+        { name: "사이드 레터럴 레이즈 (덤벨)", en: "Lateral Raise", form: "db-lateral-raise", tip: "2kg로 시작 → 마지막 세트 4kg", sets: [[15, 2], [15, 2], [15, 4]] },
         { name: "리버스 펙덱", en: "Reverse Pec Deck", tip: "날개뼈 모으며 옆으로", sets: [[15, 15], [15, 15], [15, 15]] }
       ]},
       { day: "목", part: "가슴", en: "Chest", cardio: false, items: [
