@@ -111,6 +111,13 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 선생님 페이지를 한 번 연 휴대폰(localStorage ptcoach)에서는 회원 페이지 위에 "← 회원 목록" 버튼이 생기고, 출석 상자는 보기 전용(눌러도 안 바뀜).
 - 출석 창고 주소(ATT_API)가 app.js와 coach-tqqnlh/index.html 두 곳에 있음 — 바꾸면 둘 다.
 
+## 세일즈북 (2026-11-06 장동욱 요청)
+- 워크인·OT 상담 때 선생님 폰으로 넘겨 보여주는 화면: https://gymtos-dodang.github.io/coach-tqqnlh/sales.html (선생님 페이지 맨 위 분홍 "세일즈북 열기" 카드). 디자인 시안은 Claude 디자인 캔버스 "PT 세일즈북 시안"(A 5장 + B 관리 현황).
+- 6쪽 가로 넘기기: 1 표지(담당 회원·루틴 업데이트·자세 복습지 숫자) → 2 관리 방식 6가지 → 3 PT 노트 미리보기(예시 회원 김OO) → 4 12개월 여정 → 5 첫 달 흐름 + 등록 혜택·연락처 → 6 지금 관리 현황(자동).
+- 숫자·기록은 members.js 회원들의 data.js에서 자동 계산: 담당 회원 = 이름 수(그룹은 2명), 루틴 업데이트 = 루틴 버전 숫자 합, 복습지 수, 맞춤 식단 수, 최근 관리 기록 = notices(“PT 노트가 열렸어요” 제외) 최신 8개, 회원별 현황 = 단계·개월차·주 n회·루틴 버전·복습지·식단.
+- 상담 손님에게 보이는 화면이라 회원 이름은 가운데 글자를 O로 가림(공지 제목 속 이름도). 몸 변화(인바디) 전후 사례는 동의받은 회원만 — 아직 넣지 않음.
+- "✎ 고치기": 담당 회원 수(비우면 자동), 등록 혜택, 연락처 — 그 휴대폰 localStorage(ptsales)에만 저장. 혜택·연락처가 비어 있으면 그 줄이 안 보임.
+
 ## 자세 복습지 미디어 만들기 (영상 1개 기준)
 - 웹 영상: `ffmpeg -i in.mov -an -vf "scale=540:-2,fps=30" -c:v libx264 -preset veryfast -crf 27 -pix_fmt yuv420p -movflags +faststart form.mp4`
 - 카톡 대비 움직이는 그림: `-vf "scale=324:-2,fps=10" -c:v libwebp_anim -loop 0 -quality 40 form.webp`
