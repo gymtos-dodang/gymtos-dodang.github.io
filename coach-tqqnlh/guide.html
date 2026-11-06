@@ -233,6 +233,74 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
 .chat .go { display: block; margin-top: 8px; font: inherit; font-size: 12.5px; font-weight: 900; color: var(--pink); background: #fff; border: 0; border-radius: 99px; padding: 6px 12px; cursor: pointer; }
 .cta .go.wide { margin-top: 4px; font: inherit; font-size: 15px; font-weight: 900; color: #fff; background: var(--pink); border: 0; border-radius: 99px; padding: 13px 16px; cursor: pointer; }
 .sec .n { white-space: nowrap; }
+.zoom { position: fixed; inset: 0; z-index: 50; background: rgba(15, 22, 40, .9); display: flex; align-items: center; justify-content: center; padding: 24px; cursor: zoom-out; }
+.zoom img { max-width: 100%; max-height: 100%; border-radius: 12px; }
+
+/* 한 화면에 다 보이게 (2026-11-06 "너무 스크롤") */
+.in.fit { gap: 12px; }
+.in.fit h2 { font-size: 24px; }
+.pf-top { display: flex; gap: 14px; align-items: stretch; margin-top: 4px; position: relative; }
+.pf-top img { width: 46%; aspect-ratio: 3 / 4; object-fit: cover; object-position: 50% 15%; border-radius: 16px; flex: none; display: block; }
+.pf-top div { display: flex; flex-direction: column; gap: 6px; justify-content: flex-end; min-width: 0; }
+.pf-top small { font-size: 11px; font-weight: 700; letter-spacing: .14em; color: var(--pink2); }
+.pf-top h1 { margin: 0; font-size: 25px; line-height: 1.28; font-weight: 900; }
+.pf-top b { font-size: 17px; margin-top: 6px; } .pf-top span { font-size: 12.5px; line-height: 1.5; color: #D3DCEE; }
+.quals.q2 { gap: 6px; }
+.quals.q2 div { display: flex; gap: 10px; align-items: baseline; padding: 9px 12px; }
+.quals.q2 em { flex: none; width: 52px; font-size: 11.5px; }
+.quals.q2 p { margin: 0; font-size: 12.5px; line-height: 1.45; color: #E6ECF7; }
+.wq { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.wq > * { font: inherit; text-align: left; border: 0; background: var(--paper); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 3px; color: var(--ink); box-shadow: 0 1px 3px rgba(31, 56, 100, .08); cursor: pointer; }
+.wq q { quotes: none; font-size: 12px; color: var(--sub); background: var(--page); border-radius: 10px 10px 10px 3px; padding: 5px 8px; align-self: flex-start; margin-bottom: 4px; }
+.wq b { font-size: 15px; color: var(--navy); } .wq span { font-size: 12px; line-height: 1.4; color: var(--sub); }
+.wq i { font-style: normal; font-size: 12px; font-weight: 900; color: var(--pink); margin-top: auto; padding-top: 4px; }
+.wq div { cursor: default; background: var(--pinkT); box-shadow: none; } .wq div b { color: var(--pink); }
+.wq .wait { opacity: .55; }
+.cta.slim { padding: 14px 16px; gap: 6px; } .cta.slim > b { font-size: 16px; } .cta.slim b em { font-style: normal; color: var(--pink2); } .cta.slim > span { font-size: 12px; color: var(--muted); }
+.stair .s1 { height: 84px; } .stair .s2 { height: 140px; } .stair .s3 { height: 196px; }
+.stair > div span { font-size: 10.5px; line-height: 1.35; opacity: .9; }
+.stair .t1 { bottom: 92px; } .stair .t2 { bottom: 148px; }
+.fm { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.fm div { background: var(--paper); border-radius: 12px; padding: 9px 12px; border-top: 4px solid #4C6696; display: flex; flex-direction: column; gap: 1px; }
+.fm div.p { border-top-color: var(--pink); } .fm div.g { border-top-color: #E3B341; }
+.fm small { font-size: 11px; font-weight: 700; color: var(--navy); } .fm .p small { color: var(--pink); } .fm .g small { color: var(--gold); }
+.fm b { font-size: 14px; } .fm span { font-size: 12px; color: var(--sub); }
+.bag { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.bag .bah { grid-column: 1 / -1; margin: 2px 0 -2px; }
+button.ba { border: 0; padding: 0; font: inherit; color: inherit; cursor: zoom-in; background: #0d1626; }
+.bag .ba { height: 150px; } .bag .ba img { width: 100%; height: 100%; object-fit: cover; }
+.bag .ba i { font-size: 9px; padding: 2px 6px; top: 6px; } .bag .ba i.b { left: 6px; } .bag .ba i.a { left: calc(50% + 6px); }
+.ibst.ba { width: 100%; text-align: left; background: var(--navy2); padding: 12px; overflow: visible; }
+.ibst.ba img { width: 44%; height: auto; }
+.fit .st-head { padding-bottom: 16px; gap: 8px; }
+.fit .tiles4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.fit .tiles4 div { padding: 8px 4px; align-items: center; }
+.fit .tiles4 b { font-size: 21px; } .fit .tiles4 > div > span { font-size: 10.5px; white-space: nowrap; }
+.fit .feed div { padding: 8px 0; }
+.fit .mem { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+.mem .chip { display: inline-flex; align-items: center; gap: 5px; background: var(--paper); border-radius: 99px; padding: 5px 10px; font-size: 12px; font-weight: 700; color: var(--sub); }
+.mem .chip b { color: var(--ink); font-size: 12.5px; }
+.mem .chip em { font-style: normal; font-size: 10.5px; border-radius: 99px; padding: 1px 6px; background: var(--line); color: var(--sub); }
+.mem .chip em.s2 { background: var(--pink); color: #fff; } .mem .chip em.s3 { background: var(--gold); color: #fff; }
+.fit .endcta { padding: 12px 16px; } .fit .endcta b { font-size: 14.5px; }
+/* 작은 폰(아이폰 SE 등 화면 높이 낮을 때)도 한 화면에 */
+@media (max-height: 760px) {
+  .in.fit { gap: 8px; padding-top: calc(54px + env(safe-area-inset-top, 0px)); padding-bottom: calc(74px + env(safe-area-inset-bottom, 0px)); }
+  .in.fit h2 { font-size: 21px; } .in.fit .lead { font-size: 13px; }
+  .pf-top img { width: 38%; } .pf-top h1 { font-size: 21px; }
+  .quals.q2 div { padding: 7px 10px; } .quals.q2 p { font-size: 12px; }
+  .fit .tiles3 div { padding: 9px 6px; } .fit .tiles3 b { font-size: 22px; }
+  .wq { gap: 6px; } .wq > * { padding: 8px 10px; gap: 1px; } .wq q { font-size: 11px; padding: 3px 7px; margin-bottom: 2px; } .wq b { font-size: 14px; } .wq span { font-size: 11.5px; } .wq i { padding-top: 2px; }
+  .cta.slim { padding: 10px 14px; }
+  .stair { height: 170px; } .stair .s1 { height: 70px; } .stair .s2 { height: 112px; } .stair .s3 { height: 156px; }
+  .stair .t1 { bottom: 76px; } .stair .t2 { bottom: 118px; } .stair .s3 span { display: none; }
+  .jsvg { padding: 10px 10px 8px; } .fm div { padding: 7px 10px; }
+  .bag { gap: 6px; } .bag .ba { height: 112px; } .ibst.ba { padding: 8px; } .ibst.ba img { width: 36%; } .ibst b { font-size: 20px; }
+  .fit .st-head { margin-top: calc(-54px - env(safe-area-inset-top, 0px)); padding-top: calc(54px + env(safe-area-inset-top, 0px)); padding-bottom: 12px; gap: 6px; }
+  .fit .feed div { padding: 6px 0; } .fit .feed span { font-size: 12.5px; }
+  .mem .chip { padding: 4px 8px; } .fit .endcta { padding: 10px 14px; }
+  .fit .feed div:nth-child(n+4) { display: none; }
+}
 
 /* 편집 창 (선생님만) */
 .sheet { position: fixed; inset: 0; z-index: 40; display: flex; align-items: flex-end; justify-content: center; background: rgba(15, 22, 40, .5); }
@@ -257,112 +325,112 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
 </div>
 
 <main class="deck" id="deck">
-  <!-- 1 표지 + 트레이너 소개 -->
-  <section class="pg dark" aria-label="1쪽 트레이너 소개"><div class="in">
+  <!-- 1 표지 + 트레이너 소개 (한 화면) -->
+  <section class="pg dark" aria-label="1쪽 트레이너 소개"><div class="in fit">
     <div class="ring1"></div><div class="ring2"></div>
     <div class="brand"><b>GYMTOS</b><span>도당점</span></div>
-    <div class="cover-h" style="margin-top:20px">
-      <div class="ey">PERSONAL TRAINING · 관리 안내</div>
-      <h1>PT는 1시간,<br>변화는 나머지 시간에</h1>
+    <div class="pf-top">
+      <img src="guide/trainer.jpg" alt="장동욱 트레이너">
+      <div>
+        <small>PERSONAL TRAINING</small>
+        <h1>PT는 1시간,<br>변화는 나머지<br>시간에</h1>
+        <b>장동욱 트레이너</b>
+        <span>현) 짐토스24 도당점<br>전) 짐토스 답십리점</span>
+      </div>
     </div>
-    <div class="pf-hero"><img src="guide/trainer.jpg" alt="장동욱 트레이너"><div><small>PERSONAL TRAINER</small><b>장동욱 트레이너</b><span>짐토스24 도당점 · 전) 짐토스 답십리점</span></div></div>
-    <div class="quals">
-      <div><em>트레이닝</em><ul><li><b>FISAF 국제트레이너 2급</b></li><li>케틀벨 트레이닝 교육과정 수료</li></ul></div>
-      <div class="p"><em>재활 · 통증 관리</em><ul><li><b>한국인재교육원 RTS 재활트레이닝전문가 LEVEL.1 · 2 수료</b></li><li>마인드바디 아카데미 red재활기능운동 과정 수료</li><li>디스크 케어 전문 과정 수료</li><li>스포츠 테이핑 수료</li></ul></div>
-      <div class="g"><em>몸 이론</em><ul><li>스포츠 영양학 · 스포츠 생리학 교육 이수</li></ul></div>
+    <div class="quals q2">
+      <div><em>트레이닝</em><p><b>FISAF 국제트레이너 2급</b> · 케틀벨 트레이닝 교육과정</p></div>
+      <div class="p"><em>재활</em><p><b>RTS 재활트레이닝전문가 LEVEL.1·2</b> · red재활기능운동 · 디스크 케어 · 스포츠 테이핑</p></div>
+      <div class="g"><em>몸 이론</em><p>스포츠 영양학 · 스포츠 생리학 교육 이수</p></div>
     </div>
-    <div class="cstat" style="margin-top:4px">
+    <div class="cstat">
       <div class="when" id="when1">지금 관리 중</div>
       <div class="tiles3">
         <div><b class="edit-n" data-edit="total"><span class="v-total">–</span><small>명</small></b><span>담당 회원</span></div>
         <div><b><span class="v-routine">–</span><small>회</small></b><span>루틴 업데이트</span></div>
         <div><b><span class="v-forms">–</span><small>개</small></b><span>자세 복습지</span></div>
       </div>
-      <p class="swipe" style="color:var(--muted)">옆으로 넘겨 보세요 →</p>
     </div>
   </div></section>
 
-  <!-- 2 이런 고민 → PT 노트로 해결 (누르면 실제 회원 PT 노트) -->
-  <section class="pg" aria-label="2쪽 이런 고민과 PT 노트"><div class="in">
+  <!-- 2 이런 고민 → PT 노트로 해결 (칸을 누르면 실제 회원 PT 노트) -->
+  <section class="pg" aria-label="2쪽 이런 고민과 PT 노트"><div class="in fit">
     <div class="kick"><span class="n">01</span><span class="t">고민 → PT 노트로 해결</span></div>
-    <h2>혹시 이런 고민<br>있으세요?</h2>
-    <p class="lead">버튼을 누르면 실제 회원님 PT 노트가 열려요</p>
-    <div class="chat">
-      <div><q>헬스장 가면 뭘 해야 할지 모르겠어요</q><p>요일별 <b>루틴일지</b>에 종목·세트·무게까지 다 적어 드려요<button type="button" class="go" data-go="routine">루틴일지 실제로 보기 →</button></p></div>
-      <div><q>이 자세가 맞는 건지 늘 헷갈려요</q><p>수업 영상으로 <b>자세 복습지</b>를 만들어 언제든 다시 봐요<button type="button" class="go" data-go="form">자세 복습지 보기 →</button></p></div>
-      <div><q>뭘 먹어야 할지 모르겠어요</q><p>목표에 맞춘 <b>끼니별 식단</b>을 그림으로 정리해 드려요<button type="button" class="go" data-go="diet">식단 보기 →</button></p></div>
-      <div><q>혼자 하면 늘 작심삼일이에요</q><p><b>출석 체크</b> 한 번이면 선생님이 매일 확인해요<button type="button" class="go" data-go="goal">출석·목표 보기 →</button></p></div>
-      <div><q>열심히 하는데 변화가 안 보여요</q><p>달마다 <b>인바디</b>를 올려 지난달과 숫자로 비교해요<button type="button" class="go" data-go="body">몸 변화 기록 보기 →</button></p></div>
-      <div><q>허리·무릎이 아파서 운동이 겁나요</q><p><b>재활 트레이닝</b>을 공부한 선생님이 아프지 않은 동작부터 잡아 드려요</p></div>
+    <h2>혹시 이런 고민 있으세요?</h2>
+    <p class="lead">칸을 누르면 실제 회원님 PT 노트가 열려요</p>
+    <div class="wq">
+      <button type="button" class="go" data-go="routine"><q>뭘 해야 할지 모르겠어요</q><b>루틴일지</b><span>요일별 종목·세트·무게까지</span><i>보기 →</i></button>
+      <button type="button" class="go" data-go="form"><q>자세가 맞는지 헷갈려요</q><b>자세 복습지</b><span>수업 영상으로 다시 보기</span><i>보기 →</i></button>
+      <button type="button" class="go" data-go="diet"><q>뭘 먹어야 할지 모르겠어요</q><b>맞춤 식단</b><span>끼니별 메뉴를 그림으로</span><i>보기 →</i></button>
+      <button type="button" class="go" data-go="goal"><q>혼자 하면 작심삼일이에요</q><b>출석 체크</b><span>선생님이 매일 확인해요</span><i>보기 →</i></button>
+      <button type="button" class="go" data-go="body"><q>변화가 안 보여요</q><b>몸 변화 기록</b><span>인바디로 지난달과 비교</span><i>보기 →</i></button>
+      <div><q>허리·무릎이 아파요</q><b>재활 트레이닝</b><span>안 아픈 동작부터 잡아 드려요</span></div>
     </div>
-    <div class="cta"><small>KEY POINT</small><b>이 모든 게 회원님 폰 하나에<br>나만의 PT 노트로 들어가요</b><span style="font-size:13px;color:var(--muted)">앱 설치 없이 카톡 링크 하나 · 상담 당일 바로 만들어 드려요</span><button type="button" class="go wide" data-go="home">실제 회원님 PT 노트 열어 보기 →</button></div>
+    <div class="cta slim"><b>이 모든 게 폰 하나에, <em>나만의 PT 노트</em></b><span>앱 설치 없이 카톡 링크 하나 · 상담 당일 바로 만들어 드려요</span></div>
   </div></section>
 
-  <!-- 3 12개월 여정 + 첫 달 -->
-  <section class="pg" aria-label="3쪽 12개월 여정과 첫 달"><div class="in">
+  <!-- 3 12개월 여정 + 첫 달 (한 화면) -->
+  <section class="pg" aria-label="3쪽 12개월 여정과 첫 달"><div class="in fit">
     <div class="kick"><span class="n">02</span><span class="t">PT 여정</span></div>
-    <h2>12개월,<br>계단처럼 한 단계씩</h2>
-    <p class="lead">처음엔 천천히, 어느 순간 몸이 확 바뀌어요</p>
+    <h2>12개월, 계단처럼 한 단계씩</h2>
     <div class="card jsvg" role="img" aria-label="12개월 PT 여정 계단: 1단계 기초 1~2개월, 2단계 몸이 바뀌는 시기 2~7개월, 3단계 혼자서도 하는 몸 7~12개월">
       <div class="stair">
-        <div class="s1"><small>1단계</small><b>기초</b></div>
-        <div class="s2"><small>2단계</small><b>몸이 바뀌는 시기</b></div>
-        <div class="s3"><small>3단계</small><b>혼자서도 하는 몸</b><em>12개월 · 졸업 또는 다음 목표</em></div>
+        <div class="s1"><small>1단계</small><b>기초</b><span>머신·스트레칭</span></div>
+        <div class="s2"><small>2단계</small><b>몸이 바뀌는 시기</b><span>자신감 · 머신 투어 · 반복 숙달</span></div>
+        <div class="s3"><small>3단계</small><b>혼자서도 하는 몸</b><span>프리웨이트 · 혼자 운동하는 힘</span><em>졸업 또는 다음 목표</em></div>
         <span class="tag t1">오늘 시작!</span>
         <span class="tag t2">어느 순간, 몸이 확!</span>
       </div>
       <div class="months" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div>
     </div>
-    <div class="stg">
-      <div><i>1</i><p style="margin:0"><b>기초 다지기 <small>1~2개월</small></b><span>머신 사용법 · 스트레칭 습관 · 내 근육 이해하기</span></p></div>
-      <div class="now"><i>2</i><p style="margin:0"><b>몸이 바뀌는 시기 <small>2~7개월</small></b><span>자신감이 붙고 어느 순간 몸이 달라져요 · 머신 투어 · 반복 숙달</span></p></div>
-      <div><i class="g">3</i><p style="margin:0"><b>혼자서도 하는 몸 <small>7~12개월</small></b><span>프리웨이트 · 혼자 운동하는 힘 · 다음 목표 또는 졸업</span></p></div>
+    <div class="sec"><span class="n">첫 달</span><b>이렇게 시작해요</b></div>
+    <div class="fm">
+      <div class="p"><small>상담 당일</small><b>인바디 · 목표</b><span>PT 노트를 카톡으로</span></div>
+      <div><small>1주차</small><b>머신 · 스트레칭</b><span>자세는 영상 복습지로</span></div>
+      <div><small>2~3주차</small><b>루틴일지로 혼자</b><span>온 날은 출석 체크</span></div>
+      <div class="g"><small>4주차</small><b>첫 인바디 비교</b><span>루틴 업그레이드</span></div>
     </div>
-    <div class="sec" style="margin-top:8px"><span class="n">첫 달</span><b>이렇게 시작해요</b></div>
-    <div class="card tl">
-      <div class="p"><div class="rail"><i></i><u></u></div><div class="tx"><small>상담 당일</small><b>인바디 · 목표 정하기</b><span>회원님 전용 PT 노트 주소를 카톡으로 보내드려요</span></div></div>
-      <div><div class="rail"><i></i><u></u></div><div class="tx"><small>1주차</small><b>머신 사용법 · 스트레칭</b><span>수업에서 배운 자세는 영상 복습지로 올라가요</span></div></div>
-      <div><div class="rail"><i></i><u></u></div><div class="tx"><small>2~3주차</small><b>루틴일지로 혼자 운동</b><span>요일별 종목·무게대로, 운동 온 날은 출석 체크</span></div></div>
-      <div class="g"><div class="rail"><i></i></div><div class="tx" style="padding-bottom:0"><small>4주차</small><b>인바디 다시 재고 첫 비교</b><span>지난달과 숫자로 비교하고 루틴을 업그레이드해요</span></div></div>
-    </div>
-    <div class="cta">
-      <small>오늘 상담하면</small>
-      <b>오늘부터 내 PT 노트를<br>바로 받아 가세요</b>
+    <div class="cta slim">
+      <b>오늘 상담하면, 오늘부터 <em>내 PT 노트</em></b>
       <div class="perk" id="perkRow" hidden><span>등록 혜택</span><b class="edit-n" data-edit="perk" id="perk"></b></div>
       <div class="contact" id="contactRow" hidden><span class="edit-n" data-edit="contact" id="contact"></span></div>
     </div>
   </div></section>
 
-  <!-- 4 실제 변화 -->
-  <section class="pg dark" aria-label="4쪽 실제 변화"><div class="in">
+  <!-- 4 실제 변화 (한 화면, 누르면 크게) -->
+  <section class="pg dark" aria-label="4쪽 실제 변화"><div class="in fit">
     <div class="kick"><span class="n">03</span><span class="t">BEFORE · AFTER</span></div>
-    <h2>회원님들의<br>실제 변화</h2>
-    <div class="bah">남성 회원님</div>
-    <div class="ba"><img src="guide/ba-m1.jpg" alt="남성 회원님 비포 애프터 사진" loading="lazy"><i class="b">BEFORE</i><i class="a">AFTER</i></div>
-    <div class="ba"><img src="guide/ba-m2.jpg" alt="남성 회원님 비포 애프터 사진" loading="lazy"><i class="b">BEFORE</i><i class="a">AFTER</i></div>
-    <div class="ibst"><img src="guide/inbody.jpg" alt="인바디 체지방률 기록 그래프: 4월 20.5%에서 6월 13.3%로" loading="lazy"><div><small>인바디 체지방률 · 약 11주</small><b><s>20.5</s> → 13.3%</b><span>체지방률 7.2%p 감소</span></div></div>
-    <div class="bah">여성 회원님</div>
-    <div class="ba"><img src="guide/ba-w1.jpg" alt="여성 회원님 전신 비포 애프터 사진, 얼굴은 가림" loading="lazy"><i class="b">BEFORE</i><i class="a">AFTER</i></div>
-    <div class="ba"><img src="guide/ba-w2.jpg" alt="여성 회원님 힙 라인 비포 애프터 뒷모습" loading="lazy"><i class="b">BEFORE</i><i class="a">AFTER</i></div>
+    <h2>회원님들의 실제 변화</h2>
+    <p class="lead" style="color:var(--muted)">사진을 누르면 크게 볼 수 있어요</p>
+    <div class="bag">
+      <div class="bah">남성 회원님</div>
+      <button type="button" class="ba"><img src="guide/ba-m1.jpg" alt="남성 회원님 비포 애프터 사진"><i class="b">BEFORE</i><i class="a">AFTER</i></button>
+      <button type="button" class="ba"><img src="guide/ba-m2.jpg" alt="남성 회원님 비포 애프터 사진"><i class="b">BEFORE</i><i class="a">AFTER</i></button>
+      <div class="bah">여성 회원님</div>
+      <button type="button" class="ba"><img src="guide/ba-w1.jpg" alt="여성 회원님 전신 비포 애프터 사진, 얼굴은 가림"><i class="b">BEFORE</i><i class="a">AFTER</i></button>
+      <button type="button" class="ba"><img src="guide/ba-w2.jpg" alt="여성 회원님 힙 라인 비포 애프터 뒷모습"><i class="b">BEFORE</i><i class="a">AFTER</i></button>
+    </div>
+    <button type="button" class="ibst ba"><img src="guide/inbody.jpg" alt="인바디 체지방률 기록 그래프: 4월 20.5%에서 6월 13.3%로"><div><small>인바디 체지방률 · 약 11주</small><b><s>20.5</s> → 13.3%</b><span>체지방률 7.2%p 감소</span></div></button>
   </div></section>
-  <!-- 5 지금 관리 현황 -->
-  <section class="pg" aria-label="5쪽 지금 관리 현황"><div class="in">
+
+  <!-- 5 지금 관리 현황 (한 화면) -->
+  <section class="pg" aria-label="5쪽 지금 관리 현황"><div class="in fit">
     <div class="st-head">
       <span class="live"><i></i>실제 관리 기록 · 자동 업데이트</span>
-      <h2>지금 이렇게<br>관리하고 있어요</h2>
+      <h2>지금 이렇게 관리하고 있어요</h2>
       <p id="when6">장동욱 트레이너</p>
       <div class="tiles4">
         <div><span>담당 회원</span><b class="edit-n" data-edit="total"><span class="v-total">–</span><small>명</small></b></div>
         <div><span>루틴 업데이트</span><b><span class="v-routine">–</span><small>회</small></b></div>
-        <div><span>영상 자세 복습지</span><b><span class="v-forms">–</span><small>개</small></b></div>
+        <div><span>자세 복습지</span><b><span class="v-forms">–</span><small>개</small></b></div>
         <div><span>맞춤 식단</span><b><span class="v-diet">–</span><small>명</small></b></div>
       </div>
     </div>
     <div class="sec"><span class="n">01</span><b>최근 관리 기록</b><small>최근 순</small></div>
     <div class="card feed" id="feed"><p class="loading">불러오는 중…</p></div>
-    <div class="sec"><span class="n">02</span><b>회원별 관리 현황</b><small>이름은 가렸어요</small></div>
+    <div class="sec"><span class="n">02</span><b>회원별 단계</b><small>이름은 가렸어요</small></div>
     <div class="mem" id="mem"><p class="loading">불러오는 중…</p></div>
-    <div class="endcta"><b>다음 관리 기록에<br>회원님 이름이 올라갈 차례예요</b><span>상담 당일 나만의 PT 노트를 만들어 드려요</span></div>
+    <div class="endcta"><b>다음 관리 기록에 회원님 이름이 올라갈 차례예요</b></div>
   </div></section>
 </main>
 
@@ -497,15 +565,13 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
     });
     paintNums();
     feed.sort(function (a, b) { return b.d - a.d; });
-    $("feed").innerHTML = feed.slice(0, 8).map(function (f) {
+    $("feed").innerHTML = feed.slice(0, 4).map(function (f) {
       return '<div><time>' + (f.d.getMonth() + 1) + ". " + ("0" + f.d.getDate()).slice(-2) + '</time><em class="' + f.k[1] + '">' + f.k[0] + '</em><span><b>' + esc(f.who) + '</b> ' + esc(f.t) + '</span></div>';
     }).join("") || '<p class="loading">아직 기록이 없어요</p>';
     rows.sort(function (a, b) { return b.sort - a.sort; });
-    $("mem").innerHTML = rows.map(function (r) {
-      var stg = r.j ? '<em class="s' + r.j.s + '">' + ["", "1단계 기초", "2단계 변화", "3단계 자립"][r.j.s] + '</em>' : '<em>관리 중</em>';
-      return '<div><div class="r1"><b>' + esc(r.name) + '</b>' + stg + (r.j ? '<small>' + r.j.mo + '개월차</small>' : '') + '</div>' +
-        '<div class="r2">' + (r.freq ? '<span>' + esc(r.freq) + '</span>' : '') + (r.ver ? '<span>루틴 ' + esc(r.ver) + '</span>' : '') +
-        '<span>복습지 ' + r.forms + '개</span>' + (r.diet ? '<span class="d">맞춤 식단</span>' : '') + '</div></div>';
+    $("mem").innerHTML = rows.map(function (r) {   /* 한 화면에 보이게 칩으로 */
+      var stg = r.j ? '<em class="s' + r.j.s + '">' + r.j.s + '단계</em>' + r.j.mo + '개월차' : '<em>관리 중</em>';
+      return '<span class="chip"><b>' + esc(r.name.replace(/님$/, "")) + '</b>' + stg + '</span>';
     }).join("");
   });
 
@@ -555,11 +621,23 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
   Array.prototype.forEach.call(document.querySelectorAll(".go"), function (b) {
     b.addEventListener("click", function () {
       var url = pickFor(b.getAttribute("data-go"));
-      if (!url) { b.textContent = "불러오는 중… 잠시 뒤 다시 눌러 주세요"; return; }
+      if (!url) { b.classList.add("wait"); setTimeout(function () { b.classList.remove("wait"); }, 1200); return; }
       try { sessionStorage.setItem("ptdemo", location.pathname + "#p" + (cur + 1)); } catch (e) {}
       location.href = url;
     });
   });
+  /* 비포애프터·인바디 사진 누르면 크게 */
+  Array.prototype.forEach.call(document.querySelectorAll("button.ba"), function (b) {
+    b.addEventListener("click", function () {
+      var img = b.querySelector("img"); if (!img) return;
+      var z = document.createElement("div");
+      z.className = "zoom"; z.setAttribute("role", "dialog"); z.setAttribute("aria-label", "사진 크게 보기");
+      z.innerHTML = '<img src="' + img.getAttribute("src") + '" alt="' + esc(img.alt) + '">';
+      z.addEventListener("click", function () { z.remove(); });
+      document.body.appendChild(z);
+    });
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") { var z = document.querySelector(".zoom"); if (z) z.remove(); } });
   /* 회원 PT 노트에서 "← PT 안내서"로 돌아오면 그 쪽으로 */
   var hp = (location.hash.match(/^#p(\d+)$/) || [])[1];
   if (hp) { deck.style.scrollBehavior = "auto"; requestAnimationFrame(function () { deck.scrollLeft = (Math.min(N, +hp) - 1) * deck.clientWidth; mark(); }); }
