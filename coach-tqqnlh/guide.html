@@ -283,6 +283,17 @@ button.ba { border: 0; padding: 0; font: inherit; color: inherit; cursor: zoom-i
 .mem .chip em { font-style: normal; font-size: 10.5px; border-radius: 99px; padding: 1px 6px; background: var(--line); color: var(--sub); }
 .mem .chip em.s2 { background: var(--pink); color: #fff; } .mem .chip em.s3 { background: var(--gold); color: #fff; }
 .fit .endcta { padding: 12px 16px; } .fit .endcta b { font-size: 14.5px; }
+/* 고민 칸 위 실제 화면 그림 (2026-11-07 "어플처럼 이미지도") */
+.wq img.th { display: block; width: calc(100% + 24px); max-width: none; margin: -10px -12px 6px; height: 62px; object-fit: cover; object-position: center top; border-radius: 14px 14px 0 0; background: var(--page); }
+.wq q { margin-bottom: 2px; }
+.wq span { display: none; }   /* 그림이 설명을 대신함 */
+.wq img.th { height: 58px; }
+/* 3단계 다음 목표 칩 · 오늘 시작 두 줄 (2026-11-07) */
+.stair .s3 em { display: none; }
+.stair .s3 u { margin-top: auto; text-decoration: none; font-size: 10px; font-weight: 700; color: #E3B341; }
+.stair .nx { margin: 2px 0 0; display: flex; flex-wrap: wrap; gap: 3px; }
+.stair .nx em { display: inline-block; margin: 0; font-style: normal; font-size: 10px; font-weight: 900; color: var(--navy); background: #E3B341; border-radius: 99px; padding: 2px 7px; }
+.stair .t1 { white-space: normal; text-align: center; line-height: 1.15; border-radius: 10px; padding: 4px 7px; left: 4px; }
 /* 작은 폰(아이폰 SE 등 화면 높이 낮을 때)도 한 화면에 */
 @media (max-height: 760px) {
   .in.fit { gap: 8px; padding-top: calc(54px + env(safe-area-inset-top, 0px)); padding-bottom: calc(74px + env(safe-area-inset-bottom, 0px)); }
@@ -294,12 +305,13 @@ button.ba { border: 0; padding: 0; font: inherit; color: inherit; cursor: zoom-i
   .cta.slim { padding: 10px 14px; }
   .stair { height: 170px; } .stair .s1 { height: 70px; } .stair .s2 { height: 112px; } .stair .s3 { height: 156px; }
   .stair .t1 { bottom: 76px; } .stair .t2 { bottom: 118px; } .stair .s3 span { display: none; }
+  .wq img.th { height: 40px; margin-bottom: 4px; margin-top: -8px; margin-left: -10px; margin-right: -10px; width: calc(100% + 20px); } .wq span { display: none; }
   .jsvg { padding: 10px 10px 8px; } .fm div { padding: 7px 10px; }
   .bag { gap: 6px; } .bag .ba { height: 112px; } .ibst.ba { padding: 8px; } .ibst.ba img { width: 36%; } .ibst b { font-size: 20px; }
   .fit .st-head { margin-top: calc(-54px - env(safe-area-inset-top, 0px)); padding-top: calc(54px + env(safe-area-inset-top, 0px)); padding-bottom: 12px; gap: 6px; }
   .fit .feed div { padding: 6px 0; } .fit .feed span { font-size: 12.5px; }
   .mem .chip { padding: 4px 8px; } .fit .endcta { padding: 10px 14px; }
-  .fit .feed div:nth-child(n+4) { display: none; }
+  .fit .feed div:nth-child(n+3) { display: none; }
 }
 
 /* 편집 창 (선생님만) */
@@ -357,14 +369,14 @@ button.ba { border: 0; padding: 0; font: inherit; color: inherit; cursor: zoom-i
   <section class="pg" aria-label="2쪽 이런 고민과 PT 노트"><div class="in fit">
     <div class="kick"><span class="n">01</span><span class="t">고민 → PT 노트로 해결</span></div>
     <h2>혹시 이런 고민 있으세요?</h2>
-    <p class="lead">칸을 누르면 실제 회원님 PT 노트가 열려요</p>
+    <p class="lead">회원님 폰에 들어가는 실제 화면이에요 · 누르면 열려요</p>
     <div class="wq">
-      <button type="button" class="go" data-go="routine"><q>뭘 해야 할지 모르겠어요</q><b>루틴일지</b><span>요일별 종목·세트·무게까지</span><i>보기 →</i></button>
-      <button type="button" class="go" data-go="form"><q>자세가 맞는지 헷갈려요</q><b>자세 복습지</b><span>수업 영상으로 다시 보기</span><i>보기 →</i></button>
-      <button type="button" class="go" data-go="diet"><q>뭘 먹어야 할지 모르겠어요</q><b>맞춤 식단</b><span>끼니별 메뉴를 그림으로</span><i>보기 →</i></button>
-      <button type="button" class="go" data-go="goal"><q>혼자 하면 작심삼일이에요</q><b>출석 체크</b><span>선생님이 매일 확인해요</span><i>보기 →</i></button>
-      <button type="button" class="go" data-go="body"><q>변화가 안 보여요</q><b>몸 변화 기록</b><span>인바디로 지난달과 비교</span><i>보기 →</i></button>
-      <div><q>허리·무릎이 아파요</q><b>재활 트레이닝</b><span>안 아픈 동작부터 잡아 드려요</span></div>
+      <button type="button" class="go" data-go="routine"><img class="th" src="guide/th-routine.jpg" alt="루틴일지 화면: 요일별 운동 아이콘"><q>뭘 해야 할지 모르겠어요</q><b>루틴일지</b><span>요일별 종목·세트·무게까지</span><i>보기 →</i></button>
+      <button type="button" class="go" data-go="form"><img class="th" src="guide/th-form.jpg" alt="자세 복습지 화면: 오늘 수업 영상"><q>자세가 맞는지 헷갈려요</q><b>자세 복습지</b><span>수업 영상으로 다시 보기</span><i>보기 →</i></button>
+      <button type="button" class="go" data-go="diet"><img class="th" src="guide/th-diet.jpg" alt="식단 화면: 끼니별 음식 그림"><q>뭘 먹어야 할지 모르겠어요</q><b>맞춤 식단</b><span>끼니별 메뉴를 그림으로</span><i>보기 →</i></button>
+      <button type="button" class="go" data-go="goal"><img class="th" src="guide/th-goal.jpg" alt="PT 노트 홈 화면: 오늘 출석 버튼"><q>혼자 하면 작심삼일이에요</q><b>출석 체크</b><span>선생님이 매일 확인해요</span><i>보기 →</i></button>
+      <button type="button" class="go" data-go="body"><img class="th" src="guide/th-body.jpg" alt="인바디 체지방률 기록 그래프"><q>변화가 안 보여요</q><b>몸 변화 기록</b><span>인바디로 지난달과 비교</span><i>보기 →</i></button>
+      <div><img class="th" src="guide/th-rehab.jpg" alt="자극 부위 근육 그림"><q>허리·무릎이 아파요</q><b>재활 트레이닝</b><span>안 아픈 동작부터 잡아 드려요</span></div>
     </div>
     <div class="cta slim"><b>이 모든 게 폰 하나에, <em>나만의 PT 노트</em></b><span>앱 설치 없이 카톡 링크 하나 · 상담 당일 바로 만들어 드려요</span></div>
   </div></section>
@@ -377,8 +389,8 @@ button.ba { border: 0; padding: 0; font: inherit; color: inherit; cursor: zoom-i
       <div class="stair">
         <div class="s1"><small>1단계</small><b>기초</b><span>머신·스트레칭</span></div>
         <div class="s2"><small>2단계</small><b>몸이 바뀌는 시기</b><span>자신감 · 머신 투어 · 반복 숙달</span></div>
-        <div class="s3"><small>3단계</small><b>혼자서도 하는 몸</b><span>프리웨이트 · 혼자 운동하는 힘</span><em>졸업 또는 다음 목표</em></div>
-        <span class="tag t1">오늘 시작!</span>
+        <div class="s3"><small>3단계</small><b>혼자서도 하는 몸</b><span>프리웨이트 · 혼자 운동하는 힘</span><u>다음 목표</u><p class="nx"><em>바디프로필</em><em>대회 도전</em><em>혼자 운동 졸업</em></p></div>
+        <span class="tag t1">오늘<br>시작!</span>
         <span class="tag t2">어느 순간, 몸이 확!</span>
       </div>
       <div class="months" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div>
