@@ -9,6 +9,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="icon" href="/assets/icon-coach-192.png">
+<script>
+/* 아이패드·컴퓨터처럼 가로로 넓은 화면은 가로형(intro.html)으로 — 위 버튼으로 고른 게 있으면 그걸 따름 (2026-11-07) */
+(function () { try { var v = localStorage.getItem("ptview");
+  if (v === "pad" || (!v && window.innerWidth >= 900 && window.innerWidth > window.innerHeight)) location.replace("intro.html");
+} catch (e) {} })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
@@ -333,6 +339,7 @@ button.ba { border: 0; padding: 0; font: inherit; color: inherit; cursor: zoom-i
 <div class="top">
   <a class="tbtn" href="./" id="back">← 선생님 페이지</a>
   <button class="tbtn ic" type="button" id="editBtn" aria-label="숫자·문구 고치기" title="숫자·문구 고치기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg></button>
+  <button class="tbtn" type="button" id="toPad" title="아이패드(가로 화면)용으로 바꾸기" style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M18 12h.01"/></svg>아이패드</button>
   <span class="cnt" id="cnt">1 / 5</span>
 </div>
 
@@ -613,6 +620,7 @@ button.ba { border: 0; padding: 0; font: inherit; color: inherit; cursor: zoom-i
     setTimeout(function () { w.querySelector("#eTotal").focus(); }, 50);
   }
   $("editBtn").addEventListener("click", openEdit);
+  $("toPad").addEventListener("click", function () { try { localStorage.setItem("ptview", "pad"); } catch (e) {} location.href = "intro.html"; });
 
   /* ---------- 누르면 실제 회원 PT 노트 (아무 회원이나, 이름은 가린 채로) */
   function pickFor(kind) {

@@ -100,7 +100,7 @@
      이름은 가운데 글자를 O로 가리고, 위 막대에 "← PT 안내서" 버튼. 새 공지 팝업은 안 띄움 */
   var DEMO = null;
   try { DEMO = sessionStorage.getItem("ptdemo"); } catch (e) {}
-  if (DEMO && !/^\/coach-[a-z0-9]+\/guide\.html#p\d+$/.test(DEMO)) DEMO = null;
+  if (DEMO && !/^\/coach-[a-z0-9]+\/(guide|intro)\.html#p\d+$/.test(DEMO)) DEMO = null;
   /* 소개 슬라이드 링크(주소 끝 ?demo)로 열어도 이름을 가림 — 돌아가기 버튼은 없음 */
   var DEMO_BACK = DEMO;
   if (!DEMO && /[?&]demo\b/.test(location.search)) DEMO = "link";
