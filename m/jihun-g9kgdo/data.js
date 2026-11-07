@@ -8,6 +8,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 7", title: "팔 운동 자세 복습지 4개가 올라왔어요",
+      body: "덤벨 컬 · 해머 컬 · 케이블 푸쉬다운 · 인클라인 벤치 이두컬. 오늘 수업 영상으로 만들었어요. 팔 하는 날 들어가기 전에 꼭 한 번 보세요!", link: "forms" },
     { date: "2026. 11. 5", title: "시티드 페이스풀 자세 복습지가 올라왔어요",
       body: "루틴에도 넣었어요(루틴 v4). 화요일 등·목요일 어깨·팔 하는 날 맨 앞 워밍업으로 해요. 운동 전에 한 번 보고 들어가세요!", link: "form-seated-face-pull" },
     { date: "2026. 11. 3", title: "인클라인 덤벨 프레스 자세 복습지가 올라왔어요",
@@ -22,6 +24,114 @@ window.MEMBER = {
 
   /* 자세 복습지 (최신이 위) */
   forms: [
+    {
+      id: "db-curl",
+      dir: "media/form-db-curl/",
+      date: "2026. 11. 7 (토)",
+      exercise: "덤벨 컬",
+      exercise_en: "DB Curl",
+      part: "팔",
+      targets: ["이두근", "상완근 · 전완근"],
+      benefit: "팔 앞쪽 알통을 키워 팔 라인을 또렷하게 만들어줘요",
+      key_point: "팔꿈치는 옆구리에 고정, 이두로만 말아 올린다!",
+      good_points: [
+        { title: "상체를 곧게 세웠어요", desc: "몸을 흔들지 않아서 반동 없이 팔로만 들어 올렸어요" },
+        { title: "끝까지 펴고 시작했어요", desc: "내릴 때 팔을 쭉 펴서 이두가 길게 늘어났다가 일했어요" },
+        { title: "양손 높이가 같았어요", desc: "두 팔이 같은 속도로 올라가 좌우가 고르게 일했어요" }
+      ],
+      primary_muscles: [{ name: "이두근", where: "팔 앞쪽 알통" }],
+      secondary_muscles: "상완근 · 전완근",
+      feel_good: "팔 앞쪽 알통이 빵빵하게 차올라요",
+      feel_stop: "손목·팔꿈치 안쪽이 찌릿하거나, 어깨 앞이 먼저 아파요",
+      steps: [
+        { title: "준비", desc: "발은 골반 너비, 손바닥이 앞을 보게 덤벨을 잡고 팔꿈치를 옆구리에 붙여요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "올리기", desc: "팔꿈치는 그대로 두고 덤벨을 어깨 쪽으로 말아 올려요. 위에서 1초 꽉!", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "내리기", desc: "버티면서 천천히, 팔이 끝까지 펴질 때까지 내려요", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["팔꿈치는 옆구리에 고정", "올린 끝에서 1초 쥐어짜기", "내릴 때 팔 끝까지 펴기"],
+      dont: ["허리를 뒤로 젖혀 반동 쓰기", "팔꿈치를 앞으로 들어 올리기", "손목을 안쪽으로 꺾기"]
+    },
+    {
+      id: "hammer-curl",
+      dir: "media/form-hammer-curl/",
+      date: "2026. 11. 7 (토)",
+      exercise: "해머 컬",
+      exercise_en: "Hammer Curl",
+      part: "팔",
+      targets: ["상완요골근 · 상완근", "이두근"],
+      benefit: "팔뚝 바깥쪽과 팔 두께를 채워 팔이 굵어 보이게 해줘요",
+      key_point: "엄지가 위로! 망치 들듯이 들어 올린다",
+      good_points: [
+        { title: "엄지가 위를 보게 잡았어요", desc: "손목을 돌리지 않아서 팔뚝 바깥까지 자극이 갔어요" },
+        { title: "팔꿈치가 흔들리지 않았어요", desc: "팔꿈치가 옆구리에 붙어 있어서 팔만 움직였어요" },
+        { title: "끝까지 내렸어요", desc: "매번 팔을 다 펴고 다시 들어 올렸어요" }
+      ],
+      primary_muscles: [{ name: "상완요골근", where: "팔뚝 위쪽 바깥" }, { name: "상완근", where: "이두근 아래 깊은 근육" }],
+      secondary_muscles: "이두근 · 전완근",
+      feel_good: "팔뚝 위쪽 바깥과 팔꿈치 위가 뻐근해요",
+      feel_stop: "손목이 꺾여서 아프거나, 팔꿈치 바깥이 찌릿해요",
+      steps: [
+        { title: "준비", desc: "손바닥이 몸쪽(엄지가 위)을 보게 덤벨을 잡고 팔꿈치를 옆구리에 붙여요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "올리기", desc: "손목 각도 그대로, 망치 들듯이 어깨 앞까지 들어 올려요", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "내리기", desc: "천천히 버티면서 팔을 끝까지 펴요", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["엄지는 끝까지 위로", "팔꿈치는 옆구리에 붙이기", "손목은 일자로 고정"],
+      dont: ["몸통을 흔들어 반동 쓰기", "덤벨을 어깨 너머까지 올리기", "손목을 돌려 손바닥이 위로"]
+    },
+    {
+      id: "cable-pushdown",
+      dir: "media/form-cable-pushdown/",
+      date: "2026. 11. 7 (토)",
+      exercise: "케이블 푸쉬다운",
+      exercise_en: "Cable Pushdown",
+      part: "팔",
+      targets: ["삼두근 (팔 뒤쪽)", "전완근 · 코어"],
+      benefit: "팔 뒤쪽을 탄탄하게 채워 팔이 굵고 단단해 보이게 해줘요",
+      key_point: "팔꿈치는 옆구리에 못 박고, 아래로 쭉 편다!",
+      good_points: [
+        { title: "팔꿈치를 옆구리에 붙였어요", desc: "팔꿈치가 앞뒤로 움직이지 않아 삼두에 힘이 모였어요" },
+        { title: "끝까지 쭉 폈어요", desc: "아래에서 팔을 다 펴서 삼두가 꽉 조여졌어요" },
+        { title: "천천히 돌아갔어요", desc: "손이 가슴 아래까지만 오도록 버티며 돌아갔어요" }
+      ],
+      primary_muscles: [{ name: "삼두근", where: "팔 뒤쪽 전체" }],
+      secondary_muscles: "전완근 · 코어(몸 고정)",
+      feel_good: "팔 뒤쪽이 단단하게 조여져요",
+      feel_stop: "팔꿈치 안이 찌릿하거나, 어깨·가슴이 먼저 힘들어요",
+      steps: [
+        { title: "준비", desc: "케이블 앞에 서서 살짝 앞으로 기울이고, 팔꿈치를 옆구리에 붙여 손을 가슴 아래에 둬요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "밀어 내리기", desc: "팔꿈치는 그대로, 손만 아래로 쭉 밀어 팔을 다 펴요. 아래서 1초!", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "돌아가기", desc: "버티면서 손을 가슴 아래까지만 천천히 올려요", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["팔꿈치는 옆구리에 고정", "아래에서 팔 끝까지 펴기", "어깨는 내리고 가슴은 펴기"],
+      dont: ["몸을 숙여 체중으로 누르기", "팔꿈치가 앞으로 따라 올라가기", "손이 얼굴까지 올라오기"]
+    },
+    {
+      id: "incline-bench-curl",
+      dir: "media/form-incline-bench-curl/",
+      date: "2026. 11. 7 (토)",
+      exercise: "인클라인 벤치 이두컬",
+      exercise_en: "Incline Bench Curl",
+      part: "팔",
+      targets: ["이두근 (장두)", "상완근"],
+      benefit: "이두를 길게 늘였다가 수축해서 알통 높이를 키워줘요",
+      key_point: "팔은 몸 뒤로 늘어뜨린 채, 팔꿈치는 움직이지 않는다!",
+      good_points: [
+        { title: "등을 벤치에 붙였어요", desc: "상체가 들리지 않아서 이두가 길게 늘어난 상태로 시작했어요" },
+        { title: "팔을 끝까지 늘어뜨렸어요", desc: "아래에서 팔을 다 펴서 알통 위쪽까지 자극이 들어갔어요" },
+        { title: "천천히 내렸어요", desc: "떨어뜨리지 않고 버티면서 내려왔어요" }
+      ],
+      primary_muscles: [{ name: "이두근 장두", where: "알통 바깥쪽 위" }],
+      secondary_muscles: "상완근 · 전완근",
+      feel_good: "알통 위쪽이 길게 당기다가 꽉 조여져요",
+      feel_stop: "어깨 앞이 찌릿하거나, 팔꿈치 안쪽이 아파요",
+      steps: [
+        { title: "준비", desc: "등받이를 45~60도로 세워 등과 머리를 붙이고, 팔을 몸 옆·뒤로 쭉 늘어뜨려요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "올리기", desc: "팔꿈치는 그대로 두고 덤벨을 어깨 쪽으로 말아 올려요", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "내리기", desc: "이두가 늘어나는 걸 느끼며 천천히 끝까지 내려요", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["등과 머리는 벤치에 붙이기", "팔꿈치는 몸 옆에서 고정", "아래에서 팔 끝까지 펴기"],
+      dont: ["상체를 들어 반동 쓰기", "팔꿈치를 앞으로 들어 올리기", "무거운 무게로 어깨까지 쓰기"]
+    },
     {
       id: "seated-face-pull",
       dir: "media/form-seated-face-pull/",
@@ -118,7 +228,7 @@ window.MEMBER = {
       { day: "월", part: "가슴", en: "Chest", cardio: true, items: [
         { name: "플랫 덤벨프레스", en: "Flat DB Press", tag: "메인", tip: "덤벨은 가슴 옆까지", sets: [[15, 8], [12, 8], [10, 10], [8, 10]], form: "flat-db-press" },
         { name: "인클라인 덤벨 프레스", en: "Incline DB Press", tip: "윗가슴으로 밀기", sets: [[12, 8], [12, 8], [12, 8]], form: "incline-db-press" },
-        { name: "케이블 푸쉬다운", en: "Cable Pushdown", tip: "팔꿈치 옆구리 고정", sets: [[15, 15], [15, 15], [15, 15]] }
+        { name: "케이블 푸쉬다운", en: "Cable Pushdown", tip: "팔꿈치 옆구리 고정", sets: [[15, 15], [15, 15], [15, 15]], form: "cable-pushdown" }
       ]},
       { day: "화", part: "등", en: "Back", cardio: true, items: [
         { name: "시티드 페이스풀", en: "Seated Face Pull", tag: "워밍업", tip: "팔꿈치 높게 얼굴 쪽으로", sets: [[20, 10], [15, 15]], form: "seated-face-pull" },
@@ -138,8 +248,8 @@ window.MEMBER = {
         { name: "사이드 레터럴 레이즈", en: "Lateral Raise", tag: "워밍업", tip: "어깨 으쓱 금지", sets: [[20, 4], [15, 4]] },
         { name: "숄더 프레스 머신", en: "Shoulder Press", tag: "메인", tip: "허리 등받이에 붙이기", sets: [[15, 20], [12, 20], [10, 25], [8, 25]] },
         { name: "레터럴 레이즈 머신", en: "Standing Machine", tip: "팔꿈치로 들어 올리기", sets: [[15, 10], [15, 10], [15, 10]] },
-        { name: "덤벨 컬", en: "DB Curl", tip: "팔꿈치 고정", sets: [[12, 6], [12, 6], [12, 6]] },
-        { name: "해머 컬", en: "Hammer Curl", tip: "엄지가 위로", sets: [[12, 6], [12, 6], [12, 6]] }
+        { name: "덤벨 컬", en: "DB Curl", tip: "팔꿈치 고정", sets: [[12, 6], [12, 6], [12, 6]], form: "db-curl" },
+        { name: "해머 컬", en: "Hammer Curl", tip: "엄지가 위로", sets: [[12, 6], [12, 6], [12, 6]], form: "hammer-curl" }
       ]},
       { day: "금", part: "가슴·등", en: "Chest · Back", cardio: true, items: [
         { name: "인클라인 덤벨 프레스", en: "Incline DB Press", tag: "메인", tip: "윗가슴으로 밀기", sets: [[15, 6], [12, 6], [10, 8], [8, 8]], form: "incline-db-press" },
