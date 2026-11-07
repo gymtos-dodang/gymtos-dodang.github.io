@@ -312,7 +312,7 @@ button.ba { border: 0; padding: 0; font: inherit; color: inherit; cursor: zoom-i
 /* 2쪽 그림은 잘리지 않게 2:1 통째로 (2026-11-07 "이미지 짤림") */
 .wq > * { position: relative; }
 .wq img.th { height: auto; aspect-ratio: 2 / 1; object-fit: contain; background: #F3F5F9; border-bottom: 1px solid var(--line); }
-.wq i { position: absolute; top: 6px; right: 6px; margin: 0; padding: 3px 8px; font-size: 10.5px; color: #fff; background: var(--pink); border-radius: 99px; box-shadow: 0 1px 4px rgba(194, 24, 91, .35); }
+.wq i { position: static; display: inline-block; vertical-align: 1px; margin: 0 0 0 2px; padding: 1px 7px; font-size: 10px; white-space: nowrap; color: #fff; background: var(--pink); border-radius: 99px; box-shadow: 0 1px 4px rgba(194, 24, 91, .35); }
 .stair .s1 small { line-height: 1.25; }
 .stair .t2 { white-space: nowrap; text-align: center; line-height: 1.2; border-radius: 10px; padding: 3px 8px; }
 .ba1 { position: relative; display: block; width: 100%; height: 190px; border-radius: 16px; overflow: hidden; }
@@ -410,12 +410,12 @@ button.ba { border: 0; padding: 0; font: inherit; color: inherit; cursor: zoom-i
     <p class="ey2 pk">SOUND FAMILIAR? → PT 노트로 해결</p>
     <h2>혹시 이런 고민 있으세요?</h2>
     <div class="wq">
-      <button type="button" class="go" data-go="routine"><img class="th" src="guide/t2-routine.jpg" alt="루틴일지 화면: 요일별 운동 아이콘"><q>“뭘 해야 할지 모르겠어요”</q><b>요일별 루틴일지에 무게까지</b><i>보기 →</i></button>
-      <button type="button" class="go" data-go="form"><img class="th" src="guide/t2-form.jpg" alt="자세 복습지 화면: 오늘 수업 영상"><q>“자세가 맞는지 헷갈려요”</q><b>수업 영상으로 자세 복습지</b><i>보기 →</i></button>
-      <button type="button" class="go" data-go="diet"><img class="th" src="guide/t2-diet.jpg" alt="식단 화면: 끼니별 음식 그림"><q>“뭘 먹어야 할지 모르겠어요”</q><b>끼니별 맞춤 식단을 그림으로</b><i>보기 →</i></button>
-      <button type="button" class="go" data-go="goal"><img class="th" src="guide/t2-goal.jpg" alt="PT 노트 홈 화면: 오늘 출석 버튼"><q>“혼자 하면 작심삼일이에요”</q><b>출석 체크로 매일 확인</b><i>보기 →</i></button>
-      <button type="button" class="go" data-go="body"><img class="th" src="guide/t2-body.jpg" alt="인바디 체지방률 기록 그래프"><q>“변화가 안 보여요”</q><b>인바디로 지난달과 비교</b><i>보기 →</i></button>
-      <div><img class="th" src="guide/t2-rehab.jpg" alt="자극 부위 근육 그림"><q>“허리·무릎이 아파요”</q><b>재활 트레이닝으로 안 아픈 동작부터</b></div>
+      <button type="button" class="go" data-go="routine"><img class="th" src="guide/t3-routine.jpg" alt="루틴일지 화면: 요일별 운동 아이콘"><q>“뭘 해야 할지 모르겠어요”</q><b>요일별 루틴일지에 무게까지 <i>보기 →</i></b></button>
+      <button type="button" class="go" data-go="form"><img class="th" src="guide/t3-form.jpg" alt="자세 복습지 화면: 오늘 수업 영상"><q>“자세가 맞는지 헷갈려요”</q><b>수업 영상으로 자세 복습지 <i>보기 →</i></b></button>
+      <button type="button" class="go" data-go="diet"><img class="th" src="guide/t3-diet.jpg" alt="식단 화면: 끼니별 음식 그림"><q>“뭘 먹어야 할지 모르겠어요”</q><b>끼니별 맞춤 식단을 그림으로 <i>보기 →</i></b></button>
+      <button type="button" class="go" data-go="goal"><img class="th" src="guide/t3-goal.jpg" alt="PT 노트 홈 화면: 오늘 출석 버튼"><q>“혼자 하면 작심삼일이에요”</q><b>출석 체크로 매일 확인 <i>보기 →</i></b></button>
+      <button type="button" class="go" data-go="body"><img class="th" src="guide/t3-body.jpg" alt="인바디 체지방률 기록 그래프"><q>“변화가 안 보여요”</q><b>인바디로 지난달과 비교 <i>보기 →</i></b></button>
+      <div><img class="th" src="guide/t3-rehab.jpg" alt="자극 부위 근육 그림"><q>“허리·무릎이 아파요”</q><b>재활 트레이닝으로 안 아픈 동작부터</b></div>
     </div>
     <div class="cta slim"><b>이 모든 게 회원님 폰 하나에 <em>나만의 PT 노트</em>로</b><span>앱 설치 없이 카톡 링크 하나</span></div>
   </div></section>
