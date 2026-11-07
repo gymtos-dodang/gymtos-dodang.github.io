@@ -8,6 +8,9 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 7", title: "엉덩이 자세 복습지 2개가 올라왔어요",
+      body: "오늘 수업한 굿모닝 아웃타이 · 힙쓰러스트 머신 복습지예요. 토요일 엉덩이 날 운동 전에 한 번 보고 들어가세요! 루틴 탭 토요일 종목에서도 바로 열려요.",
+      link: "forms" },
     { date: "2026. 11. 6", title: "자세 복습지 3개가 올라왔어요",
       body: "펙덱 플라이 · 시티드 페이스풀 · 체스트 프레스 머신 복습지예요. 영상으로 자세 한 번 보고 운동하면 훨씬 잘 들어가요! 루틴 탭 종목에서 '▶ 자세 복습지 보기'를 눌러도 바로 열려요.",
       link: "forms" },
@@ -19,6 +22,60 @@ window.MEMBER = {
 
   /* 자세 복습지 (최신이 위) */
   forms: [
+    {
+      id: "hip-thrust",
+      dir: "media/form-hip-thrust/",
+      date: "2026. 11. 7 (토)",
+      exercise: "힙쓰러스트 머신",
+      exercise_en: "Hip Thrust Machine",
+      part: "엉덩이",
+      targets: ["대둔근 (엉덩이)", "햄스트링 · 중둔근"],
+      benefit: "엉덩이를 위로 동그랗게 끌어올리고, 힙 라인을 탄탄하게 만들어줘요",
+      key_point: "턱은 당기고, 맨 위에서 엉덩이를 꽉 짠다!",
+      good_points: [
+        { title: "턱을 당기고 시선을 앞에 뒀어요", desc: "고개가 뒤로 젖혀지지 않아서 허리가 아닌 엉덩이로 올렸어요" },
+        { title: "끝까지 밀어 올렸어요", desc: "무릎·골반·어깨가 일자가 될 때까지 올려서 엉덩이가 꽉 수축됐어요" },
+        { title: "위에서 멈췄다 내려왔어요", desc: "맨 위에서 버티고 천천히 내려와서 엉덩이에 힘이 끝까지 남았어요" }
+      ],
+      primary_muscles: [{ name: "대둔근", where: "엉덩이 가운데 · 아래쪽" }],
+      secondary_muscles: "햄스트링 · 중둔근 · 허벅지 앞(버티기)",
+      feel_good: "엉덩이 아래쪽이 꽉 조이고 뜨거워져요",
+      feel_stop: "허리가 뻐근하거나, 허벅지 앞만 터질 것 같아요",
+      steps: [
+        { title: "준비", desc: "등받이에 날개뼈를 걸치고 벨트를 골반에 걸어요. 발은 어깨너비, 무릎은 90도가 되게", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "올리기", desc: "턱을 당긴 채 발뒤꿈치로 밀어 골반을 올려요. 무릎·골반·어깨가 일자가 되면 엉덩이 꽉 1초!", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "내리기", desc: "엉덩이 힘을 풀지 말고 천천히 내려요. 바닥에 닿기 직전에 다시 올려요", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["턱 당기고 시선은 무릎 쪽", "발뒤꿈치로 밀어 올리기", "맨 위에서 엉덩이 꽉 1초"],
+      dont: ["고개 젖히고 허리를 꺾어 올리기", "무릎이 안쪽으로 모이기", "내릴 때 털썩 내려놓기"]
+    },
+    {
+      id: "goodmorning-outer-thigh",
+      dir: "media/form-goodmorning-outer-thigh/",
+      date: "2026. 11. 7 (토)",
+      exercise: "굿모닝 아웃타이",
+      exercise_en: "Good Morning Outer Thigh",
+      part: "엉덩이",
+      targets: ["중둔근 (엉덩이 옆)", "대둔근 (엉덩이 뒤)"],
+      benefit: "엉덩이 옆과 뒤를 같이 채워서, 옆에서 봐도 동그란 힙을 만들어줘요",
+      key_point: "등은 편 채로 상체를 숙이며, 엉덩이로 다리를 밀어낸다!",
+      good_points: [
+        { title: "등을 펴고 숙였어요", desc: "허리가 둥글게 말리지 않고 엉덩이를 뒤로 빼면서 숙여서 엉덩이에 힘이 잘 실렸어요" },
+        { title: "숙이고 벌리는 타이밍이 맞았어요", desc: "상체를 숙이면서 다리를 벌려서 엉덩이 옆·뒤를 같이 썼어요" },
+        { title: "천천히 세우며 돌아왔어요", desc: "패드가 쾅 닫히지 않게 버티면서 돌아와서 자극이 끊기지 않았어요" }
+      ],
+      primary_muscles: [{ name: "중둔근", where: "엉덩이 옆 · 골반 바로 아래" }, { name: "대둔근", where: "엉덩이 뒤 · 아래쪽" }],
+      secondary_muscles: "대퇴근막장근(골반 옆 앞쪽) · 척추기립근(등 펴서 버티기)",
+      feel_good: "엉덩이 옆과 뒤가 같이 뻐근하고 뜨거워져요",
+      feel_stop: "허리가 뻐근하거나, 허벅지 바깥만 아파요",
+      steps: [
+        { title: "준비", desc: "엉덩이를 등받이 끝까지 붙여 앉고, 무릎 바깥에 패드를 대요. 손잡이를 잡고 등을 곧게 펴요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "숙이며 벌리기", desc: "인사하듯 엉덩이를 뒤로 빼며 상체를 숙이고, 엉덩이 힘으로 무릎을 바깥으로 밀어요. 끝에서 1초!", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "세우며 모으기", desc: "등을 편 채로 상체를 천천히 세우면서, 패드를 버티며 다리를 모아요", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["숙일 때도 등은 곧게", "엉덩이를 뒤로 빼면서 숙이기", "벌린 끝에서 엉덩이 꽉 1초"],
+      dont: ["허리를 둥글게 말아 숙이기", "반동으로 다리를 확 벌리기", "모을 때 패드를 쾅 닫기"]
+    },
     {
       id: "chest-press",
       dir: "media/form-chest-press/",
@@ -135,8 +192,8 @@ window.MEMBER = {
       { day: "토", part: "엉덩이", en: "Glute Day · 트레이너와 PT 수업", cardio: false, items: [
         { name: "고블릿 스쿼트", en: "Goblet Squat", tag: "선행", tip: "가슴 세우고 깊이 앉기", sets: [[20, 6], [15, 8], [12, 10]] },
         { name: "이너타이", en: "Inner Thigh", tag: "선행", tip: "천천히 모으고 버티기", sets: [[15, 15], [12, 20], [10, 25]] },
-        { name: "아웃타이 머신", en: "Outer Thigh", icon: "outer_thigh_pin", tag: "선행", tip: "엉덩이 옆으로 밀기", sets: [[20, 20], [15, 25], [12, 30]] },
-        { name: "힙쓰러스트 머신", en: "Hip Thrust", icon: "hip_thrust", tag: "메인", tip: "맨 위에서 엉덩이 꽉", sets: [[15, 10], [12, 10], [10, 15], [8, 15]] }
+        { name: "아웃타이 머신", en: "Outer Thigh", icon: "outer_thigh_pin", tag: "선행", tip: "엉덩이 옆으로 밀기", sets: [[20, 20], [15, 25], [12, 30]], form: "goodmorning-outer-thigh" },
+        { name: "힙쓰러스트 머신", en: "Hip Thrust", icon: "hip_thrust", tag: "메인", tip: "맨 위에서 엉덩이 꽉", sets: [[15, 10], [12, 10], [10, 15], [8, 15]], form: "hip-thrust" }
       ]},
       { day: "일", part: "휴식", en: "Rest", rest: true, items: [] }
     ]
