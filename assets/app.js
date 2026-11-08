@@ -235,6 +235,8 @@
   function ss(a, b, m) { var t = Math.max(0, Math.min(1, (m - a) / (b - a))); return t * t * (3 - 2 * t); }
   function bpMuscle(m) { return 0.1 + 0.72 / (1 + Math.exp(-(m - 4) / 1.2)) - 0.03 * ss(8, 12, m); }
   function bpFat(m) { return 0.5 + 0.08 * ss(0, 8, m) - 0.44 * ss(8, 11.6, m); }
+  var bpGid = 0;
+  function reduceMotion() { try { return window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { return false; } }
   function journeyChartBP(now) {
     var X = function (m) { return 26 + m * 25; }, Y = function (v) { return 168 - v * 124; };
     var bands = JST.map(function (s, i) {
@@ -249,10 +251,30 @@
       return out.join(" ");
     };
     var cm = now ? now.m : 0;
+    /* 움직이는 그라데이션 (2026-11-08): 근육 선에 금빛이 흐르고, 선 아래 금색 빛 + 반짝이는 띠가 지나감 */
+    var gid = "bpg" + (++bpGid), still = reduceMotion();
+    var anim = function (dist, dur) { return still ? "" : '<animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="' + dist + ' 0" dur="' + dur + 's" repeatCount="indefinite"/>'; };
+    var defs = '<defs>' +
+      '<linearGradient id="' + gid + 'l" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="120" y2="0" spreadMethod="reflect">' +
+      '<stop offset="0" stop-color="#C9962E"/><stop offset=".5" stop-color="#FFF3C4"/><stop offset="1" stop-color="#E8C25A"/>' + anim(240, 2.6) + '</linearGradient>' +
+      '<linearGradient id="' + gid + 'a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8C25A" stop-opacity=".42"/><stop offset="1" stop-color="#E8C25A" stop-opacity="0"/></linearGradient>' +
+      '<linearGradient id="' + gid + 's" gradientUnits="userSpaceOnUse" x1="-90" y1="0" x2="-10" y2="0">' +
+      '<stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#FFF3C4" stop-opacity=".38"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>' + anim(440, 3.4) + '</linearGradient>' +
+      '<linearGradient id="' + gid + 'f" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="0" spreadMethod="reflect">' +
+      '<stop offset="0" stop-color="var(--dot)"/><stop offset="1" stop-color="#FFD1E4"/>' + anim(200, 3.8) + '</linearGradient>' +
+      '</defs>';
     /* 체지방(분홍 점선) 먼저, 근육(금색) 위에 */
-    var path = '<polyline points="' + pts(bpFat, 0, 12) + '" fill="none" stroke="var(--dot)" stroke-width="2.5" stroke-dasharray="1 5" stroke-linecap="round" opacity=".9"/>' +
-      '<polyline points="' + pts(bpMuscle, 0, 12) + '" fill="none" stroke="var(--gold-line)" stroke-width="2.5" stroke-dasharray="5 5" opacity=".4"/>';
-    if (cm > 0) path += '<polyline points="' + pts(bpMuscle, 0, cm) + '" fill="none" stroke="var(--gold-line)" stroke-width="4.5" stroke-linecap="round"/>';
+    var path = '<polyline points="' + pts(bpFat, 0, 12) + '" fill="none" stroke="url(#' + gid + 'f)" stroke-width="2.5" stroke-dasharray="1 5" stroke-linecap="round" opacity=".9" class="bp-flow"/>' +
+      '<polyline points="' + pts(bpMuscle, cm, 12) + '" fill="none" stroke="url(#' + gid + 'l)" stroke-width="2.5" stroke-dasharray="5 5" opacity=".6" class="bp-ahead"/>';
+    /* 앞으로 갈 구간: 옅은 금빛 + 촬영 쪽으로 흐르는 반짝임 (선 아래 전체) */
+    var areaAll = pts(bpMuscle, 0, 12) + " " + X(12) + ",168 " + X(0) + ",168";
+    path = '<polygon points="' + pts(bpMuscle, cm, 12) + " " + X(12) + ",168 " + X(cm).toFixed(1) + ',168" fill="url(#' + gid + 'a)" opacity=".35"/>' +
+      '<polygon points="' + areaAll + '" fill="url(#' + gid + 's)"/>' + path;
+    if (cm > 0) {
+      var area = pts(bpMuscle, 0, cm) + " " + X(cm).toFixed(1) + ",168 " + X(0) + ",168";
+      path += '<polygon points="' + area + '" fill="url(#' + gid + 'a)" class="bp-area"/>' +
+        '<polyline points="' + pts(bpMuscle, 0, cm) + '" fill="none" stroke="url(#' + gid + 'l)" stroke-width="4.5" stroke-linecap="round" pathLength="1" class="bp-done"/>';
+    }
     /* 두 선이 만나는 곳 = 몸이 선명해지는 순간 */
     var cx = 8;
     for (var m = 8; m <= 12; m += 0.05) { if (bpMuscle(m) - bpFat(m) > 0.12) { cx = m; break; } }
@@ -265,17 +287,18 @@
     var mk = "";
     if (now) {
       var mx = X(cm), my = Y(bpMuscle(cm)), right = cm > 7.5, LW = 108, ly = my - 18;
-      mk = '<circle cx="' + mx + '" cy="' + my + '" r="12" fill="var(--gold-line)" opacity=".25"/><circle cx="' + mx + '" cy="' + my + '" r="6.5" fill="var(--gold-line)" stroke="#fff" stroke-width="2.5"/>' +
+      mk = '<circle cx="' + mx + '" cy="' + my + '" r="7" fill="none" stroke="var(--gold-line)" stroke-width="2" class="bp-sonar"/>' +
+        '<circle cx="' + mx + '" cy="' + my + '" r="12" fill="var(--gold-line)" opacity=".25"/><circle cx="' + mx + '" cy="' + my + '" r="6.5" fill="url(#' + gid + 'l)" stroke="#fff" stroke-width="2.5"/>' +
         '<g transform="translate(' + (right ? mx - 6 : mx + 6) + ',' + ly + ')"><rect x="' + (right ? -LW : 0) + '" y="-15" width="' + LW + '" height="22" rx="11" fill="var(--key)"/>' +
         '<text x="' + (right ? -LW / 2 : LW / 2) + '" y="0.5" text-anchor="middle" class="jc-mk">지금 여기 · ' + (now.month || 1) + '개월차</text></g>';
     }
     /* 끝: 금색 카메라 = 바프 촬영 D-DAY */
     var ex = X(12), ey = Y(bpMuscle(12));
-    var cam = '<g transform="translate(' + ex + ',' + (ey - 22) + ')"><circle r="14" fill="var(--gold-line)"/>' +
+    var cam = '<g transform="translate(' + ex + ',' + (ey - 22) + ')"><circle r="14" fill="var(--gold-line)" class="bp-glow"/><circle r="14" fill="url(#' + gid + 'l)"/>' +
       '<path d="M-7 -3.5 h3.5 l1.6 -2.4 h3.8 l1.6 2.4 h3.5 v9 h-14 Z" fill="none" stroke="#17294B" stroke-width="1.8" stroke-linejoin="round"/><circle cy="1" r="2.6" fill="none" stroke="#17294B" stroke-width="1.8"/></g>' +
       '<text x="' + (ex - 19) + '" y="' + (ey - 18) + '" text-anchor="end" class="bp-dd">D-DAY</text>';
     return '<div class="jchart bp-chart"><svg viewBox="0 0 340 194" role="img" aria-label="바디프로필 12개월 여정 그래프: 1단계 기초(1~2개월), 2단계 근육 채우기(2~8개월), 3단계 컷팅과 촬영(8~12개월)' + (now ? ', 지금 ' + (now.month || 1) + '개월차' : '') + '">' +
-      bands + '<line x1="26" y1="168" x2="326" y2="168" stroke="#fff" stroke-opacity=".3" stroke-width="1.5"/>' + ticks + path + sharp + cam + mk + '</svg>' +
+      defs + bands + '<line x1="26" y1="168" x2="326" y2="168" stroke="#fff" stroke-opacity=".3" stroke-width="1.5"/>' + ticks + path + sharp + cam + mk + '</svg>' +
       '<div class="bp-legend"><span><i class="lg-m"></i>근육</span><span><i class="lg-f"></i>체지방</span></div>' +
       '<p class="bp-cap">2단계에 근육을 꽉 채우고, 3단계에 지방만 걷어내 촬영날 가장 선명한 몸을 만들어요. 선은 개념 그래프예요 (실측 아님).</p></div>';
   }
