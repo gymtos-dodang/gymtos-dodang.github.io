@@ -899,3 +899,33 @@ a.ex.pick .tip{color:var(--primary);font-weight:700}
 .attcard { display: flex; flex-direction: column; gap: 0; }
 .attcard > .panel { background: none; box-shadow: none; border-radius: 0; padding: 0; }
 .attcard > .cal { margin-top: 16px; padding-top: 16px; border-top: 1.5px dashed var(--line, #E6EAF1); }
+
+/* 배지 LED 효과 — 등급이 오를수록 (2026-11-08) */
+.bdg-s { z-index: 1; } .bdg-n, .bdg-p { z-index: 3; }
+.bdg-glow { position: absolute; left: 7px; top: -3px; width: 70px; height: 70px; border-radius: 50%; z-index: 0; pointer-events: none; }
+.bdg.on.lv2 .bdg-glow { animation: bgled2 2.8s ease-in-out infinite; }
+.bdg.on.lv3 .bdg-glow { animation: bgled3 2.2s ease-in-out infinite; }
+.bdg.on.lv4 .bdg-glow { animation: bgled4 2.6s ease-in-out infinite; }
+@keyframes bgled2 { 0%, 100% { box-shadow: 0 0 2px 0 rgba(227, 179, 65, .25); } 50% { box-shadow: 0 0 10px 2px rgba(227, 179, 65, .55); } }
+@keyframes bgled3 { 0%, 100% { box-shadow: 0 0 4px 1px rgba(227, 179, 65, .35); } 50% { box-shadow: 0 0 16px 5px rgba(227, 179, 65, .7); } }
+@keyframes bgled4 { 0%, 100% { box-shadow: 0 0 8px 2px rgba(227, 179, 65, .55); } 50% { box-shadow: 0 0 20px 7px rgba(242, 123, 176, .6); } }
+.bdg-ring { position: absolute; left: 6px; top: -4px; width: 72px; height: 72px; border-radius: 50%; z-index: 2; pointer-events: none;
+  background: conic-gradient(from 0deg, #E3B341, #FFF3C4, #F27BB0, #E3B341, #FFF3C4, #DB4C8C, #E3B341);
+  -webkit-mask: radial-gradient(circle, transparent 32.2px, #000 32.6px, #000 35.4px, transparent 35.8px);
+  mask: radial-gradient(circle, transparent 32.2px, #000 32.6px, #000 35.4px, transparent 35.8px);
+  animation: bgspinring 4s linear infinite; }
+@keyframes bgspinring { to { transform: rotate(360deg); } }
+.bdg-fx { position: absolute; left: 12px; top: 2px; width: 60px; height: 60px; border-radius: 50%; overflow: hidden; z-index: 2; pointer-events: none; }
+.bdg-fx::after { content: ""; position: absolute; top: -20px; left: -40px; width: 22px; height: 100px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .6), rgba(255, 255, 255, 0)); transform: rotate(25deg);
+  animation: bgsweep 3.6s ease-in-out infinite; }
+.bdg.lv4 .bdg-fx::after { animation-duration: 2.8s; }
+@keyframes bgsweep { 0% { left: -40px; } 45%, 100% { left: 90px; } }
+.bdg-spark { transform-box: fill-box; transform-origin: center; animation: bgtwinkle 1.6s ease-in-out infinite; }
+.bdg-spark.s2 { animation-delay: .8s; }
+@keyframes bgtwinkle { 0%, 100% { transform: scale(.55) rotate(0); opacity: .5; } 50% { transform: scale(1.15) rotate(45deg); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .bdg-glow, .bdg-ring, .bdg-fx::after, .bdg-spark { animation: none !important; }
+  .bdg.on.lv2 .bdg-glow, .bdg.on.lv3 .bdg-glow, .bdg.on.lv4 .bdg-glow { box-shadow: 0 0 10px 2px rgba(227, 179, 65, .55); }
+  .bdg-fx { display: none; }
+}

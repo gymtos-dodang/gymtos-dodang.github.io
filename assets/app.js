@@ -964,11 +964,15 @@
     s += t === 1 ? '<circle cx="42" cy="32" r="28.75" fill="none" stroke="' + ring + '" stroke-width="2.5"/>'
       : '<circle cx="42" cy="32" r="28.5" fill="none" stroke="' + (t === 4 ? (on ? "#F8E3A6" : "#F3F5F9") : ring) + '" stroke-width="3"/>';
     if (b.kind !== "num") s += '<g transform="translate(' + bgT(b) + ') scale(' + bgSc(b) + ')" fill="none" stroke="' + ic + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + BG_IC[b.kind] + '</g>';
-    if (t === 4 && on) s += '<path transform="translate(64 0)" d="M7 0 L8.4 5.6 L14 7 L8.4 8.4 L7 14 L5.6 8.4 L0 7 L5.6 5.6 Z" fill="' + BG_GOLD + '"/>';
+    if (t === 4 && on) s += '<g transform="translate(64 0)"><path class="bdg-spark" d="M7 0 L8.4 5.6 L14 7 L8.4 8.4 L7 14 L5.6 8.4 L0 7 L5.6 5.6 Z" fill="' + BG_GOLD + '"/></g>' +
+      '<g transform="translate(2 50)"><path class="bdg-spark s2" d="M4 0 L4.8 3.2 L8 4 L4.8 4.8 L4 8 L3.2 4.8 L0 4 L3.2 3.2 Z" fill="' + BG_GOLD + '"/></g>';
     s += '</svg>';
     var num = b.kind === "num" ? '<span class="bdg-n' + (String(b.num).length > 2 ? ' sm' : '') + '" style="color:' + ic + '">' + b.num + '</span>' : '';
     var pill = b.pill ? '<span class="bdg-p" style="background:' + (on ? BG_GOLD : BG_GREY) + ';color:' + (on ? BG_N : "#fff") + ';border-color:' + (gap || "#fff") + '">' + b.pill + '</span>' : '';
-    return '<span class="bdg' + (on ? ' on' : '') + '">' + s + num + pill + '</span>';
+    /* 받은 배지는 등급이 오를수록 LED처럼 빛남 (2026-11-08): Lv.2 은은한 금빛 숨쉬기 → Lv.3 + 반짝 빛 지나감 → Lv.4 + 금·분홍 그라데이션 링이 돌고 별이 반짝 */
+    var fx = on && t >= 2 ? (t === 4 ? '<span class="bdg-ring" aria-hidden="true"></span>' : '') + '<span class="bdg-glow" aria-hidden="true"></span>' : '';
+    var sw = on && t >= 3 ? '<span class="bdg-fx" aria-hidden="true"></span>' : '';
+    return '<span class="bdg lv' + t + (on ? ' on' : '') + '">' + fx + s + sw + num + pill + '</span>';
   }
   function bgSc(b) { return b.kind === "sun" ? 1.1667 : 1.0833; }
   function bgT(b) { var o = 42 - 12 * bgSc(b), o2 = 32 - 12 * bgSc(b); return o.toFixed(2) + " " + o2.toFixed(2); }
@@ -1264,6 +1268,7 @@
       var holder = document.createElement("div");
       holder.style.cssText = "position:fixed;left:-12000px;top:0;width:1080px;height:1350px;overflow:hidden";
       var c = r.cloneNode(true); c.removeAttribute("id"); c.style.transform = "none";
+      Array.prototype.forEach.call(c.querySelectorAll(".bdg-fx, .bdg-ring"), function (x) { x.remove(); });   /* 움직이는 효과는 그림에선 빼고 */
       holder.appendChild(c); document.body.appendChild(holder);
       var fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
       fontsReady.then(loadH2C).then(function (h2c) {
