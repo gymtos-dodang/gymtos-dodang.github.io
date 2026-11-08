@@ -77,6 +77,23 @@ body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; touch-act
 .dots button { width: 7px; height: 7px; border-radius: 4px; border: 0; padding: 0; background: #C5CBD6; cursor: pointer; transition: width .2s; }
 .dots button.on { width: 20px; background: #1F3864; }
 .hideui .top, .hideui .bot { opacity: 0; transition: opacity .3s; }
+
+/* ---- 포인트 그라데이션 + 살짝 움직임 (2026-11-08, 폰 버전 guide.html과 같은 느낌) — 슬라이드는 인라인 스타일이라 색으로 골라 씀 ---- */
+@keyframes gflow { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+.slide h2[style*="0F1B33" i] { background: linear-gradient(100deg, #0F1B33 0%, #0F1B33 30%, #A0407E 58%, #DB4C8C 72%, #0F1B33 100%); background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent !important; animation: gflow 9s ease-in-out infinite; }
+.slide h1[style*="F3F5F9" i], .slide h2[style*="F3F5F9" i] { background: linear-gradient(100deg, #FFFFFF 0%, #FFFFFF 35%, #F7B3D0 60%, #FFFFFF 85%); background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent !important; animation: gflow 9s ease-in-out infinite; }
+.slide [style*="background:#C2185B" i], .slide [style*="background: #C2185B" i], .itiles div:first-child {
+  background: linear-gradient(120deg, #C2185B, #DB4C8C 35%, #F27BB0 50%, #DB4C8C 65%, #C2185B) !important; background-size: 220% 100% !important; animation: gflow 6s ease-in-out infinite; }
+.slide div[style*="height:40px;border-radius:20px;background:#"]:not([style*="C2185B"]) { background-image: linear-gradient(90deg, rgba(255, 255, 255, .45), rgba(255, 255, 255, 0)) !important; }
+.slide [style*="background:#dce3f0" i] { background: linear-gradient(180deg, #E8EDF7, #D3DCEC) !important; }
+.slide [style*="background:#4c6696" i][style*="height:215px"] { background: linear-gradient(180deg, #6582B6, #4C6696) !important; }
+.slide [style*="background:#0f1b33" i][style*="height:300px"] { background: linear-gradient(180deg, #24406F, #0F1B33) !important; }
+.slide [style*="background:#e3b341" i] { background: linear-gradient(120deg, #D9A62C, #F3CF6B 50%, #D9A62C) !important; background-size: 220% 100% !important; animation: gflow 5s ease-in-out infinite; }
+.itiles div { background-image: linear-gradient(150deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, 0) 60%); }
+.itiles div:not(:first-child) em { background: linear-gradient(180deg, #FFFFFF 40%, #C9D6F0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (prefers-reduced-motion: reduce) { .slide *, .itiles div { animation: none !important; } }
 </style>
 </head>
 <body>

@@ -374,6 +374,26 @@ button.ba { border: 0; padding: 0; font: inherit; color: inherit; cursor: zoom-i
 .sheet .row button { flex: 1; font: inherit; font-size: 15px; font-weight: 700; padding: 12px; border-radius: 99px; border: 1.5px solid var(--navy); background: #fff; color: var(--navy); cursor: pointer; }
 .sheet .row button.fill { background: var(--navy); color: #fff; }
 @media (prefers-reduced-motion: reduce) { .mchk i, .live i { animation: none; } .dots button { transition: none; } }
+
+/* ---- 포인트 그라데이션 + 살짝 움직임 (2026-11-08 시안 B "약간 움직이는 그라데이션 느낌으로") — 배경은 그대로, 볼 곳에만 ---- */
+@keyframes gflow { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+.pg:not(.dark) h2 { background: linear-gradient(100deg, #1F3864 0%, #1F3864 30%, #A0407E 58%, #DB4C8C 72%, #1F3864 100%); background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; animation: gflow 9s ease-in-out infinite; }
+.pg.dark h2, .pg .st-head h2, .pf-top h1 { background: linear-gradient(100deg, #FFFFFF 0%, #FFFFFF 35%, #F7B3D0 60%, #FFFFFF 85%); background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; animation: gflow 9s ease-in-out infinite; }
+.endcta, .who, .stair .t1 { background: linear-gradient(120deg, #C2185B, #DB4C8C 35%, #F27BB0 50%, #DB4C8C 65%, #C2185B); background-size: 220% 100%; animation: gflow 6s ease-in-out infinite; }
+.price i u { background-image: linear-gradient(90deg, rgba(255, 255, 255, .45), rgba(255, 255, 255, 0)) !important; }
+.price .best i u { background: linear-gradient(90deg, #C2185B, #F27BB0 50%, #C2185B) !important; background-size: 220% 100% !important; animation: gflow 6s ease-in-out infinite; }
+.stair .s1 { background: linear-gradient(180deg, #E8EDF7, #D3DCEC); }
+.stair .s2 { background: linear-gradient(180deg, #6582B6, #4C6696); }
+.stair .s3 { background: linear-gradient(180deg, #2E4E87, #1F3864); }
+.stair .s3 em { background: linear-gradient(120deg, #D9A62C, #F3CF6B 50%, #D9A62C); background-size: 220% 100%; animation: gflow 5s ease-in-out infinite; }
+.cta, .tiles3 div, .tiles4 div, .quals div, .perk, .ibst { background-image: linear-gradient(150deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, 0) 60%); }
+.tiles3 b, .tiles4 b { background: linear-gradient(180deg, #FFFFFF 40%, #C9D6F0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.ibst b { background: linear-gradient(90deg, #F27BB0, #F3CF6B, #F27BB0); background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: gflow 7s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .pg h2, .pf-top h1, .endcta, .who, .stair .t1, .price .best i u, .stair .s3 em, .ibst b { animation: none !important; }
+}
 </style>
 </head>
 <body>
