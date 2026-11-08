@@ -10,5 +10,6 @@ window.COACH_MEMBERS = [
   "jihwan-t7m4qe",
   "chanyoung-dvrara",
   "jinyoung-n73rzx",
-  "inseok-02j3ia"
+  "inseok-02j3ia",
+  "yujeong-55pl5t"
 ];
