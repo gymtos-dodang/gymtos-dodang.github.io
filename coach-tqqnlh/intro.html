@@ -418,7 +418,14 @@ body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; touch-act
   paint();
   /* ---------- 회원 data.js → 관리 현황 (폰 버전 guide.html과 같은 계산) */
   function mask(n) { return String(n).split("·").map(function (p) { p = p.trim(); if (p.length <= 1) return p; if (p.length === 2) return p.charAt(0) + "O"; return p.charAt(0) + new Array(p.length - 1).join("O") + p.charAt(p.length - 1); }).join("·"); }
-  function journey(M) { if (!M.journey || !M.journey.start) return null; var q = M.journey.start.split("-"), st = new Date(+q[0], +q[1] - 1, +q[2]); var el = (Date.now() - st.getTime()) / (86400000 * 30.44); return { mo: Math.max(1, Math.min(12, Math.floor(el) + 1)), s: el < 2 ? 1 : el < 7 ? 2 : 3 }; }
+  function journey(M) { if (!M.journey || !M.journey.start) return null; var q = M.journey.start.split("-"), st = new Date(+q[0], +q[1] - 1, +q[2]); var el = (Date.now() - st.getTime()) / (86400000 * 30.44); var f = jFit(M, el); return { mo: Math.max(1, Math.min(f ? Math.ceil(f.T) : 12, Math.floor(el) + 1)), s: f ? f.s : el < 2 ? 1 : el < 7 ? 2 : 3 }; }
+  function jFit(M, el) {   /* 바프 촬영일 맞춤(journey.fit) — app.js와 같은 규칙: 기초 18%(0.75~2개월) · 컷팅 촬영 전 16주 */
+    var J = M.journey; if (!J || J.mode !== "bodyprofile" || !J.fit || !J.shoot) return null;
+    var d = function (s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); };
+    var T = (d(J.shoot) - d(J.start)) / (86400000 * 30.44); if (T <= 2) return null;
+    var b = Math.max(0.75, Math.min(2, T * 0.18)), c = T - Math.max(6, Math.min(16, Math.round((T - b - 0.75) * 4.35))) / 4.35;
+    return { T: T, s: el < b ? 1 : el < c ? 2 : 3 };
+  }
   function verNum(v) { var m = String(v || "").match(/\d+/); return m ? +m[0] : 0; }
   function nDate(t) { var m = String(t || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; }
   function kindOf(t) { return /복습지/.test(t) ? ["복습지", ""] : /루틴/.test(t) ? ["루틴", "r"] : /식단/.test(t) ? ["식단", "d"] : ["공지", ""]; }

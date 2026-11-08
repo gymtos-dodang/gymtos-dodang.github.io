@@ -217,14 +217,44 @@
   ];
   var BP = !!(M.journey && M.journey.mode === "bodyprofile");
   var JST = BP ? STAGES_BP : STAGES;
+  /* 바프 촬영일 맞춤 (2026-11-09, 우유정님 — 4월 말 촬영처럼 12개월보다 짧은 바프):
+     journey.fit: true + shoot 이 있으면 시작일 → 촬영일 길이(JT개월)로 그래프·단계를 맞춤.
+     3단계 컷팅 = 촬영 전 16주(짧으면 줄임), 1단계 기초 = 전체의 18%(0.75~2개월), 사이가 2단계 근육 채우기.
+     곡선 모양은 12개월 그래프를 단계별로 늘이고 줄여서(jWarp) 그대로 씀. */
+  function jDate(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  var JT = 12, JFIT = null;
+  if (BP && M.journey.fit && M.journey.start && M.journey.shoot) {
+    var jst0 = jDate(M.journey.start), JTd = (jDate(M.journey.shoot) - jst0) / (86400000 * 30.44);
+    if (JTd > 2) {
+      JT = JTd;
+      var jb = Math.max(0.75, Math.min(2, JT * 0.18)), jcw = Math.max(6, Math.min(16, Math.round((JT - jb - 0.75) * 4.35)));
+      var jc = JT - jcw / 4.35;
+      var jWhen = function (m) { var d = new Date(jst0.getTime() + m * 86400000 * 30.44), dd = d.getDate(); return (d.getMonth() + 1) + "월 " + (dd <= 10 ? "초" : dd <= 20 ? "중순" : "말"); };
+      JFIT = { b: jb, c: jc, cw: jcw, when: jWhen, mon: function (m) { return (new Date(jst0.getTime() + m * 86400000 * 30.44).getMonth() + 1) + "월"; } };
+      JST = STAGES_BP.map(function (s, i) {
+        var f = [0, jb, jc][i], t = [jb, jc, JT][i], o = {};
+        for (var k in s) o[k] = s[k];
+        o.from = f; o.to = t; o.range = jWhen(f) + " ~ " + (i === 2 ? "촬영" : jWhen(t));
+        if (i === 2) o.focus = s.focus.map(function (x) { return x.replace("16주", jcw + "주"); });
+        return o;
+      });
+    }
+  }
+  var JTN = Math.round(JT);   /* 화면 문구용 "N개월" */
+  function jWarp(m) {   /* 실제 개월 → 12개월 그래프 모양 위치 */
+    if (!JFIT) return m;
+    if (m <= JFIT.b) return m / JFIT.b * 2;
+    if (m <= JFIT.c) return 2 + (m - JFIT.b) / (JFIT.c - JFIT.b) * 6;
+    return 8 + (m - JFIT.c) / (JT - JFIT.c) * 4;
+  }
   function journeyNow() {
     var J = M.journey;
     if (!J || !J.start) return null;
-    var p = J.start.split("-"), st = new Date(+p[0], +p[1] - 1, +p[2]);
+    var st = jDate(J.start);
     var el = (Date.now() - st.getTime()) / (86400000 * 30.44);
-    var m = Math.max(0, Math.min(12, el));
+    var m = Math.max(0, Math.min(JT, el));
     var stage = m < JST[1].from ? JST[0] : m < JST[2].from ? JST[1] : JST[2];
-    return { el: el, m: m, month: el < 0 ? 0 : Math.min(12, Math.floor(el) + 1), stage: stage, start: J.start };
+    return { el: el, m: m, month: el < 0 ? 0 : Math.min(Math.ceil(JT), Math.floor(el) + 1), stage: stage, start: J.start };
   }
   function bpDday() {   /* 촬영일(journey.shoot)이 있으면 D-day */
     var s = M.journey && M.journey.shoot;
@@ -233,12 +263,13 @@
     return { n: Math.round((d - t) / 86400000), label: p[0] + ". " + (+p[1]) + ". " + (+p[2]) };
   }
   function ss(a, b, m) { var t = Math.max(0, Math.min(1, (m - a) / (b - a))); return t * t * (3 - 2 * t); }
-  function bpMuscle(m) { return 0.1 + 0.72 / (1 + Math.exp(-(m - 4) / 1.2)) - 0.03 * ss(8, 12, m); }
-  function bpFat(m) { return 0.5 + 0.08 * ss(0, 8, m) - 0.44 * ss(8, 11.6, m); }
+  function bpMuscleU(m) { return 0.1 + 0.72 / (1 + Math.exp(-(m - 4) / 1.2)) - 0.03 * ss(8, 12, m); }
+  function bpFatU(m) { return 0.5 + 0.08 * ss(0, 8, m) - 0.44 * ss(8, 11.6, m); }
   var bpGid = 0;
   function reduceMotion() { try { return window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { return false; } }
   function journeyChartBP(now) {
-    var X = function (m) { return 26 + m * 25; }, Y = function (v) { return 168 - v * 124; };
+    var X = function (m) { return 26 + m * 300 / JT; }, Y = function (v) { return 168 - v * 124; };
+    var bpMuscle = function (m) { return bpMuscleU(jWarp(m)); }, bpFat = function (m) { return bpFatU(jWarp(m)); };
     var bands = JST.map(function (s, i) {
       var cur = now && s === now.stage;
       return '<rect x="' + X(s.from) + '" y="34" width="' + (X(s.to) - X(s.from)) + '" height="134" fill="#fff" opacity="' + (cur ? 0.12 : 0.03 + i * 0.015) + '"/>' +
@@ -247,7 +278,7 @@
     }).join("");
     var pts = function (f, a, b) {
       var out = [];
-      for (var m = a; m <= b + 1e-9; m += 0.1) out.push(X(m).toFixed(1) + "," + Y(f(m)).toFixed(1));
+      for (var m = a; m <= b + 1e-9; m += JT / 120) out.push(X(m).toFixed(1) + "," + Y(f(m)).toFixed(1));
       return out.join(" ");
     };
     var cm = now ? now.m : 0;
@@ -264,11 +295,11 @@
       '<stop offset="0" stop-color="var(--dot)"/><stop offset="1" stop-color="#FFD1E4"/>' + anim(200, 3.8) + '</linearGradient>' +
       '</defs>';
     /* 체지방(분홍 점선) 먼저, 근육(금색) 위에 */
-    var path = '<polyline points="' + pts(bpFat, 0, 12) + '" fill="none" stroke="url(#' + gid + 'f)" stroke-width="2.5" stroke-dasharray="1 5" stroke-linecap="round" opacity=".9" class="bp-flow"/>' +
-      '<polyline points="' + pts(bpMuscle, cm, 12) + '" fill="none" stroke="url(#' + gid + 'l)" stroke-width="2.5" stroke-dasharray="5 5" opacity=".6" class="bp-ahead"/>';
+    var path = '<polyline points="' + pts(bpFat, 0, JT) + '" fill="none" stroke="url(#' + gid + 'f)" stroke-width="2.5" stroke-dasharray="1 5" stroke-linecap="round" opacity=".9" class="bp-flow"/>' +
+      '<polyline points="' + pts(bpMuscle, cm, JT) + '" fill="none" stroke="url(#' + gid + 'l)" stroke-width="2.5" stroke-dasharray="5 5" opacity=".6" class="bp-ahead"/>';
     /* 앞으로 갈 구간: 옅은 금빛 + 촬영 쪽으로 흐르는 반짝임 (선 아래 전체) */
-    var areaAll = pts(bpMuscle, 0, 12) + " " + X(12) + ",168 " + X(0) + ",168";
-    path = '<polygon points="' + pts(bpMuscle, cm, 12) + " " + X(12) + ",168 " + X(cm).toFixed(1) + ',168" fill="url(#' + gid + 'a)" opacity=".35"/>' +
+    var areaAll = pts(bpMuscle, 0, JT) + " " + X(JT) + ",168 " + X(0) + ",168";
+    path = '<polygon points="' + pts(bpMuscle, cm, JT) + " " + X(JT) + ",168 " + X(cm).toFixed(1) + ',168" fill="url(#' + gid + 'a)" opacity=".35"/>' +
       '<polygon points="' + areaAll + '" fill="url(#' + gid + 's)"/>' + path;
     if (cm > 0) {
       var area = pts(bpMuscle, 0, cm) + " " + X(cm).toFixed(1) + ",168 " + X(0) + ",168";
@@ -276,28 +307,28 @@
         '<polyline points="' + pts(bpMuscle, 0, cm) + '" fill="none" stroke="url(#' + gid + 'l)" stroke-width="4.5" stroke-linecap="round" pathLength="1" class="bp-done"/>';
     }
     /* 두 선이 만나는 곳 = 몸이 선명해지는 순간 */
-    var cx = 8;
-    for (var m = 8; m <= 12; m += 0.05) { if (bpMuscle(m) - bpFat(m) > 0.12) { cx = m; break; } }
+    var cx = JFIT ? JFIT.c : 8;
+    for (var m = cx; m <= JT; m += JT / 240) { if (bpMuscle(m) - bpFat(m) > 0.12) { cx = m; break; } }
     var sharp = '<g transform="translate(' + X(cx) + ',' + Y(bpMuscle(cx)) + ')"><path d="M0 -9 L2.2 -2.2 L9 0 L2.2 2.2 L0 9 L-2.2 2.2 L-9 0 L-2.2 -2.2 Z" fill="#fff" opacity=".9"/></g>' +
       '<text x="' + (X(cx) - 6) + '" y="' + (Y(bpMuscle(cx)) - 13) + '" text-anchor="end" class="bp-note">몸이 선명해지는 순간</text>';
-    var ticks = [0, 2, 8, 12].map(function (m) {
+    var ticks = (JFIT ? [0, JFIT.b, JFIT.c, JT] : [0, 2, 8, 12]).map(function (m, i) {
       return '<line x1="' + X(m) + '" y1="168" x2="' + X(m) + '" y2="173" stroke="#fff" stroke-opacity=".35"/>' +
-        '<text x="' + X(m) + '" y="186" text-anchor="' + (m === 12 ? "end" : "middle") + '" class="bp-x">' + (m === 0 ? "시작" : m === 12 ? "촬영" : m + "개월") + '</text>';
+        '<text x="' + X(m) + '" y="186" text-anchor="' + (i === 3 ? "end" : "middle") + '" class="bp-x">' + (i === 0 ? "시작" : i === 3 ? "촬영" : JFIT ? JFIT.mon(m) : m + "개월") + '</text>';
     }).join("");
     var mk = "";
     if (now) {
-      var mx = X(cm), my = Y(bpMuscle(cm)), right = cm > 7.5, LW = 108, ly = my - 18;
+      var mx = X(cm), my = Y(bpMuscle(cm)), right = cm > JT * 0.62, LW = 108, ly = my - 18;
       mk = '<circle cx="' + mx + '" cy="' + my + '" r="7" fill="none" stroke="var(--gold-line)" stroke-width="2" class="bp-sonar"/>' +
         '<circle cx="' + mx + '" cy="' + my + '" r="12" fill="var(--gold-line)" opacity=".25"/><circle cx="' + mx + '" cy="' + my + '" r="6.5" fill="url(#' + gid + 'l)" stroke="#fff" stroke-width="2.5"/>' +
         '<g transform="translate(' + (right ? mx - 6 : mx + 6) + ',' + ly + ')"><rect x="' + (right ? -LW : 0) + '" y="-15" width="' + LW + '" height="22" rx="11" fill="var(--key)"/>' +
         '<text x="' + (right ? -LW / 2 : LW / 2) + '" y="0.5" text-anchor="middle" class="jc-mk">지금 여기 · ' + (now.month || 1) + '개월차</text></g>';
     }
     /* 끝: 금색 카메라 = 바프 촬영 D-DAY */
-    var ex = X(12), ey = Y(bpMuscle(12));
+    var ex = X(JT), ey = Y(bpMuscle(JT));
     var cam = '<g transform="translate(' + ex + ',' + (ey - 22) + ')"><circle r="14" fill="var(--gold-line)" class="bp-glow"/><circle r="14" fill="url(#' + gid + 'l)"/>' +
       '<path d="M-7 -3.5 h3.5 l1.6 -2.4 h3.8 l1.6 2.4 h3.5 v9 h-14 Z" fill="none" stroke="#17294B" stroke-width="1.8" stroke-linejoin="round"/><circle cy="1" r="2.6" fill="none" stroke="#17294B" stroke-width="1.8"/></g>' +
       '<text x="' + (ex - 19) + '" y="' + (ey - 18) + '" text-anchor="end" class="bp-dd">D-DAY</text>';
-    return '<div class="jchart bp-chart"><svg viewBox="0 0 340 194" role="img" aria-label="바디프로필 12개월 여정 그래프: 1단계 기초(1~2개월), 2단계 근육 채우기(2~8개월), 3단계 컷팅과 촬영(8~12개월)' + (now ? ', 지금 ' + (now.month || 1) + '개월차' : '') + '">' +
+    return '<div class="jchart bp-chart"><svg viewBox="0 0 340 194" role="img" aria-label="바디프로필 ' + JTN + '개월 여정 그래프: ' + JST.map(function (s) { return s.no + '단계 ' + s.short + '(' + s.range + ')'; }).join(", ") + (now ? ', 지금 ' + (now.month || 1) + '개월차' : '') + '">' +
       defs + bands + '<line x1="26" y1="168" x2="326" y2="168" stroke="#fff" stroke-opacity=".3" stroke-width="1.5"/>' + ticks + path + sharp + cam + mk + '</svg>' +
       '<div class="bp-legend"><span><i class="lg-m"></i>근육</span><span><i class="lg-f"></i>체지방</span></div>' +
       '<p class="bp-cap">2단계에 근육을 꽉 채우고, 3단계에 지방만 걷어내 촬영날 가장 선명한 몸을 만들어요. 선은 개념 그래프예요 (실측 아님).</p></div>';
@@ -363,7 +394,7 @@
   function journeyHome() {
     var now = journeyNow();
     if (!now) return "";
-    if (BP) return '<section>' + head("", "나의 바프 여정", "촬영날까지 함께 가는 12개월", '<a class="more" href="#goal">목표 자세히 →</a>') +
+    if (BP) return '<section>' + head("", "나의 바프 여정", "촬영날까지 함께 가는 " + JTN + "개월", '<a class="more" href="#goal">목표 자세히 →</a>') +
       '<div class="panel jpanel bp">' + bpStrip() + journeyChart(now) + stageCard(now.stage, now, true) + '</div></section>';
     return '<section>' + head("", "나의 PT 여정", "함께 가는 12개월", '<a class="more" href="#goal">목표 자세히 →</a>') +
       '<div class="panel jpanel">' + journeyChart(now) + stageCard(now.stage, now, true) + '</div></section>';
@@ -380,7 +411,7 @@
       return h + attSec + badgeSection("02") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
     }
     h += attSec + badgeSection("02");
-    h += '<section>' + head(n4, BP ? "바프까지 12개월" : "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel' + (BP ? ' bp">' + bpStrip() : '">') + journeyChart(now) + '</div></section>';
+    h += '<section>' + head(n4, BP ? "바프까지 " + JTN + "개월" : "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel' + (BP ? ' bp">' + bpStrip() : '">') + journeyChart(now) + '</div></section>';
     h += '<section>' + head(n5, "단계별 목표", BP ? "기초 → 벌크 → 컷팅" : "단계마다 하는 것이 달라요") + '<div class="jlist' + (BP ? ' bp' : '') + '">' +
       JST.map(function (st) { return stageCard(st, now, false); }).join("") + '</div></section>';
     return h + remember();

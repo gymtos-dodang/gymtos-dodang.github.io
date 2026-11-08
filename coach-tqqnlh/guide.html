@@ -594,8 +594,17 @@ button.ba { border: 0; padding: 0; font: inherit; color: inherit; cursor: zoom-i
     if (!M.journey || !M.journey.start) return null;
     var p = M.journey.start.split("-"), st = new Date(+p[0], +p[1] - 1, +p[2]);
     var el = (Date.now() - st.getTime()) / (86400000 * 30.44);
-    return { mo: Math.max(1, Math.min(12, Math.floor(el) + 1)), s: el < 2 ? 1 : el < 7 ? 2 : 3 };
+    var f = jFit(M, el);
+    return { mo: Math.max(1, Math.min(f ? Math.ceil(f.T) : 12, Math.floor(el) + 1)), s: f ? f.s : el < 2 ? 1 : el < 7 ? 2 : 3 };
   }
+  function jFit(M, el) {   /* 바프 촬영일 맞춤(journey.fit) — app.js와 같은 규칙: 기초 18%(0.75~2개월) · 컷팅 촬영 전 16주 */
+    var J = M.journey; if (!J || J.mode !== "bodyprofile" || !J.fit || !J.shoot) return null;
+    var d = function (s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); };
+    var T = (d(J.shoot) - d(J.start)) / (86400000 * 30.44); if (T <= 2) return null;
+    var b = Math.max(0.75, Math.min(2, T * 0.18)), c = T - Math.max(6, Math.min(16, Math.round((T - b - 0.75) * 4.35))) / 4.35;
+    return { T: T, s: el < b ? 1 : el < c ? 2 : 3 };
+  }
+
   function freq(M) {
     var R = M.routine || {};
     var n = (R.days || []).filter(function (d) { return !d.rest && ((d.items || []).length || d.cardio_only); }).length;
