@@ -351,14 +351,12 @@
       '<h1>' + esc(M.goal || "나의 목표") + '</h1><div class="en">' + esc(M.name) + ' 회원님 · ' + (BP ? '기초 → 벌크 → 컷팅, 바프 촬영까지 함께 가요' : '기초 → 변화 → 자립, 3단계로 함께 가요') + '</div>' +
       '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 장동욱 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + (BP ? '목표는 하나, 바프 촬영날! 그 의지라면 충분해요. 단계마다 함께 넘어가요!' : '혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!') + '</p></div></div>';
-    var ibSec = "", n4 = "05", n5 = "06";   /* 몸 변화 기록은 2026-11-06 '몸변화' 탭(#body)으로 이동 */
+    var n4 = "03", n5 = "04";   /* 몸 변화 기록은 2026-11-06 '몸변화' 탭(#body)으로, 근육 지도는 2026-11-08 루틴 탭으로 이동 */
+    var attSec = '<section id="att">' + head("01", "출석률 · 출석 달력", "얼마나 꾸준히 나왔는지 봐요") + '<div class="panel attcard">' + attGauge() + attCalendar() + '</div></section>';
     if (!now) {
-      return h + '<section>' + head("01", "출석률", "얼마나 꾸준히 나왔는지 봐요") + attGauge() + '</section>' +
-        '<section>' + head("02", "출석 달력", "운동하는 날을 채워봐요") + attCalendar() + '</section>' + badgeSection("03") + muscleSection("04") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
+      return h + attSec + badgeSection("02") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
     }
-    h += '<section>' + head("01", "출석률", "얼마나 꾸준히 나왔는지 봐요") + attGauge() + '</section>';
-    h += '<section>' + head("02", "출석 달력", "운동하는 날을 채워봐요") + attCalendar() + '</section>';
-    h += badgeSection("03") + muscleSection("04");
+    h += attSec + badgeSection("02");
     h += '<section>' + head(n4, BP ? "바프까지 12개월" : "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel' + (BP ? ' bp">' + bpStrip() : '">') + journeyChart(now) + '</div></section>';
     h += '<section>' + head(n5, "단계별 목표", BP ? "기초 → 벌크 → 컷팅" : "단계마다 하는 것이 달라요") + '<div class="jlist' + (BP ? ' bp' : '') + '">' +
       JST.map(function (st) { return stageCard(st, now, false); }).join("") + '</div></section>';
@@ -1220,7 +1218,7 @@
     if (!ym || ym > curYm) ym = curYm;
     if (ym < firstYm) ym = firstYm;
     var R = reportData(ym), pv = ymAdd(ym, -1), nx = ymAdd(ym, 1);
-    return '<div class="rp-nav"><a href="#goal" class="rp-back">← 목표</a><div class="rp-mo">' +
+    return '<div class="rp-nav"><a href="#routine" class="rp-back">← 루틴</a><div class="rp-mo">' +
       (pv >= firstYm ? '<a href="#report-' + pv + '" aria-label="' + (+pv.slice(5)) + '월 리포트">‹</a>' : '<span class="off">‹</span>') +
       '<b>' + R.y + '년 ' + R.mo + '월</b>' +
       (nx <= curYm ? '<a href="#report-' + nx + '" aria-label="' + (+nx.slice(5)) + '월 리포트">›</a>' : '<span class="off">›</span>') + '</div></div>' +
@@ -1597,6 +1595,7 @@
       h += '</div>' + (R.note ? '<p class="note">' + esc(R.note) + '</p>' : '');
     }
     h += '</section>';
+    h += muscleSection("03");   /* 이번 달 근육 지도 (2026-11-08 "루틴 항목에 넣는 게 컨셉에 맞지") */
     return h + remember();
   }
 
@@ -1729,8 +1728,8 @@
     else if (hsh === "notice") { html = renderNotice(); tab = "notice"; }
     else if (hsh === "goal" || hsh === "journey") { html = renderGoal(); tab = "goal"; }
     else if (hsh === "goal-badges" || hsh === "badges") { html = renderGoal(); tab = "goal"; jumpTo = "badges"; }
-    else if (hsh === "muscle") { html = renderGoal(); tab = "goal"; jumpTo = "muscle"; }
-    else if (hsh === "report" || /^report-\d{4}-\d{2}$/.test(hsh)) { html = renderReport(hsh.slice(7)); tab = "goal"; after = setupReport; }
+    else if (hsh === "muscle") { html = renderRoutine(); tab = "routine"; jumpTo = "muscle"; }
+    else if (hsh === "report" || /^report-\d{4}-\d{2}$/.test(hsh)) { html = renderReport(hsh.slice(7)); tab = "routine"; after = setupReport; }
     else if ((hsh === "body" || hsh === "inbody") && IB_ON) { html = renderBody(); tab = "body"; }
     else { html = renderHome(); }
     var wasRoutine = view.getAttribute("data-tab") === "routine";

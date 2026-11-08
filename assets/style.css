@@ -893,3 +893,9 @@ a.ex.pick .tip{color:var(--primary);font-weight:700}
 .rp-shot img { width: 100%; border-radius: 12px; display: block; -webkit-touch-callout: default; }
 .rp-shot p { margin: 0; color: #fff; text-align: center; font-size: 14px; }
 .rp-shot .btn { justify-content: center; }
+
+/* 출석률 + 출석 달력 한 칸 (2026-11-08) */
+#att { scroll-margin-top: 64px; }
+.attcard { display: flex; flex-direction: column; gap: 0; }
+.attcard > .panel { background: none; box-shadow: none; border-radius: 0; padding: 0; }
+.attcard > .cal { margin-top: 16px; padding-top: 16px; border-top: 1.5px dashed var(--line, #E6EAF1); }
