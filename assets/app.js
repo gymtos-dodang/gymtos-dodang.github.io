@@ -351,14 +351,14 @@
       '<h1>' + esc(M.goal || "나의 목표") + '</h1><div class="en">' + esc(M.name) + ' 회원님 · ' + (BP ? '기초 → 벌크 → 컷팅, 바프 촬영까지 함께 가요' : '기초 → 변화 → 자립, 3단계로 함께 가요') + '</div>' +
       '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 장동욱 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + (BP ? '목표는 하나, 바프 촬영날! 그 의지라면 충분해요. 단계마다 함께 넘어가요!' : '혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!') + '</p></div></div>';
-    var ibSec = "", n4 = "03", n5 = "04";   /* 몸 변화 기록은 2026-11-06 '몸변화' 탭(#body)으로 이동 */
+    var ibSec = "", n4 = "05", n5 = "06";   /* 몸 변화 기록은 2026-11-06 '몸변화' 탭(#body)으로 이동 */
     if (!now) {
       return h + '<section>' + head("01", "출석률", "얼마나 꾸준히 나왔는지 봐요") + attGauge() + '</section>' +
-        '<section>' + head("02", "출석 달력", "운동하는 날을 채워봐요") + attCalendar() + '</section>' + ibSec + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
+        '<section>' + head("02", "출석 달력", "운동하는 날을 채워봐요") + attCalendar() + '</section>' + badgeSection("03") + muscleSection("04") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
     }
     h += '<section>' + head("01", "출석률", "얼마나 꾸준히 나왔는지 봐요") + attGauge() + '</section>';
     h += '<section>' + head("02", "출석 달력", "운동하는 날을 채워봐요") + attCalendar() + '</section>';
-    h += ibSec;
+    h += badgeSection("03") + muscleSection("04");
     h += '<section>' + head(n4, BP ? "바프까지 12개월" : "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel' + (BP ? ' bp">' + bpStrip() : '">') + journeyChart(now) + '</div></section>';
     h += '<section>' + head(n5, "단계별 목표", BP ? "기초 → 벌크 → 컷팅" : "단계마다 하는 것이 달라요") + '<div class="jlist' + (BP ? ' bp' : '') + '">' +
       JST.map(function (st) { return stageCard(st, now, false); }).join("") + '</div></section>';
@@ -440,6 +440,8 @@
     if (b) { b.outerHTML = attCheckStrip(); setupAttCheck(); }
     var g = document.querySelector(".attgauge"); if (g) g.outerHTML = attGauge();
     var c = document.querySelector(".cal"); if (c) { c.outerHTML = attCalendar(); setupCal(); }
+    var bs = document.getElementById("badges"); if (bs) { bs.outerHTML = badgeSection(bs.getAttribute("data-num")); setupBadges(); }
+    var mb = document.querySelector(".mm-body"); if (mb) mb.innerHTML = muscleBody();
     alignText(document);
   }
   function attApply(days) {   /* 창고에서 받은 기록으로 바꿔 끼움 */
@@ -454,7 +456,7 @@
   }
   function attSync() {
     if (!ATT_API) return;
-    attCall("").then(attRefresh).catch(function () {});
+    attCall("").then(function () { attRefresh(); badgeCheck(); }).catch(function () {});
   }
   function attToast(msg) {
     var t = document.createElement("div"); t.className = "atttoast"; t.textContent = msg;
@@ -479,7 +481,7 @@
       if (!ATT_API) return;
       if (nb) nb.classList.add("saving");
       attCall("&a=" + (turnOn ? "check" : "uncheck") + "&d=" + key + "&t=" + encodeURIComponent(tm) + "&n=" + encodeURIComponent(M._real || M.name))
-        .then(function () { attRefresh(); })
+        .then(function () { attRefresh(); badgeCheck(); })
         .catch(function () {
           var cur = attLoad().slice(), k = cur.indexOf(key);
           if (turnOn) { if (k >= 0) cur.splice(k, 1); delete attTimes[key]; }
@@ -640,6 +642,7 @@
         if (!j || !j.ok) throw new Error("ib");
         if (!("inbody" in j)) { ibReady = false; ibRefresh(); return; }   /* 창고가 아직 옛 버전(인바디 없음) */
         ibReady = true; ibSet(j.inbody); ibRefresh();
+        if (bgReady) badgeCheck();
       })
       .catch(function () { if (!ibData) { ibErr = true; ibRefresh(); } });
   }
@@ -767,6 +770,7 @@
         .then(function (j) {
           if (!j || !j.ok) throw new Error(j && j.error || "save");
           ibSet(j.inbody); close(); ibRefresh(); attToast("인바디 기록을 저장했어요");
+          setTimeout(badgeCheck, 2800);
         })
         .catch(function () { busy = false; form.classList.remove("saving"); msg.className = "ibs-msg"; msg.textContent = "저장 못 했어요. 인터넷 연결을 확인하고 다시 눌러 주세요"; });
     });
@@ -856,6 +860,445 @@
         '<div class="tip">메인 ' + esc(mi.name) + ' →</div></div></div></a>';
     }).join("") + '</div>';
   }
+  /* ---------------- 출석 배지 · 이번 달 근육 지도 · 월간 리포트 (2026-11-08 장동욱 "이렇게 ㄱㄱ")
+     - 배지 12개(목표 탭 03): 출석 횟수 1·10·30·50·100 / 연속 출석 3·7·14 / 새벽 운동(7시 전) / 주말 전사(토·일 둘 다) /
+       첫 인바디(인바디 없는 회원은 연속 30) / 루틴 레벨업(루틴 v2 이상). 등급 Lv.1 한 줄 → Lv.2 두 겹 → Lv.3 금빛 월계수 → Lv.4 금빛+리본.
+       새로 받으면 팝업 한 번(휴대폰 localStorage ptnote:<주소>:badges). 선생님 보기·안내서 보기에서는 팝업 안 띄움.
+     - 근육 지도(목표 탭 04): 출석한 날의 루틴(요일 / 순환은 DAY 순서) 종목 이름 → 부위 8개. 1~2회 · 3~4회 · 5회 이상 진하게.
+       그림은 assets/muscle/M|F/base.png + 부위별 투명 그림(_tools/make_musclemap.py).
+     - 월간 리포트(#report, #report-YYYY-MM): 1080×1350 카드, 이미지로 저장(html2canvas). 매달 1~7일 홈에 '지난달 리포트 도착'.
+       선생님 한마디는 data.js reports: { "2026-11": "문구" } (없으면 자동 한 줄 요약) */
+  (function () {   /* 숫자용 글꼴 */
+    if (document.getElementById("oswald")) return;
+    var l = document.createElement("link"); l.id = "oswald"; l.rel = "stylesheet";
+    l.href = "https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&display=swap";
+    document.head.appendChild(l);
+  })();
+  var BG_N = "#1F3864", BG_P = "#DB4C8C", BG_G = "#A87508", BG_GOLD = "#E3B341", BG_GREY = "#C9D0DC";
+  var BG_TIER = ["", "한 줄 테두리", "두 겹 테두리", "금빛 월계수", "금빛 리본"];
+  var BG_SEEN = "ptnote:" + SLUG + ":badges";
+  var BG_IC = {
+    check: '<path d="M5 12.5l4.5 4.5L19 7.5" stroke-width="2.6"/>',
+    flame: '<path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.4 1.3-4 2.6-5.2.3 1.6 1 2.6 2.1 3.2C11.3 8.6 11.2 5.6 12 3z"/>',
+    sun: '<path d="M4 18h16"/><path d="M7 18a5 5 0 0 1 10 0"/><path d="M12 6v3"/><path d="M5.6 10.6l1.8 1.4"/><path d="M18.4 10.6l-1.8 1.4"/>',
+    cal: '<rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 10h16"/><path d="M8 3v4"/><path d="M16 3v4"/>',
+    scale: '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 10a3.5 3.5 0 0 1 7 0"/><path d="M12 10l1.6-1.6"/>',
+    up: '<path d="M12 19V6"/><path d="M6.5 11.5L12 6l5.5 5.5"/><path d="M5 20h14"/>'
+  };
+  var LAUREL = '<g transform="translate(17 57) rotate(45)"><ellipse rx="3" ry="6.5"/></g><g transform="translate(8.5 44) rotate(20)"><ellipse rx="3" ry="6.5"/></g>' +
+    '<g transform="translate(6.5 29) rotate(-5)"><ellipse rx="3" ry="6.5"/></g><g transform="translate(11 15) rotate(-30)"><ellipse rx="3" ry="6"/></g>' +
+    '<g transform="translate(67 57) rotate(-45)"><ellipse rx="3" ry="6.5"/></g><g transform="translate(75.5 44) rotate(-20)"><ellipse rx="3" ry="6.5"/></g>' +
+    '<g transform="translate(77.5 29) rotate(5)"><ellipse rx="3" ry="6.5"/></g><g transform="translate(73 15) rotate(30)"><ellipse rx="3" ry="6"/></g>';
+  function md(k) { var p = k.split("-"); return (+p[1]) + ". " + pad2(+p[2]); }
+  function ymOf(d) { return d.getFullYear() + "-" + pad2(d.getMonth() + 1); }
+  function ymDate(ym) { var p = ym.split("-"); return new Date(+p[0], +p[1] - 1, 1); }
+  function ymAdd(ym, n) { var d = ymDate(ym); return ymOf(new Date(d.getFullYear(), d.getMonth() + n, 1)); }
+
+  function attHistory() {   /* 날마다 연속 출석 수를 따라감 → 연속 n회가 처음 된 날, 달마다 최고 연속 */
+    var a = attLoad(), st = startDate(), today = ymd(new Date());
+    var res = { first: {}, monthBest: {}, best: 0 };
+    if (!a.length || !st) return res;
+    var on = {}; a.forEach(function (k) { on[k] = 1; });
+    var d = new Date(st.getFullYear(), st.getMonth(), st.getDate()), run = 0, gap = 0;
+    for (var i = 0; i < 1500 && ymd(d) <= today; i++, d.setDate(d.getDate() + 1)) {
+      var k = ymd(d);
+      if (on[k]) {
+        run++; gap = 0;
+        if (!res.first[run]) res.first[run] = k;
+        var mo = k.slice(0, 7);
+        if (run > (res.monthBest[mo] || 0)) res.monthBest[mo] = run;
+        if (run > res.best) res.best = run;
+      } else if (k === today) { /* 오늘은 아직 안 끝남 */ }
+      else if (ROT) { if (++gap > 2) run = 0; }
+      else if (isWorkoutDay(d)) run = 0;
+    }
+    return res;
+  }
+  function badgeList() {
+    var a = attLoad().slice().sort(), hs = attHistory(), cur = attStreak(attLoad()), L = [];
+    function att(n, tier) {
+      return { id: "att" + n, line: "att", label: n === 1 ? "첫 출석" : "출석 " + n + "회", tier: tier, kind: n === 1 ? "check" : "num", num: n, color: BG_N,
+        on: a[n - 1] || null, have: a.length, goal: n,
+        desc: n === 1 ? "PT 노트 첫 출석 체크! 시작이 반이에요." : "출석 " + n + "번 달성! 꾸준함이 몸을 바꿔요." };
+    }
+    function stk(n, tier) {
+      return { id: "stk" + n, line: "stk", label: "연속 " + n + "회", tier: tier, kind: "flame", pill: n >= 7 ? n : null, color: BG_P,
+        on: hs.first[n] || null, have: cur, goal: n,
+        desc: "운동하는 날 " + n + "번 연속으로 한 번도 안 빠졌어요." };
+    }
+    var dawn = null, wk = null, ib = null, lv = null;
+    a.forEach(function (k) {
+      if (!dawn && attTimes[k] && attTimes[k] < "07:00") dawn = k;
+      var p = k.split("-"), d = new Date(+p[0], +p[1] - 1, +p[2]);
+      if (!wk && d.getDay() === 0) { var s = new Date(d); s.setDate(s.getDate() - 1); if (attHas(a, ymd(s))) wk = k; }
+    });
+    if (ibData && ibData.length) ib = ibData.map(function (r) { return r.d; }).sort()[0];
+    var ver = M.routine && parseInt(String(M.routine.version || "").replace(/\D/g, ""), 10);
+    if (ver >= 2) {
+      var um = String(M.routine.updated || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+      lv = um ? um[1] + "-" + pad2(+um[2]) + "-" + pad2(+um[3]) : ymd(new Date());
+    }
+    L.push(att(1, 1), att(10, 1), att(30, 2), att(50, 3));
+    L.push(stk(3, 1), stk(7, 2), stk(14, 3), att(100, 4));
+    L.push({ id: "dawn", label: "새벽 운동", tier: 2, kind: "sun", color: BG_G, on: dawn, hint: "7시 전 출석", desc: "아침 7시 전에 출석했어요. 하루를 먼저 이긴 사람!" });
+    L.push({ id: "wkend", label: "주말 전사", tier: 2, kind: "cal", color: BG_G, on: wk, hint: "토·일 둘 다", desc: "토·일 둘 다 나왔어요. 주말에도 멈추지 않아요!" });
+    if (IB_ON) L.push({ id: "ib1", label: "첫 인바디", tier: 1, kind: "scale", color: BG_N, on: ib, hint: "인바디 올리기", desc: "첫 인바디 기록 완료! 이제 변화를 숫자로 봐요." });
+    else L.push(stk(30, 4));
+    L.push({ id: "lvup", label: "루틴 레벨업", tier: 2, kind: "up", color: BG_N, on: lv, hint: "새 루틴 받기", desc: "새 루틴을 받았어요. 한 단계 올라간 거예요!" });
+    ["att", "stk"].forEach(function (ln) {   /* 줄마다 다음 목표 하나만 분홍 글씨 */
+      for (var i = 0; i < L.length; i++) if (L[i].line === ln && !L[i].on) { L[i].next = true; break; }
+    });
+    return L;
+  }
+  function bgNextOf(b, L) {   /* 같은 줄의 다음 배지 */
+    if (!b.line) return null;
+    var c = L.filter(function (x) { return x.line === b.line && x.goal > b.goal; }).sort(function (x, y) { return x.goal - y.goal; });
+    return c[0] || null;
+  }
+  function bgIcon(b, gap) {   /* 84×72 배지 그림 (동그라미 60) — 링은 SVG라서 이미지로 저장해도 그대로 */
+    var on = !!b.on, t = b.tier, ring = on ? BG_GOLD : BG_GREY;
+    var base = on ? (t === 4 ? BG_GOLD : b.color) : "#E6EAF1", ic = on ? (t === 4 ? BG_N : "#FFFFFF") : "#A3AABA";
+    var s = '<svg class="bdg-s" viewBox="0 0 84 72" width="84" height="72" aria-hidden="true">';
+    if (t >= 3) s += '<g fill="' + ring + '">' + LAUREL + '</g>';
+    if (t === 4) s += '<polygon points="31,50 40,55 34,71 28,65" fill="' + (on ? BG_P : BG_GREY) + '"/><polygon points="53,50 44,55 50,71 56,65" fill="' + (on ? BG_N : BG_GREY) + '"/>';
+    if (t >= 2) s += '<circle cx="42" cy="32" r="33.75" fill="' + (gap || "#fff") + '" stroke="' + ring + '" stroke-width="2.5"/>';
+    s += '<circle cx="42" cy="32" r="30" fill="' + base + '"/>';
+    s += t === 1 ? '<circle cx="42" cy="32" r="28.75" fill="none" stroke="' + ring + '" stroke-width="2.5"/>'
+      : '<circle cx="42" cy="32" r="28.5" fill="none" stroke="' + (t === 4 ? (on ? "#F8E3A6" : "#F3F5F9") : ring) + '" stroke-width="3"/>';
+    if (b.kind !== "num") s += '<g transform="translate(' + bgT(b) + ') scale(' + bgSc(b) + ')" fill="none" stroke="' + ic + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + BG_IC[b.kind] + '</g>';
+    if (t === 4 && on) s += '<path transform="translate(64 0)" d="M7 0 L8.4 5.6 L14 7 L8.4 8.4 L7 14 L5.6 8.4 L0 7 L5.6 5.6 Z" fill="' + BG_GOLD + '"/>';
+    s += '</svg>';
+    var num = b.kind === "num" ? '<span class="bdg-n' + (String(b.num).length > 2 ? ' sm' : '') + '" style="color:' + ic + '">' + b.num + '</span>' : '';
+    var pill = b.pill ? '<span class="bdg-p" style="background:' + (on ? BG_GOLD : BG_GREY) + ';color:' + (on ? BG_N : "#fff") + ';border-color:' + (gap || "#fff") + '">' + b.pill + '</span>' : '';
+    return '<span class="bdg' + (on ? ' on' : '') + '">' + s + num + pill + '</span>';
+  }
+  function bgSc(b) { return b.kind === "sun" ? 1.1667 : 1.0833; }
+  function bgT(b) { var o = 42 - 12 * bgSc(b), o2 = 32 - 12 * bgSc(b); return o.toFixed(2) + " " + o2.toFixed(2); }
+  function bgSub(b) {
+    if (b.on) return '<small>' + md(b.on) + '</small>';
+    if (b.line) return '<small class="' + (b.next ? 'pg' : '') + '">' + Math.min(b.have, b.goal) + ' / ' + b.goal + '</small>';
+    return '<small>' + esc(b.hint || "") + '</small>';
+  }
+  function badgeSection(num) {
+    var L = badgeList(), got = L.filter(function (b) { return b.on; }).length;
+    var cand = L.filter(function (b) { return b.next; }).sort(function (x, y) { return (x.goal - x.have) - (y.goal - y.have) || (x.line === "att" ? -1 : 1); });
+    var nx = cand[0], card;
+    if (nx) {
+      var left = Math.max(1, nx.goal - nx.have), pct = Math.min(100, Math.round(nx.have / nx.goal * 1000) / 10);
+      card = '<div class="panel bgnext"><span class="bgn-ic' + (nx.kind === "flame" ? ' fl' : '') + '" aria-hidden="true">' +
+        (nx.kind === "flame" ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + BG_IC.flame + '</svg>' : nx.goal) + '</span>' +
+        '<div class="bgn-t"><div class="bgn-h"><b>다음 배지 · ' + esc(nx.label) + ' <small>Lv.' + nx.tier + '</small></b><span>' +
+        (nx.line === "stk" ? '연속 ' + left + '번 더!' : left + '번 남았어요') + '</span></div>' +
+        '<i class="bgn-bar"><em style="width:' + pct + '%"></em></i>' +
+        '<p>' + (nx.line === "stk" ? '지금 연속 ' + nx.have + '회째' : '지금 ' + nx.have + '회') + ' · 받으면 ' + BG_TIER[nx.tier] + ' 배지예요</p></div></div>';
+    } else {
+      card = '<div class="panel bgnext done"><span class="bgn-ic" aria-hidden="true">★</span><div class="bgn-t"><div class="bgn-h"><b>출석 배지를 다 모았어요!</b></div><p>정말 대단해요. 선생님이 새 배지를 준비할게요</p></div></div>';
+    }
+    var grid = L.map(function (b, i) {
+      return '<button type="button" class="bgc' + (b.on ? ' on' : '') + '" data-i="' + i + '" aria-label="' + esc(b.label) + (b.on ? ' 받음' : ' 아직') + '">' +
+        bgIcon(b) + '<b>' + esc(b.label) + '</b>' + bgSub(b) + '</button>';
+    }).join("");
+    return '<section id="badges" data-num="' + num + '">' + head(num, "나의 배지", "많이 올수록 더 화려해져요", '<span class="more bg-cnt"><b>' + got + '</b> / ' + L.length + '</span>') +
+      card + '<div class="panel bggrid">' + grid + '</div>' +
+      '<p class="bg-tiers"><span>Lv.1 한 줄</span><span>Lv.2 두 겹</span><span>Lv.3 월계수</span><span class="g">Lv.4 금빛 리본</span></p></section>';
+  }
+  function setupBadges() {
+    Array.prototype.forEach.call(document.querySelectorAll(".bgc"), function (el) {
+      el.addEventListener("click", function () {
+        var L = badgeList(), b = L[+el.getAttribute("data-i")];
+        if (!b) return;
+        var p = b.on ? b.on.split("-") : null;
+        attToast(b.label + " · Lv." + b.tier + " — " + (p ? (+p[1]) + "월 " + (+p[2]) + "일에 받았어요" :
+          b.line === "stk" ? "운동하는 날 " + b.goal + "번 연속으로 오면 받아요" : b.line ? (b.goal - b.have) + "번 더 오면 받아요" :
+          b.id === "dawn" ? "아침 7시 전에 출석하면 받아요" : b.id === "wkend" ? "토요일·일요일 둘 다 오면 받아요" :
+          b.id === "ib1" ? "몸변화 탭에서 인바디를 올리면 받아요" : "선생님이 새 루틴을 올려 주면 받아요"));
+      });
+    });
+  }
+  var bgReady = false;
+  function badgeCheck() {   /* 새로 받은 배지가 있으면 팝업 한 번 */
+    bgReady = true;
+    if (DEMO || COACH_MODE) return;
+    if (document.querySelector(".npop-wrap, .bgpop-wrap, .ibsheet")) { setTimeout(badgeCheck, 6500); return; }
+    var L = badgeList(), seen = lsArr(BG_SEEN);
+    var fresh = L.filter(function (b) { return b.on && seen.indexOf(b.id) < 0; });
+    if (!fresh.length) return;
+    lsAdd(BG_SEEN, fresh.map(function (b) { return b.id; }));
+    fresh.sort(function (x, y) { return y.tier - x.tier || (y.on > x.on ? 1 : y.on < x.on ? -1 : 0); });
+    showBadgePop(fresh[0], fresh.length - 1, L);
+  }
+  function showBadgePop(b, extra, L) {
+    var got = L.filter(function (x) { return x.on; }).length, nx = bgNextOf(b, L);
+    var hint = nx ? '다음은 <b>' + esc(nx.label) + '</b> · ' + BG_TIER[nx.tier] + ' 배지(Lv.' + nx.tier + ')예요!' : b.line ? '이 줄의 마지막 배지까지 받았어요!' : '';
+    var conf = "", cols = ["#E3B341", "#F27BB0", "#5BD08A", "#FFFFFF", "#8FB1FF"];
+    for (var i = 0; i < 22; i++) {
+      conf += '<i style="left:' + (4 + (i * 41) % 92) + '%;background:' + cols[i % 5] + ';animation-delay:' + ((i * 0.13) % 1.4).toFixed(2) + 's;animation-duration:' + (2.4 + (i % 4) * 0.35).toFixed(2) + 's' +
+        (i % 3 === 0 ? ';border-radius:50%;width:8px;height:8px' : '') + '"></i>';
+    }
+    var box = document.createElement("div");
+    box.className = "bgpop-wrap";
+    box.innerHTML = '<div class="bgpop-conf" aria-hidden="true">' + conf + '</div>' +
+      '<div class="bgpop" role="dialog" aria-modal="true" aria-labelledby="bgpopT">' +
+      '<div class="bgpop-medal">' + bgIcon(b) + '</div>' +
+      '<small class="bgpop-k">NEW BADGE</small><h3 id="bgpopT">새 배지를 받았어요!</h3>' +
+      '<span class="bgpop-chip">' + esc(b.label) + ' · Lv.' + b.tier + '</span>' +
+      '<p>' + esc(b.desc) + (hint ? '<br>' + hint : '') + (extra > 0 ? '<br><em>외 ' + extra + '개도 함께 받았어요</em>' : '') + '</p>' +
+      '<div class="bgpop-bar"><div><span>모은 배지</span><b>' + got + ' / ' + L.length + '</b></div><i><em style="width:' + Math.round(got / L.length * 100) + '%"></em></i></div>' +
+      '<a class="bgpop-go" href="#goal-badges">내 배지 보러 가기</a><button type="button" class="bgpop-x">닫기</button></div>';
+    document.body.appendChild(box);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { box.classList.add("in"); }); });
+    function close() { box.classList.remove("in"); setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 300); }
+    box.querySelector(".bgpop-x").addEventListener("click", close);
+    box.querySelector(".bgpop-go").addEventListener("click", function () { close(); });
+    box.addEventListener("click", function (e) { if (e.target === box) close(); });
+  }
+
+  /* ---- 근육 지도 */
+  var MG = [["chest", "가슴"], ["back", "등"], ["shoulder", "어깨"], ["arm", "팔"], ["core", "복근"], ["thigh", "허벅지"], ["glute", "엉덩이"], ["calf", "종아리"]];
+  var MG_KO = {}; MG.forEach(function (g) { MG_KO[g[0]] = g[1]; });
+  var MG_RULES = [   /* 종목 이름 → 부위 (위에서부터 처음 맞는 것) */
+    [/레그\s?컬/, ["thigh"]],
+    [/RDL|데드리프트|굿모닝/i, ["thigh", "glute"]],
+    [/레그\s?익스텐션|시시\s?스쿼트/, ["thigh"]],
+    [/카프|종아리/, ["calf"]],
+    [/스쿼트|레그\s?프레스|런지|스텝\s?업/, ["thigh", "glute"]],
+    [/이너\s?타이|어덕/, ["thigh"]],
+    [/아웃\s?타이|힙|글루트|브릿지|어브덕/, ["glute"]],
+    [/페이스\s?풀|리버스\s?펙덱|리어\s?델트/, ["shoulder"]],
+    [/레터럴|숄더|밀리터리|프론트\s?레이즈|업라이트/, ["shoulder"]],
+    [/슈러그|풀다운|로우|풀업|턱걸이|풀오버|백\s?익스텐션/, ["back"]],
+    [/푸[쉬시]\s?다운|익스텐션|딥스|킥백|컬/, ["arm"]],
+    [/플랭크|크런치|복근|코어|레그\s?레이즈|싯업|AB/i, ["core"]],
+    [/펙덱|플라이|체스트|벤치|프레스|푸[쉬시]\s?업/, ["chest"]]
+  ];
+  var MG_PART = [[/가슴/, ["chest"]], [/등/, ["back"]], [/어깨/, ["shoulder"]], [/팔|삼두|이두/, ["arm"]], [/하체/, ["thigh", "glute"]], [/엉덩이|힙/, ["glute"]], [/복근|코어/, ["core"]]];
+  function dayGroups(d) {
+    var out = {};
+    if (!d || d.rest || d.pick || d.cardio_only) return [];
+    (d.items || []).forEach(function (it) {
+      var n = it.name || "";
+      for (var i = 0; i < MG_RULES.length; i++) if (MG_RULES[i][0].test(n)) { MG_RULES[i][1].forEach(function (g) { out[g] = 1; }); break; }
+    });
+    if (!Object.keys(out).length) MG_PART.forEach(function (r) { if (r[0].test(d.part || "")) r[1].forEach(function (g) { out[g] = 1; }); });
+    return Object.keys(out);
+  }
+  function dayOfDate(k, sorted) {   /* 그날 한 루틴 (요일 / 순환은 그 전까지 출석 수로 DAY 순서) */
+    if (ROT) {
+      var n = rotDays().length; if (!n) return null;
+      var since = M.routine.rotation_start || "2000-01-01";
+      var before = sorted.filter(function (x) { return x >= since && x < k; }).length;
+      return rotDays()[before % n];
+    }
+    var p = k.split("-");
+    return dayByKey(DAY_KEYS[new Date(+p[0], +p[1] - 1, +p[2]).getDay()]);
+  }
+  function muscleCounts(ym) {
+    var a = attLoad().slice().sort(), cnt = {}, days = 0;
+    MG.forEach(function (g) { cnt[g[0]] = 0; });
+    a.forEach(function (k) {
+      if (k.slice(0, 7) !== ym) return;
+      days++;
+      dayGroups(dayOfDate(k, a)).forEach(function (g) { cnt[g]++; });
+    });
+    return { cnt: cnt, days: days };
+  }
+  function routineGroups() {
+    var out = {};
+    ((M.routine && M.routine.days) || []).forEach(function (d) { dayGroups(d).forEach(function (g) { out[g] = 1; }); });
+    return out;
+  }
+  function mgLevel(n) { return n >= 5 ? 3 : n >= 3 ? 2 : n >= 1 ? 1 : 0; }
+  function mmFigure(cnt, alt) {
+    var sx = M.sex === "F" ? "F" : "M", src = BASE + "muscle/" + sx + "/";
+    return '<div class="mm-fig"><img src="' + src + 'base.png" alt="' + esc(alt) + '">' +
+      MG.map(function (g) {
+        var lv = mgLevel(cnt[g[0]]);
+        return lv ? '<img class="mm-l" src="' + src + g[0] + '.png" alt="" style="opacity:' + [0, 0.4, 0.72, 1][lv] + '">' : '';
+      }).join("") + '</div>';
+  }
+  function mgTop(cnt) {
+    return MG.filter(function (g) { return cnt[g[0]] > 0; })
+      .sort(function (x, y) { return cnt[y[0]] - cnt[x[0]]; }).map(function (g) { return { k: g[0], name: g[1], n: cnt[g[0]] }; });
+  }
+  function mgWhite(cnt) {   /* 루틴엔 있는데 이번 달 아직 안 칠해진 부위 */
+    var rg = routineGroups();
+    return MG.filter(function (g) { return rg[g[0]] && !cnt[g[0]]; }).map(function (g) { return g[1]; });
+  }
+  var mmWhich = "cur";
+  function muscleBody() {
+    var now = new Date(), ym = mmWhich === "prev" ? ymAdd(ymOf(now), -1) : ymOf(now), mo = +ym.slice(5);
+    var r = muscleCounts(ym), top = mgTop(r.cnt), white = mgWhite(r.cnt);
+    var alt = mo + "월 근육 지도: " + (top.length ? top.map(function (t) { return t.name + " " + t.n + "회"; }).join(", ") : "아직 색칠된 곳 없음");
+    var h = '<div class="mm-card">' + mmFigure(r.cnt, alt) + (r.days ? '' : '<p class="mm-empty">' + (mmWhich === "prev" ? '이 달엔 출석 기록이 없어요' : '출석하면 그날 루틴 부위가<br>하나씩 색칠돼요') + '</p>') +
+      '<div class="mm-leg"><span><i class="l0"></i>안 함</span><span><i class="l1"></i>1~2회</span><span><i class="l2"></i>3~4회</span><span><i class="l3"></i>5회 이상</span></div></div>';
+    if (top.length) {
+      h += '<div class="mm-top"><b>' + (mmWhich === "prev" ? mo + '월에' : '이번 달') + ' 제일 많이 한 부위</b><div>' + top.slice(0, 3).map(function (t, i) {
+        return '<span class="' + (i ? '' : 'first') + '"><small>' + (i + 1) + '위</small><b>' + t.name + '</b><em>' + t.n + '회</em></span>';
+      }).join("") + '</div></div>';
+    }
+    if (r.days && white.length) h += '<div class="mm-tip"><span aria-hidden="true">!</span><div><b>아직 하얀 곳 · ' + white.slice(0, 2).join(" · ") + '</b><small>루틴에 있는 부위예요. 그 요일에 나와서 채워 봐요!</small></div></div>';
+    else if (r.days) h += '<div class="mm-tip ok"><span aria-hidden="true">★</span><div><b>루틴 부위를 다 칠했어요!</b><small>이 기세 그대로 다음 달도 채워 봐요</small></div></div>';
+    return h;
+  }
+  function muscleSection(num) {
+    var now = new Date(), st = startDate(), prevYm = ymAdd(ymOf(now), -1);
+    var canPrev = st && ymOf(st) <= prevYm;
+    if (!canPrev) mmWhich = "cur";
+    return '<section id="muscle" data-num="' + num + '">' + head(num, "이번 달 근육 지도", "출석한 날 루틴 부위가 하나씩 칠해져요", '<a class="more" href="#report">' + (now.getMonth() + 1) + '월 리포트 →</a>') +
+      '<div class="panel mmap"><div class="mm-seg" role="group" aria-label="달 고르기">' +
+      '<button type="button" data-m="cur" aria-pressed="' + (mmWhich === "cur") + '">이번 달 ' + (now.getMonth() + 1) + '월</button>' +
+      '<button type="button" data-m="prev" aria-pressed="' + (mmWhich === "prev") + '"' + (canPrev ? '' : ' disabled') + '>지난달 ' + (+prevYm.slice(5)) + '월</button></div>' +
+      '<div class="mm-body">' + muscleBody() + '</div></div></section>';
+  }
+  function setupMuscle() {
+    Array.prototype.forEach.call(document.querySelectorAll(".mm-seg button"), function (b) {
+      b.addEventListener("click", function () {
+        mmWhich = b.getAttribute("data-m");
+        Array.prototype.forEach.call(document.querySelectorAll(".mm-seg button"), function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        var body = document.querySelector(".mm-body"); if (body) body.innerHTML = muscleBody();
+      });
+    });
+  }
+
+  /* ---- 월간 리포트 */
+  function reportData(ym) {
+    var a = attLoad(), now = new Date(), first = ymDate(ym), last = new Date(first.getFullYear(), first.getMonth() + 1, 0);
+    var to = last < now ? last : now, s = attStats(a, first, to), hs = attHistory(), L = badgeList();
+    var mc = muscleCounts(ym), ib = null;
+    if (IB_ON && ibData && ibData.length) {
+      var recs = ibData.slice().sort(function (x, y) { return x.d < y.d ? -1 : 1; });
+      var cur = null, prev = null;
+      recs.forEach(function (r) { if (r.d.slice(0, 7) === ym) cur = r; else if (r.d.slice(0, 7) < ym) prev = r; });
+      if (cur) ib = { cur: cur, prev: prev };
+    }
+    return { ym: ym, mo: +ym.slice(5), y: +ym.slice(0, 4), done: s.done, rate: s.rate, best: hs.monthBest[ym] || 0,
+      badges: L.filter(function (b) { return b.on && b.on.slice(0, 7) === ym; }), mc: mc, ib: ib,
+      live: ym === ymOf(now), upto: md(ymd(to)) };
+  }
+  function reportCard(R) {
+    var top = mgTop(R.mc.cnt), white = mgWhite(R.mc.cnt);
+    var cm = M.reports && M.reports[R.ym], quote, qwho;
+    if (cm) { quote = esc(cm).replace(/\n/g, "<br>"); qwho = "장동욱 트레이너의 한마디"; }
+    else {
+      qwho = R.mo + "월 한 줄 요약";
+      quote = !R.done ? "이번 달은 쉬어 갔어요.<br>다음 달엔 하나씩 다시 채워 봐요!" :
+        (top.length ? "이번 달 " + top[0].name + " 운동이 제일 성실했어요." : R.done + "번 출석, 잘 해냈어요.") +
+        "<br>" + (white.length ? "다음 달엔 " + white[0] + "까지 채워 봐요!" : "다음 달도 이 기세 그대로 가요!");
+    }
+    var tile = function (lab, v, unit, cls) { return '<div class="rp-tile ' + (cls || '') + '"><span>' + lab + '</span><p><b>' + v + '</b><small>' + unit + '</small></p></div>'; };
+    var right;
+    if (R.ib) {
+      var rows = R.ib.prev ? [["골격근량", "smm", 1], ["체지방량", "bfm", -1], ["체중", "w", 0]].map(function (r) {
+        var dl = Math.round((R.ib.cur[r[1]] - R.ib.prev[r[1]]) * 10) / 10;
+        var cls = !r[2] || !dl ? "" : (dl > 0) === (r[2] > 0) ? "up" : "down";
+        return '<div class="rp-ibr"><span>' + r[0] + '</span><b class="' + cls + '">' + (dl > 0 ? "+" : dl < 0 ? "−" : "") + ibFmt(Math.abs(dl)) + '<small> kg</small></b></div>';
+      }).join("") : [["골격근량", "smm", "kg"], ["체지방량", "bfm", "kg"], ["체중", "w", "kg"]].map(function (r) {
+        return '<div class="rp-ibr"><span>' + r[0] + '</span><b>' + ibFmt(R.ib.cur[r[1]]) + '<small> ' + r[2] + '</small></b></div>';
+      }).join("");
+      right = '<div class="rp-box rp-ib"><h4>' + (R.ib.prev ? '인바디 · 지난번보다' : '인바디 · 첫 기록') + '</h4>' + rows + '</div>';
+    } else if (IB_ON) {
+      right = '<div class="rp-box rp-ib empty"><h4>인바디</h4><p>' + R.mo + '월 인바디 기록이 없어요.<br>몸변화 탭에 올리면<br>여기서 지난번과 비교돼요</p></div>';
+    } else {
+      right = '<div class="rp-box rp-ib"><h4>제일 많이 한 부위</h4>' + (top.length ? top.slice(0, 3).map(function (t, i) {
+        return '<div class="rp-ibr"><span>' + (i + 1) + '위 · ' + t.name + '</span><b>' + t.n + '<small> 회</small></b></div>';
+      }).join("") : '<p>출석하면 여기에 쌓여요</p>') + '</div>';
+    }
+    var bdgs = R.badges.slice(0, 4).map(function (b) { return bgIcon(b, "#17294B"); }).join("");
+    return '<div class="rp" id="rp"><i class="rp-stripe"></i><i class="rp-c1"></i><i class="rp-c2"></i>' +
+      '<div class="rp-top"><div class="rp-brand"><b>GYMTOS</b><span>도당점</span></div><span class="rp-k">MONTHLY REPORT · ' + R.y + '. ' + pad2(R.mo) + '</span></div>' +
+      '<div class="rp-title"><span>' + esc(M.name) + ' 회원님의</span><h2>' + R.mo + '월 운동 리포트</h2>' + (R.live ? '<em>' + R.upto + ' 기준 · 진행 중</em>' : '') + '</div>' +
+      '<div class="rp-tiles">' + tile("출석", R.done, "회", "pk") + tile("출석률", R.rate, "%") + tile("최고 연속", R.best, "회") + tile("새 배지", R.badges.length, "개", "gd") + '</div>' +
+      '<div class="rp-mid"><div class="rp-map"><h4>' + R.mo + '월 근육 지도</h4>' + mmFigure(R.mc.cnt, R.mo + "월 근육 지도") +
+      '<p>' + (top.length ? '가장 많이 한 부위 · ' + top.slice(0, 2).map(function (t) { return t.name; }).join(" · ") : '출석하면 부위가 색칠돼요') + '</p></div>' +
+      '<div class="rp-side">' + right + '<div class="rp-box rp-bd"><h4>' + (R.badges.length ? '이번 달 받은 배지' : '이번 달 배지') + '</h4>' +
+      (bdgs ? '<div class="rp-bds">' + bdgs + '</div>' : '<p>다음 달엔 배지 하나 받아 봐요!</p>') + '</div></div></div>' +
+      '<div class="rp-quote"><span aria-hidden="true">“</span><div><p>' + quote + '</p><small>' + qwho + '</small></div></div>' +
+      '<div class="rp-foot"><span><b>MY PT NOTE</b> · 나만의 운동 노트</span><span>GYMTOS 도당점 · 담당 장동욱 트레이너</span></div></div>';
+  }
+  function renderReport(ym) {
+    var now = new Date(), curYm = ymOf(now), st = startDate(), firstYm = st ? ymOf(st) : curYm;
+    if (!ym || ym > curYm) ym = curYm;
+    if (ym < firstYm) ym = firstYm;
+    var R = reportData(ym), pv = ymAdd(ym, -1), nx = ymAdd(ym, 1);
+    return '<div class="rp-nav"><a href="#goal" class="rp-back">← 목표</a><div class="rp-mo">' +
+      (pv >= firstYm ? '<a href="#report-' + pv + '" aria-label="' + (+pv.slice(5)) + '월 리포트">‹</a>' : '<span class="off">‹</span>') +
+      '<b>' + R.y + '년 ' + R.mo + '월</b>' +
+      (nx <= curYm ? '<a href="#report-' + nx + '" aria-label="' + (+nx.slice(5)) + '월 리포트">›</a>' : '<span class="off">›</span>') + '</div></div>' +
+      '<div class="rp-frame" id="rpFrame">' + reportCard(R) + '</div>' +
+      '<button type="button" class="btn fill rp-save" id="rpSave"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg>이미지로 저장 · 공유</button>' +
+      '<p class="rp-hint">' + (R.live ? '이번 달은 아직 진행 중이라 숫자가 계속 바뀌어요. ' : '') + '카톡·인스타에 올려 자랑해 보세요!</p>' + remember();
+  }
+  function rpFit() {
+    var f = document.getElementById("rpFrame"), r = document.getElementById("rp");
+    if (!f || !r) return;
+    var s = f.clientWidth / 1080;
+    r.style.transform = "scale(" + s + ")";
+    f.style.height = Math.round(1350 * s) + "px";
+  }
+  window.addEventListener("resize", rpFit);
+  function loadH2C() {
+    if (window.html2canvas) return Promise.resolve(window.html2canvas);
+    return new Promise(function (ok, no) {
+      var s = document.createElement("script");
+      s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+      s.onload = function () { ok(window.html2canvas); }; s.onerror = no;
+      document.head.appendChild(s);
+    });
+  }
+  function rpShow(url, name) {   /* 공유가 안 되는 브라우저(카톡 안 등): 그림을 띄워서 길게 눌러 저장 */
+    var box = document.createElement("div");
+    box.className = "rp-shot";
+    box.innerHTML = '<div><img src="' + url + '" alt="월간 리포트 그림"><p>그림을 <b>길게 눌러</b> 사진에 저장하세요</p>' +
+      '<a class="btn fill" href="' + url + '" download="' + name + '">파일로 받기</a><button type="button" class="btn">닫기</button></div>';
+    document.body.appendChild(box);
+    box.querySelector("button").addEventListener("click", function () { box.remove(); });
+  }
+  function setupReport() {
+    rpFit();
+    var imgs = document.querySelectorAll("#rp img");
+    Array.prototype.forEach.call(imgs, function (im) { if (!im.complete) im.addEventListener("load", rpFit); });
+    var b = document.getElementById("rpSave");
+    if (!b) return;
+    b.addEventListener("click", function () {
+      var r = document.getElementById("rp"); if (!r || b.disabled) return;
+      b.disabled = true; b.classList.add("saving");
+      var name = "PT리포트-" + (location.hash.match(/\d{4}-\d{2}/) || [ymOf(new Date())])[0] + ".png";
+      var holder = document.createElement("div");
+      holder.style.cssText = "position:fixed;left:-12000px;top:0;width:1080px;height:1350px;overflow:hidden";
+      var c = r.cloneNode(true); c.removeAttribute("id"); c.style.transform = "none";
+      holder.appendChild(c); document.body.appendChild(holder);
+      var fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+      fontsReady.then(loadH2C).then(function (h2c) {
+        return h2c(c, { scale: 1, width: 1080, height: 1350, backgroundColor: "#0F1B33", useCORS: true, logging: false });
+      }).then(function (cv) {
+        holder.remove();
+        cv.toBlob(function (blob) {
+          b.disabled = false; b.classList.remove("saving");
+          var url = cv.toDataURL("image/png");
+          var file = null;
+          try { file = new File([blob], name, { type: "image/png" }); } catch (e) {}
+          if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({ files: [file], title: M.name + " 회원님 월간 리포트" }).catch(function (e) { if (!e || e.name !== "AbortError") rpShow(url, name); });
+          } else rpShow(url, name);
+        }, "image/png");
+      }).catch(function () {
+        holder.remove(); b.disabled = false; b.classList.remove("saving");
+        attToast("그림을 못 만들었어요. 인터넷 연결을 확인해 주세요");
+      });
+    });
+  }
+  function reportHomeCard() {   /* 매달 1~7일: 지난달 리포트 도착 */
+    var now = new Date();
+    if (now.getDate() > 7) return "";
+    var ym = ymAdd(ymOf(now), -1), st = startDate();
+    if (!st || ymOf(st) > ym) return "";
+    var R = reportData(ym);
+    if (!R.done) return "";
+    return '<a class="rp-home" href="#report-' + ym + '"><span class="rh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>' +
+      '<span class="rh-t"><small>MONTHLY REPORT</small><b>' + R.mo + '월 리포트가 도착했어요</b><em>출석 ' + R.done + '회 · 출석률 ' + R.rate + '%' + (R.badges.length ? ' · 새 배지 ' + R.badges.length + '개' : '') + '</em></span>' +
+      '<span class="rh-go" aria-hidden="true">›</span></a>';
+  }
+
   /* ---------------- 홈 */
   function exMini(d) {
     return '<ul class="mini">' + d.items.map(function (it, i) {
@@ -872,6 +1315,7 @@
       '<div class="who"><span>GYMTOS 도당점 · 장동욱 트레이너</span></div>' +
       '</div>' + attCheckStrip() + '</div></div></div>';
 
+    h += reportHomeCard();
     h += journeyHome();
     if (IB_ON) h += ibHomeStrip() || '<span class="ibstrip-slot"></span>';
     h += '<section>' + head("", ROT ? "오늘 할 운동" : "오늘의 운동", ROT ? dayName(k) + " 차례" : DAY_KO[k] + "요일", '<a class="more" href="#routine-' + k + '">자세히 →</a>');
@@ -1272,7 +1716,7 @@
   var TAB_OF = { home: "home", forms: "forms", form: "forms", routine: "routine", diet: "diet", notice: "notice" };
   function route() {
     var hsh = (location.hash || "").replace(/^#/, "");
-    var html, tab = "home", after = null, scrollDay = false;
+    var html, tab = "home", after = null, scrollDay = false, jumpTo = null;
     if (!hsh || hsh === "home") { html = renderHome(); }
     else if (hsh === "forms") { html = renderForms(); tab = "forms"; }
     else if (hsh.indexOf("form-") === 0) {
@@ -1284,6 +1728,9 @@
     else if (hsh === "diet") { html = renderDiet(); tab = "diet"; }
     else if (hsh === "notice") { html = renderNotice(); tab = "notice"; }
     else if (hsh === "goal" || hsh === "journey") { html = renderGoal(); tab = "goal"; }
+    else if (hsh === "goal-badges" || hsh === "badges") { html = renderGoal(); tab = "goal"; jumpTo = "badges"; }
+    else if (hsh === "muscle") { html = renderGoal(); tab = "goal"; jumpTo = "muscle"; }
+    else if (hsh === "report" || /^report-\d{4}-\d{2}$/.test(hsh)) { html = renderReport(hsh.slice(7)); tab = "goal"; after = setupReport; }
     else if ((hsh === "body" || hsh === "inbody") && IB_ON) { html = renderBody(); tab = "body"; }
     else { html = renderHome(); }
     var wasRoutine = view.getAttribute("data-tab") === "routine";
@@ -1293,7 +1740,7 @@
       if (a.getAttribute("data-tab") === tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
     alignText(document);
-    setupAttCheck(); setupCal(); setupIb();
+    setupAttCheck(); setupCal(); setupIb(); setupBadges(); setupMuscle();
     if (after) after();
     var flashEl = null;
     if (tab === "notice") {
@@ -1305,7 +1752,10 @@
         pendingNotice = null;
       }
     }
-    if (flashEl) {
+    var jumpEl = jumpTo && document.getElementById(jumpTo);
+    if (jumpEl) {
+      jumpEl.scrollIntoView({ block: "start" });
+    } else if (flashEl) {
       flashEl.scrollIntoView({ block: "center" });
       flashEl.classList.add("flash");
     } else if (scrollDay && wasRoutine) {
@@ -1321,6 +1771,7 @@
   if (!DEMO) setTimeout(showNoticePop, 800);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { alignText(document); });
   attSync(); ibSync();
+  if (!ATT_API) setTimeout(badgeCheck, 1500);
   document.addEventListener("visibilitychange", function () { if (!document.hidden) { attSync(); ibSync(); } });
   window.addEventListener("load", function () { alignText(document); });
 })();
