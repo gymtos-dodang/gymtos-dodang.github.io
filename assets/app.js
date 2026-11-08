@@ -551,9 +551,10 @@
     var st = startDate(), all = attStats(a, st || new Date(now.getFullYear(), now.getMonth(), 1), now);
     var w = (m.plan === 0 || all.done === 0) ? ["none", "오늘부터 채워봐요!"] : rateWord(m.rate), R = 46, C = 2 * Math.PI * R, len = C * m.rate / 100;
     return '<div class="panel attgauge"><div class="gauge ' + w[0] + '"><svg viewBox="0 0 120 120" aria-hidden="true">' +
-      '<circle cx="60" cy="60" r="' + R + '" fill="none" stroke="var(--tint)" stroke-width="13"/>' +
-      (m.rate > 0 ? '<circle cx="60" cy="60" r="' + R + '" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round" stroke-dasharray="' + len.toFixed(1) + ' ' + C.toFixed(1) + '" transform="rotate(-90 60 60)"/>' : '') + '</svg>' +
-      '<div class="gnum"><b>' + m.rate + '<i>%</i></b><small>이번 달 출석률</small></div></div>' +
+      '<defs><linearGradient id="gGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" class="gs1"/><stop offset="1" class="gs2"/></linearGradient></defs>' +   /* 게이지 그라데이션 (2026-11-08) */
+      '<circle cx="60" cy="60" r="' + R + '" fill="none" stroke="var(--tint)" stroke-width="11"/>' +
+      (m.rate > 0 ? '<circle cx="60" cy="60" r="' + R + '" fill="none" stroke="url(#gGrad)" stroke-width="11" stroke-linecap="round" stroke-dasharray="' + (m.rate >= 100 ? C.toFixed(1) + ' 0' : len.toFixed(1) + ' ' + C.toFixed(1)) + '" transform="rotate(-90 60 60)"/>' : '') + '</svg>' +
+      '<div class="gnum' + (m.rate >= 100 ? ' full' : '') + '"><b>' + m.rate + '<i>%</i></b><small>이번 달 출석률</small></div></div>' +
       '<div class="gside"><p class="gword ' + w[0] + '">' + w[1] + '</p>' +
       '<dl><div><dt>이번 달</dt><dd>' + m.done + ' / ' + m.plan + '회</dd></div>' +
       '<div><dt>연속 출석</dt><dd>' + attStreak(a) + '회째</dd></div>' +
