@@ -8,6 +8,9 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 9", title: "등 자세 복습지 3개가 올라왔어요",
+      body: "오늘 한 시티드 로우 · 랫풀다운 · 버티컬 풀다운 복습지예요. 월요일 등 날 운동 전에 한 번 보고 들어가세요! 루틴 탭 월요일 종목에서도 바로 열려요.",
+      link: "forms" },
     { date: "2026. 11. 7", title: "엉덩이 자세 복습지 2개가 올라왔어요",
       body: "오늘 수업한 굿모닝 아웃타이 · 힙쓰러스트 머신 복습지예요. 토요일 엉덩이 날 운동 전에 한 번 보고 들어가세요! 루틴 탭 토요일 종목에서도 바로 열려요.",
       link: "forms" },
@@ -22,6 +25,87 @@ window.MEMBER = {
 
   /* 자세 복습지 (최신이 위) */
   forms: [
+    {
+      id: "vertical-pulldown",
+      dir: "media/form-vertical-pulldown/",
+      date: "2026. 11. 9 (월)",
+      exercise: "버티컬 풀다운",
+      exercise_en: "Vertical Pulldown",
+      part: "등",
+      targets: ["광배근 (등 옆 날개)", "대원근 · 능형근"],
+      benefit: "손잡이가 따로 움직여서 양쪽 등을 고르게 쓰고, 등 넓이를 키워줘요",
+      key_point: "손이 아니라 팔꿈치로, 옆구리 쪽으로 끌어내린다!",
+      good_points: [
+        { title: "가슴을 세우고 앉았어요", desc: "등이 굽지 않아서 당길 때 힘이 등으로 바로 갔어요" },
+        { title: "팔꿈치를 아래로 끌어내렸어요", desc: "팔꿈치가 옆구리 쪽으로 내려와서 등 옆이 꽉 조여졌어요" },
+        { title: "끝까지 올려서 늘렸어요", desc: "돌아갈 때 팔을 위로 쭉 펴서 등이 충분히 늘어났어요" }
+      ],
+      primary_muscles: [{ name: "광배근", where: "겨드랑이 아래 · 등 옆 날개" }],
+      secondary_muscles: "대원근 · 능형근 · 중부 승모근 · 이두근",
+      feel_good: "겨드랑이 아래 등 옆이 뻐근하게 조여요",
+      feel_stop: "팔뚝만 아프거나, 목·어깨 위쪽이 뻐근해요",
+      steps: [
+        { title: "준비", desc: "허벅지 패드에 다리를 고정하고 가슴을 세워요. 손잡이를 잡고 팔을 위로 쭉 펴요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "당기기", desc: "어깨를 먼저 내리고, 팔꿈치를 옆구리 쪽으로 끌어내려요. 손잡이가 어깨 높이에 오면 등 꽉 1초!", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "올리기", desc: "등이 늘어나는 느낌으로 버티면서 팔을 천천히 위로 펴요", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["가슴 세우고 엉덩이는 의자에", "어깨 먼저 내리고 팔꿈치로 당기기", "올릴 때 천천히, 등이 늘어나게"],
+      dont: ["상체를 뒤로 크게 젖히기", "어깨를 귀 쪽으로 으쓱 올리기", "손목·팔뚝 힘으로만 당기기"]
+    },
+    {
+      id: "lat-pulldown",
+      dir: "media/form-lat-pulldown/",
+      date: "2026. 11. 9 (월)",
+      exercise: "랫풀다운",
+      exercise_en: "Lat Pulldown",
+      part: "등",
+      targets: ["광배근 (등 옆 날개)", "대원근 · 능형근"],
+      benefit: "등을 넓게 펴서 허리가 잘록해 보이는 V라인을 만들어줘요",
+      key_point: "가슴을 바에 마중 나가듯 세우고, 팔꿈치로 당긴다!",
+      good_points: [
+        { title: "허벅지를 패드에 고정했어요", desc: "몸이 들리지 않아서 무게를 등으로 버틸 수 있었어요" },
+        { title: "바를 가슴 위쪽까지 당겼어요", desc: "쇄골 아래까지 내려와서 등이 끝까지 수축됐어요" },
+        { title: "팔을 끝까지 펴서 올렸어요", desc: "위에서 팔이 다 펴질 때까지 올라가서 등이 쭉 늘어났어요" }
+      ],
+      primary_muscles: [{ name: "광배근", where: "겨드랑이 아래 · 등 옆 날개" }],
+      secondary_muscles: "대원근 · 능형근 · 중부 승모근 · 이두근",
+      feel_good: "겨드랑이 아래와 등 옆이 뻐근해요",
+      feel_stop: "팔뚝만 아프거나, 목 뒤가 뻐근해요",
+      steps: [
+        { title: "준비", desc: "허벅지 패드에 다리를 끼우고, 어깨보다 조금 넓게 바를 잡아요. 가슴을 세우고 팔을 쭉 펴요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "당기기", desc: "어깨를 내리고 팔꿈치를 옆구리로 끌어내리며 바를 쇄골 아래까지 당겨요. 등 꽉 1초!", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "올리기", desc: "바를 버티면서 팔이 다 펴질 때까지 천천히 올려요", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["가슴은 세우고 시선은 바 쪽", "팔꿈치를 옆구리로 끌어내리기", "올릴 때 팔 끝까지 펴기"],
+      dont: ["몸을 뒤로 눕히며 반동 쓰기", "바를 목 뒤로 당기기", "어깨를 으쓱 올린 채 당기기"]
+    },
+    {
+      id: "seated-row",
+      dir: "media/form-seated-row/",
+      date: "2026. 11. 9 (월)",
+      exercise: "시티드 로우",
+      exercise_en: "Seated Row",
+      part: "등",
+      targets: ["광배근 · 능형근", "중부 승모근 (날개뼈 사이)"],
+      benefit: "등 두께를 채워주고, 굽은 어깨·자세를 바로 세워줘요",
+      key_point: "상체는 고정, 날개뼈를 모으며 배꼽 쪽으로 당긴다!",
+      good_points: [
+        { title: "상체를 세우고 버텼어요", desc: "몸이 앞뒤로 흔들리지 않아서 반동 없이 등으로 당겼어요" },
+        { title: "배꼽 쪽으로 당겼어요", desc: "손잡이가 배 쪽으로 와서 등 아래쪽까지 힘이 들어갔어요" },
+        { title: "끝에서 날개뼈를 모았어요", desc: "당긴 끝에서 가슴을 펴고 날개뼈를 모아서 등 가운데가 꽉 조여졌어요" }
+      ],
+      primary_muscles: [{ name: "광배근", where: "등 옆 · 아래쪽" }, { name: "능형근 · 중부 승모근", where: "날개뼈 사이" }],
+      secondary_muscles: "대원근 · 후면 삼각근 · 이두근",
+      feel_good: "날개뼈 사이와 등 옆이 뻐근하게 조여요",
+      feel_stop: "허리가 뻐근하거나, 팔뚝만 아파요",
+      steps: [
+        { title: "준비", desc: "발판에 발을 대고 무릎은 살짝 굽혀요. 손잡이를 잡고 허리를 곧게 세워 팔을 앞으로 펴요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "당기기", desc: "가슴을 펴고 팔꿈치를 뒤로 보내며 손잡이를 배꼽 쪽으로 당겨요. 날개뼈 모으고 1초!", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "돌아가기", desc: "상체는 그대로 두고, 등이 늘어나는 느낌으로 팔을 천천히 펴요", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["허리 곧게, 상체는 고정", "팔꿈치를 몸 옆으로 붙여 뒤로", "당긴 끝에서 날개뼈 모으고 1초"],
+      dont: ["몸을 뒤로 젖혀 반동 쓰기", "어깨를 으쓱 올리며 당기기", "돌아갈 때 허리가 둥글게 말리기"]
+    },
     {
       id: "hip-thrust",
       dir: "media/form-hip-thrust/",
@@ -171,8 +255,8 @@ window.MEMBER = {
     days: [
       { day: "월", part: "등", en: "Back", cardio: false, items: [
         { name: "시티드 페이스풀", en: "Seated Face Pull", tag: "워밍업", tip: "날개뼈 모으며 얼굴 쪽으로", sets: [[20, 10], [15, 15]], form: "seated-face-pull" },
-        { name: "랫풀다운", en: "Lat Pulldown", tip: "팔꿈치로 당기기", sets: [[12, 25], [12, 25], [12, 25]] },
-        { name: "시티드 로우 머신", en: "Seated Row Machine", tag: "메인", tip: "가슴 패드 붙이고 당기기", sets: [[15, 25], [12, 25], [10, 30], [8, 30]] },
+        { name: "랫풀다운", en: "Lat Pulldown", tip: "팔꿈치로 당기기", sets: [[12, 25], [12, 25], [12, 25]], form: "lat-pulldown" },
+        { name: "시티드 로우 머신", en: "Seated Row Machine", tag: "메인", tip: "가슴 패드 붙이고 당기기", sets: [[15, 25], [12, 25], [10, 30], [8, 30]], form: "seated-row" },
         { name: "리버스 펙덱", en: "Reverse Pec Deck", tip: "날개뼈 모으며 옆으로", sets: [[15, 15], [15, 15], [15, 15]] }
       ]},
       { day: "화", part: "어깨", en: "Shoulder", cardio: true, items: [
