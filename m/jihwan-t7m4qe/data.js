@@ -8,6 +8,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 9", title: "등 복습지 3개가 올라왔어요", link: "forms",
+      body: "언더그립 시티드 로우 · 해머스트렝스 로우로우 · 리버스 펙덱! 넓은 등이 바프 V라인을 만들어요. 월·목 등 루틴 종목에서도 바로 열려요." },
     { date: "2026. 11. 6", title: "어깨 복습지 2개가 올라왔어요", link: "forms",
       body: "스탠딩 사이드 레터럴 레이즈 머신 · 바이킹 프레스! 넓은 어깨가 바프 V라인을 만들어요. 금요일 루틴의 레터럴 레이즈 머신에서도 바로 열려요." },
     { date: "2026. 11. 6", title: "자세 복습지 5개가 올라왔어요", link: "forms",
@@ -22,6 +24,87 @@ window.MEMBER = {
 
   /* 자세 복습지 (최신이 위) */
   forms: [
+    {
+      id: "underhand-seated-row",
+      dir: "media/form-underhand-seated-row/",
+      date: "2026. 11. 9 (월)",
+      exercise: "언더그립 시티드 로우",
+      exercise_en: "Underhand Seated Row",
+      part: "등",
+      targets: ["광배근 아래쪽 (등 날개)", "능형근 · 이두근"],
+      benefit: "손바닥을 위로 잡으면 팔꿈치가 몸에 붙어서 등 날개 아래쪽까지 꽉 차요. 바프 사진에서 등이 V자로 넓어 보여요",
+      key_point: "바는 배꼽 쪽으로, 팔꿈치는 몸에 붙여 뒤로 쭉!",
+      good_points: [
+        { title: "바를 배 쪽으로 당겼어요", desc: "가슴이 아니라 배꼽 쪽으로 당겨서 등 아래쪽 날개가 일했어요" },
+        { title: "팔을 끝까지 펴서 늘렸어요", desc: "돌아갈 때 팔을 다 펴서 등이 충분히 늘어난 상태에서 다시 당겼어요" },
+        { title: "발판을 단단히 밀고 앉았어요", desc: "하체가 고정돼서 당길 때 몸이 앞뒤로 끌려가지 않았어요" }
+      ],
+      primary_muscles: [{ name: "광배근", where: "겨드랑이 아래 ~ 허리 위 등 날개" }],
+      secondary_muscles: "대원근 · 능형근 · 중부 승모근 · 이두근",
+      feel_good: "등 아래쪽 날개가 꽉 조여요",
+      feel_stop: "이두·팔뚝만 아프거나, 허리가 뻐근해요",
+      steps: [
+        { title: "준비", desc: "발판에 발을 대고 앉아 일자바를 손바닥이 위로 오게 어깨너비로 잡아요. 팔을 펴고 가슴을 세워요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "당기기", desc: "팔꿈치를 몸 옆에 붙인 채 뒤로! 바가 배꼽에 닿을 때 날개뼈를 꽉 모아요", chip: "1~2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "펴주기", desc: "버티면서 팔을 끝까지 펴요. 등이 앞으로 쭉 늘어나는 걸 느껴요", chip: "2~3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["가슴을 세우고 허리는 곧게", "팔꿈치는 몸통에 붙여서 뒤로", "끝에서 날개뼈 1초 모으기"],
+      dont: ["상체를 뒤로 크게 젖혀 당기기", "손목을 말아 팔로 당기기", "어깨를 귀 쪽으로 으쓱하기"]
+    },
+    {
+      id: "low-row",
+      dir: "media/form-low-row/",
+      date: "2026. 11. 9 (월)",
+      exercise: "해머스트렝스 로우로우",
+      exercise_en: "Hammer Strength Low Row",
+      part: "등",
+      targets: ["광배근 (등 날개)", "능형근 · 중부 승모근 · 후면 삼각근"],
+      benefit: "가슴 패드가 몸을 잡아줘서 무겁게 당겨도 허리 부담이 적어요. 등 두께와 넓이를 같이 키워줘요",
+      key_point: "가슴은 패드에 붙이고, 팔꿈치로 뒤를 찌른다!",
+      good_points: [
+        { title: "가슴을 패드에 붙이고 했어요", desc: "당길 때 상체가 뒤로 젖혀지지 않아서 등으로만 당겼어요" },
+        { title: "팔꿈치를 뒤까지 보냈어요", desc: "손잡이를 몸 옆까지 당겨서 등이 끝까지 수축됐어요" },
+        { title: "일정한 속도로 반복했어요", desc: "무게가 무거워도 회마다 같은 리듬으로 움직였어요" }
+      ],
+      primary_muscles: [{ name: "광배근", where: "겨드랑이 아래 등 옆 날개" }],
+      secondary_muscles: "능형근 · 중부 승모근 · 대원근 · 후면 삼각근 · 이두근",
+      feel_good: "등 가운데와 날개가 뻐근해요",
+      feel_stop: "허리가 찌릿하거나, 팔만 아파요",
+      steps: [
+        { title: "준비", desc: "의자 높이를 맞춰 가슴을 패드에 붙이고 손잡이를 잡아요. 팔을 앞으로 쭉 펴서 등을 늘려요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "당기기", desc: "팔꿈치로 뒤를 찌르듯 손잡이를 몸 옆까지! 날개뼈를 꽉 모아요", chip: "1~2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "펴주기", desc: "버티면서 팔을 앞으로 쭉. 날개뼈가 벌어지며 등이 늘어나는 걸 느껴요", chip: "2~3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["가슴은 끝까지 패드에 붙이기", "팔꿈치로 뒤를 찌르듯 당기기", "무게는 원판 양쪽 합계로 보기"],
+      dont: ["가슴을 패드에서 떼고 젖히기", "어깨를 으쓱하며 당기기", "펼 때 무게에 끌려가기"]
+    },
+    {
+      id: "reverse-pec-deck",
+      dir: "media/form-reverse-pec-deck/",
+      date: "2026. 11. 9 (월)",
+      exercise: "리버스 펙덱",
+      exercise_en: "Reverse Pec Deck",
+      part: "어깨 · 등",
+      targets: ["후면 삼각근 (뒷어깨)", "능형근 · 중부 승모근"],
+      benefit: "뒷어깨와 날개뼈 사이를 키워서 말린 어깨가 펴져요. 등 운동 전에 하면 날개뼈가 먼저 깨어나요",
+      key_point: "손이 아니라 팔꿈치로 옆으로 크게 벌린다!",
+      good_points: [
+        { title: "팔을 뒤까지 크게 벌렸어요", desc: "손잡이를 몸통 옆까지 보내서 뒷어깨가 끝까지 일했어요" },
+        { title: "팔꿈치 각도를 유지했어요", desc: "팔을 굽혔다 폈다 하지 않아서 팔이 아니라 어깨로 벌렸어요" },
+        { title: "가슴을 패드에 붙였어요", desc: "상체가 뒤로 빠지지 않아서 반동 없이 움직였어요" }
+      ],
+      primary_muscles: [{ name: "후면 삼각근", where: "어깨 뒤쪽" }],
+      secondary_muscles: "능형근 · 중부 승모근 · 극하근 · 소원근",
+      feel_good: "어깨 뒤쪽과 날개뼈 사이가 뻐근해요",
+      feel_stop: "목·승모근만 뻐근하거나, 어깨 앞이 찌릿해요",
+      steps: [
+        { title: "준비", desc: "가슴을 패드에 붙이고 손잡이를 어깨 높이로 잡아요. 팔꿈치는 살짝 굽히고 어깨는 내려요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "벌리기", desc: "팔꿈치로 큰 원을 그리듯 옆으로! 팔이 몸통과 일자가 될 때까지 벌려요", chip: "1~2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "천천히 모으기", desc: "버티면서 앞으로 천천히. 손잡이가 부딪히기 전에 다시 벌려요", chip: "2~3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["가슴은 패드에 붙이기", "팔꿈치 각도는 처음 그대로", "어깨는 아래로 내린 채"],
+      dont: ["어깨를 귀 쪽으로 으쓱하기", "몸을 뒤로 젖혀 반동 쓰기", "날개뼈만 모으고 팔은 덜 벌리기"]
+    },
     {
       id: "lateral-raise-machine",
       dir: "media/form-lateral-raise-machine/",
@@ -227,8 +310,8 @@ window.MEMBER = {
         { name: "케이블 풀오버", en: "Cable Pullover", form: "cable-pullover", tag: "워밍업", tip: "팔 펴고 골반까지", sets: [[20, 15], [15, 15]] },
         { name: "시티드 로우 머신", en: "Seated Row Machine", tag: "메인", tip: "가슴 패드 붙이고 당기기", sets: [[15, 35], [12, 40], [10, 40], [8, 45]] },
         { name: "랫풀다운", en: "Lat Pulldown", tip: "팔꿈치로 당기기", sets: [[12, 40], [12, 40], [12, 40]] },
-        { name: "해머스트렝스 로우로우", en: "Low Row", tip: "원판 양쪽 합계 무게", sets: [[12, 40], [12, 40], [12, 40]] },
-        { name: "리버스 펙덱", en: "Reverse Pec Deck", tip: "날개뼈 모으며 옆으로", sets: [[15, 20], [15, 20], [15, 20]] }
+        { name: "해머스트렝스 로우로우", en: "Low Row", form: "low-row", tip: "원판 양쪽 합계 무게", sets: [[12, 40], [12, 40], [12, 40]] },
+        { name: "리버스 펙덱", en: "Reverse Pec Deck", form: "reverse-pec-deck", tip: "날개뼈 모으며 옆으로", sets: [[15, 20], [15, 20], [15, 20]] }
       ]},
       { day: "화", part: "가슴", en: "Chest", cardio: true, items: [
         { name: "펙덱 플라이", en: "Pec Deck Fly", form: "pec-deck", tag: "워밍업", tip: "가슴 모은다는 느낌", sets: [[20, 20], [15, 20]] },
@@ -244,9 +327,9 @@ window.MEMBER = {
         { name: "레그프레스", en: "Leg Press", tip: "무릎은 발끝 방향으로", sets: [[12, 60], [12, 60], [12, 60]] }
       ]},
       { day: "목", part: "등 B", en: "Back B", cardio: true, items: [
-        { name: "리버스 펙덱", en: "Reverse Pec Deck", tag: "워밍업", tip: "뒷어깨 가볍게 풀기", sets: [[20, 15], [15, 15]] },
+        { name: "리버스 펙덱", en: "Reverse Pec Deck", form: "reverse-pec-deck", tag: "워밍업", tip: "뒷어깨 가볍게 풀기", sets: [[20, 15], [15, 15]] },
         { name: "케이블 시티드 로우", en: "Cable Seated Row", tag: "메인", tip: "가슴 펴고 날개뼈 모으기", sets: [[15, 35], [12, 40], [10, 40], [8, 45]] },
-        { name: "언더그립 시티드 로우", en: "Underhand Seated Row", tip: "일자바 · 손바닥 위로", sets: [[12, 35], [12, 35], [12, 35]] },
+        { name: "언더그립 시티드 로우", en: "Underhand Seated Row", form: "underhand-seated-row", tip: "일자바 · 손바닥 위로", sets: [[12, 35], [12, 35], [12, 35]] },
         { name: "랫풀다운", en: "Lat Pulldown", tip: "팔꿈치로 당기기", sets: [[12, 40], [12, 40], [12, 40]] },
         { name: "시티드 페이스풀", en: "Seated Face Pull", tip: "팔꿈치 높게 얼굴 쪽으로", sets: [[15, 15], [15, 15], [15, 15]] }
       ]},
