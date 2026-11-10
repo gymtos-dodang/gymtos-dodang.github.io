@@ -1,7 +1,12 @@
 // GYMTOS PT 노트 창고 (출석 + 인바디) — 이 코드를 Apps Script에 그대로 붙여넣고 "웹 앱"으로 배포하세요.
 // 2026-11-06 인바디 추가: 시트 "인바디" 탭에 숫자, 구글 드라이브 "PT노트 인바디 사진" 폴더에 결과지 사진.
 // 2026-11-06 결과지 자동 읽기(OCR): 왼쪽 "서비스 +" 에서 "Drive API"를 추가해야 동작 (없으면 회원이 숫자를 직접 넣으면 됨).
+// 2026-11-10 루틴 고치기: 선생님이 폰에서 고친 루틴을 시트 "루틴" 탭에 저장 → 회원 PT 노트가 열릴 때 바로 바뀜.
+//            고칠 때마다 "루틴기록" 탭에 전체 내용이 한 줄씩 쌓임(되살리기용). 선생님 열쇠는 아래 RT_KEY_HASH(열쇠 자체는 여기 없음).
 const SHEET = '출석';
+const RT_SHEET = '루틴';
+const RT_LOG = '루틴기록';
+const RT_KEY_HASH = '4756ec53d712de9927d43e17e7efda99bb0a8312a08e1b82be440c1f2cf5da25';
 const IB_SHEET = '인바디';
 const IB_FOLDER = 'PT노트 인바디 사진';
 
@@ -81,6 +86,49 @@ function num_(x, lo, hi) {
 
 function memberOk_(m) { return /^[a-z0-9-]{3,40}$/.test(m); }
 
+/* ---------------- 루틴 (선생님이 폰에서 고친 것) */
+function rtSheet_(name, head) {
+  const ss = book_();
+  let s = ss.getSheetByName(name);
+  if (!s) {
+    s = ss.insertSheet(name);
+    s.appendRow(head);
+    s.setFrozenRows(1);
+  }
+  return s;
+}
+function rtMain_() { return rtSheet_(RT_SHEET, ['회원주소', '이름', '기준', '루틴(JSON)', '기록시각']); }
+function rtLog_() { return rtSheet_(RT_LOG, ['회원주소', '이름', '기록시각', '할일', '루틴(JSON)']); }
+
+function keyOk_(k) {
+  if (!k) return false;
+  const b = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(k), Utilities.Charset.UTF_8);
+  const hex = b.map(function (x) { return ('0' + ((x + 256) % 256).toString(16)).slice(-2); }).join('');
+  return hex === RT_KEY_HASH;
+}
+
+function rtGet_(m) {
+  const v = rtMain_().getDataRange().getValues();
+  for (let i = 1; i < v.length; i++) {
+    if (v[i][0] !== m) continue;
+    try { return JSON.parse(String(v[i][3])); } catch (e) { return null; }
+  }
+  return null;
+}
+
+function rtSet_(m, n, rec) {   // rec = null 이면 지움(원래 루틴으로)
+  const s = rtMain_();
+  const v = s.getDataRange().getValues();
+  let row = -1;
+  for (let i = 1; i < v.length; i++) if (v[i][0] === m) { row = i + 1; break; }
+  const js = rec ? JSON.stringify(rec) : '';
+  rtLog_().appendRow([m, n, new Date(), rec ? '저장' : '원래대로', js]);
+  if (!rec) { if (row > 0) s.deleteRow(row); return; }
+  const line = [m, n, String(rec.base || ''), js, new Date()];
+  if (row > 0) s.getRange(row, 1, 1, line.length).setValues([line]);
+  else s.appendRow(line);
+}
+
 /* ---------------- GET: 출석 + 인바디 보기·사진·삭제 */
 function doGet(e) {
   const p = (e && e.parameter) || {};
@@ -132,7 +180,9 @@ function doGet(e) {
     for (let i = 1; i < all.length; i++) {
       if (all[i][0] === m) days[txt_(all[i][2], 'yyyy-MM-dd')] = txt_(all[i][3], 'HH:mm');
     }
-    return json_({ ok: true, days: days });
+    let routine = null;
+    try { routine = rtGet_(m); } catch (err) {}
+    return json_({ ok: true, days: days, routine: routine });
   } finally {
     lock.releaseLock();
   }
@@ -164,6 +214,25 @@ function doPost(e) {
     if (!b.img || String(b.img).length > 8000000) return json_({ ok: false, error: 'img' });
     try { return json_({ ok: true, text: ocr_(String(b.img)) }); }
     catch (err) { return json_({ ok: false, error: 'ocr', msg: String(err) }); }
+  }
+  if (b.a === 'routine_key') return json_({ ok: keyOk_(b.key), error: keyOk_(b.key) ? '' : 'key' });
+  if (b.a === 'routine_save' || b.a === 'routine_reset') {
+    if (!keyOk_(b.key)) return json_({ ok: false, error: 'key' });
+    let rec = null;
+    if (b.a === 'routine_save') {
+      rec = b.rec;
+      if (!rec || typeof rec !== 'object' || !rec.routine || !Array.isArray(rec.routine.days)) return json_({ ok: false, error: 'routine' });
+      if (JSON.stringify(rec).length > 45000) return json_({ ok: false, error: 'size' });
+      rec.at = Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd HH:mm');
+    }
+    const lock = LockService.getScriptLock();
+    lock.waitLock(20000);
+    try {
+      rtSet_(m, String(b.n || ''), rec);
+      return json_({ ok: true, routine: rec });
+    } finally {
+      lock.releaseLock();
+    }
   }
   if (b.a !== 'inbody_add') return json_({ ok: false, error: 'action' });
   const d = String(b.d || '');

@@ -134,6 +134,19 @@
   var LIST = window.COACH_MEMBERS || [];
   var DK = ["일", "월", "화", "수", "목", "금", "토"];
   try { sessionStorage.setItem("ptcoach", location.pathname); localStorage.setItem("ptcoach", location.pathname); sessionStorage.removeItem("ptdemo"); } catch (e) {}
+  /* 루틴 고치기 열쇠 (2026-11-10): 주소 끝 #key=… 로 한 번 열면 이 휴대폰에 저장 → 회원 루틴 탭에서 바로 저장됨 */
+  var km = location.hash.match(/key=([a-z0-9]{8,64})/);
+  if (km) {
+    try { localStorage.setItem("ptkey", km[1]); } catch (e) {}
+    history.replaceState(null, "", location.pathname + location.search);
+    setTimeout(function () {
+      var t = document.createElement("div");
+      t.textContent = "루틴 고치기 열쇠가 이 휴대폰에 저장됐어요";
+      t.style.cssText = "position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:50;background:#1E2330;color:#fff;font-size:13.5px;font-weight:700;padding:10px 16px;border-radius:99px;box-shadow:0 4px 16px rgba(0,0,0,.2);max-width:calc(100% - 32px);text-align:center";
+      document.body.appendChild(t); setTimeout(function () { t.remove(); }, 3200);
+    }, 300);
+  }
+  function rtBase(r) { return r ? String(r.version || "") + "|" + String(r.updated || "") : ""; }
 
   function pad(n) { return (n < 10 ? "0" : "") + n; }
   function ymd(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
@@ -184,7 +197,7 @@
       info = '<span>이번 달 출석 <b>' + cnt + '회</b></span><span>마지막 <b>' + (last ? (+last.slice(5, 7)) + "/" + (+last.slice(8)) : "없음") + '</b></span>';
     }
     var R = M.routine || {};
-    info += '<span>루틴 <b>' + esc(R.version || "–") + '</b></span><span>복습지 <b>' + (M.forms || []).length + '개</b></span>';
+    info += '<span>루틴 <b>' + esc(R.version || "–") + (M._rted ? ' ✎' : '') + '</b></span><span>복습지 <b>' + (M.forms || []).length + '개</b></span>';
     var jt = journeyText(M);
     var stKey = !days ? "wait" : on ? "on" : rest ? "rest" : "off";
     return '<div class="mcard" data-name="' + esc(M.name) + '" data-cho="' + esc(cho(M.name)) + '" data-st="' + stKey + '"><a class="mtop" href="' + base + '#home"><span class="av ' + sex + '">' + esc(M.name.charAt(0)) + '</span>' +
@@ -241,7 +254,11 @@
       var done = 0, onN = 0, restN = 0;
       rows.forEach(function (r, i) {
         fetch(API + "?m=" + encodeURIComponent(r.slug), { cache: "no-store" }).then(function (x) { return x.json(); })
-          .then(function (j) { return j && j.ok ? j.days : {}; }).catch(function () { return {}; })
+          .then(function (j) {
+            /* 선생님이 폰에서 고친 루틴(창고)이 있으면 그걸로 — 쉬는 날·버전도 그대로 맞춤 */
+            if (j && j.ok && j.routine && j.routine.routine && j.routine.base === rtBase(r.M.routine)) { r.M.routine = j.routine.routine; r.M._rted = 1; }
+            return j && j.ok ? j.days : {};
+          }).catch(function () { return {}; })
           .then(function (days) {
             var el = box.children[i]; if (el) el.outerHTML = card(r.slug, r.M, days);
             applyFilter();
