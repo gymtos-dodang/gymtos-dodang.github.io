@@ -9,7 +9,7 @@ window.MEMBER = {
   /* 공지 (최신이 위) */
   notices: [
     { date: "2026. 11. 9", title: "등 자세 복습지 3개가 올라왔어요",
-      body: "오늘 한 시티드 로우 · 랫풀다운 · 버티컬 풀다운 복습지예요. 월요일 등 날 운동 전에 한 번 보고 들어가세요! 루틴 탭 월요일 종목에서도 바로 열려요.",
+      body: "오늘 한 케이블 시티드 로우 · 랫풀다운 · 버티컬 풀다운 복습지예요. 월요일 등 날 운동 전에 한 번 보고 들어가세요! 루틴 탭 월요일 랫풀다운에서도 바로 열려요.",
       link: "forms" },
     { date: "2026. 11. 7", title: "엉덩이 자세 복습지 2개가 올라왔어요",
       body: "오늘 수업한 굿모닝 아웃타이 · 힙쓰러스트 머신 복습지예요. 토요일 엉덩이 날 운동 전에 한 번 보고 들어가세요! 루틴 탭 토요일 종목에서도 바로 열려요.",
@@ -83,8 +83,8 @@ window.MEMBER = {
       id: "seated-row",
       dir: "media/form-seated-row/",
       date: "2026. 11. 9 (월)",
-      exercise: "시티드 로우",
-      exercise_en: "Seated Row",
+      exercise: "케이블 시티드 로우",
+      exercise_en: "Seated Cable Row",
       part: "등",
       targets: ["광배근 · 능형근", "중부 승모근 (날개뼈 사이)"],
       benefit: "등 두께를 채워주고, 굽은 어깨·자세를 바로 세워줘요",
@@ -256,7 +256,7 @@ window.MEMBER = {
       { day: "월", part: "등", en: "Back", cardio: false, items: [
         { name: "시티드 페이스풀", en: "Seated Face Pull", tag: "워밍업", tip: "날개뼈 모으며 얼굴 쪽으로", sets: [[20, 10], [15, 15]], form: "seated-face-pull" },
         { name: "랫풀다운", en: "Lat Pulldown", tip: "팔꿈치로 당기기", sets: [[12, 25], [12, 25], [12, 25]], form: "lat-pulldown" },
-        { name: "뉴텍 시티드 로우 머신", en: "Seated Row Machine", tag: "메인", tip: "가슴 패드 붙이고 당기기", sets: [[15, 25], [12, 25], [10, 30], [8, 30]], form: "seated-row" },
+        { name: "뉴텍 시티드 로우 머신", en: "Seated Row Machine", tag: "메인", tip: "가슴 패드 붙이고 당기기", sets: [[15, 25], [12, 25], [10, 30], [8, 30]] },
         { name: "리버스 펙덱", en: "Reverse Pec Deck", tip: "날개뼈 모으며 옆으로", sets: [[15, 15], [15, 15], [15, 15]] }
       ]},
       { day: "화", part: "어깨", en: "Shoulder", cardio: true, items: [
