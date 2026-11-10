@@ -8,6 +8,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 10", title: "주 5회 힙업 루틴이 올라왔어요", link: "routine",
+      body: "월·수·금은 엉덩이, 화는 가슴·어깨, 목은 등이에요. 운동 끝나면 유산소 20분까지! 화요일 가슴 운동은 복습지 영상 한 번 보고 들어가세요." },
     { date: "2026. 11. 10", title: "가슴 운동 복습지 3개가 올라왔어요", link: "forms",
       body: "스미스 인클라인 프레스 · 펙덱 플라이 · 체스트프레스 머신 복습지예요. 운동 전에 영상으로 자세 한 번 보고 들어가면 가슴에 훨씬 잘 들어가요!" },
     { date: "2026. 11. 10", title: "PT 노트가 열렸어요",
@@ -102,7 +104,53 @@ window.MEMBER = {
   ],
 
   /* 주간 루틴 (없으면 null → "루틴이 아직 없어요") */
-  routine: null,
+  routine: {
+    version: "v1",
+    updated: "2026. 11. 10",
+    title: "주 5회 · 힙업 집중",
+    plan: ["엉덩이 주 3번 (월 · 수 · 금)", "화 가슴·어깨 / 목 등", "토 · 일은 푹 쉬고 잘 먹기"],
+    key_point: "엉덩이는 일주일에 3번! 무게보다 엉덩이 자극 먼저, 천천히 올려가요",
+    note: "세트 사이 1분~1분 30초 쉬기 · 덤벨 무게는 한 손 기준이에요",
+    cardio: { minutes: 20, options: "경사 걷기 · 천국의 계단 · 사이클 중 택1" },
+    days: [
+      { day: "월", part: "힙 A", en: "Glute A", cardio: true, items: [
+        { name: "레그 익스텐션", en: "Leg Extension", tag: "워밍업", tip: "가볍게 무릎 풀기", sets: [[20, 10], [15, 15]] },
+        { name: "아웃타이 머신", en: "Outer Thigh", icon: "outer_thigh_pin", tag: "선행", tip: "엉덩이 옆으로 밀기", sets: [[20, 15], [15, 20], [12, 20]] },
+        { name: "힙쓰러스트 머신", en: "Hip Thrust", icon: "hip_thrust", tag: "메인", tip: "맨 위에서 엉덩이 꽉 1초", sets: [[15, 20], [12, 20], [10, 25], [8, 25]] },
+        { name: "덤벨 RDL", en: "Dumbbell RDL", tip: "엉덩이 뒤로 빼며 허벅지 뒤 늘리기", sets: [[12, 6], [12, 6], [12, 6]] },
+        { name: "라잉 레그컬", en: "Lying Leg Curl", tip: "엉덩이 들리지 않게", sets: [[12, 10], [12, 10], [12, 10]] }
+      ]},
+      { day: "화", part: "가슴·어깨", en: "Chest · Shoulder", cardio: true, items: [
+        { name: "펙덱 플라이", en: "Pec Deck Fly", tag: "워밍업", tip: "가슴으로 껴안듯이 모으기", sets: [[20, 10], [15, 10]], form: "pec-deck-fly" },
+        { name: "스미스 인클라인 프레스", en: "Smith Incline Press", tag: "메인", tip: "바는 윗가슴으로 내리기", sets: [[15, 15], [12, 15], [10, 20], [8, 20]], form: "smith-incline-press" },
+        { name: "체스트 프레스 머신", en: "Chest Press", icon: "chest_press", tip: "날개뼈 모으고 가슴으로 밀기", sets: [[12, 20], [12, 20], [12, 20]], form: "chest-press-machine" },
+        { name: "숄더 프레스 머신", en: "Shoulder Press", tip: "허리 등받이에 붙이기", sets: [[12, 10], [12, 10], [12, 10]] },
+        { name: "사이드 레터럴 레이즈 머신", en: "Lateral Raise Machine", icon: "lateral_raise_machine", tip: "어깨 으쓱 금지, 팔꿈치로 들기", sets: [[15, 5], [15, 5], [15, 5]] }
+      ]},
+      { day: "수", part: "힙 B", en: "Glute B", cardio: true, items: [
+        { name: "레그 익스텐션", en: "Leg Extension", tag: "워밍업", tip: "가볍게 무릎 풀기", sets: [[20, 10], [15, 15]] },
+        { name: "이너타이", en: "Inner Thigh", tag: "선행", tip: "천천히 모으고 버티기", sets: [[15, 15], [12, 20], [12, 20]] },
+        { name: "레그프레스 (발 높게)", en: "Leg Press · High", tag: "메인", tip: "발은 발판 위쪽, 뒤꿈치로 밀기", sets: [[15, 40], [12, 40], [10, 45], [8, 45]] },
+        { name: "고블릿 스쿼트", en: "Goblet Squat", tip: "가슴 세우고 깊이 앉기", sets: [[12, 8], [12, 8], [12, 8]] },
+        { name: "힙 익스텐션", en: "Hip Extension", icon: "back_extension", tip: "등 말지 말고 엉덩이로 올라오기", sets: [[15, null], [15, null], [15, null]] }
+      ]},
+      { day: "목", part: "등", en: "Back", cardio: true, items: [
+        { name: "스트레이트 암 풀다운", en: "Straight Arm Pulldown", tag: "워밍업", tip: "팔 편 채 허벅지까지", sets: [[20, 10], [15, 10]] },
+        { name: "랫풀다운", en: "Lat Pulldown", tag: "메인", tip: "팔꿈치로 당기기", sets: [[15, 20], [12, 20], [10, 25], [8, 25]] },
+        { name: "시티드 로우 머신", en: "Seated Row Machine", tip: "가슴 패드 붙이고 당기기", sets: [[12, 20], [12, 20], [12, 20]] },
+        { name: "리버스 펙덱", en: "Reverse Pec Deck", tip: "날개뼈 모으며 옆으로", sets: [[15, 10], [15, 10], [15, 10]] }
+      ]},
+      { day: "금", part: "힙 C", en: "Glute C", cardio: true, items: [
+        { name: "레그 익스텐션", en: "Leg Extension", tag: "워밍업", tip: "가볍게 무릎 풀기", sets: [[20, 10], [15, 15]] },
+        { name: "플레이트 아웃타이", en: "Booty Builder", icon: "outer_thigh_plate", tag: "선행", tip: "엉덩이 옆으로 밀기", sets: [[20, 15], [15, 20], [12, 20]] },
+        { name: "스미스 스쿼트", en: "Smith Squat", tag: "메인", tip: "엉덩이 뒤로 빼며 깊이 앉기", sets: [[15, 10], [12, 10], [10, 15], [8, 15]] },
+        { name: "힙쓰러스트 머신", en: "Hip Thrust", icon: "hip_thrust", tip: "맨 위에서 엉덩이 꽉 1초", sets: [[12, 20], [12, 20], [12, 20]] },
+        { name: "케이블 힙 킥백", en: "Cable Kickback", icon: "cable_kickback", tip: "한 발씩 15회, 엉덩이로 뒤로 차기", sets: [[15, 5], [15, 5], [15, 5]] }
+      ]},
+      { day: "토", part: "휴식", en: "Rest", rest: true, items: [] },
+      { day: "일", part: "휴식", en: "Rest", rest: true, items: [] }
+    ]
+  },
 
   /* 식단 (null이면 "준비 중") */
   diet: null
