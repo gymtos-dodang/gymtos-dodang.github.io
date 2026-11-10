@@ -130,7 +130,7 @@ window.MEMBER = {
       ]},
       { day: "화", part: "등", en: "Back", cardio: true, items: [
         { name: "스트레이트 암 풀다운", en: "Straight Arm Pulldown", tag: "워밍업", tip: "팔 펴고 광배로 누르기", sets: [[20, 20], [15, 25]] },
-        { name: "시티드 로우 머신", en: "Seated Row Machine", tag: "메인", tip: "가슴 패드 붙이고 당기기", sets: [[15, 40], [12, 40], [10, 45], [8, 50]] },
+        { name: "뉴텍 시티드 로우 머신", en: "Seated Row Machine", tag: "메인", tip: "가슴 패드 붙이고 당기기", sets: [[15, 40], [12, 40], [10, 45], [8, 50]] },
         { name: "원암 덤벨 로우", en: "One Arm DB Row", tip: "파트너가 한쪽씩 횟수 세기", sets: [[12, 22], [12, 22], [12, 22]] },
         { name: "랫풀다운", en: "Lat Pulldown", tip: "팔꿈치로 당기기", sets: [[12, 45], [12, 45], [12, 45]] },
         { name: "스미스 슈러그", en: "Smith Shrug", tip: "어깨를 귀 쪽으로, 1초 멈춤", sets: [[15, 40], [15, 40], [15, 40]] }

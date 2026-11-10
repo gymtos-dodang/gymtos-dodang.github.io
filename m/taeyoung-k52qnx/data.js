@@ -108,7 +108,7 @@ window.MEMBER = {
         { name: "리버스 펙덱", en: "Reverse Pec Deck", tag: "워밍업", tip: "뒷어깨 가볍게 풀기", sets: [[20, 15], [15, 15]] },
         { name: "숄더 프레스", en: "Shoulder Press", tag: "메인", tip: "허리 등받이에 붙이기", sets: [[15, 20], [12, 25], [10, 25], [8, 25]] },
         { name: "사이드 레터럴 레이즈", en: "Lateral Raise", tip: "어깨 으쓱 금지", sets: [[15, 4], [15, 4], [15, 4]] },
-        { name: "머신 레터럴 레이즈", en: "Machine Lateral Raise", icon: "lateral_raise_machine", tip: "팔꿈치로 옆으로 밀기", sets: [[15, 15], [15, 15], [15, 15]] },
+        { name: "사이드 레터럴 레이즈 머신", en: "Machine Lateral Raise", tip: "팔꿈치로 옆으로 밀기", sets: [[15, 15], [15, 15], [15, 15]] },
         { name: "덤벨 슈러그", en: "DB Shrug", tip: "위로 올리고 1초 멈추기", sets: [[15, 14], [15, 14], [15, 14]] }
       ]},
       { day: "금", part: "팔", en: "Arms", cardio: true, items: [

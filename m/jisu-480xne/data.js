@@ -116,7 +116,7 @@ window.MEMBER = {
       { day: "월", part: "등", en: "Back", cardio: false, items: [
         { name: "시티드 페이스풀", en: "Seated Face Pull", tag: "워밍업", tip: "날개뼈 모으며 얼굴 쪽으로", sets: [[20, 10], [15, 15]] },
         { name: "랫풀다운", en: "Lat Pulldown", tip: "팔꿈치로 당기기", sets: [[12, 25], [12, 25], [12, 25]] },
-        { name: "시티드 로우 머신", en: "Seated Row Machine", tag: "메인", tip: "가슴 패드 붙이고 당기기", sets: [[15, 25], [12, 25], [10, 30], [8, 30]] },
+        { name: "뉴텍 시티드 로우 머신", en: "Seated Row Machine", tag: "메인", tip: "가슴 패드 붙이고 당기기", sets: [[15, 25], [12, 25], [10, 30], [8, 30]] },
         { name: "리버스 펙덱", en: "Reverse Pec Deck", tip: "날개뼈 모으며 옆으로", sets: [[15, 15], [15, 15], [15, 15]] }
       ]},
       { day: "화", part: "엉덩이", en: "Glute", cardio: false, items: [
@@ -126,7 +126,7 @@ window.MEMBER = {
         { name: "힙쓰러스트 머신", en: "Hip Thrust", icon: "hip_thrust", tag: "메인", tip: "맨 위에서 엉덩이 꽉", sets: [[15, 10], [12, 10], [10, 15], [8, 15]] }
       ]},
       { day: "수", part: "어깨", en: "Shoulder", cardio: true, items: [
-        { name: "레터럴 레이즈 머신", en: "Standing Machine", tag: "워밍업", tip: "가볍게 어깨 풀기", sets: [[20, 5], [15, 10]] },
+        { name: "사이드 레터럴 레이즈 머신", en: "Standing Machine", tag: "워밍업", tip: "가볍게 어깨 풀기", sets: [[20, 5], [15, 10]] },
         { name: "덤벨 숄더 프레스", en: "DB Shoulder Press", form: "db-shoulder-press", tag: "메인", tip: "덤벨은 귀 옆까지 내리기", sets: [[15, 4], [12, 4], [10, 6], [8, 6]] },
         { name: "사이드 레터럴 레이즈 (덤벨)", en: "Lateral Raise", form: "db-lateral-raise", tip: "2kg로 시작 → 마지막 세트 4kg", sets: [[15, 2], [15, 2], [15, 4]] },
         { name: "리버스 펙덱", en: "Reverse Pec Deck", tip: "날개뼈 모으며 옆으로", sets: [[15, 15], [15, 15], [15, 15]] }

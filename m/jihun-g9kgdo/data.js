@@ -233,7 +233,7 @@ window.MEMBER = {
       { day: "화", part: "등", en: "Back", cardio: true, items: [
         { name: "시티드 페이스풀", en: "Seated Face Pull", tag: "워밍업", tip: "팔꿈치 높게 얼굴 쪽으로", sets: [[20, 10], [15, 15]], form: "seated-face-pull" },
         { name: "랫풀다운", en: "Lat Pulldown", tag: "메인", tip: "팔꿈치로 당기기", sets: [[15, 25], [12, 25], [10, 30], [8, 30]] },
-        { name: "시티드 로우 머신", en: "Seated Row Machine", tip: "가슴 패드 붙이고 당기기", sets: [[12, 30], [12, 30], [12, 30]] },
+        { name: "뉴텍 시티드 로우 머신", en: "Seated Row Machine", tip: "가슴 패드 붙이고 당기기", sets: [[12, 30], [12, 30], [12, 30]] },
         { name: "리버스 펙덱", en: "Reverse Pec Deck", tip: "날개뼈 모으며 옆으로", sets: [[15, 15], [15, 15], [15, 15]] }
       ]},
       { day: "수", part: "하체", en: "Legs A", cardio: false, items: [
@@ -247,7 +247,7 @@ window.MEMBER = {
         { name: "시티드 페이스풀", en: "Seated Face Pull", tag: "워밍업", tip: "팔꿈치 높게 얼굴 쪽으로", sets: [[20, 10], [15, 15]], form: "seated-face-pull" },
         { name: "사이드 레터럴 레이즈", en: "Lateral Raise", tag: "워밍업", tip: "어깨 으쓱 금지", sets: [[20, 4], [15, 4]] },
         { name: "숄더 프레스 머신", en: "Shoulder Press", tag: "메인", tip: "허리 등받이에 붙이기", sets: [[15, 20], [12, 20], [10, 25], [8, 25]] },
-        { name: "레터럴 레이즈 머신", en: "Standing Machine", tip: "팔꿈치로 들어 올리기", sets: [[15, 10], [15, 10], [15, 10]] },
+        { name: "사이드 레터럴 레이즈 머신", en: "Standing Machine", tip: "팔꿈치로 들어 올리기", sets: [[15, 10], [15, 10], [15, 10]] },
         { name: "덤벨 컬", en: "DB Curl", tip: "팔꿈치 고정", sets: [[12, 6], [12, 6], [12, 6]], form: "db-curl" },
         { name: "해머 컬", en: "Hammer Curl", tip: "엄지가 위로", sets: [[12, 6], [12, 6], [12, 6]], form: "hammer-curl" }
       ]},
@@ -255,7 +255,7 @@ window.MEMBER = {
         { name: "인클라인 덤벨 프레스", en: "Incline DB Press", tag: "메인", tip: "윗가슴으로 밀기", sets: [[15, 6], [12, 6], [10, 8], [8, 8]], form: "incline-db-press" },
         { name: "플랫 덤벨프레스", en: "Flat DB Press", tip: "덤벨은 가슴 옆까지", sets: [[12, 8], [12, 8], [12, 8]], form: "flat-db-press" },
         { name: "랫풀다운", en: "Lat Pulldown", tip: "팔꿈치로 당기기", sets: [[12, 30], [12, 30], [12, 30]] },
-        { name: "시티드 로우 머신", en: "Seated Row Machine", tip: "가슴 패드 붙이고 당기기", sets: [[12, 30], [12, 30], [12, 30]] }
+        { name: "뉴텍 시티드 로우 머신", en: "Seated Row Machine", tip: "가슴 패드 붙이고 당기기", sets: [[12, 30], [12, 30], [12, 30]] }
       ]},
       { day: "토", part: "하체 B", en: "Legs B", cardio: false, items: [
         { name: "레그 익스텐션", en: "Leg Extension", tag: "워밍업", tip: "가볍게 무릎 풀기", sets: [[20, 15], [15, 20]] },

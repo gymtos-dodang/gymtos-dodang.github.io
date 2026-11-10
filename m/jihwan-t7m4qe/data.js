@@ -308,7 +308,7 @@ window.MEMBER = {
     days: [
       { day: "월", part: "등 A", en: "Back A", cardio: true, items: [
         { name: "케이블 풀오버", en: "Cable Pullover", form: "cable-pullover", tag: "워밍업", tip: "팔 펴고 골반까지", sets: [[20, 15], [15, 15]] },
-        { name: "시티드 로우 머신", en: "Seated Row Machine", tag: "메인", tip: "가슴 패드 붙이고 당기기", sets: [[15, 35], [12, 40], [10, 40], [8, 45]] },
+        { name: "뉴텍 시티드 로우 머신", en: "Seated Row Machine", tag: "메인", tip: "가슴 패드 붙이고 당기기", sets: [[15, 35], [12, 40], [10, 40], [8, 45]] },
         { name: "랫풀다운", en: "Lat Pulldown", tip: "팔꿈치로 당기기", sets: [[12, 40], [12, 40], [12, 40]] },
         { name: "해머스트렝스 로우로우", en: "Low Row", form: "low-row", tip: "원판 양쪽 합계 무게", sets: [[12, 40], [12, 40], [12, 40]] },
         { name: "리버스 펙덱", en: "Reverse Pec Deck", form: "reverse-pec-deck", tip: "날개뼈 모으며 옆으로", sets: [[15, 20], [15, 20], [15, 20]] }
@@ -336,7 +336,7 @@ window.MEMBER = {
       { day: "금", part: "어깨 · 팔", en: "Shoulder & Arms", cardio: false, items: [
         { name: "사이드 레터럴 레이즈", en: "Lateral Raise", tag: "워밍업", tip: "어깨 으쓱 금지", sets: [[20, 4], [15, 4]] },
         { name: "숄더 프레스 머신", en: "Shoulder Press", tag: "메인", tip: "허리 등받이에 붙이기", sets: [[15, 25], [12, 25], [10, 30], [8, 30]] },
-        { name: "레터럴 레이즈 머신", en: "Standing Machine", form: "lateral-raise-machine", tip: "팔꿈치로 들어 올리기", sets: [[15, 15], [15, 15], [15, 15]] },
+        { name: "사이드 레터럴 레이즈 머신", en: "Standing Machine", form: "lateral-raise-machine", tip: "팔꿈치로 들어 올리기", sets: [[15, 15], [15, 15], [15, 15]] },
         { name: "시티드 페이스풀", en: "Seated Face Pull", tip: "팔꿈치 높게 얼굴 쪽으로", sets: [[15, 15], [15, 15], [15, 15]] },
         { name: "덤벨 컬", en: "DB Curl", tip: "팔꿈치 고정, 반동 금지", sets: [[12, 10], [12, 10], [12, 10]] },
         { name: "해머 컬", en: "Hammer Curl", tip: "엄지가 위로", sets: [[12, 10], [12, 10], [12, 10]] }

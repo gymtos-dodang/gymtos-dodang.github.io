@@ -51,7 +51,7 @@ window.MEMBER = {
       { day: "목", part: "등", en: "Back", cardio: true, items: [
         { name: "스트레이트 암 풀다운", en: "Straight Arm Pulldown", tag: "워밍업", tip: "팔 편 채 허벅지까지", sets: [[20, 10], [15, 10]] },
         { name: "랫풀다운", en: "Lat Pulldown", tag: "메인", tip: "팔꿈치로 당기기", sets: [[15, 25], [12, 25], [10, 30], [8, 30]] },
-        { name: "시티드 로우 머신", en: "Seated Row Machine", tip: "가슴 패드 붙이고 당기기", sets: [[12, 25], [12, 25], [12, 25]] },
+        { name: "뉴텍 시티드 로우 머신", en: "Seated Row Machine", tip: "가슴 패드 붙이고 당기기", sets: [[12, 25], [12, 25], [12, 25]] },
         { name: "언더그립 랫풀다운", en: "Underhand Pulldown", tip: "손바닥 위로, 팔꿈치 옆구리로", sets: [[12, 25], [12, 25], [12, 25]] },
         { name: "리버스 펙덱", en: "Reverse Pec Deck", tip: "날개뼈 모으며 옆으로", sets: [[15, 15], [15, 15], [15, 15]] }
       ]},

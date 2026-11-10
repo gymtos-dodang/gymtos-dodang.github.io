@@ -39,7 +39,7 @@ window.MEMBER = {
       { day: "화", part: "등", en: "Back", cardio: true, items: [
         { name: "시티드 페이스풀", en: "Seated Face Pull", tag: "워밍업", tip: "팔꿈치 높게 얼굴 쪽으로", sets: [[20, 15], [15, 20]] },
         { name: "랫풀다운", en: "Lat Pulldown", tag: "메인", tip: "팔꿈치로 당기기", sets: [[15, 35], [12, 40], [10, 45], [8, 45]] },
-        { name: "시티드 로우 머신", en: "Seated Row Machine", tip: "가슴 패드 붙이고 당기기", sets: [[12, 40], [12, 40], [12, 40]] },
+        { name: "뉴텍 시티드 로우 머신", en: "Seated Row Machine", tip: "가슴 패드 붙이고 당기기", sets: [[12, 40], [12, 40], [12, 40]] },
         { name: "원암 덤벨 로우", en: "One Arm DB Row", tip: "팔꿈치를 골반 쪽으로", sets: [[12, 18], [12, 18], [12, 18]] },
         { name: "덤벨 컬", en: "DB Curl", tip: "팔꿈치 고정", sets: [[12, 10], [12, 10], [12, 10]] }
       ]},
@@ -55,7 +55,7 @@ window.MEMBER = {
       { day: "금", part: "어깨·팔", en: "Shoulder · Arm", cardio: true, items: [
         { name: "사이드 레터럴 레이즈", en: "Lateral Raise", tag: "워밍업", tip: "어깨 으쓱 금지", sets: [[20, 4], [15, 6]] },
         { name: "숄더 프레스 머신", en: "Shoulder Press", tag: "메인", tip: "허리 등받이에 붙이기", sets: [[15, 25], [12, 30], [10, 35], [8, 35]] },
-        { name: "레터럴 레이즈 머신", en: "Standing Machine", tip: "팔꿈치로 들어 올리기", sets: [[15, 15], [15, 15], [15, 15]] },
+        { name: "사이드 레터럴 레이즈 머신", en: "Standing Machine", tip: "팔꿈치로 들어 올리기", sets: [[15, 15], [15, 15], [15, 15]] },
         { name: "리버스 펙덱", en: "Reverse Pec Deck", tip: "날개뼈 모으며 옆으로", sets: [[15, 20], [15, 20], [15, 20]] },
         { name: "해머 컬", en: "Hammer Curl", tip: "엄지가 위로", sets: [[12, 10], [12, 10], [12, 10]] },
         { name: "오버헤드 익스텐션", en: "Overhead Extension", tip: "팔꿈치 앞으로 고정", sets: [[12, 15], [12, 15], [12, 15]] }

@@ -177,7 +177,7 @@ window.MEMBER = {
             ]
           },
           {
-            "name": "시티드 로우 머신",
+            "name": "뉴텍 시티드 로우 머신",
             "en": "Seated Row",
             "icon": "seated_row_machine",
             "tip": "가슴 패드 붙이고 당기기",
@@ -390,7 +390,7 @@ window.MEMBER = {
         "cardio": true,
         "items": [
           {
-            "name": "레터럴 레이즈 머신",
+            "name": "사이드 레터럴 레이즈 머신",
             "en": "Standing Machine",
             "icon": "lateral_raise_standing",
             "tag": "워밍업",

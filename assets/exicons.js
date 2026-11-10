@@ -20,7 +20,12 @@
     return [L("eq", [a, b], 2.6), L("eq", [a, a2], 8.5), L("eq", [b, b2], 8.5)];
   }
   function grip(p, h) { return L("eq", [[p[0], p[1] - (h || 6)], [p[0], p[1] + (h || 6)]], 3.6); }
-  function mir(o) { var r = {}, k; for (k in o) { r[k] = o[k]; if (/L$/.test(k)) r[k.slice(0, -1) + "R"] = [100 - o[k][0], o[k][1]]; } return r; }
+  function mir(o) {   /* 왼쪽(…L)만 적으면 오른쪽(…R)은 좌우 대칭으로 — 이미 있던 오른쪽 값도 항상 왼쪽을 따라감 */
+    var r = {}, k;
+    for (k in o) r[k] = o[k];
+    for (k in o) if (/L$/.test(k)) r[k.slice(0, -1) + "R"] = [100 - o[k][0], o[k][1]];
+    return r;
+  }
   function ext(a, b) { var r = {}, k; for (k in a) r[k] = a[k]; for (k in b) r[k] = b[k]; return r; }
 
   /* 기본 자세 */
@@ -87,14 +92,29 @@
   }
   EX.chest_press = pressMachine({ el: [30, 50], ha: [45, 45] }, { el: [50, 43], ha: [64, 42] });
   EX.incline_machine_press = pressMachine({ el: [30, 49], ha: [44, 41] }, { el: [48, 34], ha: [60, 22] });
-  function deck(open0, hl, pad) {   /* 펙덱(모으기) · 리버스 펙덱(벌리기) — 앞에서 본 모습 */
-    var open = { elL: [27, 43], haL: [13, 42] }, close = { elL: [38, 48], haL: [45, 41] };
-    return { t: open0 ? .85 : .9, p0: mir(ext(FSIT, open0 ? open : close)), p1: mir(open0 ? close : open), bones: FLEGS.concat([FTORSO]).concat(FARMS_O), hl: hl,
-      back: function () { return fseatEq(); },
-      front: function (P) { return pad ? [L("eq", [off(P.haL, 0, -7), off(P.haL, 0, 7)], 4.4), L("eq", [off(P.haR, 0, -7), off(P.haR, 0, 7)], 4.4)] : [grip(P.haL, 6), grip(P.haR, 6)]; } };
+  /* 펙덱 · 리버스 펙덱은 위에서 본 모습 (2026-11-10 "더 직관적이게, 헷갈리겠어") — 화면 위쪽이 앞.
+     펙덱: 등받이가 등 뒤(아래), 팔을 벌렸다가 앞으로 모음, 가슴(앞쪽) 강조 / 리버스: 가슴 패드가 앞(위), 팔을 앞에서 뒤로 벌림, 등·어깨 뒤(뒤쪽) 강조 */
+  function deckTop(rev) {
+    var wide = rev ? { haL: [9, 67] } : { haL: [9, 58] }, front = { haL: [44, 20] };
+    return { t: rev ? .85 : .8, headR: 9, headO: 1,
+      p0: mir(ext({ head: [50, rev ? 58 : 62], tl: [36, 62], tr: [64, 62], shL: [31, 62] }, rev ? front : wide)), p1: mir(rev ? wide : front), arcs: { haL: "shL", haR: "shR" },
+      fx: function (P) { P.elL = mix(P.shL, P.haL, .5); P.elR = mix(P.shR, P.haR, .5); },
+      bones: [{ pts: ["shL", "elL", "haL"], w: 8 }, { pts: ["shR", "elR", "haR"], w: 8 }, { pts: ["tl", "tr"], w: 22 }],
+      hl: function (P) {
+        return rev ? [{ line: [[33, 70], [67, 70]], w: 6 }, { dot: [29, 66], r: 4.6 }, { dot: [71, 66], r: 4.6 }]
+          : [{ line: [[31, 54.5], [41.5, 53.5]], w: 6 }, { line: [[58.5, 53.5], [69, 54.5]], w: 6 }];
+      },
+      back: function (P) {
+        var pv = rev ? [[40, 40], [60, 40]] : [[25, 82], [75, 82]];
+        return [rev ? L("eq2", [[34, 43.5], [66, 43.5]], 8.5) : L("eq2", [[34, 80], [66, 80]], 8), L("eq2", [pv[0], P.haL], 3), L("eq2", [pv[1], P.haR], 3), D("eq2", pv[0], 3.2), D("eq2", pv[1], 3.2)];
+      },
+      front: function (P) {
+        var nl = perp(P.shL, P.haL), nr = perp(P.shR, P.haR);
+        return [L("eq", [off(P.haL, -nl[0] * 5.5, -nl[1] * 5.5), off(P.haL, nl[0] * 5.5, nl[1] * 5.5)], 4.4), L("eq", [off(P.haR, -nr[0] * 5.5, -nr[1] * 5.5), off(P.haR, nr[0] * 5.5, nr[1] * 5.5)], 4.4)];
+      } };
   }
-  EX.pec_deck = deck(true, chestPolys, true);
-  EX.reverse_pec_deck = deck(false, delts, false);
+  EX.pec_deck = deckTop(false);
+  EX.reverse_pec_deck = deckTop(true);
   EX.band_push_up = { t: .2,
     p0: { head: [19, 69], sh: [30, 72], hip: [58, 76], ft: [86, 84], toe: [88, 91], el: [41, 66], ha: [30, 87] },
     p1: { head: [19, 53], sh: [30, 58], hip: [58, 68], el: [31, 73] },
@@ -111,19 +131,40 @@
   }
   EX.lat_pulldown = pulldown({ elL: [31, 33], haL: [27, 19] }, { elL: [25, 57], haL: [28, 42] }, function (y) { return L("eq", [[16, y + 6], [23, y], [77, y], [84, y + 6]], 3.8); });
   EX.underhand_pulldown = pulldown({ elL: [37, 33], haL: [39, 19] }, { elL: [31, 58], haL: [39, 44] }, function (y) { return L("eq", [[28, y], [72, y]], 3.8); });
-  EX.vertical_pulldown = EX.lat_pulldown;
+  /* 뉴텍 버티컬 풀다운(원판식): 옆모습 — 머리 위 손잡이를 당기면 뒤쪽 원판이 올라가는 지렛대 */
+  EX.vertical_pulldown = { t: .85, p0: ext(sit(40, 66), { el: [47, 24], ha: [54, 9] }), p1: { el: [48, 55], ha: [54, 39] }, bones: SIDE,
+    fx: function (P) { P.pv = [27, 21]; P.bk = [P.pv[0] + (P.pv[0] - P.ha[0]) * .46, P.pv[1] + (P.pv[1] - P.ha[1]) * .46]; },
+    hl: function (P) { return [seg(P.sh, P.hip, .06, .56, 13)]; },
+    back: function (P) { return seatEq(40, 66, false).concat([L("eq2", [[27, 21], [24, 93]], 3.5), L("eq2", [[52, 60], [61, 60]], 5), L("eq2", [[57, 62], [57, 93]], 3),
+      L("eq", [P.bk, P.pv, off(P.ha, 0, -1)], 3.4), D("eq2", P.pv, 3.4), R("eq", P.bk, 6.5, 3.4)]); },
+    front: function (P) { return [L("eq", [off(P.ha, -4, -1), off(P.ha, 4, -1)], 3.8)]; } };
   EX.straight_arm_pulldown = { t: .75,
     p0: { head: [36, 15], sh: [38, 30], hip: [34, 57], kn: [37, 75], ft: [35, 90], toe: [43, 91], ha: [66, 20] }, p1: { ha: [44, 59] }, arcs: { ha: "sh" },
     fx: function (P) { P.el = mix(P.sh, P.ha, .5); }, bones: SIDE,
     hl: function (P) { return [seg(P.sh, P.hip, .08, .6, 13)]; },
     back: function (P) { return [floor(22, 92), L("eq2", [[86, 6], [86, 93]], 3.5), L("eq2", [[84, 9], P.ha], 2), D("eq2", [84, 9], 3.2)]; },
     front: function (P) { var n = perp(P.sh, P.ha); return [L("eq", [[P.ha[0] - n[0] * 5, P.ha[1] - n[1] * 5], [P.ha[0] + n[0] * 5, P.ha[1] + n[1] * 5]], 3.6)]; } };
-  EX.cable_pullover = EX.straight_arm_pulldown;
+  /* 케이블 풀오버: 케이블을 등지고 앞을 보고 서서, 머리 위에서 앞·아래로 당김 (2026-11-10 "반대가 됐는데? 앞을 바라보고 땡기는 자세") */
+  EX.cable_pullover = { t: .75,
+    p0: { head: [52, 16], sh: [48, 30], hip: [42, 57], kn: [46, 75], ft: [43, 90], toe: [51, 91], ha: [41, 4] }, p1: { ha: [66, 51] }, arcs: { ha: "sh" },
+    fx: function (P) { P.el = mix(P.sh, P.ha, .5); }, bones: SIDE,
+    hl: function (P) { return [seg(P.sh, P.hip, .08, .6, 13)]; },
+    back: function (P) { return [floor(8, 82), L("eq2", [[12, 4], [12, 93]], 3.5), L("eq2", [[14, 8], P.ha], 2), D("eq2", [14, 8], 3.2)]; },
+    front: function (P) { return [D("eq", P.ha, 3.6)]; } };
   EX.seated_row_machine = { t: .9, p0: ext(sit(34, 65), { el: [48, 42], ha: [64, 43] }), p1: { el: [24, 49], ha: [45, 46] }, bones: SIDE,
     hl: function (P) { return [seg(P.sh, P.hip, .04, .52, 13)]; },
     back: function (P) { return seatEq(34, 65, false).concat([L("eq2", [[43, 58], [47, 93]], 3), L("eq2", [[43, 35], [43, 58]], 5.5), L("eq2", [P.ha, [82, 88]], 3), D("eq2", [82, 88], 3.2)]); },
     front: function (P) { return [grip(P.ha)]; } };
-  EX.low_row = EX.seated_row_machine; EX.high_row = EX.seated_row_machine; EX.seated_row = EX.seated_row_machine;
+  EX.high_row = EX.seated_row_machine; EX.seated_row = EX.seated_row_machine;
+  /* 해머스트렝스 로우로우(원판식, 2026-11-10 사진 기준): 가슴 패드에 기대 앉아, 위에서 내려온 지렛대 손잡이를 무릎 앞 낮은 곳에서 골반 쪽으로 당김 */
+  EX.low_row = { t: .9,
+    p0: { head: [36, 24], sh: [33, 39], hip: [31, 66], kn: [50, 65], ft: [47, 88], toe: [55, 89], el: [47, 51], ha: [62, 60] },
+    p1: { head: [31, 22], sh: [29, 37], el: [20, 53], ha: [40, 61] }, bones: SIDE,
+    fx: function (P) { P.pv = [70, 9]; P.pl = off(mix(P.pv, P.ha, .7), 8, 1); },
+    hl: function (P) { return [seg(P.sh, P.hip, .06, .58, 13)]; },
+    back: function (P) { return [floor(8, 94), L("eq2", [[35, 76], [35, 93]], 3), L("eq2", [[22, 73.5], [45, 73.5]], 5), L("eq2", [[43, 62], [47, 93]], 3), L("eq2", [[42.5, 38], [42.5, 62]], 5.5),
+      L("eq2", [[70, 9], [78, 93]], 3.5), L("eq2", [[52, 9], [76, 9]], 3), L("eq", [P.pv, P.ha], 3.4), D("eq2", P.pv, 3.4), R("eq", P.pl, 6.5, 3.4)]; },
+    front: function (P) { return [grip(P.ha, 5)]; } };
   EX.cable_seated_row = { t: .9,
     p0: { head: [40, 31], sh: [36, 45], hip: [32, 72], kn: [52, 65], ft: [70, 73], toe: [73, 65], el: [50, 54], ha: [63, 56] },
     p1: { head: [31, 29], sh: [31, 44], el: [22, 58], ha: [42, 57] }, bones: SIDE,
@@ -165,20 +206,29 @@
   EX.shoulder_press = ohp(function (P) { return db(P.haL, [1, 0], 7).concat(db(P.haR, [1, 0], 7)); });
   EX.smith_shoulder_press = ohp(function () { return []; }, function (P) {
     var y = P.haL[1] - 1; return [L("eq2", [[20, 4], [20, 93]], 2.6), L("eq2", [[80, 4], [80, 93]], 2.6), L("eq", [[14, y], [86, y]], 3.4), L("eq", [[14, y - 7], [14, y + 7]], 5), L("eq", [[86, y - 7], [86, y + 7]], 5)]; });
-  function raise(base, seated, pad) {
+  function raise(base, seated, machine) {
+    function pads(P) {
+      var nl = perp(P.elL, P.haL), nr = perp(P.haR, P.elR);
+      return [[off(mix(P.elL, P.haL, .1), nl[0] * 6.5, nl[1] * 6.5), off(mix(P.elL, P.haL, .95), nl[0] * 6.5, nl[1] * 6.5)],
+        [off(mix(P.elR, P.haR, .1), nr[0] * 6.5, nr[1] * 6.5), off(mix(P.elR, P.haR, .95), nr[0] * 6.5, nr[1] * 6.5)]];
+    }
     return { t: .85, p0: mir(ext(base, seated ? { elL: [35, 56], haL: [34, 69] } : { elL: [36, 43], haL: [34, 57] })),
       p1: mir(seated ? { elL: [26, 43], haL: [12, 44] } : { elL: [26, 29], haL: [12, 30] }), arcs: FARC, bones: FRONT, hl: delts,
-      back: function () { return seated ? fseatEq() : [floor(20, 80)]; },
+      back: function (P) {
+        if (seated) return [L("eq2", [[50, 80], [50, 93]], 3), L("eq2", [[32, 79.5], [68, 79.5]], 5), floor(24, 76)];   /* 등받이 없는 벤치 */
+        if (!machine) return [floor(20, 80)];
+        var pd = pads(P);   /* 스탠딩 머신: 뒤에 기둥 + 기둥에서 팔 패드로 가는 지렛대 */
+        return [floor(18, 82), L("eq2", [[38, 93.5], [62, 93.5]], 4), L("eq2", [[50, 2], [50, 92]], 5.5), L("eq2", [[50, 25], mix(pd[0][0], pd[0][1], .5)], 3), L("eq2", [[50, 25], mix(pd[1][0], pd[1][1], .5)], 3)];
+      },
       front: function (P) {
-        if (!pad) return [D("eq", P.haL, 5.2), D("eq", P.haR, 5.2)];
-        var nl = perp(P.elL, P.haL), nr = perp(P.haR, P.elR);
-        return [L("eq", [off(mix(P.elL, P.haL, .1), nl[0] * 6.5, nl[1] * 6.5), off(mix(P.elL, P.haL, .95), nl[0] * 6.5, nl[1] * 6.5)], 4.4),
-          L("eq", [off(mix(P.elR, P.haR, .1), nr[0] * 6.5, nr[1] * 6.5), off(mix(P.elR, P.haR, .95), nr[0] * 6.5, nr[1] * 6.5)], 4.4)];
+        if (!machine) return [D("eq", P.haL, 5.2), D("eq", P.haR, 5.2)];
+        var pd = pads(P); return [L("eq", pd[0], 4.6), L("eq", pd[1], 4.6)];
       } };
   }
   EX.lateral_raise = raise(FSTAND, false, false);
-  EX.lateral_raise_standing = raise(FSTAND, false, true);
-  EX.lateral_raise_machine = raise(FSIT, true, true);
+  EX.seated_lateral_raise = raise(FSIT, true, false);                    /* 시티드 레터럴 레이즈 (덤벨, 벤치에 앉아서) */
+  EX.lateral_raise_standing = raise(FSTAND, false, true);                /* 사이드 레터럴 레이즈 머신 — 도당점은 스탠딩 */
+  EX.lateral_raise_machine = EX.lateral_raise_standing;                  /* 예전 이름(앉는 머신)도 같은 그림으로 통합 */
 
   /* ---------- 팔 ---------- */
   EX.db_curl = { t: .7, p0: ext(stand(40), { el: [42, 45], ha: [44, 63] }), p1: { ha: [55, 32.5] }, arcs: { ha: "el" }, bones: SIDE,
@@ -314,7 +364,8 @@
       if (b.o) add(s, S.tile, 3.2);   /* 몸통 앞을 지나는 팔다리는 옅은 테두리로 구분 */
       add(s, S.fig);
     });
-    add({ dot: P.head, r: 7.2 }, S.fig);
+    if (ex.headO) add({ dot: P.head, r: (ex.headR || 7.2) + 1.7 }, S.tile);
+    add({ dot: P.head, r: ex.headR || 7.2 }, S.fig);
     ex.hl(P).forEach(function (s) { add(s, S.hl, 0, true); });
     ex.front(P).forEach(function (s) { add(s, S[s.k]); });
     return out;
