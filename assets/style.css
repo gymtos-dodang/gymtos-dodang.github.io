@@ -975,3 +975,6 @@ a.ex.pick .tip{color:var(--primary);font-weight:700}
 .gnum small { font-size: 10px; white-space: nowrap; letter-spacing: -.3px; }
 /* 공용 .good(복습지 '잘한 점' 상자) 모양이 출석률 80% 이상일 때 게이지에 씌워져 원이 작아지던 것 막기 */
 .gauge.good, .gword.good { background: none; padding: 0; border-radius: 0; }
+
+/* 움직이는 운동 아이콘 (assets/exicons.js, 2026-11-10) */
+svg.exi { display: block; overflow: hidden; }

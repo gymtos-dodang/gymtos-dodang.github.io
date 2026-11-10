@@ -37,7 +37,11 @@
     return d.items[0];
   }
   function dayIcon(d) { return !d || d.rest ? "rest" : d.cardio_only ? "treadmill" : d.pick ? "dumbbell" : iconOf(mainItem(d)); }
-  function img(key, cls) { return '<img class="' + (cls || "icn") + '" src="' + iconSrc(key) + '" alt="" loading="lazy">'; }
+  /* 운동 아이콘: assets/exicons.js(움직이는 SVG, 2026-11-10)에 있는 종목은 그걸로, 없으면 예전 PNG. still = 멈춘 그림(작은 칸용) */
+  function img(key, cls, still) {
+    if (window.EXI && EXI.has(key)) return EXI.svg(key, { sex: THEME, cls: cls || "icn", still: !!still });
+    return '<img class="' + (cls || "icn") + '" src="' + iconSrc(key) + '" alt="" loading="lazy">';
+  }
   document.documentElement.setAttribute("data-sex", M.sex === "F" ? "F" : "M");
 
   var DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
@@ -1360,7 +1364,7 @@
   /* ---------------- 홈 */
   function exMini(d) {
     return '<ul class="mini">' + d.items.map(function (it, i) {
-      return '<li><span class="mini-ic' + (it.tag === "메인" ? " main" : "") + '">' + img(iconOf(it)) + '<span class="n">' + (i + 1) + '</span></span>' + esc(it.name) +
+      return '<li><span class="mini-ic' + (it.tag === "메인" ? " main" : "") + '">' + img(iconOf(it), "", true) + '<span class="n">' + (i + 1) + '</span></span>' + esc(it.name) +
         (it.tag ? ' ' + tagChip(it.tag) : '') + '</li>';
     }).join("") + '</ul>';
   }
@@ -1607,7 +1611,7 @@
       rotKeys().forEach(function (k) {
         var d = dayByKey(k);
         h += '<a class="day-tile' + (k === tk ? " today" : "") + '" href="#routine-' + k + '" role="tab" aria-current="' + (k === sel) + '"><b class="rot"><small>DAY</small>' + k.slice(1) + '</b>' +
-          img(dayIcon(d), "wk-ic") + '<span>' + esc(d.part) + '</span></a>';
+          img(dayIcon(d), "wk-ic", true) + '<span>' + esc(d.part) + '</span></a>';
       });
       if (rotKeys().length < 7) h += '<div class="day-tile rest"><b class="rot"><small>OFF</small>휴</b>' + img("rest", "wk-ic") + '<span>근무표 따라</span></div>';
     } else
@@ -1615,7 +1619,7 @@
       var d = dayByKey(k);
       var cls = "day-tile" + (!d || d.rest ? " rest" : "") + (k === tk ? " today" : "");
       h += '<a class="' + cls + '" href="#routine-' + k + '" role="tab" aria-current="' + (k === sel) + '"><b>' + DAY_KO[k] + '</b>' +
-        img(dayIcon(d), "wk-ic") + '<span>' +
+        img(dayIcon(d), "wk-ic", true) + '<span>' +
         esc(d ? d.part : "휴식") + '</span></a>';
     });
     h += '</div></section>';
@@ -1829,6 +1833,9 @@
   nDot();
   if (!DEMO) setTimeout(showNoticePop, 800);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { alignText(document); });
+  if (!window.EXI) {   /* 옛 껍데기(index.html에 exicons.js 줄이 없는 회원)도 움직이는 아이콘이 나오게 */
+    var exs = document.createElement("script"); exs.src = BASE + "exicons.js"; exs.onload = function () { route(); }; document.head.appendChild(exs);
+  }
   attSync(); ibSync();
   if (!ATT_API) setTimeout(badgeCheck, 1500);
   document.addEventListener("visibilitychange", function () { if (!document.hidden) { attSync(); ibSync(); } });

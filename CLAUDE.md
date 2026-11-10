@@ -15,7 +15,8 @@ index.html            짐토스 안내용 첫 화면 (회원 목록 없음)
 robots.txt, .nojekyll 검색 차단 / Jekyll 끔
 assets/style.css      공통 디자인 (남 네이비 / 여 핑크, data-sex 로 분기)
 assets/app.js         data.js를 읽어 화면을 그림 (아래 탭도 app.js가 그림: 홈·목표·루틴·복습지·식단·공지, 해시 주소 #home #goal #body(몸변화) #forms #form-<id> #routine #routine-mon~sun #diet #notice)
-assets/icons/M|F/     루틴일지 운동 아이콘 (네이비/핑크, 192px). 종목명→아이콘은 app.js의 ICON_BY_NAME
+assets/exicons.js     움직이는 운동 아이콘(SVG) — PT 노트 화면은 이걸 먼저 씀 (아래 '움직이는 운동 아이콘')
+assets/icons/M|F/     루틴일지 운동 아이콘 PNG (네이비/핑크, 192px). 종목명→아이콘은 app.js의 ICON_BY_NAME — exicons.js에 없는 이름(rest·treadmill 등)과 종이 루틴일지는 이 PNG
 assets/logo.png       GYMTOS 브러시드 메탈 로고 (무채색)
 m/<이름-랜덤6자>/     회원 한 명의 PT 노트
   index.html          껍데기 (제목·og 태그에 회원 이름)
@@ -120,6 +121,13 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - **월간 리포트** (#report = 이번 달 진행 중, #report-YYYY-MM — 근육 지도 오른쪽 위 "OO월 리포트 →", 아래 탭은 루틴): 1080×1350 카드(남녀 같은 네이비) — 출석·출석률·최고 연속·새 배지 / 근육 지도 / 인바디(그 달 마지막 기록 vs 그 전 기록, 그룹 PT는 제일 많이 한 부위) / 이번 달 받은 배지 / 한마디. "이미지로 저장 · 공유" = html2canvas(cdnjs 1.4.1) → 공유 시트, 안 되면(카톡 안) 그림을 띄워 길게 눌러 저장.
   - 선생님 한마디: data.js에 `reports: { "2026-11": "이번 달 등 운동이 제일 성실했어요.\n다음 달엔 종아리까지!" }` → "장동욱 트레이너의 한마디". 없으면 자동 한 줄 요약.
   - 매달 1~7일 홈 맨 위 "OO월 리포트가 도착했어요" 카드(지난달 출석이 있을 때만).
+
+## 움직이는 운동 아이콘 (2026-11-10 장동욱 "시안D로 가자")
+- assets/exicons.js: 종목마다 관절 좌표(0~100) 두 자세 p0(시작)·p1(끝)만 적으면 사람(테마색)·기구(회색)·**자극 부위(남 분홍 / 여 네이비)**를 SVG로 그리고 두 자세 사이를 계속 반복(SMIL animate, 2.8초: 멈춤 → 힘 줘서 빠르게 → 멈춤 → 천천히 돌아옴). 자극 부위는 힘 줄 때 진해짐.
+- app.js img(key, cls, still): EXI.has(key)면 SVG, 아니면 예전 PNG. 루틴 탭 종목 카드·홈 '오늘 할 운동' 큰 아이콘은 움직이고, 작은 칸(일주일 한눈에·홈 종목 목록)은 멈춘 그림(still). 휴대폰 '동작 줄이기'면 전부 멈춘 그림.
+- 회원 index.html에 `<script src="../../assets/exicons.js">`가 app.js 앞에 있음(없는 옛 껍데기는 app.js가 뒤늦게 불러와 다시 그림).
+- 지금 52개 이름(루틴에 쓰는 45종 전부 + 별칭). 아이콘 이름은 PNG와 같음(bench_press, lat_pulldown …).
+- **새 종목 추가**: exicons.js의 EX에 한 칸 추가 — 비슷한 종목을 복사해 좌표만 고침(옆모습 SIDE: head·sh·hip·kn·ft·toe·el·ha / 앞모습 FRONT: …L만 적고 mir()로 좌우 대칭). arcs = 관절을 축으로 도는 부위(팔꿈치 축으로 도는 손 등), fx = 따라 움직이는 점 계산, hl = 자극 부위, back/front = 기구(몸 뒤/앞). 그다음 `_tools/exicons_sheet.html`(시작·끝·움직임 확인판, ?sex=F ?only=이름)을 열어 두 자세를 눈으로 확인하고 app.js ICON_BY_NAME에 종목 이름 연결.
 
 ## 새 공지 팝업 (2026-11-05 장동욱 요청)
 - data.js notices 맨 위에 새 공지를 올리면, 회원이 PT 노트를 열 때 화면 위에서 팝업이 내려왔다가 약 5초 뒤 사라짐(위로 밀어도 닫힘). 누르면 공지 탭의 그 공지로 이동해 반짝 표시.
