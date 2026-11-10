@@ -1073,3 +1073,27 @@ html.rts-open, html.rts-open body { overflow: hidden; }
 .rtp-free { flex: 0 0 auto; margin-top: 0; padding: 11px; font-size: 14px; }
 .rts-ic { position: relative; border: 0; padding: 0; cursor: pointer; }
 .rts-ic i { position: absolute; left: 0; right: 0; bottom: 0; font-style: normal; font-size: 10px; font-weight: 800; color: #fff; background: rgba(20, 25, 40, .55); text-align: center; padding: 1px 0; }
+
+/* 하단 탭 점등 (2026-11-11): 루틴·복습지·식단이 새로 바뀌었는데 아직 안 열어 봤으면 아이콘에 LED */
+:root { --led: #E0508F; }
+:root[data-sex="F"] { --led: #FF3D8B; }
+.tabs a.lit { color: var(--led); }
+.tabs a.lit svg { animation: tabLed 2.2s ease-in-out infinite; }
+.tabs a.lit::before {
+  content: ""; position: absolute; top: 5px; left: calc(50% + 8px); width: 8px; height: 8px; border-radius: 50%;
+  background: var(--led); box-shadow: 0 0 0 2px var(--paper), 0 0 8px 2px var(--led);
+  animation: tabDot 2.2s ease-in-out infinite;
+}
+@keyframes tabLed {
+  0%, 100% { filter: drop-shadow(0 0 0 transparent); }
+  50% { filter: drop-shadow(0 0 4px var(--led)) drop-shadow(0 0 1px var(--led)); }
+}
+@keyframes tabDot {
+  0%, 100% { box-shadow: 0 0 0 2px var(--paper), 0 0 3px 0 var(--led); opacity: .75; }
+  50% { box-shadow: 0 0 0 2px var(--paper), 0 0 10px 3px var(--led); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tabs a.lit svg, .tabs a.lit::before { animation: none; }
+  .tabs a.lit svg { filter: drop-shadow(0 0 3px var(--led)); }
+}
+.fnew { display: inline-block; margin-left: 6px; font-size: 10.5px; font-weight: 800; letter-spacing: .04em; color: #fff; background: var(--led); border-radius: 99px; padding: 2px 7px; vertical-align: 1px; box-shadow: 0 0 8px var(--led); }

@@ -1526,9 +1526,36 @@
   }
 
   /* ---------------- 복습지 목록 */
+  /* 하단 탭 점등 (2026-11-11 "루틴이나 자세복습지 업데이트하면 하단 아이콘도 점등"):
+     루틴(버전·업데이트 날짜·폰에서 고친 시각)·복습지(새 id)·식단(updated)이 14일 안에 바뀌었는데 아직 그 탭을 안 열었으면 아이콘에 LED.
+     그 탭을 열면 꺼짐(이 휴대폰 localStorage ptnote:<주소>:lit). 복습지 목록 카드에는 아직 안 열어 본 새 복습지에 NEW (…:fopen) */
+  var LIT_KEY = "ptnote:" + SLUG + ":lit", FOPEN_KEY = "ptnote:" + SLUG + ":fopen", LIT_DAYS = 14;
+  function dRecent(s) {
+    var m = String(s || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+    return !!m && Date.now() - new Date(+m[1], +m[2] - 1, +m[3]).getTime() <= LIT_DAYS * 86400000;
+  }
+  function litSigs() {
+    var o = { routine: [], forms: [], diet: [] }, R = M.routine, D = M.diet, at = RT_REC && RT_REC.at;
+    if (R && dRecent(at || R.updated)) o.routine.push("r|" + rtBase(R) + "|" + (at || ""));
+    (M.forms || []).forEach(function (f) { if (dRecent(f.date)) o.forms.push("f|" + f.id); });
+    if (D && typeof D === "object" && dRecent(D.updated)) o.diet.push("d|" + (D.updated || ""));
+    return o;
+  }
+  function formNew(f) { return !DEMO && dRecent(f.date) && lsArr(FOPEN_KEY).indexOf(f.id) < 0; }
+  function litApply(curTab) {
+    if (DEMO) return;
+    var sg = litSigs();
+    if (sg[curTab] && sg[curTab].length) lsAdd(LIT_KEY, sg[curTab]);
+    var seen = lsArr(LIT_KEY);
+    Object.keys(sg).forEach(function (t) {
+      var a = document.querySelector('.tabs a[data-tab="' + t + '"]');
+      if (a) a.classList.toggle("lit", sg[t].some(function (k) { return seen.indexOf(k) < 0; }));
+    });
+  }
+
   function formCard(f) {
     return '<a class="card-link" href="#form-' + esc(f.id) + '"><div class="thumb"><img src="' + esc(f.dir) + 'poster.jpg" alt="" loading="lazy"></div>' +
-      '<div><span class="tagc">' + esc(f.part) + '</span><h3>' + esc(f.exercise) + '</h3><p>' + esc(f.exercise_en) + ' · ' + esc(f.date) + '</p></div></a>';
+      '<div><span class="tagc">' + esc(f.part) + '</span>' + (formNew(f) ? '<span class="fnew">NEW</span>' : '') + '<h3>' + esc(f.exercise) + '</h3><p>' + esc(f.exercise_en) + ' · ' + esc(f.date) + '</p></div></a>';
   }
   function renderForms() {
     var h = '<section>' + head("", "자세 복습지", "수업에서 배운 자세를 영상으로 다시 봐요");
@@ -1835,7 +1862,7 @@
     if (JSON.stringify(ok) === JSON.stringify(RT_REC)) return;
     if (RT_EDIT) { var draft = M.routine; rtUse(ok); RT_EDIT.saved = M.routine; M.routine = draft; return; }
     rtUse(ok);
-    if (view.getAttribute("data-tab") !== "body") rerender();
+    if (view.getAttribute("data-tab") !== "body") rerender(); else litApply("body");
   }
   function rtAt(rec) {   /* "11/10 14:32" */
     var m = String(rec && rec.at || "").match(/\d{4}-(\d{2})-(\d{2}) (\d{2}:\d{2})/);
@@ -2280,6 +2307,8 @@
       if (a.getAttribute("data-tab") === tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
     alignText(document);
+    if (/^form-/.test(hsh) && !DEMO) lsAdd(FOPEN_KEY, [hsh.slice(5)]);
+    litApply(tab);
     setupAttCheck(); setupCal(); setupIb(); setupBadges(); setupMuscle(); setupRtEdit();
     if (after) after();
     var flashEl = null;
