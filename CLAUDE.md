@@ -147,6 +147,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 회원 폰: 출석 창고에서 받으면 localStorage ptnote:<주소>:routine 에 기억 → 다음부터 열자마자 고친 루틴. notice가 있으면 공지 맨 위에 끼워 넣음(새 공지 팝업도 뜸).
 - **기준(base) = data.js 루틴의 "version|updated"**. data.js 루틴을 새로 올리면 기준이 달라져서 폰에서 고친 루틴은 꺼지고 data.js가 이김(선생님 띠에 "예전에 폰에서 고친 것은 꺼졌어요"). → **Claude가 data.js로 루틴을 고치기 전에, 폰에서 고친 게 있는지 장동욱에게 먼저 물어볼 것**(있으면 그 내용을 받아서 data.js에 합치기 — 시트 "루틴" 탭의 JSON).
 - 선생님 열쇠: Apps Script의 RT_KEY_HASH(SHA-256)만 코드에 있음, 열쇠 자체는 저장소에 넣지 말 것(공개 저장소). 폰에 넣는 법: 선생님 페이지 주소 끝 `#key=<열쇠>` 로 한 번 열기(localStorage ptkey), 또는 저장할 때 열쇠 칸에 직접. 열쇠는 장동욱만 앎(대화로 전달함).
+- **복습지 자동 연결** (2026-11-10): 루틴 카드의 "▶ 자세 복습지 보기" = item.form이 있으면 그것, 없으면 종목 이름이 복습지 exercise와 같은(띄어쓰기·가운뎃점·괄호 무시) 가장 최근 복습지(app.js itemForm). 그래서 복습지는 data.js forms에만 올리면 폰에서 고친 루틴에도 알아서 붙음 — 복습지 올릴 때 루틴(data.js routine)은 건드리지 않아도 됨. 이름이 다르면(예: 복습지 "덤벨 사이드 레터럴 레이즈" ↔ 루틴 "사이드 레터럴 레이즈 (덤벨)") form id로 연결. form:"-" = 연결 안 함(폰 고치기 창의 '연결 안 함').
 - 선생님 페이지 회원 카드: 폰에서 고친 루틴이면 "루틴 v5 ✎", 쉬는 날 판정도 고친 루틴으로.
 - 코드: app.js 맨 위 rtUse/RT_BASE(적용) · "루틴 고치기" 블록(rtTopBar·rtItemSheet·rtDaySheet·rtInfoSheet·rtSaveSheet·setupRtEdit), RT_EN·RT_PART_EN = 종목·부위 영어 자동 채우기. style.css .rtbar·.rtctl·.rtadd·.rtsave·.rtsheet.
 - 창고 코드가 바뀌었으니 Apps Script에 붙여넣고 '배포 관리 → 수정 → 새 버전' 해야 저장됨(옛 버전이면 "창고를 새 버전으로 다시 배포해야" 안내).

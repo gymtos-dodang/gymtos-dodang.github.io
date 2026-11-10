@@ -200,6 +200,17 @@
     for (var i = 0; i < M.forms.length; i++) if (M.forms[i].id === id) return M.forms[i];
     return null;
   }
+  /* 루틴 종목 → 자세 복습지 (2026-11-10): form을 정해 뒀으면 그것, 아니면 이름이 같은(띄어쓰기 무시) 가장 최근 복습지를 자동 연결.
+     그래서 복습지를 새로 올리기만 해도 선생님이 폰에서 고친 루틴 카드에 "▶ 자세 복습지 보기"가 붙음. form:"-" = 연결 안 함 */
+  function fnorm(s) { return String(s || "").replace(/[\s·()\-]/g, "").toLowerCase(); }
+  function itemForm(it) {
+    if (!it || it.form === "-") return null;
+    var f = it.form && findForm(it.form);
+    if (f) return f;
+    var n = fnorm(it.name);
+    for (var i = 0; n && i < (M.forms || []).length; i++) if (fnorm(M.forms[i].exercise) === n) return M.forms[i];
+    return null;
+  }
   function remember() {
     var q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
     return '<div class="remember"><svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="17" fill="var(--primary)"/>' +
@@ -1678,7 +1689,7 @@
           (main ? '<span class="main-badge">메인</span>' : '') + '</span><div>' +
           '<h3>' + esc(it.name) + '</h3><div class="meta">' + esc(it.en) + ' ' + tagChip(it.tag) + '</div>' +
           '<div class="tip">' + esc(it.tip) + '</div></div></div><div class="sets">' + sets + '</div>' +
-          (it.form && findForm(it.form) ? '<a class="formlink" href="#form-' + esc(it.form) + '">▶ 자세 복습지 보기</a>' : '') + (ED ? rtItemCtl(i, d.items.length) : '') + '</div>';
+          (itemForm(it) ? '<a class="formlink" href="#form-' + esc(itemForm(it).id) + '">▶ 자세 복습지 보기</a>' : '') + (ED ? rtItemCtl(i, d.items.length) : '') + '</div>';
       }).join("");
       if (ED) h += '<button type="button" class="rtadd" data-rt="add">+ 종목 추가</button>';
       if (d.cardio && R.cardio) {
@@ -1910,7 +1921,7 @@
       '<label>팁<textarea id="fTip" rows="3">' + esc(it.tip) + '</textarea></label>' +
       '<div class="rts-l">세트 <small>횟수에 "30초"처럼 글자도 돼요 · 무게를 비우면 맨몸</small></div><div class="rts-sets" id="fSets"></div>' +
       '<div class="rts-row"><button type="button" class="rtb" id="fAdd">+ 세트 추가</button><button type="button" class="rtb" id="fPyr">피라미드 15·12·10·8</button></div>' +
-      (M.forms && M.forms.length ? '<label>자세 복습지 연결<select id="fForm"><option value="">없음</option>' + M.forms.map(function (f) {
+      (M.forms && M.forms.length ? '<label>자세 복습지 연결 <small>자동 = 이름이 같은 복습지가 올라오면 알아서 붙음</small><select id="fForm"><option value="">자동</option><option value="-"' + (it.form === "-" ? ' selected' : '') + '>연결 안 함</option>' + M.forms.map(function (f) {
         return '<option value="' + esc(f.id) + '"' + (it.form === f.id ? ' selected' : '') + '>' + esc(f.exercise) + ' (' + esc(f.date) + ')</option>';
       }).join("") + '</select></label>' : '');
     var sh = rtSheet(isNew ? dayName(dk) + " · 새 종목 넣기" : "종목 고치기", body, function (sh) {
