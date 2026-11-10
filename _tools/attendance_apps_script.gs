@@ -1,6 +1,7 @@
 // GYMTOS PT 노트 창고 (출석 + 인바디) — 이 코드를 Apps Script에 그대로 붙여넣고 "웹 앱"으로 배포하세요.
 // 2026-11-06 인바디 추가: 시트 "인바디" 탭에 숫자, 구글 드라이브 "PT노트 인바디 사진" 폴더에 결과지 사진.
 // 2026-11-06 결과지 자동 읽기(OCR): 왼쪽 "서비스 +" 에서 "Drive API"를 추가해야 동작 (없으면 회원이 숫자를 직접 넣으면 됨).
+// 2026-11-11 보기(GET)는 잠그지 않게 바꿈 — 여러 명을 한꺼번에 불러도 실패하지 않음.
 // 2026-11-10 루틴 고치기: 선생님이 폰에서 고친 루틴을 시트 "루틴" 탭에 저장 → 회원 PT 노트가 열릴 때 바로 바뀜.
 //            고칠 때마다 "루틴기록" 탭에 전체 내용이 한 줄씩 쌓임(되살리기용). 선생님 열쇠는 아래 RT_KEY_HASH(열쇠 자체는 여기 없음).
 const SHEET = '출석';
@@ -158,13 +159,15 @@ function doGet(e) {
     }
   }
 
-  const lock = LockService.getScriptLock();
-  lock.waitLock(10000);
-  try {
-    const s = sheet_();
-    if (p.a === 'check' || p.a === 'uncheck') {
-      const d = String(p.d || '');
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return json_({ ok: false, error: 'date' });
+  /* 2026-11-11: 잠금(lock)은 출석 쓰기(check/uncheck)할 때만. 보기만 할 땐 잠그지 않음
+     → 선생님 페이지가 회원 여러 명을 한꺼번에 불러도 줄 서다 실패하지 않고, 루틴 저장도 안 막힘 */
+  const s = sheet_();
+  if (p.a === 'check' || p.a === 'uncheck') {
+    const d = String(p.d || '');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return json_({ ok: false, error: 'date' });
+    const lock = LockService.getScriptLock();
+    lock.waitLock(25000);
+    try {
       const v = s.getDataRange().getValues();
       let row = -1;
       for (let i = 1; i < v.length; i++) {
@@ -174,18 +177,19 @@ function doGet(e) {
         s.appendRow([m, String(p.n || ''), "'" + d, "'" + String(p.t || ''), new Date()]);
       }
       if (p.a === 'uncheck' && row > 0) s.deleteRow(row);
+      SpreadsheetApp.flush();
+    } finally {
+      lock.releaseLock();
     }
-    const all = s.getDataRange().getValues();
-    const days = {};
-    for (let i = 1; i < all.length; i++) {
-      if (all[i][0] === m) days[txt_(all[i][2], 'yyyy-MM-dd')] = txt_(all[i][3], 'HH:mm');
-    }
-    let routine = null;
-    try { routine = rtGet_(m); } catch (err) {}
-    return json_({ ok: true, days: days, routine: routine });
-  } finally {
-    lock.releaseLock();
   }
+  const all = s.getDataRange().getValues();
+  const days = {};
+  for (let i = 1; i < all.length; i++) {
+    if (all[i][0] === m) days[txt_(all[i][2], 'yyyy-MM-dd')] = txt_(all[i][3], 'HH:mm');
+  }
+  let routine = null;
+  try { routine = rtGet_(m); } catch (err) {}
+  return json_({ ok: true, days: days, routine: routine });
 }
 
 /* 결과지 사진 → 글자 (구글 드라이브 OCR: 사진을 구글 문서로 바꿔 글자만 읽고 바로 휴지통) */
@@ -226,9 +230,10 @@ function doPost(e) {
       rec.at = Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd HH:mm');
     }
     const lock = LockService.getScriptLock();
-    lock.waitLock(20000);
+    lock.waitLock(25000);
     try {
       rtSet_(m, String(b.n || ''), rec);
+      SpreadsheetApp.flush();
       return json_({ ok: true, routine: rec });
     } finally {
       lock.releaseLock();

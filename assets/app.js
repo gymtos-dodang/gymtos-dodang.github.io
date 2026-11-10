@@ -2133,8 +2133,11 @@
   function rtPost(body) {
     if (!ATT_API) return Promise.reject(new Error("api"));
     body.m = SLUG; body.n = M._real || M.name;
-    return fetch(ATT_API, { method: "POST", body: JSON.stringify(body) }).then(function (r) { return r.json(); });
+    function once() { return fetch(ATT_API, { method: "POST", body: JSON.stringify(body) }).then(function (r) { return r.json(); }); }
+    /* 창고가 다른 일로 바쁘면 한 번 실패할 수 있어서 2.5초 뒤 한 번 더 (같은 내용 덮어쓰기라 두 번 가도 괜찮음) */
+    return once().catch(function () { return new Promise(function (ok) { setTimeout(ok, 2500); }).then(once); });
   }
+  function rtNetMsg() { return navigator.onLine === false ? "인터넷 연결을 확인하고 다시 눌러 주세요" : "창고가 잠깐 바빠요. 몇 초 뒤 다시 눌러 주세요"; }
   function rtErr(j, sh) {
     var e = j && j.error;
     if (e === "key") { try { localStorage.removeItem("ptkey"); } catch (x) {} sh.msg("선생님 열쇠가 맞지 않아요. 다시 넣어 주세요"); var k = sh.querySelector("#sKeyWrap"); if (k) k.hidden = false; }
@@ -2168,7 +2171,7 @@
         RT_EDIT = null; rtUse(j.routine); RT_STALE = null;
         sh.close(); rerender();
         attToast("회원님 노트에 바로 반영됐어요");
-      }).catch(function () { ok.disabled = false; ok.textContent = "반영하기"; sh.msg("인터넷 연결을 확인하고 다시 눌러 주세요"); });
+      }).catch(function () { ok.disabled = false; ok.textContent = "반영하기"; sh.msg(rtNetMsg()); });
       return true;
     }, "반영하기");
     var ver = sh.querySelector("#sVer"), ntc = sh.querySelector("#sNt"), box = sh.querySelector("#sNtBox");
@@ -2196,7 +2199,7 @@
         RT_EDIT = null; rtUse(null);
         sh.close(); rerender();
         attToast("처음 루틴으로 돌아갔어요");
-      }).catch(function () { ok.disabled = false; ok.textContent = "되돌리기"; sh.msg("인터넷 연결을 확인하고 다시 눌러 주세요"); });
+      }).catch(function () { ok.disabled = false; ok.textContent = "되돌리기"; sh.msg(rtNetMsg()); });
       return true;
     }, "되돌리기");
   }
