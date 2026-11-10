@@ -19,7 +19,12 @@
     RT_REC = rec && rec.routine && rec.base === RT_BASE ? rec : null;
     M.routine = RT_REC ? clone(RT_REC.routine) : clone(RT_ORIG);
     var nt = RT_REC && RT_REC.notice, list = NT_ORIG.slice();
-    if (nt && nt.title && !list.some(function (n) { return n.date === nt.date && n.title === nt.title; })) list.unshift(nt);
+    if (nt && nt.title && !list.some(function (n) { return n.date === nt.date && n.title === nt.title; })) {
+      /* 날짜 순서대로 끼움 — 나중에 data.js로 올린 복습지 공지가 더 새것이면 그게 위 */
+      var ymd = function (n) { var m = String(n.date || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/); return m ? +m[1] * 10000 + +m[2] * 100 + +m[3] : 0; };
+      var at = 0; while (at < list.length && ymd(list[at]) > ymd(nt)) at++;
+      list.splice(at, 0, nt);
+    }
     M.notices = list;
   }
   try { var rtc = JSON.parse(localStorage.getItem(RT_LS) || "null"); if (rtc) rtUse(rtc); } catch (e) {}
