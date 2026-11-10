@@ -91,7 +91,15 @@
       front: function (P) { return [grip(P.ha)]; } };
   }
   EX.chest_press = pressMachine({ el: [30, 50], ha: [45, 45] }, { el: [50, 43], ha: [64, 42] });
-  EX.incline_machine_press = pressMachine({ el: [30, 49], ha: [44, 41] }, { el: [48, 34], ha: [60, 22] });
+  /* 인클라인 프레스 머신 (2026-11-10 "등받이 각도 45도로"): 등받이·상체 45도로 기대고, 손잡이를 등받이와 직각(위·앞)으로 밀어 올림 */
+  EX.incline_machine_press = { t: .9,
+    p0: { head: [18.5, 39.5], sh: [28, 50], hip: [48, 70], kn: [67, 70], ft: [68, 91], toe: [76, 92], el: [24, 65], ha: [37, 52] },
+    p1: { el: [39, 41], ha: [47.5, 30.5] },
+    bones: [{ pts: ["hip", "kn", "ft", "toe"], w: 9 }, { pts: ["sh", "hip"], w: 13 }, { hlHere: 1 }, { pts: ["sh", "el", "ha"], w: 7.5, o: 1 }],
+    hl: function (P) { return [seg(P.sh, P.hip, 0, .42, 13)]; },
+    back: function (P) { return [floor(8, 90), L("eq2", [[52, 80], [52, 93]], 3), L("eq2", [[41, 77.5], [63, 77.5]], 5.5), L("eq2", [[42.5, 76.5], [16.5, 50.5]], 5.5),
+      L("eq2", [[30, 64], [30, 93]], 3), L("eq2", [[9, 93], [11, 8]], 3.5), L("eq2", [[11, 8], [30, 8]], 3), L("eq2", [[30, 8], P.ha], 3), D("eq2", [30, 8], 3.2)]; },
+    front: function (P) { return [grip(P.ha)]; } };
   /* 펙덱 · 리버스 펙덱은 위에서 본 모습 (2026-11-10 "더 직관적이게, 헷갈리겠어") — 화면 위쪽이 앞.
      펙덱: 등받이가 등 뒤(아래), 팔을 벌렸다가 앞으로 모음, 가슴(앞쪽) 강조 / 리버스: 가슴 패드가 앞(위), 팔을 앞에서 뒤로 벌림, 등·어깨 뒤(뒤쪽) 강조 */
   function deckTop(rev) {
@@ -359,14 +367,16 @@
       out.push(o);
     }
     ex.back(P).forEach(function (s) { add(s, S[s.k]); });
+    var hlDone = false;
     ex.bones.forEach(function (b) {
+      if (b.hlHere) { ex.hl(P).forEach(function (s) { add(s, S.hl, 0, true); }); hlDone = true; return; }
       var s = b.poly ? { poly: b.poly.map(function (k) { return P[k]; }), w: b.w } : { line: b.pts.map(function (k) { return P[k]; }), w: b.w };
       if (b.o) add(s, S.tile, 3.2);   /* 몸통 앞을 지나는 팔다리는 옅은 테두리로 구분 */
       add(s, S.fig);
     });
     if (ex.headO) add({ dot: P.head, r: (ex.headR || 7.2) + 1.7 }, S.tile);
     add({ dot: P.head, r: ex.headR || 7.2 }, S.fig);
-    ex.hl(P).forEach(function (s) { add(s, S.hl, 0, true); });
+    if (!hlDone) ex.hl(P).forEach(function (s) { add(s, S.hl, 0, true); });
     ex.front(P).forEach(function (s) { add(s, S[s.k]); });
     return out;
   }

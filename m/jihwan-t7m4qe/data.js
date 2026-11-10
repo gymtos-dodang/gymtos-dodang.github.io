@@ -317,7 +317,7 @@ window.MEMBER = {
         { name: "펙덱 플라이", en: "Pec Deck Fly", form: "pec-deck", tag: "워밍업", tip: "가슴 모은다는 느낌", sets: [[20, 20], [15, 20]] },
         { name: "인클라인 덤벨 프레스", en: "Incline DB Press", form: "incline-db-press", tag: "메인", tip: "윗가슴으로 밀기", sets: [[15, 12], [12, 12], [10, 14], [8, 14]] },
         { name: "체스트 프레스", en: "Chest Press", tip: "가슴 펴고 밀기", sets: [[12, 35], [12, 35], [12, 35]] },
-        { name: "머신 인클라인 프레스", en: "Incline Machine Press", tip: "세트마다 무게 ↑", sets: [[15, 25], [12, 30], [10, 35]] }
+        { name: "인클라인 프레스 머신", en: "Incline Machine Press", tip: "세트마다 무게 ↑", sets: [[15, 25], [12, 30], [10, 35]] }
       ]},
       { day: "수", part: "하체 A", en: "Legs A", cardio: false, items: [
         { name: "이너타이", en: "Inner Thigh", tag: "선행", tip: "세트마다 무게 ↑", sets: [[20, 25], [15, 30], [12, 35]] },

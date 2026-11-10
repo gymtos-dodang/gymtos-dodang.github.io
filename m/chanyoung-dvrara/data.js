@@ -32,7 +32,7 @@ window.MEMBER = {
         { name: "벤치프레스", en: "Bench Press", tag: "메인", tip: "바는 가슴 중앙까지, 날개뼈 모으고", sets: [[15, 50], [12, 52.5], [10, 55], [8, 60]] },
         { name: "인클라인 덤벨 프레스", en: "Incline DB Press", tip: "윗가슴으로 밀기", sets: [[12, 20], [12, 20], [12, 20]] },
         { name: "체스트 프레스", en: "Chest Press", tip: "가슴 펴고 밀기", sets: [[12, 50], [12, 50], [12, 50]] },
-        { name: "머신 인클라인 프레스", en: "Incline Machine Press", tip: "끝에서 가슴 꽉 조이기", sets: [[12, 40], [12, 40], [12, 40]] }
+        { name: "인클라인 프레스 머신", en: "Incline Machine Press", tip: "끝에서 가슴 꽉 조이기", sets: [[12, 40], [12, 40], [12, 40]] }
       ]},
       { day: "화", part: "하체", en: "Legs", cardio: false, items: [
         { name: "레그 익스텐션", en: "Leg Extension", tag: "워밍업", tip: "무릎 풀어주기", sets: [[20, 30], [15, 35]] },
