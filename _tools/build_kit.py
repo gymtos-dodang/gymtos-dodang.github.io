@@ -60,6 +60,8 @@ def main():
         if os.path.exists(os.path.join(KIT, "assets", f)): os.remove(os.path.join(KIT, "assets", f))
     plain_icon(180, os.path.join(KIT, "assets", "icon.png"), "PT NOTE")
     for sz in (180, 192, 512): plain_icon(sz, os.path.join(KIT, "assets", "icon-coach-%d.png" % sz), "COACH")
+    for sx in ("m", "f"):
+        for sz in (180, 192, 512): plain_icon(sz, os.path.join(KIT, "assets", "icon-%s-%d.png" % (sx, sz)), "PT NOTE")   # 회원 앱 아이콘(JK 로고 들어간 것) 대신 글자 아이콘
     os.makedirs(os.path.join(KIT, COACH, "guide"))
     for f in ["index.html", "guide.html", "intro.html", "manifest.webmanifest"]:
         shutil.copy(os.path.join(SRC, "coach-tqqnlh", f), os.path.join(KIT, COACH, f))
