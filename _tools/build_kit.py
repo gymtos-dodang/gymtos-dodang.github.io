@@ -41,6 +41,7 @@ def scrub(s):
     s = s.replace("장동욱 트레이너", "OOO 트레이너").replace("장동욱", "트레이너").replace("gymtos-dodang.github.io", "<내 아이디>.github.io")
     s = s.replace("coach-tqqnlh", COACH)
     s = s.replace("트레이너 트레이너", "트레이너")
+    s = s.replace("JANG KAREDO PT노트", "PT 노트").replace("JANG KAREDO 로고", "로고").replace("JANG KAREDO", "GYMTOS")
     return s
 
 
@@ -52,7 +53,13 @@ def main():
         if os.path.exists(os.path.join(SRC, f)): shutil.copy(os.path.join(SRC, f), KIT)
     shutil.copytree(os.path.join(SRC, "assets"), os.path.join(KIT, "assets"))
     shutil.copytree(os.path.join(SRC, "_tools"), os.path.join(KIT, "_tools"),
-                    ignore=shutil.ignore_patterns("__pycache__", "build_kit.py"))
+                    ignore=shutil.ignore_patterns("__pycache__", "build_kit.py", "rebrand_jk.py", "brand"))
+    # 2026-11-11: 사이트는 장동욱 개인 브랜드(JANG KAREDO)로 바뀜 → 키트는 GYMTOS 로고·글자 아이콘으로
+    shutil.copy(os.path.join(SRC, "_tools", "brand", "gymtos_logo_old.png"), os.path.join(KIT, "assets", "logo.png"))
+    for f in ["logo-white.png", "logo-black.png"]:
+        if os.path.exists(os.path.join(KIT, "assets", f)): os.remove(os.path.join(KIT, "assets", f))
+    plain_icon(180, os.path.join(KIT, "assets", "icon.png"), "PT NOTE")
+    for sz in (180, 192, 512): plain_icon(sz, os.path.join(KIT, "assets", "icon-coach-%d.png" % sz), "COACH")
     os.makedirs(os.path.join(KIT, COACH, "guide"))
     for f in ["index.html", "guide.html", "intro.html", "manifest.webmanifest"]:
         shutil.copy(os.path.join(SRC, "coach-tqqnlh", f), os.path.join(KIT, COACH, f))
@@ -143,7 +150,7 @@ process.stdout.write(JSON.stringify(M,null,2));
         for f in files:
             if not f.endswith(TEXT_EXT): continue
             p = os.path.join(root, f); s = rd(p)
-            for x in SECRETS + MEMBER_NAMES + ["장동욱", "3rhkdi1pwrfts5q8"]:
+            for x in SECRETS + MEMBER_NAMES + ["장동욱", "3rhkdi1pwrfts5q8", "JANG KAREDO", "KAREDO"]:
                 if x in s: bad.append((os.path.relpath(p, KIT), x))
     if bad:
         for b in bad[:30]: print("남은 것:", b)
@@ -156,6 +163,15 @@ process.stdout.write(JSON.stringify(M,null,2));
                 p = os.path.join(root, f)
                 z.write(p, os.path.relpath(p, OUT))
     print("키트:", KIT, "\nzip:", zp, round(os.path.getsize(zp) / 1e6, 1), "MB")
+
+
+def plain_icon(size, path, text):
+    from PIL import Image, ImageDraw, ImageFont
+    im = Image.new("RGB", (size, size), (26, 26, 30)); d = ImageDraw.Draw(im)
+    fp = "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc"
+    f = ImageFont.truetype(fp, size // 6) if os.path.exists(fp) else ImageFont.load_default()
+    tw = d.textlength(text, font=f); d.text(((size - tw) / 2, size * 0.40), text, font=f, fill="white")
+    im.save(path)
 
 
 def make_og(path, name, color):

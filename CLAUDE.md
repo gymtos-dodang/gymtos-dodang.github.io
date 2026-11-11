@@ -1,6 +1,8 @@
-# GYMTOS 도당점 PT 노트 (회원 개인 홈페이지)
+# JANG KAREDO PT노트 (회원 개인 홈페이지)
 
-장동욱 트레이너(짐토스 도당점)의 회원별 PT 노트 사이트. 깃허브 페이지로 공개: https://gymtos-dodang.github.io
+> 2026-11-11 브랜드 변경: 짐토스 로고·'GYMTOS 도당점' 글자 전부 빼고 장동욱 독자 브랜드 **JANG KAREDO PT노트**. 색 = 남 블랙·레드(#1A1A1E·#E1141E) / 여 핑크레드(#D6204F). 아래 옛 설명의 '네이비'는 블랙, 남 '핑크' 포인트는 레드로 읽을 것. 바꾼 도구 `_tools/rebrand_jk.py`(색 표·로고 정리·앱 아이콘·og.jpg) — 로고 원본 `_tools/brand/jk_logo_src.png`(잡티 있는 원본 → 자동 정리), 결과 assets/logo.png(빨강)·logo-white.png·logo-black.png.
+
+장동욱 트레이너의 회원별 PT 노트 사이트(JANG KAREDO PT노트, 수업은 짐토스 도당점). 깃허브 페이지로 공개: https://gymtos-dodang.github.io
 답변은 항상 한국어로.
 
 ## 운영 원칙 (2026-11-03 장동욱 요청)
@@ -18,7 +20,7 @@ assets/style.css      공통 디자인 (남 네이비 / 여 핑크, data-sex 로
 assets/app.js         data.js를 읽어 화면을 그림 (아래 탭도 app.js가 그림: 홈·목표·루틴·복습지·식단·공지, 해시 주소 #home #goal #body(몸변화) #forms #form-<id> #routine #routine-mon~sun #diet #notice)
 assets/exicons.js     움직이는 운동 아이콘(SVG) — PT 노트 화면은 이걸 먼저 씀 (아래 '움직이는 운동 아이콘')
 assets/icons/M|F/     루틴일지 운동 아이콘 PNG (네이비/핑크, 192px). 종목명→아이콘은 app.js의 ICON_BY_NAME — exicons.js에 없는 이름(rest·treadmill 등)과 종이 루틴일지는 이 PNG
-assets/logo.png       GYMTOS 브러시드 메탈 로고 (무채색)
+assets/logo.png       JANG KAREDO 로고(빨강, 투명) · logo-white.png(핑크레드 바탕용) · logo-black.png / icon.png·icon-coach-*.png = 블랙 바탕+빨강 로고 앱 아이콘
 m/<이름-랜덤6자>/     회원 한 명의 PT 노트
   index.html          껍데기 (제목·og 태그에 회원 이름)
   data.js             회원 데이터 — 내용 수정은 이 파일만
@@ -53,9 +55,9 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 ## 새 회원 PT 노트 만들기
 0. **PT 시작일을 꼭 받기** (장동욱이 말해줌, "10월"처럼 달만 주면 그 달 15일로). 안 알려주면 물어볼 것. → data.js journey.start
 1. 주소: `m/<이름 로마자>-<랜덤 소문자·숫자 6자>/` (예: jisu-k3x9qa). 추측하기 어렵게.
-2. `m/jihun-g9kgdo/index.html` 복사(site.js·exicons.js·app.js 스크립트 태그 그대로) → 제목·og:title·헤더 문구의 이름, og:image 경로, theme-color(여 #C2185B) 바꾸기.
+2. `m/jihun-g9kgdo/index.html` 복사(site.js·exicons.js·app.js 스크립트 태그 그대로) → 제목·og:title·헤더 문구의 이름, og:image 경로, theme-color(여 #D6204F) 바꾸기.
 3. data.js 작성 (아래 형식). sex "F"면 핑크 테마·핑크 아이콘 자동.
-4. og.jpg 생성 (1200×630, 테마색 배경 + 로고 + "MY PT NOTE · 나만의 운동 노트" + "OOO 회원님" + 아래 띠 "GYMTOS 도당점 · 담당 장동욱 트레이너").
+4. og.jpg 생성: `python3 _tools/rebrand_jk.py` 가 모든 회원 og.jpg를 다시 그림(남 블랙+빨강 로고 / 여 핑크레드+흰 로고, "JANG KAREDO PT노트 · 나만의 운동 노트", "OOO 회원님", 아래 띠 "JANG KAREDO PT노트 · 담당 장동욱 트레이너") — 이미 바뀐 글자·색은 그대로라 여러 번 돌려도 됨. theme-color 남 #1A1A1E / 여 #D6204F.
 5. 위 회원 목록 표에 추가하고, coach-tqqnlh/members.js에도 주소 추가.
 
 ## data.js 형식
@@ -231,7 +233,8 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 루틴일지 꼬리말 문구(build_log.js FOOTER_MSGS, 메모리 routine-log-code)와 **똑같이 유지**. 루틴일지 문구를 추가·수정하면 여기 QUOTES도 같이 고칠 것.
 - 맨 아래 3개(복습지용)는 PT 노트에만 있는 문구.
 
-## 뼈대 키트 — 다른 선생님께 공유 (2026-11-11 장동욱 "다른 선생님한테 그대로 공유 — 난 뼈대, 각자 테마")
+## 뼈대 키트 — 다른 선생님께 공유
+- (2026-11-11 브랜드 변경 뒤) 키트에는 JANG KAREDO 브랜드가 안 들어감: 로고는 옛 GYMTOS 로고(_tools/brand/gymtos_logo_old.png), 앱 아이콘은 글자 아이콘, 'JANG KAREDO' 글자는 GYMTOS/PT 노트로, rebrand_jk.py·brand 폴더 제외. 남으면 멈춤. (2026-11-11 장동욱 "다른 선생님한테 그대로 공유 — 난 뼈대, 각자 테마")
 - 같은 도당점 선생님들이 **각자 따로**(자기 GitHub 사이트·자기 구글 시트·자기 열쇠) 쓰도록, 회원 정보·개인 자료를 뺀 키트를 만들어 줌: `python3 _tools/build_kit.py <출력 폴더>` → `<출력>/pt-note-kit/` + `pt-note-kit.zip`.
 - 키트에서 빠지는 것: 회원 14명 폴더·영상, PT 안내서 사진(트레이너·비포애프터·인바디·화면 그림 → guide/placeholder.svg), 자격·경력(→ [자격 n]·[경력]), 창고 주소·열쇠 지문(→ 빈칸·PUT_YOUR_KEY_HASH_HERE), Apps Script 프로젝트·슬라이드 링크, 회원 이름·주소(주석·CLAUDE.md까지 OO로). 가격표는 같은 지점이라 그대로. 끝에 비밀·회원 이름이 남았으면 멈춤.
 - 키트에 들어가는 것: 사이트 코드 전부 + 가상 샘플 회원 홍길동(m/sample-k7d2qx, 루틴·식단) + coach-sample/(선생님 페이지·안내서) + README.md(선생님용) + CLAUDE.md(맨 위 '처음 세팅' 8단계·'테마 바꾸는 곳' + 이 설명서를 일반화한 운영 설명) + _tools/make_key.py.

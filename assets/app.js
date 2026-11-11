@@ -1,4 +1,4 @@
-/* GYMTOS 도당점 회원 홈페이지 — window.MEMBER(data.js)를 읽어 화면을 그림 */
+/* JANG KAREDO 회원 홈페이지 — window.MEMBER(data.js)를 읽어 화면을 그림 */
 (function () {
   "use strict";
   var M = window.MEMBER;
@@ -8,7 +8,7 @@
   var THEME = M.sex === "F" ? "F" : "M";
   /* 사이트 기본 정보 (assets/site.js — 없으면 아래 기본값) */
   var SITE = window.SITE || {};
-  var TRN = SITE.trainer || "장동욱", BRAND = SITE.brand || "GYMTOS", BRANCH = SITE.branch || "도당점", BRN = BRAND + (BRANCH ? " " + BRANCH : "");
+  var TRN = SITE.trainer || "장동욱", BRAND = SITE.brand || "JANG KAREDO", BRANCH = SITE.branch || "PT노트", BRN = BRAND + (BRANCH ? " " + BRANCH : "");
   /* 루틴 고치기 (2026-11-10): 선생님이 폰에서 고친 루틴은 출석 창고(시트 "루틴")에 저장되고,
      회원 휴대폰에는 ptnote:<주소>:routine 으로 기억해 둠 → 열자마자 고친 루틴으로 보임.
      기준(base) = data.js 루틴의 version|updated. data.js 루틴이 새로 올라오면(기준이 달라지면) data.js가 이김 */
@@ -229,7 +229,7 @@
     var q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
     return '<div class="remember"><svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="17" fill="var(--primary)"/>' +
       '<rect x="7" y="13" width="4" height="8" rx="1.2" fill="#fff"/><rect x="23" y="13" width="4" height="8" rx="1.2" fill="#fff"/>' +
-      '<rect x="11" y="15.5" width="12" height="3" rx="1" fill="#F27BB0"/></svg><div><small>기억해요!</small><p>' + esc(q) + '</p></div></div>' +
+      '<rect x="11" y="15.5" width="12" height="3" rx="1" fill="#FF4F57"/></svg><div><small>기억해요!</small><p>' + esc(q) + '</p></div></div>' +
       '<footer class="foot"><span>' + esc(BRN) + '</span><span>PERSONAL TRAINING</span></footer>';
   }
   function head(num, title, sub, more) {
@@ -379,7 +379,7 @@
     /* 끝: 금색 카메라 = 바프 촬영 D-DAY */
     var ex = X(JT), ey = Y(bpMuscle(JT));
     var cam = '<g transform="translate(' + ex + ',' + (ey - 22) + ')"><circle r="14" fill="var(--gold-line)" class="bp-glow"/><circle r="14" fill="url(#' + gid + 'l)"/>' +
-      '<path d="M-7 -3.5 h3.5 l1.6 -2.4 h3.8 l1.6 2.4 h3.5 v9 h-14 Z" fill="none" stroke="var(--bp-ink, #17294B)" stroke-width="1.8" stroke-linejoin="round"/><circle cy="1" r="2.6" fill="none" stroke="var(--bp-ink, #17294B)" stroke-width="1.8"/></g>' +
+      '<path d="M-7 -3.5 h3.5 l1.6 -2.4 h3.8 l1.6 2.4 h3.5 v9 h-14 Z" fill="none" stroke="var(--bp-ink, #0E0E10)" stroke-width="1.8" stroke-linejoin="round"/><circle cy="1" r="2.6" fill="none" stroke="var(--bp-ink, #0E0E10)" stroke-width="1.8"/></g>' +
       '<text x="' + (ex - 19) + '" y="' + (ey - 18) + '" text-anchor="end" class="bp-dd">D-DAY</text>';
     return '<div class="jchart bp-chart"><svg viewBox="0 0 340 194" role="img" aria-label="바디프로필 ' + JTN + '개월 여정 그래프: ' + JST.map(function (s) { return s.no + '단계 ' + s.short + '(' + s.range + ')'; }).join(", ") + (now ? ', 지금 ' + (now.month || 1) + '개월차' : '') + '">' +
       defs + bands + '<line x1="26" y1="168" x2="326" y2="168" stroke="#fff" stroke-opacity=".3" stroke-width="1.5"/>' + ticks + path + sharp + cam + mk + '</svg>' +
@@ -980,7 +980,7 @@
     l.href = "https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&display=swap";
     document.head.appendChild(l);
   })();
-  var BG_N = "#1F3864", BG_P = "#DB4C8C", BG_G = "#A87508", BG_GOLD = "#E3B341", BG_GREY = "#C9D0DC";
+  var BG_N = "#1A1A1E", BG_P = "#E1141E", BG_G = "#A87508", BG_GOLD = "#E3B341", BG_GREY = "#C9D0DC";
   var BG_TIER = ["", "한 줄 테두리", "두 겹 테두리", "금빛 월계수", "금빛 리본"];
   var BG_SEEN = "ptnote:" + SLUG + ":badges";
   var BG_IC = {
@@ -1063,14 +1063,14 @@
   }
   function bgIcon(b, gap) {   /* 84×72 배지 그림 (동그라미 60) — 링은 SVG라서 이미지로 저장해도 그대로 */
     var on = !!b.on, t = b.tier, ring = on ? BG_GOLD : BG_GREY;
-    var base = on ? (t === 4 ? BG_GOLD : b.color) : "#E6EAF1", ic = on ? (t === 4 ? BG_N : "#FFFFFF") : "#A3AABA";
+    var base = on ? (t === 4 ? BG_GOLD : b.color) : "#ECE7E7", ic = on ? (t === 4 ? BG_N : "#FFFFFF") : "#A3AABA";
     var s = '<svg class="bdg-s" viewBox="0 0 84 72" width="84" height="72" aria-hidden="true">';
     if (t >= 3) s += '<g fill="' + ring + '">' + LAUREL + '</g>';
     if (t === 4) s += '<polygon points="31,50 40,55 34,71 28,65" fill="' + (on ? BG_P : BG_GREY) + '"/><polygon points="53,50 44,55 50,71 56,65" fill="' + (on ? BG_N : BG_GREY) + '"/>';
     if (t >= 2) s += '<circle cx="42" cy="32" r="33.75" fill="' + (gap || "#fff") + '" stroke="' + ring + '" stroke-width="2.5"/>';
     s += '<circle cx="42" cy="32" r="30" fill="' + base + '"/>';
     s += t === 1 ? '<circle cx="42" cy="32" r="28.75" fill="none" stroke="' + ring + '" stroke-width="2.5"/>'
-      : '<circle cx="42" cy="32" r="28.5" fill="none" stroke="' + (t === 4 ? (on ? "#F8E3A6" : "#F3F5F9") : ring) + '" stroke-width="3"/>';
+      : '<circle cx="42" cy="32" r="28.5" fill="none" stroke="' + (t === 4 ? (on ? "#F8E3A6" : "#F5F3F3") : ring) + '" stroke-width="3"/>';
     if (b.kind !== "num") s += '<g transform="translate(' + bgT(b) + ') scale(' + bgSc(b) + ')" fill="none" stroke="' + ic + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + BG_IC[b.kind] + '</g>';
     if (t === 4 && on) s += '<g transform="translate(64 0)"><path class="bdg-spark" d="M7 0 L8.4 5.6 L14 7 L8.4 8.4 L7 14 L5.6 8.4 L0 7 L5.6 5.6 Z" fill="' + BG_GOLD + '"/></g>' +
       '<g transform="translate(2 50)"><path class="bdg-spark s2" d="M4 0 L4.8 3.2 L8 4 L4.8 4.8 L4 8 L3.2 4.8 L0 4 L3.2 3.2 Z" fill="' + BG_GOLD + '"/></g>';
@@ -1140,7 +1140,7 @@
   function showBadgePop(b, extra, L) {
     var got = L.filter(function (x) { return x.on; }).length, nx = bgNextOf(b, L);
     var hint = nx ? '다음은 <b>' + esc(nx.label) + '</b> · ' + BG_TIER[nx.tier] + ' 배지(Lv.' + nx.tier + ')예요!' : b.line ? '이 줄의 마지막 배지까지 받았어요!' : '';
-    var conf = "", cols = ["#E3B341", "#F27BB0", "#5BD08A", "#FFFFFF", "#8FB1FF"];
+    var conf = "", cols = ["#E3B341", "#FF4F57", "#5BD08A", "#FFFFFF", "#8FB1FF"];
     for (var i = 0; i < 22; i++) {
       conf += '<i style="left:' + (4 + (i * 41) % 92) + '%;background:' + cols[i % 5] + ';animation-delay:' + ((i * 0.13) % 1.4).toFixed(2) + 's;animation-duration:' + (2.4 + (i % 4) * 0.35).toFixed(2) + 's' +
         (i % 3 === 0 ? ';border-radius:50%;width:8px;height:8px' : '') + '"></i>';
@@ -1313,7 +1313,7 @@
         return '<div class="rp-ibr"><span>' + (i + 1) + '위 · ' + t.name + '</span><b>' + t.n + '<small> 회</small></b></div>';
       }).join("") : '<p>출석하면 여기에 쌓여요</p>') + '</div>';
     }
-    var bdgs = R.badges.slice(0, 4).map(function (b) { return bgIcon(b, "#17294B"); }).join("");
+    var bdgs = R.badges.slice(0, 4).map(function (b) { return bgIcon(b, "#0E0E10"); }).join("");
     return '<div class="rp" id="rp"><i class="rp-stripe"></i><i class="rp-c1"></i><i class="rp-c2"></i>' +
       '<div class="rp-top"><div class="rp-brand"><b>' + esc(BRAND) + '</b><span>' + esc(BRANCH) + '</span></div><span class="rp-k">MONTHLY REPORT · ' + R.y + '. ' + pad2(R.mo) + '</span></div>' +
       '<div class="rp-title"><span>' + esc(M.name) + ' 회원님의</span><h2>' + R.mo + '월 운동 리포트</h2>' + (R.live ? '<em>' + R.upto + ' 기준 · 진행 중</em>' : '') + '</div>' +
@@ -1380,7 +1380,7 @@
       holder.appendChild(c); document.body.appendChild(holder);
       var fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
       fontsReady.then(loadH2C).then(function (h2c) {
-        return h2c(c, { scale: 1, width: 1080, height: 1350, backgroundColor: "#0F1B33", useCORS: true, logging: false });
+        return h2c(c, { scale: 1, width: 1080, height: 1350, backgroundColor: "#121214", useCORS: true, logging: false });
       }).then(function (cv) {
         holder.remove();
         cv.toBlob(function (blob) {

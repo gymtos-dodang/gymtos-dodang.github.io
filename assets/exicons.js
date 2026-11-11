@@ -336,8 +336,8 @@
 
   /* ---------- 그리기 ---------- */
   var STY = {
-    M: { tile: "#ECEFF5", fig: "#1F3864", eq: "#8792A8", eq2: "#C5CCDA", floor: "#C5CCDA", hl: "#E0508F" },
-    F: { tile: "#FBEAF1", fig: "#C2185B", eq: "#A9909C", eq2: "#E3C9D4", floor: "#E3C9D4", hl: "#1F3864" }
+    M: { tile: "#F1ECEC", fig: "#1A1A1E", eq: "#958A8B", eq2: "#D2C8C9", floor: "#D2C8C9", hl: "#E1141E" },
+    F: { tile: "#FBEAF1", fig: "#D6204F", eq: "#A9909C", eq2: "#E3C9D4", floor: "#E3C9D4", hl: "#1A1A1E" }
   };
   function pose(ex, t) {
     var P = {}, k;
