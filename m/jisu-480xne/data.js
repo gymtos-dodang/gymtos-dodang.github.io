@@ -8,6 +8,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 11", title: "자세 복습지 2개가 올라왔어요", link: "forms",
+      body: "리버스 펙덱 · 숄더 프레스 머신! 오늘 수업 영상으로 만들었어요. 리버스 펙덱은 루틴 월·수요일 종목에서도 바로 열려요." },
     { date: "2026. 11. 6", title: "루틴이 v7로 바뀌었어요", link: "routine-wed",
       body: "수요일 어깨 메인이 덤벨 숄더 프레스로 바뀌었어요. 사이드 레터럴 레이즈는 2kg로 시작해서 마지막 세트에 4kg로 올려요. 종목을 누르면 자세 복습지가 열려요!" },
     { date: "2026. 11. 6", title: "자세 복습지 3개가 올라왔어요",
@@ -20,6 +22,60 @@ window.MEMBER = {
 
   /* 자세 복습지 (최신이 위) */
   forms: [
+    {
+      id: "reverse-pec-deck",
+      dir: "media/form-reverse-pec-deck/",
+      date: "2026. 11. 11 (수)",
+      exercise: "리버스 펙덱",
+      exercise_en: "Reverse Pec Deck",
+      part: "어깨 · 등",
+      targets: ["후면 삼각근 (뒷어깨)", "능형근 · 중부 승모근"],
+      benefit: "뒷어깨와 날개뼈 사이를 채워서 말린 어깨가 펴지고, 뒤태 라인이 또렷해져요",
+      key_point: "손이 아니라 팔꿈치로 옆으로 크게 벌리고, 어깨는 내린 채!",
+      good_points: [
+        { title: "몸통과 일자까지 벌렸어요", desc: "팔을 옆으로 쭉 벌려서 몸통과 한 줄이 될 때까지 보내 뒷어깨가 끝까지 일했어요" },
+        { title: "팔꿈치 각도를 유지했어요", desc: "벌리고 모을 때 팔을 굽혔다 폈다 하지 않아서 팔이 아니라 어깨로 움직였어요" },
+        { title: "가슴을 패드에 붙였어요", desc: "상체가 뒤로 빠지지 않고 앉은 자세 그대로라 반동 없이 반복했어요" }
+      ],
+      primary_muscles: [{ name: "후면 삼각근", where: "어깨 뒤쪽" }],
+      secondary_muscles: "능형근 · 중부 승모근 · 극하근 · 소원근",
+      feel_good: "어깨 뒤쪽과 날개뼈 사이가 뻐근해요",
+      feel_stop: "목·승모근만 뻐근하거나, 어깨 앞이 찌릿해요",
+      steps: [
+        { title: "준비", desc: "가슴을 패드에 붙이고 손잡이를 어깨 높이로 잡아요. 팔꿈치는 살짝 굽히고 어깨는 아래로", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "벌리기", desc: "팔꿈치로 큰 원을 그리듯 옆으로! 팔이 몸통과 일자가 될 때까지 벌려요", chip: "1~2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "천천히 모으기", desc: "버티면서 앞으로 천천히. 손잡이가 부딪히기 전에 다시 벌려요", chip: "2~3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["가슴은 패드에 붙이기", "팔꿈치 각도는 처음 그대로", "어깨는 아래로 내린 채"],
+      dont: ["어깨를 귀 쪽으로 으쓱하기", "몸을 뒤로 젖혀 반동 쓰기", "손잡이를 앞에서 쾅 부딪히기"]
+    },
+    {
+      id: "shoulder-press-machine",
+      dir: "media/form-shoulder-press-machine/",
+      date: "2026. 11. 11 (수)",
+      exercise: "숄더 프레스 머신",
+      exercise_en: "Shoulder Press Machine",
+      part: "어깨",
+      targets: ["삼각근 (앞·옆 어깨)", "삼두근 · 상부 승모근"],
+      benefit: "궤도가 정해져 있어서 어깨에만 집중하기 좋아요. 무게를 안전하게 올리며 어깨 볼륨을 채워줘요",
+      key_point: "손잡이는 어깨 높이까지 내리고, 등은 등받이에 딱 붙인 채 밀어 올린다!",
+      good_points: [
+        { title: "어깨 높이까지 충분히 내렸어요", desc: "손잡이를 어깨 옆까지 내려서 어깨가 넓은 범위로 일했어요" },
+        { title: "머리 위로 쭉 밀었어요", desc: "팔이 거의 펴질 때까지 밀어 올려서 한 번 한 번 끝까지 했어요" },
+        { title: "등이 등받이에 붙어 있었어요", desc: "허리를 젖히지 않고 상체가 고정돼서 어깨 힘으로만 밀었어요" }
+      ],
+      primary_muscles: [{ name: "삼각근 전면·측면", where: "어깨 앞과 옆, 동그란 부분" }],
+      secondary_muscles: "삼두근 · 상부 승모근 · 윗가슴",
+      feel_good: "어깨 앞·옆이 터질 듯 뻐근해요",
+      feel_stop: "허리가 찌릿하거나, 목·승모근만 뻐근해요",
+      steps: [
+        { title: "준비", desc: "손잡이가 어깨 높이에 오게 의자를 맞추고 앉아요. 등·허리는 등받이에 붙이고 가슴은 펴요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "밀어 올리기", desc: "어깨로 밀어 머리 위로! 팔꿈치는 끝까지 잠그지 말고 살짝 남겨요", chip: "1~2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "내리기", desc: "버티면서 어깨 높이까지 천천히. 무게가 쿵 내려앉기 전에 다시 밀어요", chip: "2~3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["등·허리는 등받이에 붙이기", "손잡이는 어깨 높이까지 내리기", "위에서 팔꿈치는 살짝 남기기"],
+      dont: ["허리를 젖히며 밀기", "어깨를 귀 쪽으로 으쓱하기", "무게를 쿵 내려놓고 쉬기"]
+    },
     {
       id: "db-lateral-raise",
       dir: "media/form-db-lateral-raise/",
