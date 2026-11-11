@@ -13,6 +13,7 @@
 ```
 index.html            짐토스 안내용 첫 화면 (회원 목록 없음)
 robots.txt, .nojekyll 검색 차단 / Jekyll 끔
+assets/site.js        사이트 기본 정보(2026-11-11): 트레이너 이름·센터·지점·사이트 주소·출석 창고 주소(att_api) — app.js·선생님 페이지가 읽음(회원 index.html·coach index.html에 script 태그)
 assets/style.css      공통 디자인 (남 네이비 / 여 핑크, data-sex 로 분기)
 assets/app.js         data.js를 읽어 화면을 그림 (아래 탭도 app.js가 그림: 홈·목표·루틴·복습지·식단·공지, 해시 주소 #home #goal #body(몸변화) #forms #form-<id> #routine #routine-mon~sun #diet #notice)
 assets/exicons.js     움직이는 운동 아이콘(SVG) — PT 노트 화면은 이걸 먼저 씀 (아래 '움직이는 운동 아이콘')
@@ -52,7 +53,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 ## 새 회원 PT 노트 만들기
 0. **PT 시작일을 꼭 받기** (장동욱이 말해줌, "10월"처럼 달만 주면 그 달 15일로). 안 알려주면 물어볼 것. → data.js journey.start
 1. 주소: `m/<이름 로마자>-<랜덤 소문자·숫자 6자>/` (예: jisu-k3x9qa). 추측하기 어렵게.
-2. `m/jihun-g9kgdo/index.html` 복사 → 제목·og:title·헤더 문구의 이름, og:image 경로, theme-color(여 #C2185B) 바꾸기.
+2. `m/jihun-g9kgdo/index.html` 복사(site.js·exicons.js·app.js 스크립트 태그 그대로) → 제목·og:title·헤더 문구의 이름, og:image 경로, theme-color(여 #C2185B) 바꾸기.
 3. data.js 작성 (아래 형식). sex "F"면 핑크 테마·핑크 아이콘 자동.
 4. og.jpg 생성 (1200×630, 테마색 배경 + 로고 + "MY PT NOTE · 나만의 운동 노트" + "OOO 회원님" + 아래 띠 "GYMTOS 도당점 · 담당 장동욱 트레이너").
 5. 위 회원 목록 표에 추가하고, coach-tqqnlh/members.js에도 주소 추가.

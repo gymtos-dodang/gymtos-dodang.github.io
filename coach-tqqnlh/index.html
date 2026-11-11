@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <link rel="stylesheet" href="/assets/style.css">
+<script src="/assets/site.js"></script>
 <style>
 .wrap { padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
 .sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -162,7 +163,7 @@ section.folded .fsum:not(:empty) { display: inline; }
 <main class="wrap">
   <div class="hero"><div class="hero-main"><div class="hero-l">
     <div class="eyebrow">MY MEMBERS <b>· 담당 회원 PT 노트</b></div>
-    <h1>장동욱 트레이너</h1>
+    <h1 id="trn">장동욱 트레이너</h1>
     <div class="en" id="sub">GYMTOS 도당점</div>
   </div></div></div>
 
@@ -238,7 +239,10 @@ section.folded .fsum:not(:empty) { display: inline; }
 <script>
 (function () {
   "use strict";
-  var API = "https://script.google.com/macros/s/AKfycbwtjTpk88xTWQcKXoaFX2qCYtKSzKoCOs-Us26k6QUbtKvewTaqJutJuA4RJjAmV-6bvA/exec";
+  var SITE = window.SITE || {}, BRN = (SITE.brand || "GYMTOS") + " " + (SITE.branch || "도당점");
+  if (SITE.trainer) document.getElementById("trn").textContent = SITE.trainer + " 트레이너";
+  document.title = "PT 노트 선생님 · " + BRN;
+  var API = SITE.att_api || "https://script.google.com/macros/s/AKfycbwtjTpk88xTWQcKXoaFX2qCYtKSzKoCOs-Us26k6QUbtKvewTaqJutJuA4RJjAmV-6bvA/exec";
   var LIST = window.COACH_MEMBERS || [];
   var DK = ["일", "월", "화", "수", "목", "금", "토"];
   try { sessionStorage.setItem("ptcoach", location.pathname); localStorage.setItem("ptcoach", location.pathname); sessionStorage.removeItem("ptdemo"); } catch (e) {}
@@ -262,7 +266,7 @@ section.folded .fsum:not(:empty) { display: inline; }
   var now = new Date(), today = ymd(now);
   document.getElementById("today").textContent = (now.getMonth() + 1) + "월 " + now.getDate() + "일 " + DK[now.getDay()] + "요일";
   document.getElementById("sAll").textContent = LIST.length;
-  document.getElementById("sub").textContent = "GYMTOS 도당점 · 담당 회원 " + LIST.length + "명";
+  document.getElementById("sub").textContent = BRN + " · 담당 회원 " + LIST.length + "명";
 
   function loadMember(slug) {
     return fetch("/m/" + slug + "/data.js", { cache: "no-store" }).then(function (r) { return r.text(); }).then(function (t) {
