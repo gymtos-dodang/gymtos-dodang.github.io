@@ -225,5 +225,11 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 루틴일지 꼬리말 문구(build_log.js FOOTER_MSGS, 메모리 routine-log-code)와 **똑같이 유지**. 루틴일지 문구를 추가·수정하면 여기 QUOTES도 같이 고칠 것.
 - 맨 아래 3개(복습지용)는 PT 노트에만 있는 문구.
 
+## 뼈대 키트 — 다른 선생님께 공유 (2026-11-11 장동욱 "다른 선생님한테 그대로 공유 — 난 뼈대, 각자 테마")
+- 같은 도당점 선생님들이 **각자 따로**(자기 GitHub 사이트·자기 구글 시트·자기 열쇠) 쓰도록, 회원 정보·개인 자료를 뺀 키트를 만들어 줌: `python3 _tools/build_kit.py <출력 폴더>` → `<출력>/pt-note-kit/` + `pt-note-kit.zip`.
+- 키트에서 빠지는 것: 회원 14명 폴더·영상, PT 안내서 사진(트레이너·비포애프터·인바디·화면 그림 → guide/placeholder.svg), 자격·경력(→ [자격 n]·[경력]), 창고 주소·열쇠 지문(→ 빈칸·PUT_YOUR_KEY_HASH_HERE), Apps Script 프로젝트·슬라이드 링크, 회원 이름·주소(주석·CLAUDE.md까지 OO로). 가격표는 같은 지점이라 그대로. 끝에 비밀·회원 이름이 남았으면 멈춤.
+- 키트에 들어가는 것: 사이트 코드 전부 + 가상 샘플 회원 홍길동(m/sample-k7d2qx, 루틴·식단) + coach-sample/(선생님 페이지·안내서) + README.md(선생님용) + CLAUDE.md(맨 위 '처음 세팅' 8단계·'테마 바꾸는 곳' + 이 설명서를 일반화한 운영 설명) + _tools/make_key.py.
+- 사이트 기능을 고친 뒤 키트를 다시 원하면 build_kit.py 다시 돌리면 최신으로 나옴. 새 개인 정보 종류가 생기면 build_kit.py의 SECRETS·MEMBER_NAMES·치환에도 추가.
+
 ## 커밋
 작성자: gymtos-dodang <gymtos-dodang@users.noreply.github.com>
