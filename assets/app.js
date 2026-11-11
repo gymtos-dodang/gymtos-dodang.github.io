@@ -2513,7 +2513,7 @@
   /* 뒤로 가기 (2026-11-12 장동욱 "태블릿·PC에서 종목 보다가 자세 복습지 누르면 뒤로가기가 없어서 다시 루틴 들어가야 함")
      본문 속 링크(루틴 → 복습지, 홈 → 루틴 요일, 리포트·배지 등)로 넘어가면 화면 위에 "‹ 뒤로 · 루틴" 버튼이 붙어 다님.
      누르면 직전 화면 + 보던 위치(스크롤)로 돌아감. 아래 탭·위 막대·나 탭 전환 칸을 누르면 새 출발이라 기록을 비움. */
-  var NAVS = [], NAV_BACK = null, ZOOM = null;
+  var NAVS = [], NAV_BACK = null, ZOOM = null, SOFT = 0;
   function zoomRun(view) {   /* 화면(view) 중 지금 보이는 부분을 누른 칸 크기·자리에서 시작해 화면 가득 커지게 */
     var z = ZOOM; ZOOM = null;
     if (!z || Date.now() - z.at > 1500 || !view.animate) return false;
@@ -2541,6 +2541,8 @@
     var to = a.getAttribute("href"), cur = location.hash || "#home";
     if (to === "#" || to === cur) return;
     if (a.closest(".tabs") || a.closest(".bar") || a.closest(".meseg")) { NAVS = []; return; }
+    /* 루틴 안에서 요일 바꾸기(일주일 한눈에 칸·로테이션 고르기)는 뒤로 버튼·커지는 효과 없이 그날 칸만 은은하게 (2026-11-12 "요일별 눌러서 들어가는 칸은 별로 — 은은하게") */
+    if (/^#routine/.test(cur) && /^#routine/.test(to)) { SOFT = Date.now(); return; }
     NAVS.push({ h: cur, y: window.scrollY });
     /* B안 (2026-11-12 "아이콘이 퍼지며 화면 들어가기 — B안으로"): 누른 칸 자리에서 다음 화면이 커지며 열림 → 그 칸 위치를 기억 */
     var zEl = a.closest(".th-tile, .card-link, .hw, .ex, .thero, .stamp, .ibstrip, .rp-home") || ((a.offsetHeight < 56) && a.closest(".panel, section")) || a;
@@ -2596,7 +2598,8 @@
     /* 화면 넘어갈 때 효과 D안 (2026-11-12 "D안으로 가자"): 칸들이 위에서부터 차례로 톡톡 올라옴 — 주소가 바뀔 때만(같은 화면 다시 그리기는 X) */
     var curH = location.hash || "#home";
     var hashChanged = route.lastH !== undefined && route.lastH !== curH;
-    if (route.lastH !== undefined && route.lastH !== curH && !(ZOOM && Date.now() - ZOOM.at < 1500)) {
+    var soft = SOFT && Date.now() - SOFT < 1500; SOFT = 0;
+    if (route.lastH !== undefined && route.lastH !== curH && !soft && !(ZOOM && Date.now() - ZOOM.at < 1500)) {
       view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");
       clearTimeout(route.enterT); route.enterT = setTimeout(function () { view.classList.remove("enter"); }, 900);
     }
@@ -2638,6 +2641,10 @@
       window.scrollTo(0, 0);
     }
     if (ZOOM) { if (hashChanged) zoomRun(view); else ZOOM = null; }
+    if (soft && hashChanged) {
+      var dEl = document.getElementById("day");
+      if (dEl && dEl.animate) { try { if (!matchMedia("(prefers-reduced-motion: reduce)").matches) dEl.animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], { duration: 280, easing: "ease-out" }); } catch (e) {} }
+    }
   }
   window.addEventListener("hashchange", route);
   route();
