@@ -2540,6 +2540,14 @@
       setTimeout(function () { if (location.hash === was) location.hash = want; }, 350);
     });
   }
+  function tabInd() {   /* 아래 탭 밑 빨간 막대 — 고른 탭으로 미끄러져 감 (D안) */
+    var tin = document.querySelector(".tabs-in"); if (!tin) return;
+    var bar = tin.querySelector(".tind"); if (!bar) { bar = document.createElement("i"); bar.className = "tind"; bar.setAttribute("aria-hidden", "true"); tin.appendChild(bar); }
+    var a = tin.querySelector('a[aria-current="page"]');
+    if (!a) { bar.style.opacity = "0"; return; }
+    bar.style.opacity = "1"; bar.style.transform = "translateX(" + Math.round(a.offsetLeft + a.offsetWidth / 2 - 11) + "px)";
+  }
+  window.addEventListener("resize", function () { tabInd(); });
   function route() {
     var hsh = (location.hash || "").replace(/^#/, "");
     var navTop = NAVS[NAVS.length - 1];
@@ -2565,9 +2573,17 @@
     if (tab !== "routine") view.removeAttribute("data-day");
     view.innerHTML = html + rtSaveBar();
     view.setAttribute("data-tab", tab);
+    /* 화면 넘어갈 때 효과 D안 (2026-11-12 "D안으로 가자"): 칸들이 위에서부터 차례로 톡톡 올라옴 — 주소가 바뀔 때만(같은 화면 다시 그리기는 X) */
+    var curH = location.hash || "#home";
+    if (route.lastH !== undefined && route.lastH !== curH) {
+      view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");
+      clearTimeout(route.enterT); route.enterT = setTimeout(function () { view.classList.remove("enter"); }, 900);
+    }
+    route.lastH = curH;
     Array.prototype.forEach.call(document.querySelectorAll(".tabs a"), function (a) {
       if (a.getAttribute("data-tab") === (/^(goal|body|notice)$/.test(tab) ? "me" : tab)) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
+    tabInd();
     alignText(document);
     if (/^form-/.test(hsh) && !DEMO) lsAdd(FOPEN_KEY, [hsh.slice(5)]);
     litApply(tab);
@@ -2606,7 +2622,7 @@
   cmemoFill();
   (function () {   /* 로딩 화면 걷기 — 앱 아이콘으로 열었을 때 0.6초는 보이게, 그 밖(아이패드 칸 안·안내서 데모)은 바로 */
     var t0 = (window.performance && performance.timing && performance.timing.navigationStart) || Date.now();
-    var wait = window.self !== window.top || DEMO ? 0 : Math.max(0, 600 - (Date.now() - t0));
+    var wait = window.self !== window.top || DEMO ? 0 : Math.max(0, 1000 - (Date.now() - t0));
     setTimeout(function () { document.body.classList.add("ready"); }, wait);
   })();
   nDot();

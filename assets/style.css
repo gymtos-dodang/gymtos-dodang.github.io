@@ -1318,3 +1318,26 @@ html[data-sex="F"] body::after { background-image: url("icon-f-512.png"); }
 html[data-sex] body.ready::before, html[data-sex] body.ready::after { opacity: 0; visibility: hidden; pointer-events: none; animation: none; }
 html[data-sex] body.ready::after { transform: scale(.92); }
 @keyframes spOut { to { opacity: 0; visibility: hidden; } }
+
+/* 화면 넘어갈 때 효과 D안 (2026-11-12) — 칸이 위에서부터 차례로 올라옴 + 아래 탭 빨간 막대 이동 */
+.view.enter > * { animation: vIn .42s cubic-bezier(.2, .8, .2, 1) both; }
+.view.enter > *:nth-child(2) { animation-delay: .04s; } .view.enter > *:nth-child(3) { animation-delay: .08s; }
+.view.enter > *:nth-child(4) { animation-delay: .12s; } .view.enter > *:nth-child(5) { animation-delay: .16s; }
+.view.enter > *:nth-child(6) { animation-delay: .2s; } .view.enter > *:nth-child(n+7) { animation-delay: .24s; }
+.view.enter > .navback { animation: none; }
+@keyframes vIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.tabs-in { position: relative; }
+.tind { position: absolute; left: 0; bottom: 1px; width: 22px; height: 3px; border-radius: 2px; background: var(--seal); opacity: 0; pointer-events: none;
+  transition: transform .38s cubic-bezier(.2, .8, .2, 1), opacity .2s; }
+@media (prefers-reduced-motion: reduce) { .view.enter > * { animation: none; } .tind { transition: none; } }
+
+/* 로딩 화면 감성 다듬기 (2026-11-12 "진입 로딩화면 더 감성적으로") — 문구 없이: 테마빛 은은한 번짐 + 아이콘이 살포시 떠오르고 숨쉬기 + 글자 천천히 또렷 → 나갈 땐 아이콘이 살짝 커지며 사라짐(아이폰 앱 여는 느낌) */
+html[data-sex] body::before { background: radial-gradient(42% 30% at 50% 46%, color-mix(in srgb, var(--seal, #E1141E) 14%, transparent), transparent 70%), var(--page, #F2F2F4);
+  animation: spTxt .6s ease .2s both, spOut .35s ease 4s forwards; }
+html[data-sex] body::after { animation: spIcon .6s cubic-bezier(.2, .8, .2, 1) both, spBreath 2.6s ease-in-out .6s infinite, spOut .35s ease 4s forwards;
+  box-shadow: 0 18px 40px -14px color-mix(in srgb, var(--seal, #E1141E) 55%, transparent), 0 2px 6px rgba(0, 0, 0, .12); }
+html[data-sex] body.ready::after { transform: scale(1.08); }
+@keyframes spIcon { from { opacity: 0; transform: translateY(10px) scale(.86); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes spBreath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.035); } }
+@keyframes spTxt { from { color: transparent; letter-spacing: .3em; } to { color: var(--ink, #1A1A1E); letter-spacing: -.01em; } }
+@media (prefers-reduced-motion: reduce) { html[data-sex] body::before, html[data-sex] body::after { animation: spOut .35s ease 4s forwards; } }
