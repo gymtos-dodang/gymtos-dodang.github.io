@@ -143,6 +143,18 @@
   }
   EX.lat_pulldown = pulldown({ elL: [31, 33], haL: [27, 19] }, { elL: [25, 57], haL: [28, 42] }, function (y) { return L("eq", [[16, y + 6], [23, y], [77, y], [84, y + 6]], 3.8); });
   EX.underhand_pulldown = pulldown({ elL: [37, 33], haL: [39, 19] }, { elL: [31, 58], haL: [39, 44] }, function (y) { return L("eq", [[28, y], [72, y]], 3.8); });
+  /* 어시스트 친업(2026-11-11 최지훈님 영상): 앞모습 — 무릎 받침에 무릎 꿇고 머리 위 손잡이를 잡은 채, 몸을 끌어올려 턱이 손잡이 위로. 받침이 몸과 같이 올라감 */
+  EX.assisted_chin_up = { t: .35,
+    p0: mir({ head: [50, 22], shL: [40, 36], elL: [34, 23], haL: [31, 10], hipL: [44, 62], knL: [42, 76], ftL: [41, 84], toeL: [38, 85] }),
+    p1: mir({ head: [50, 8], shL: [40, 21], elL: [26, 22], haL: [31, 10], hipL: [44, 47], knL: [42, 61], ftL: [41, 69], toeL: [38, 70] }),
+    bones: FRONT, hl: latPolys,
+    back: function (P) {
+      var ky = P.knL[1] + 4.5;
+      return [floor(10, 90), L("eq2", [[15, 4], [15, 93]], 3.5), L("eq2", [[85, 4], [85, 93]], 3.5), L("eq2", [[15, 5], [85, 5]], 3),
+        L("eq", [[15, 10], [26, 10]], 3), L("eq", [[85, 10], [74, 10]], 3),
+        L("eq2", [[50, ky], [50, 93]], 3), L("eq2", [[32, ky], [68, ky]], 6)];
+    },
+    front: function (P) { return [grip(P.haL, 4.5), grip(P.haR, 4.5)]; } };
   /* 뉴텍 버티컬 풀다운(원판식): 옆모습 — 머리 위 손잡이를 당기면 뒤쪽 원판이 올라가는 지렛대 */
   EX.vertical_pulldown = { t: .85, p0: ext(sit(40, 66), { el: [47, 24], ha: [54, 9] }), p1: { el: [48, 55], ha: [54, 39] }, bones: SIDE,
     fx: function (P) { P.pv = [27, 21]; P.bk = [P.pv[0] + (P.pv[0] - P.ha[0]) * .46, P.pv[1] + (P.pv[1] - P.ha[1]) * .46]; },

@@ -1,5 +1,7 @@
 """스미스 머신 아이콘 등 추가분 (2026-11-05, 최용민·고은성 그룹 PT): 스미스 벤치·로우·숄더, 스미스 슈러그, 밴드 푸쉬업
-python3 make_icons_smith.py <폴더> "#1F3864"   — make_icons.py와 같은 그림 규칙, 새 아이콘만 저장"""
+python3 make_icons_smith.py <폴더> "#1F3864" [이름,이름]  — make_icons.py와 같은 그림 규칙, 새 아이콘만 저장 (세 번째 칸에 이름을 주면 그것만)
+2026-11-11 어시스트 친업(assisted_chin_up) 추가 — 남 "#1A1A1E" / 여 "#D6204F"
+"""
 import sys, math
 import make_icons as mi
 from make_icons import Canvas, fk, side, draw_side, draw_front, floor, pill, dumbbell, FAR, GRAY, GRAYL, WHITE, LW, TH, SH, FT, UA, FA, NECKH, TORSO
@@ -131,14 +133,37 @@ def band_push_up(c):
     c.arrow((38, 42), (38, 57))
 
 
+def assisted_chin_up(c):
+    # 어시스트 친업 (2026-11-11 최지훈님): 앞모습 — 무릎 받침에 무릎 꿇고, 머리 위 손잡이를 잡고 몸을 끌어올림
+    floor(c, 5, 6, 94)
+    for x in (12, 88):
+        c.stroke([(x, 5), (x, 96)], 3.0, GRAYL)
+    c.stroke([(12, 94), (88, 94)], 3.0, GRAYL)
+    for x0, x1 in ((12, 27), (88, 73)):
+        c.stroke([(x0, 86), (x1, 86)], 3.0, GRAY)
+    c.stroke([(50, 5), (50, 14)], 3.0, GRAY)
+    pill(c, (33, 15.5), (67, 15.5), 4.6)
+    head, Ls, Rs, Lh, Rh = (50, 74), (40.5, 62), (59.5, 62), (44, 38), (56, 38)
+    arms = [((28, 71), (29, 85)), ((72, 71), (71, 85))]
+    legs = [((42, 20.5), (41.5, 14), (37, 13.5)), ((58, 20.5), (58.5, 14), (63, 13.5))]
+    draw_front(c, head, Ls, Rs, Lh, Rh, arms, legs)
+    for x in (29, 71):
+        c.rrect(x - 2.2, 81, x + 2.2, 91, 1.4, fill=GRAY)
+    c.arrow((21, 40), (21, 56))
+    c.arrow((79, 40), (79, 56))
+
+
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
        "smith_shrug": smith_shrug, "band_push_up": band_push_up,
-       "incline_db_curl": incline_db_curl}
+       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up}
 
 
 if __name__ == "__main__":
     out = sys.argv[1]
+    only = sys.argv[3].split(",") if len(sys.argv) > 3 else None   # 예: ... "#1A1A1E" assisted_chin_up  (그 아이콘만 다시 그림)
     for name, fn in NEW.items():
+        if only and name not in only:
+            continue
         c = Canvas()
         fn(c)
         path = f"{out}/{name}.png"

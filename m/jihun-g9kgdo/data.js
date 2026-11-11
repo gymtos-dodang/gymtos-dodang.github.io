@@ -8,6 +8,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 11", title: "등 운동 자세 복습지 4개가 올라왔어요",
+      body: "랫풀다운 · 어시스트 친업 · 해머스트렝스 로우로우 · 리버스 펙덱 플라이. 오늘 수업 영상으로 만들었어요. 등 하는 날 들어가기 전에 꼭 한 번 보세요!", link: "forms" },
     { date: "2026. 11. 11", title: "스미스 인클라인 프레스 자세 복습지가 올라왔어요",
       body: "월요일 수업 영상으로 만들었어요. 바가 레일을 따라 움직여서 윗가슴에만 집중하기 좋은 종목이에요. 하기 전에 한 번 보고 들어가세요!", link: "form-smith-incline-press" },
     { date: "2026. 11. 7", title: "팔 운동 자세 복습지 4개가 올라왔어요",
@@ -26,6 +28,116 @@ window.MEMBER = {
 
   /* 자세 복습지 (최신이 위) */
   forms: [
+    {
+      id: "lat-pulldown",
+      dir: "media/form-lat-pulldown/",
+      date: "2026. 11. 11 (수)",
+      exercise: "랫풀다운",
+      exercise_en: "Lat Pulldown",
+      part: "등",
+      targets: ["광배근 (등 날개)", "대원근 · 이두근"],
+      benefit: "등을 옆으로 넓혀서 어깨는 넓고 허리는 가늘어 보이는 V라인을 만들어줘요",
+      key_point: "손이 아니라 팔꿈치로, 가슴 위쪽까지 끌어내린다!",
+      good_points: [
+        { title: "허벅지 패드로 몸을 고정했어요", desc: "당길 때 엉덩이가 뜨지 않아 등에만 힘이 들어갔어요" },
+        { title: "위에서 팔을 끝까지 폈어요", desc: "올라갈 때 등이 충분히 늘어나서 운동 범위가 넓었어요" },
+        { title: "가슴을 펴고 살짝 뒤로 기댔어요", desc: "손잡이가 얼굴 앞으로 곧게 내려와 광배근으로 당겼어요" }
+      ],
+      primary_muscles: [{ name: "광배근", where: "겨드랑이 아래 옆구리 쪽 등" }],
+      secondary_muscles: "대원근 · 능형근 · 이두근 · 후면 삼각근",
+      feel_good: "겨드랑이 아래 옆구리 쪽 등이 뻐근해요",
+      feel_stop: "팔(이두)만 터질 것 같거나, 목·어깨 위쪽이 뭉쳐요",
+      steps: [
+        { title: "준비", desc: "허벅지 패드를 딱 맞게 내리고, 손잡이를 잡아 팔을 쭉 편 채 가슴을 살짝 펴요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "당기기", desc: "팔꿈치를 옆구리 쪽으로 끌어내리며 손잡이를 가슴 위쪽(쇄골 아래)까지", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "올려 보내기", desc: "등이 늘어나는 느낌으로 천천히, 팔이 다 펴질 때까지 올려요", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["가슴을 펴고 살짝 뒤로 기대기", "팔꿈치를 옆구리 쪽으로 끌어내리기", "올라갈 땐 천천히, 팔 끝까지 펴기"],
+      dont: ["몸을 크게 뒤로 젖혀 반동 쓰기", "어깨를 귀 쪽으로 으쓱 올리기", "손잡이를 목 뒤로 당기기"]
+    },
+    {
+      id: "assisted-chin-up",
+      dir: "media/form-assisted-chin-up/",
+      date: "2026. 11. 11 (수)",
+      exercise: "어시스트 친업",
+      exercise_en: "Assisted Chin-up",
+      part: "등",
+      targets: ["광배근 (등 날개)", "이두근 · 능형근"],
+      benefit: "받침이 몸무게를 덜어줘서, 혼자서는 어려운 턱걸이를 바른 자세로 연습할 수 있어요",
+      key_point: "턱이 손잡이 위로! 내려올 땐 버티면서 천천히",
+      good_points: [
+        { title: "아래에서 팔을 끝까지 폈어요", desc: "매번 매달린 자세에서 시작해서 등이 충분히 늘어났어요" },
+        { title: "턱이 손잡이 높이까지 올라갔어요", desc: "끝까지 당겨 올려서 등 근육을 다 썼어요" },
+        { title: "몸이 흔들리지 않았어요", desc: "무릎을 받침에 붙이고 곧게 올라가서 반동 없이 당겼어요" }
+      ],
+      primary_muscles: [{ name: "광배근", where: "겨드랑이 아래 옆구리 쪽 등" }],
+      secondary_muscles: "이두근 · 능형근 · 대원근 · 후면 삼각근",
+      feel_good: "겨드랑이 아래 등과 날개뼈 사이가 뻐근해요",
+      feel_stop: "팔(이두)만 타거나, 어깨 앞이 찌릿해요",
+      steps: [
+        { title: "준비", desc: "받침 무게를 정하고(무거울수록 쉬워요) 손잡이를 잡은 뒤, 무릎을 받침에 올려 팔을 쭉 펴고 매달려요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "올라가기", desc: "가슴을 손잡이 쪽으로 내밀며 팔꿈치를 옆구리로 끌어내려, 턱이 손잡이 위로", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "내려가기", desc: "버티면서 천천히, 팔이 다 펴질 때까지 내려와요", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["어깨를 아래로 내리고 시작하기", "가슴을 손잡이 쪽으로 내밀기", "내려올 때 3초 버티기"],
+      dont: ["다리로 받침을 밀어 반동 쓰기", "어깨를 귀 쪽으로 으쓱 올리기", "반만 내려왔다 다시 올라가기"]
+    },
+    {
+      id: "hammer-low-row",
+      dir: "media/form-hammer-low-row/",
+      date: "2026. 11. 11 (수)",
+      exercise: "해머스트렝스 로우로우",
+      also: ["해머 로우로우", "로우로우"],
+      exercise_en: "Hammer Strength Low Row",
+      part: "등",
+      targets: ["광배근 아래쪽", "능형근 · 승모근 중부"],
+      benefit: "낮은 곳에서 골반 쪽으로 당겨서, 등 아래쪽까지 꽉 찬 두꺼운 등을 만들어줘요",
+      key_point: "가슴은 패드에 붙이고, 팔꿈치를 골반 쪽 뒤로 보낸다!",
+      good_points: [
+        { title: "가슴을 패드에 붙였어요", desc: "상체가 앞뒤로 흔들리지 않고 등으로만 당겼어요" },
+        { title: "팔꿈치를 몸 뒤까지 보냈어요", desc: "끝까지 당겨서 등 가운데가 꽉 조여졌어요" },
+        { title: "보낼 때 팔을 다 폈어요", desc: "등이 늘어나는 구간까지 써서 운동 범위가 넓었어요" }
+      ],
+      primary_muscles: [{ name: "광배근", where: "겨드랑이 아래~허리 위 등" }],
+      secondary_muscles: "능형근 · 승모근 중부 · 후면 삼각근 · 이두근",
+      feel_good: "허리 위 등 아래쪽과 날개뼈 사이가 뻐근해요",
+      feel_stop: "허리가 아프거나, 팔뚝만 타요",
+      steps: [
+        { title: "준비", desc: "의자 높이를 맞춰 가슴을 패드에 붙이고, 손잡이를 잡아 팔을 쭉 펴요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "당기기", desc: "팔꿈치를 몸통 옆에 붙인 채 골반 쪽 뒤로 끌어당기며 날개뼈를 모아요", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "보내기", desc: "등이 앞으로 늘어나는 느낌으로 천천히, 팔이 다 펴질 때까지", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["가슴은 끝까지 패드에 붙이기", "팔꿈치는 몸통 옆으로 붙여 당기기", "당긴 끝에서 날개뼈 1초 꽉"],
+      dont: ["상체를 뒤로 젖혀 당기기", "어깨를 귀 쪽으로 으쓱 올리기", "손목을 꺾어 손으로만 당기기"]
+    },
+    {
+      id: "reverse-pec-deck",
+      dir: "media/form-reverse-pec-deck/",
+      date: "2026. 11. 11 (수)",
+      exercise: "리버스 펙덱 플라이",
+      also: ["리버스 펙덱"],
+      exercise_en: "Reverse Pec Deck Fly",
+      part: "어깨·등",
+      targets: ["후면 삼각근 (어깨 뒤)", "능형근 · 승모근 중부"],
+      benefit: "잘 안 쓰는 어깨 뒤를 채워서 어깨가 입체적으로 보이고, 굽은 어깨도 펴줘요",
+      key_point: "팔은 길게 편 채, 크게 반원을 그리며 뒤로!",
+      good_points: [
+        { title: "가슴을 패드에 붙였어요", desc: "상체가 고정돼서 어깨 뒤에만 힘이 들어갔어요" },
+        { title: "팔을 길게 편 채로 벌렸어요", desc: "팔꿈치가 크게 굽지 않아 어깨 뒤를 정확히 썼어요" },
+        { title: "돌아올 때 천천히 버텼어요", desc: "손잡이가 쾅 붙지 않게 조절해서 힘이 계속 유지됐어요" }
+      ],
+      primary_muscles: [{ name: "후면 삼각근", where: "어깨 뒤쪽 동그란 부분" }],
+      secondary_muscles: "능형근 · 승모근 중부",
+      feel_good: "어깨 뒤쪽이 화끈거려요",
+      feel_stop: "목·어깨 위쪽(승모)만 뭉치거나, 어깨 앞이 찌릿해요",
+      steps: [
+        { title: "준비", desc: "손잡이가 어깨 높이에 오게 의자를 맞추고, 가슴을 패드에 붙인 채 손잡이를 잡아 팔을 앞으로 쭉", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "벌리기", desc: "팔꿈치를 살짝 굽힌 그대로, 크게 반원을 그리며 몸 옆까지 뒤로", chip: "2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "돌아오기", desc: "버티면서 천천히 앞으로, 손잡이끼리 닿기 직전까지", chip: "3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["손잡이는 어깨 높이에 맞추기", "팔꿈치 각도는 고정한 채 벌리기", "어깨는 내리고 목은 길게"],
+      dont: ["어깨를 으쓱 올려 승모로 당기기", "상체를 패드에서 떼고 젖히기", "반동으로 휙 벌리기"]
+    },
     {
       id: "smith-incline-press",
       dir: "media/form-smith-incline-press/",
