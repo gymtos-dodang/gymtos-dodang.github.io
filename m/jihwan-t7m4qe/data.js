@@ -8,6 +8,8 @@ window.MEMBER = {
 
   /* 공지 (최신이 위) */
   notices: [
+    { date: "2026. 11. 11", title: "하체·가슴 복습지 4개가 올라왔어요", link: "forms",
+      body: "스미스 인클라인 프레스 · 이너타이 · 아웃타이 머신 · 레그프레스! 하체가 받쳐줘야 바프 몸이 완성돼요. 수·토 하체 루틴 종목에서도 바로 열려요." },
     { date: "2026. 11. 9", title: "등 복습지 3개가 올라왔어요", link: "forms",
       body: "언더그립 시티드 로우 · 해머스트렝스 로우로우 · 리버스 펙덱! 넓은 등이 바프 V라인을 만들어요. 월·목 등 루틴 종목에서도 바로 열려요." },
     { date: "2026. 11. 6", title: "어깨 복습지 2개가 올라왔어요", link: "forms",
@@ -24,6 +26,114 @@ window.MEMBER = {
 
   /* 자세 복습지 (최신이 위) */
   forms: [
+    {
+      id: "leg-press",
+      dir: "media/form-leg-press/",
+      date: "2026. 11. 11 (수)",
+      exercise: "레그프레스",
+      exercise_en: "Leg Press",
+      part: "하체",
+      targets: ["대퇴사두근 (앞허벅지)", "대둔근 · 내전근 · 햄스트링"],
+      benefit: "등을 기대고 하니까 허리 부담 없이 하체를 무겁게 쓸 수 있어요. 허벅지 볼륨을 키워 상체와 균형 맞는 바프 몸을 만들어요",
+      key_point: "무릎은 발끝 방향으로, 발바닥 전체로 민다!",
+      good_points: [
+        { title: "깊게 내렸어요", desc: "무릎이 가슴 쪽까지 오도록 내려서 허벅지를 넓은 범위로 썼어요" },
+        { title: "등과 엉덩이를 붙이고 했어요", desc: "내려올 때 엉덩이가 들리지 않아서 허리가 안전했어요" },
+        { title: "일정한 리듬으로 반복했어요", desc: "내리고 미는 속도가 회마다 비슷해서 자세가 흐트러지지 않았어요" }
+      ],
+      primary_muscles: [{ name: "대퇴사두근", where: "허벅지 앞쪽" }],
+      secondary_muscles: "대둔근 · 내전근 · 햄스트링",
+      feel_good: "허벅지 앞과 엉덩이가 뻐근해요",
+      feel_stop: "허리·꼬리뼈가 아프거나, 무릎 안쪽이 찌릿해요",
+      steps: [
+        { title: "준비", desc: "등과 엉덩이를 등받이에 붙이고 발은 골반 너비로 발판 가운데. 다리를 펴고 안전 걸쇠를 풀어요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "내리기", desc: "무릎을 발끝 방향으로 굽히며 천천히. 엉덩이가 들리기 직전까지 내려요", chip: "2~3초 · 들이마시며", media: "step2.webp", loop: true },
+        { title: "밀기", desc: "발바닥 전체로 밀어 처음 자리까지! 맨 위에서 무릎은 완전히 펴서 잠그지 않아요", chip: "1~2초 · 후~ 내쉬며", media: "step3.webp", loop: true }
+      ],
+      do: ["등·엉덩이는 등받이에 붙이기", "무릎은 발끝 방향으로", "발바닥 전체로 밀기"],
+      dont: ["엉덩이가 들릴 만큼 깊게 내리기", "무릎이 안으로 모이기", "맨 위에서 무릎 쾅 잠그기"]
+    },
+    {
+      id: "outer-thigh",
+      dir: "media/form-outer-thigh/",
+      date: "2026. 11. 11 (수)",
+      exercise: "아웃타이 머신",
+      exercise_en: "Outer Thigh (Abduction)",
+      part: "엉덩이",
+      targets: ["중둔근 (엉덩이 옆)", "대둔근 · 대퇴근막장근"],
+      benefit: "엉덩이 옆을 깨워서 무릎이 안으로 모이지 않게 잡아줘요. 하체 메인 전에 하면 스쿼트·레그프레스가 더 안정돼요",
+      key_point: "엉덩이 옆으로 밀어내고, 끝에서 1초 버틴다!",
+      good_points: [
+        { title: "다리를 끝까지 벌렸어요", desc: "패드를 바깥쪽 끝까지 밀어서 엉덩이 옆이 꽉 수축됐어요" },
+        { title: "상체를 곧게 세웠어요", desc: "몸을 앞뒤로 흔들지 않고 엉덩이 힘으로만 벌렸어요" },
+        { title: "손잡이를 잡고 몸을 고정했어요", desc: "엉덩이가 의자에서 들리지 않아서 같은 자세로 반복했어요" }
+      ],
+      primary_muscles: [{ name: "중둔근", where: "엉덩이 옆 위쪽" }],
+      secondary_muscles: "대둔근 위쪽 · 대퇴근막장근",
+      feel_good: "엉덩이 옆이 타는 듯 뻐근해요",
+      feel_stop: "허리가 뻐근하거나, 허벅지 옆만 당겨요",
+      steps: [
+        { title: "준비", desc: "등받이에 기대 앉아 무릎 바깥쪽에 패드를 대요. 손잡이를 잡고 배에 힘을 줘요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "벌리기", desc: "엉덩이 옆으로 밀어내듯 다리를 끝까지! 끝에서 1초 버텨요", chip: "1~2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "천천히 모으기", desc: "무게에 끌려가지 말고 버티면서 처음 자리까지. 패드가 부딪히기 전에 다시 벌려요", chip: "2~3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["엉덩이는 의자 끝까지 붙이기", "끝에서 1초 멈추기", "모을 때도 천천히 버티기"],
+      dont: ["상체를 앞뒤로 흔들어 반동 쓰기", "반만 벌리고 빨리 모으기", "무게를 쾅 내려놓기"]
+    },
+    {
+      id: "inner-thigh",
+      dir: "media/form-inner-thigh/",
+      date: "2026. 11. 11 (수)",
+      exercise: "이너타이",
+      exercise_en: "Inner Thigh (Adduction)",
+      part: "하체",
+      targets: ["내전근 (허벅지 안쪽)", "치골근 · 박근"],
+      benefit: "허벅지 안쪽을 채워서 하체가 꽉 차 보이고, 스쿼트·레그프레스 때 무릎과 골반을 단단히 잡아줘요",
+      key_point: "허벅지 안쪽으로 꽉 모으고, 벌릴 땐 천천히!",
+      good_points: [
+        { title: "넓게 벌린 데서 시작했어요", desc: "다리를 충분히 벌려서 허벅지 안쪽이 늘어난 상태에서 모았어요" },
+        { title: "끝까지 모았어요", desc: "패드가 가운데 닿을 때까지 모아서 안쪽이 꽉 수축됐어요" },
+        { title: "상체를 세우고 했어요", desc: "손잡이를 잡고 몸을 고정해서 허벅지 힘으로만 움직였어요" }
+      ],
+      primary_muscles: [{ name: "내전근", where: "허벅지 안쪽" }],
+      secondary_muscles: "치골근 · 박근",
+      feel_good: "허벅지 안쪽이 꽉 조이고 뻐근해요",
+      feel_stop: "사타구니가 찌릿하거나, 무릎 안쪽이 아파요",
+      steps: [
+        { title: "준비", desc: "등받이에 기대 앉아 무릎 안쪽에 패드를 대요. 아프지 않을 만큼만 벌리고 손잡이를 잡아요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "모으기", desc: "허벅지 안쪽 힘으로 패드를 가운데까지! 끝에서 1초 꽉 조여요", chip: "1~2초 · 후~ 내쉬며", media: "step2.webp", loop: true },
+        { title: "천천히 벌리기", desc: "버티면서 처음 자리까지. 안쪽이 쭉 늘어나는 걸 느껴요", chip: "2~3초 · 들이마시며", media: "step3.webp", loop: true }
+      ],
+      do: ["시작 각도는 아프지 않을 만큼만", "끝에서 1초 꽉 모으기", "벌릴 땐 3초 버티기"],
+      dont: ["처음부터 너무 넓게 벌리기", "상체를 숙여 반동 쓰기", "벌릴 때 무게에 끌려가기"]
+    },
+    {
+      id: "smith-incline-press",
+      dir: "media/form-smith-incline-press/",
+      date: "2026. 11. 10 (화)",
+      exercise: "스미스 인클라인 프레스",
+      exercise_en: "Smith Incline Press",
+      part: "가슴",
+      targets: ["윗가슴 (대흉근 상부)", "전면 삼각근 · 삼두근"],
+      benefit: "바가 정해진 길로만 움직여서 균형 걱정 없이 윗가슴에 무게를 실을 수 있어요. 쇄골 아래를 채워 바프 사진 속 가슴 두께를 만들어요",
+      key_point: "바는 윗가슴으로 내리고, 날개뼈 모은 채 민다!",
+      good_points: [
+        { title: "윗가슴까지 내렸어요", desc: "바를 쇄골 아래 윗가슴 쪽으로 내려서 윗가슴이 충분히 늘어났어요" },
+        { title: "끝까지 밀어 올렸어요", desc: "매 회 팔을 거의 다 펴서 마지막까지 가슴이 일했어요" },
+        { title: "등을 벤치에 붙이고 했어요", desc: "밀 때 엉덩이·등이 들리지 않아서 같은 자세로 반복했어요" }
+      ],
+      primary_muscles: [{ name: "대흉근 상부", where: "쇄골 아래 윗가슴" }],
+      secondary_muscles: "대흉근 중부 · 전면 삼각근 · 삼두근",
+      feel_good: "쇄골 아래 윗가슴이 뻐근해요",
+      feel_stop: "어깨 앞만 타거나, 손목이 꺾여 아파요",
+      steps: [
+        { title: "준비", desc: "벤치 30도, 바가 윗가슴 위에 오게 자리를 잡아요. 날개뼈를 모으고 바를 풀어 팔을 펴요", chip: "숨 들이마시기", media: "step1.jpg" },
+        { title: "내리기", desc: "팔꿈치를 45도로 벌리며 바를 윗가슴까지 천천히", chip: "2~3초 · 들이마시며", media: "step2.webp", loop: true },
+        { title: "밀어 올리기", desc: "윗가슴으로 밀어 처음 자리까지! 날개뼈는 모은 채", chip: "1~2초 · 후~ 내쉬며", media: "step3.webp", loop: true }
+      ],
+      do: ["바는 쇄골 아래 윗가슴으로", "날개뼈 모으고 가슴 세우기", "손목은 팔꿈치 위에 세우기"],
+      dont: ["바를 목 쪽으로 내리기", "엉덩이를 들어 밀기", "가슴에서 튕겨 올리기"]
+    },
     {
       id: "underhand-seated-row",
       dir: "media/form-underhand-seated-row/",
@@ -320,11 +430,11 @@ window.MEMBER = {
         { name: "인클라인 프레스 머신", en: "Incline Machine Press", tip: "세트마다 무게 ↑", sets: [[15, 25], [12, 30], [10, 35]] }
       ]},
       { day: "수", part: "하체 A", en: "Legs A", cardio: false, items: [
-        { name: "이너타이", en: "Inner Thigh", tag: "선행", tip: "세트마다 무게 ↑", sets: [[20, 25], [15, 30], [12, 35]] },
-        { name: "아웃타이 머신", en: "Outer Thigh", icon: "outer_thigh_pin", tag: "선행", tip: "세트마다 무게 ↑", sets: [[20, 25], [15, 30], [12, 35]] },
+        { name: "이너타이", en: "Inner Thigh", form: "inner-thigh", tag: "선행", tip: "세트마다 무게 ↑", sets: [[20, 25], [15, 30], [12, 35]] },
+        { name: "아웃타이 머신", en: "Outer Thigh", form: "outer-thigh", icon: "outer_thigh_pin", tag: "선행", tip: "세트마다 무게 ↑", sets: [[20, 25], [15, 30], [12, 35]] },
         { name: "고블릿 스쿼트", en: "Goblet Squat", tag: "워밍업", tip: "가슴 세우고 깊이 앉기", sets: [[20, 6], [15, 8]] },
         { name: "핵스쿼트", en: "Hack Squat", tag: "메인", tip: "등 패드에 붙이고 · 원판 양쪽 합계", sets: [[15, 20], [12, 20], [10, 25], [8, 25]] },
-        { name: "레그프레스", en: "Leg Press", tip: "무릎은 발끝 방향으로", sets: [[12, 60], [12, 60], [12, 60]] }
+        { name: "레그프레스", en: "Leg Press", form: "leg-press", tip: "무릎은 발끝 방향으로", sets: [[12, 60], [12, 60], [12, 60]] }
       ]},
       { day: "목", part: "등 B", en: "Back B", cardio: true, items: [
         { name: "리버스 펙덱", en: "Reverse Pec Deck", form: "reverse-pec-deck", tag: "워밍업", tip: "뒷어깨 가볍게 풀기", sets: [[20, 15], [15, 15]] },
@@ -342,8 +452,8 @@ window.MEMBER = {
         { name: "해머 컬", en: "Hammer Curl", tip: "엄지가 위로", sets: [[12, 10], [12, 10], [12, 10]] }
       ]},
       { day: "토", part: "하체 B", en: "Legs B", cardio: false, items: [
-        { name: "이너타이", en: "Inner Thigh", tag: "선행", tip: "세트마다 무게 ↑", sets: [[20, 25], [15, 30], [12, 35]] },
-        { name: "아웃타이 머신", en: "Outer Thigh", icon: "outer_thigh_pin", tag: "선행", tip: "세트마다 무게 ↑", sets: [[20, 25], [15, 30], [12, 35]] },
+        { name: "이너타이", en: "Inner Thigh", form: "inner-thigh", tag: "선행", tip: "세트마다 무게 ↑", sets: [[20, 25], [15, 30], [12, 35]] },
+        { name: "아웃타이 머신", en: "Outer Thigh", form: "outer-thigh", icon: "outer_thigh_pin", tag: "선행", tip: "세트마다 무게 ↑", sets: [[20, 25], [15, 30], [12, 35]] },
         { name: "고블릿 스쿼트", en: "Goblet Squat", tag: "워밍업", tip: "가슴 세우고 깊이 앉기", sets: [[20, 6], [15, 8]] },
         { name: "핵스쿼트", en: "Hack Squat", tag: "메인", tip: "등 패드에 붙이고 · 원판 양쪽 합계", sets: [[15, 20], [12, 20], [10, 25], [8, 25]] },
         { name: "레그프레스 (발 높게)", en: "Leg Press · High", tip: "뒤꿈치로 밀기", sets: [[12, 55], [12, 55], [12, 55]] }
