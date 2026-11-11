@@ -1492,27 +1492,30 @@
       (ROT ? '<p class="th-hint">출석 도장 찍은 날을 세서 다음 순서를 알려줘요. 순서가 다르면 루틴 탭에서 그날 DAY를 눌러요</p>' : '') + '</div>';
   }
   /* 회원 메모 (2026-11-12): 선생님 보기에서만 홈 맨 위 — assets/memo.js(PTMemo), 창고 coach:memo:<주소>(선생님 열쇠로만 읽힘) */
+  /* 2026-11-12 "메모칸 간소화 — 상단에 작은 아이콘으로": 홈 칸 대신 위 막대 종 왼쪽 📝 동그라미(메모 개수 배지, 고정 메모 있으면 금색) → 누르면 메모 창 */
   function cmemoDraw(list) {
-    var box = document.getElementById("cmemo"); if (!box) return;
-    var it = (list || []).slice(0, 3);
-    box.innerHTML = '<div class="cm-h"><b>📝 선생님 메모</b><small>회원님께는 안 보여요</small></div>' +
-      (it.length ? it.map(function (x) {
-        var m = String(x.d || "").match(/^\d{4}-(\d{2})-(\d{2})/);
-        return '<div class="cm-i' + (x.pin ? ' pin' : '') + '"><span>' + (x.pin ? '📌' : (m ? +m[1] + '/' + +m[2] : '')) + (x.tag ? ' · ' + esc(x.tag) : '') + '</span><p>' + esc(x.t) + '</p></div>';
-      }).join("") : '<p class="cm-e">아직 메모가 없어요 — 몸 상태·통증·일정을 적어 두세요</p>') +
-      '<button type="button" class="cm-go" id="cmGo">' + ((list || []).length > 3 ? '메모 ' + list.length + '개 모두 보기 · 쓰기' : '메모 쓰기') + ' →</button>';
-    document.getElementById("cmGo").addEventListener("click", function () { window.PTMemo.open(SLUG, M.name, cmemoDraw); });
+    var b = document.getElementById("memoBtn"); if (!b) return;
+    var n = (list || []).length, pin = (list || []).some(function (x) { return x.pin; });
+    b.classList.toggle("pin", pin);
+    b.querySelector("i").textContent = n ? (n > 9 ? "9+" : n) : "";
+    b.querySelector("i").hidden = !n;
+    b.setAttribute("aria-label", "선생님 메모" + (n ? " " + n + "개" : "") + " (회원님께는 안 보여요)");
+    b.title = n ? window.PTMemo.line(list) : "선생님 메모 — 회원님께는 안 보여요";
   }
   function cmemoFill() {
-    if (!document.getElementById("cmemo")) return;
-    function go() { if (!window.PTMemo) return; window.PTMemo.load(SLUG).then(function (o) { cmemoDraw(o ? o[SLUG] : (window.PTMemo.cache[SLUG] || [])); }); }
+    if (!(COACH_MODE && !DEMO)) return;
+    var r = document.querySelector(".bar-r"); if (!r || document.getElementById("memoBtn")) return;
+    var b = document.createElement("button"); b.type = "button"; b.className = "memob"; b.id = "memoBtn";
+    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10l4 4v12H5z"/><path d="M14 4v5h5M8.5 13h7M8.5 16.5h5"/></svg><i hidden></i>';
+    r.insertBefore(b, r.firstChild);
+    b.addEventListener("click", function () { if (window.PTMemo) window.PTMemo.open(SLUG, M.name, cmemoDraw); });
+    function go() { window.PTMemo.load(SLUG).then(function (o) { cmemoDraw(o ? o[SLUG] : []); }); }
     if (window.PTMemo) return go();
     var sc = document.createElement("script"); sc.src = BASE + "memo.js"; sc.onload = go; document.head.appendChild(sc);
   }
   function renderHome() {
     var k = todayKey(), d = dayByKey(k), now = new Date();
     var h = '<div class="hlead"><p>' + esc(M.name) + ' 회원님 · ' + (now.getMonth() + 1) + '월 ' + now.getDate() + '일 ' + DAY_KO[DAY_KEYS[now.getDay()]] + '요일</p><h1>오늘</h1></div>';
-    if (COACH_MODE && !DEMO) { h += '<section class="cmemo" id="cmemo" aria-label="선생님 메모"><div class="cm-h"><b>📝 선생님 메모</b><small>회원님께는 안 보여요</small></div><p class="cm-e">불러오는 중…</p></section>'; setTimeout(cmemoFill, 0); }
     h += attCheckStrip();
     h += todayHero(k, d);
     h += homeWidgets();
@@ -2600,6 +2603,7 @@
   }
   window.addEventListener("hashchange", route);
   route();
+  cmemoFill();
   nDot();
   if (!DEMO) setTimeout(showNoticePop, 800);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { alignText(document); });

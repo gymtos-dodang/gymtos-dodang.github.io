@@ -206,9 +206,9 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 
 ## 회원 메모 — 선생님만 (2026-11-12 장동욱 "회원님들 메모 기능, 그 회원님 상태를 까먹을 수도 있으니까")
 - 선생님 페이지 회원 카드마다 금색 점선 📝 줄(고정 메모 또는 최신 메모 한 줄, 메모 2개 이상이면 개수) → 누르면 메모 창: 내용 + 꼬리표(몸 상태·통증·주의·목표·식단·일정·기타) + 📌 맨 위 고정 → 저장. 목록에서 고정/풀기·삭제(두 번).
-- 선생님 보기로 회원 노트를 열면(폰·아이패드 오른쪽 칸) 홈 맨 위 "📝 선생님 메모" 칸(고정 먼저, 최신 3개 + 메모 쓰기). 회원 폰·PT 안내서 데모에선 안 나옴(COACH_MODE && !DEMO).
+- 선생님 보기로 회원 노트를 열면(폰·아이패드 오른쪽 칸) 위 막대 종 왼쪽에 작은 📝 동그라미 아이콘(.memob — 금색 점선, 메모 개수 배지, 고정 메모 있으면 진한 금색) → 누르면 메모 창. (2026-11-12 처음엔 홈 맨 위 큰 칸이었는데 "간소화 — 상단에 작은 아이콘으로"로 바꿈) 회원 폰·PT 안내서 데모에선 안 나옴(COACH_MODE && !DEMO).
 - 저장: 창고 저장소 `coach:memo:<회원주소>` = [{id, d:"YYYY-MM-DD", t, tag?, pin?}] — coach:* 라 선생님 열쇠 없이는 못 읽음(회원 쪽 GET 응답 kv에도 안 들어감). 창고 재배포 필요 없음. 폰에서 만든 회원도 똑같이 됨.
-- 코드: assets/memo.js(PTMemo.load·open·line — 창 모양·저장 전부, 선생님 페이지는 script 태그, app.js는 cmemoFill에서 BASE+"memo.js"를 불러옴) · coach-tqqnlh/index.html memoRow·memoRefresh · app.js cmemoDraw·cmemoFill · style.css .cmemo.
+- 코드: assets/memo.js(PTMemo.load·open·line — 창 모양·저장 전부, 선생님 페이지는 script 태그, app.js는 cmemoFill에서 BASE+"memo.js"를 불러옴) · coach-tqqnlh/index.html memoRow·memoRefresh · app.js cmemoDraw·cmemoFill(route() 다음 한 번) · style.css .memob.
 - Claude가 회원 이야기를 들을 때 "메모에 적어둬"라고 하면: 내장 브라우저로 선생님 페이지를 열어 그 회원 📝에 저장(또는 kv_set coach:memo:<주소>, 기존 목록 앞에 추가).
 
 ## 뒤로 가기 버튼 (2026-11-12 장동욱 "태블릿·PC에서 종목 보다가 자세 복습지 연결 누르면 뒤로가기가 없어 불편")

@@ -1290,13 +1290,12 @@ section[data-fold] > .head .fold-btn { background: #fff; }
 .stamp, .hw { transition: transform .25s cubic-bezier(.2, .8, .2, 1); }
 @media (prefers-reduced-motion: reduce) { .stamp, .stamp.on, .thero::before, .thero::after { animation: none !important; } }
 
-/* 선생님 메모 (2026-11-12) — 선생님 보기에서만, 금색 점선 */
-.cmemo { background: #FFFAEF; border: 1.5px dashed #D9B25F; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
-.cm-h { display: flex; align-items: baseline; gap: 8px; } .cm-h b { font-size: 15px; font-weight: 900; color: #7A5410; } .cm-h small { font-size: 11.5px; color: #A68A55; }
-.cm-i { background: #fff; border-radius: 12px; padding: 8px 11px; } .cm-i.pin { box-shadow: inset 0 0 0 1.5px #E8D3A6; }
-.cm-i span { font-size: 11.5px; font-weight: 700; color: #A68A55; } .cm-i p { margin: 2px 0 0; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
-.cm-e { margin: 0; font-size: 13px; color: #A68A55; }
-.cm-go { align-self: flex-start; font: inherit; font-size: 13.5px; font-weight: 800; color: #7A5410; background: #fff; border: 1.5px solid #E8D3A6; border-radius: 99px; padding: 8px 14px; cursor: pointer; }
+/* 선생님 메모 (2026-11-12, 같은 날 "상단에 작은 아이콘으로") — 선생님 보기에서만 위 막대 종 왼쪽 */
+.memob { position: relative; width: 40px; height: 40px; border-radius: 50%; border: 1.5px dashed #D9B25F; background: #FFFAEF; color: #9A6D17; display: grid; place-items: center; cursor: pointer; padding: 0; flex: none; }
+.memob svg { width: 19px; height: 19px; }
+.memob.pin { border-style: solid; border-color: #C9962F; background: #FBEFD3; }
+.memob i { position: absolute; top: -3px; right: -3px; min-width: 17px; height: 17px; padding: 0 4px; box-sizing: border-box; border-radius: 99px; background: #C9962F; color: #fff; font-style: normal; font-size: 10.5px; font-weight: 800; line-height: 17px; text-align: center; box-shadow: 0 0 0 2px #fff; }
+.memob:focus-visible { outline: 3px solid var(--seal); outline-offset: 2px; }
 
 /* 뒤로 가기 (2026-11-12) — 본문 링크로 넘어간 화면 위에 붙어 다니는 알약 버튼 */
 .navback { position: sticky; top: 72px; z-index: 30; align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; margin-bottom: -10px;
