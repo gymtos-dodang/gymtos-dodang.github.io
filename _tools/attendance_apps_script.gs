@@ -1,12 +1,14 @@
 // GYMTOS PT 노트 창고 (출석 + 인바디) — 이 코드를 Apps Script에 그대로 붙여넣고 "웹 앱"으로 배포하세요.
 // 2026-11-06 인바디 추가: 시트 "인바디" 탭에 숫자, 구글 드라이브 "PT노트 인바디 사진" 폴더에 결과지 사진.
 // 2026-11-06 결과지 자동 읽기(OCR): 왼쪽 "서비스 +" 에서 "Drive API"를 추가해야 동작 (없으면 회원이 숫자를 직접 넣으면 됨).
+// 2026-11-11 전체 공지: 선생님 페이지에서 쓴 공지를 시트 "전체공지" 탭에 저장 → 모든 회원 노트 공지에 같이 나옴(60일 지난 건 안 보냄).
 // 2026-11-11 보기(GET)는 잠그지 않게 바꿈 — 여러 명을 한꺼번에 불러도 실패하지 않음.
 // 2026-11-10 루틴 고치기: 선생님이 폰에서 고친 루틴을 시트 "루틴" 탭에 저장 → 회원 PT 노트가 열릴 때 바로 바뀜.
 //            고칠 때마다 "루틴기록" 탭에 전체 내용이 한 줄씩 쌓임(되살리기용). 선생님 열쇠는 아래 RT_KEY_HASH(열쇠 자체는 여기 없음).
 const SHEET = '출석';
 const RT_SHEET = '루틴';
 const RT_LOG = '루틴기록';
+const BN_SHEET = '전체공지';
 const RT_KEY_HASH = '4756ec53d712de9927d43e17e7efda99bb0a8312a08e1b82be440c1f2cf5da25';
 const IB_SHEET = '인바디';
 const IB_FOLDER = 'PT노트 인바디 사진';
@@ -130,6 +132,19 @@ function rtSet_(m, n, rec) {   // rec = null 이면 지움(원래 루틴으로)
   else s.appendRow(line);
 }
 
+/* ---------------- 전체 공지 (선생님 페이지에서 쓰는 공지 — 모든 회원에게) */
+function bnSheet_() { return rtSheet_(BN_SHEET, ['번호', '날짜', '제목', '내용', '바로가기', '기록시각']); }
+function bnList_() {
+  const v = bnSheet_().getDataRange().getValues(), out = [], lim = Date.now() - 60 * 86400000;
+  for (let i = v.length - 1; i >= 1; i--) {
+    const at = v[i][5] instanceof Date ? v[i][5].getTime() : Date.now();
+    if (at < lim) continue;
+    out.push({ id: String(v[i][0]), date: String(v[i][1]), title: String(v[i][2]), body: String(v[i][3]), link: String(v[i][4] || '') });
+    if (out.length >= 20) break;
+  }
+  return out;
+}
+
 /* ---------------- GET: 출석 + 인바디 보기·사진·삭제 */
 function doGet(e) {
   const p = (e && e.parameter) || {};
@@ -137,6 +152,7 @@ function doGet(e) {
   if (!memberOk_(m)) return json_({ ok: false, error: 'member' });
 
   if (p.a === 'inbody') return json_({ ok: true, inbody: ibList_(m) });
+  if (p.a === 'bn') return json_({ ok: true, bnotices: bnList_() });
   if (p.a === 'inbody_img') {
     const r = ibRow_(ibSheet_(), m, String(p.id || ''));
     if (!r || !r.photo) return json_({ ok: false, error: 'photo' });
@@ -187,9 +203,10 @@ function doGet(e) {
   for (let i = 1; i < all.length; i++) {
     if (all[i][0] === m) days[txt_(all[i][2], 'yyyy-MM-dd')] = txt_(all[i][3], 'HH:mm');
   }
-  let routine = null;
+  let routine = null, bnotices = [];
   try { routine = rtGet_(m); } catch (err) {}
-  return json_({ ok: true, days: days, routine: routine });
+  try { bnotices = bnList_(); } catch (err) {}
+  return json_({ ok: true, days: days, routine: routine, bnotices: bnotices });
 }
 
 /* 결과지 사진 → 글자 (구글 드라이브 OCR: 사진을 구글 문서로 바꿔 글자만 읽고 바로 휴지통) */
@@ -218,6 +235,28 @@ function doPost(e) {
     if (!b.img || String(b.img).length > 8000000) return json_({ ok: false, error: 'img' });
     try { return json_({ ok: true, text: ocr_(String(b.img)) }); }
     catch (err) { return json_({ ok: false, error: 'ocr', msg: String(err) }); }
+  }
+  if (b.a === 'bn_add' || b.a === 'bn_del') {
+    if (!keyOk_(b.key)) return json_({ ok: false, error: 'key' });
+    const lock = LockService.getScriptLock();
+    lock.waitLock(25000);
+    try {
+      const s = bnSheet_();
+      if (b.a === 'bn_add') {
+        const t = String(b.title || '').trim().slice(0, 80), body = String(b.body || '').trim().slice(0, 600);
+        if (!t) return json_({ ok: false, error: 'title' });
+        const link = /^[a-z0-9-]{0,30}$/.test(String(b.link || '')) ? String(b.link || '') : '';
+        const now = new Date();
+        s.appendRow([Utilities.getUuid().slice(0, 8), Utilities.formatDate(now, 'Asia/Seoul', 'yyyy. M. d'), t, body, link, now]);
+      } else {
+        const v = s.getDataRange().getValues();
+        for (let i = v.length - 1; i >= 1; i--) if (String(v[i][0]) === String(b.id || '')) { s.deleteRow(i + 1); break; }
+      }
+      SpreadsheetApp.flush();
+      return json_({ ok: true, bnotices: bnList_() });
+    } finally {
+      lock.releaseLock();
+    }
   }
   if (b.a === 'routine_key') return json_({ ok: keyOk_(b.key), error: keyOk_(b.key) ? '' : 'key' });
   if (b.a === 'routine_save' || b.a === 'routine_reset') {

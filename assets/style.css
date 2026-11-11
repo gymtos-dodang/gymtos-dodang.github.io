@@ -1097,3 +1097,32 @@ html.rts-open, html.rts-open body { overflow: hidden; }
   .tabs a.lit svg { filter: drop-shadow(0 0 3px var(--led)); }
 }
 .fnew { display: inline-block; margin-left: 6px; font-size: 10.5px; font-weight: 800; letter-spacing: .04em; color: #fff; background: var(--led); border-radius: 99px; padding: 2px 7px; vertical-align: 1px; box-shadow: 0 0 8px var(--led); }
+/* 세트 빠르게 넣기 (2026-11-11) */
+.rts-pre { display: flex; flex-direction: column; gap: 7px; background: var(--page); border-radius: 12px; padding: 10px; }
+.rts-pre .rts-l { margin-bottom: 0; }
+.rts-pg { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.rts-pg > b { flex: 0 0 100%; font-size: 12px; color: var(--sub); }
+.rts-pg button[data-p] { display: flex; flex-direction: column; align-items: center; gap: 1px; border: 1.5px solid var(--line); background: #fff; border-radius: 10px; padding: 6px 10px; font-weight: 800; font-size: 13px; color: var(--ink); cursor: pointer; line-height: 1.2; }
+.rts-pg button[data-p] small { font-size: 11px; font-weight: 700; color: var(--faint); }
+.rts-pg button[data-p].on { border-color: var(--primary); background: var(--tint); color: var(--primary); }
+.rts-seg { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.rts-seg button { border: 1.5px solid var(--line); background: #fff; border-radius: 99px; padding: 5px 11px; font-weight: 800; font-size: 12.5px; color: var(--sub); cursor: pointer; }
+.rts-seg button[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: #fff; }
+.rts-hint2 { margin: 0; font-size: 11.5px; color: var(--faint); line-height: 1.4; }
+.nall { display: inline-block; margin-left: 6px; font-size: 10.5px; font-weight: 800; color: var(--primary); background: var(--tint); border-radius: 99px; padding: 1px 7px; vertical-align: 1px; }
+/* 다른 회원 루틴 가져오기 */
+.rtcp-list { display: flex; flex-direction: column; gap: 6px; }
+.rtcp { display: flex; align-items: center; gap: 10px; text-align: left; width: 100%; border: 1.5px solid var(--line); background: #fff; border-radius: 12px; padding: 9px 11px; cursor: pointer; }
+.rtcp:active { border-color: var(--primary); background: var(--tint); }
+.rtcp .av { flex: 0 0 34px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 14px; background: #1F3864; }
+.rtcp .av.F { background: #C2185B; }
+.rtcp-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rtcp-t b { font-size: 14.5px; color: var(--ink); }
+.rtcp-t b small { font-size: 12px; color: var(--faint); font-weight: 700; }
+.rtcp-t > small { font-size: 12px; color: var(--sub); line-height: 1.35; }
+.rtcp i { font-style: normal; font-size: 20px; color: var(--faint); }
+.rtcp-pv { display: flex; flex-direction: column; gap: 5px; }
+.rtcp-d { display: grid; grid-template-columns: 44px 1fr; gap: 6px; font-size: 12.5px; line-height: 1.4; background: var(--page); border-radius: 9px; padding: 7px 9px; }
+.rtcp-d b { color: var(--primary); }
+.rtcp-d em { font-style: normal; font-weight: 800; color: var(--ink); margin-right: 6px; }
+.rtcp-d.rest { opacity: .55; }

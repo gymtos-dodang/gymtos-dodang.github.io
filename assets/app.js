@@ -15,18 +15,28 @@
   function clone(o) { return o == null ? o : JSON.parse(JSON.stringify(o)); }
   var RT_ORIG = clone(M.routine || null), RT_BASE = rtBase(M.routine), NT_ORIG = (M.notices || []).slice();
   var RT_REC = null;   /* 지금 쓰고 있는 '폰에서 고친 루틴' 기록 {base, routine, notice?, at} */
+  /* 전체 공지 (2026-11-11): 선생님 페이지에서 쓴 공지 — 출석 창고 "전체공지" 탭 → 모든 회원 노트 공지에 같이 나옴. 휴대폰엔 ptnote:bn */
+  var BN = [];
+  try { BN = JSON.parse(localStorage.getItem("ptnote:bn") || "[]") || []; } catch (e) { BN = []; }
+  function nYmd(n) { var m = String(n.date || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/); return m ? +m[1] * 10000 + +m[2] * 100 + +m[3] : 0; }
+  function nBuild() {   /* data.js 공지 + 전체 공지 + 폰에서 고친 루틴 공지 → 날짜 최신순(같은 날은 원래 순서) */
+    var extra = BN.map(function (b) { return { date: b.date, title: b.title, body: b.body, link: b.link || "", all: 1 }; });
+    var nt = RT_REC && RT_REC.notice;
+    if (nt && nt.title) extra.push(nt);
+    var list = NT_ORIG.slice();
+    extra.forEach(function (x) {
+      if (list.some(function (n) { return n.date === x.date && n.title === x.title; })) return;
+      var at = 0; while (at < list.length && nYmd(list[at]) > nYmd(x)) at++;
+      list.splice(at, 0, x);
+    });
+    M.notices = list;
+  }
   function rtUse(rec) {
     RT_REC = rec && rec.routine && rec.base === RT_BASE ? rec : null;
     M.routine = RT_REC ? clone(RT_REC.routine) : clone(RT_ORIG);
-    var nt = RT_REC && RT_REC.notice, list = NT_ORIG.slice();
-    if (nt && nt.title && !list.some(function (n) { return n.date === nt.date && n.title === nt.title; })) {
-      /* 날짜 순서대로 끼움 — 나중에 data.js로 올린 복습지 공지가 더 새것이면 그게 위 */
-      var ymd = function (n) { var m = String(n.date || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/); return m ? +m[1] * 10000 + +m[2] * 100 + +m[3] : 0; };
-      var at = 0; while (at < list.length && ymd(list[at]) > ymd(nt)) at++;
-      list.splice(at, 0, nt);
-    }
-    M.notices = list;
+    nBuild();
   }
+  nBuild();
   try { var rtc = JSON.parse(localStorage.getItem(RT_LS) || "null"); if (rtc) rtUse(rtc); } catch (e) {}
   /* 종목 이름 → 루틴일지 아이콘 (data.js에서 icon을 따로 주면 그게 우선) */
   var ICON_BY_NAME = {
@@ -544,7 +554,7 @@
   function attCall(q) {
     return fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + (q || ""), { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw new Error("save"); attApply(j.days); if ("routine" in j) rtServer(j.routine); return j; });
+      .then(function (j) { if (!j || !j.ok) throw new Error("save"); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); return j; });
   }
   function attSync() {
     if (!ATT_API) return;
@@ -1457,7 +1467,7 @@
 
   /* ---------------- 공지 */
   function noticeCard(n) {
-    return '<div class="panel notice" data-nkey="' + esc(nKey(n)) + '"><time>' + esc(n.date) + '</time><h3>' + esc(n.title) + '</h3><p>' + esc(n.body) + '</p>' +
+    return '<div class="panel notice" data-nkey="' + esc(nKey(n)) + '"><time>' + esc(n.date) + (n.all ? '<span class="nall">전체 공지</span>' : '') + '</time><h3>' + esc(n.title) + '</h3><p>' + esc(n.body) + '</p>' +
       (n.link ? '<a class="btn" href="#' + esc(n.link) + '">바로 보기</a>' : '') + '</div>';
   }
   function renderNotice() {
@@ -1659,7 +1669,7 @@
   /* ---------------- 루틴 */
   function renderRoutine(sel) {
     var R = M.routine;
-    if (!R) return (CAN_EDIT ? '<div class="rtbar"><div><b>선생님만 보여요</b><span>여기서 바로 루틴을 만들 수 있어요</span></div><button type="button" class="rtb fill" data-rt="create">✎ 새 루틴 만들기</button></div>' : '') +
+    if (!R) return (CAN_EDIT ? '<div class="rtbar"><div><b>선생님만 보여요</b><span>여기서 바로 루틴을 만들 수 있어요</span></div><div class="rtbar-b"><button type="button" class="rtb" data-rt="createcopy">다른 회원 루틴 복사</button><button type="button" class="rtb fill" data-rt="create">✎ 새 루틴 만들기</button></div></div>' : '') +
       '<section>' + head("", "주간 루틴", "") + '<div class="panel empty"><h3>루틴이 아직 없어요</h3><p>선생님이 곧 올려드릴게요</p></div></section>' + remember();
     var tk = todayKey(), ED = !!RT_EDIT;
     sel = sel || tk;
@@ -1864,6 +1874,16 @@
     rtUse(ok);
     if (view.getAttribute("data-tab") !== "body") rerender(); else litApply("body");
   }
+  function bnServer(list) {   /* 창고에서 받은 전체 공지 */
+    list = Array.isArray(list) ? list : [];
+    if (JSON.stringify(list) === JSON.stringify(BN)) return;
+    BN = list;
+    try { localStorage.setItem("ptnote:bn", JSON.stringify(list)); } catch (e) {}
+    nBuild(); nDot();
+    var tb = view.getAttribute("data-tab");
+    if (tb === "notice" || tb === "home") rerender();
+    if (!DEMO && !document.querySelector(".npop-wrap")) showNoticePop();
+  }
   function rtAt(rec) {   /* "11/10 14:32" */
     var m = String(rec && rec.at || "").match(/\d{4}-(\d{2})-(\d{2}) (\d{2}:\d{2})/);
     return m ? (+m[1]) + "/" + (+m[2]) + " " + m[3] : "";
@@ -1881,6 +1901,7 @@
     if (!CAN_EDIT) return "";
     if (RT_EDIT) return '<div class="rtbar edit"><div><b>✎ 고치는 중</b><span>아래 저장을 눌러야 회원님께 보여요</span></div>' +
       '<div class="rtbar-b">' + (RT_REC ? '<button type="button" class="rtb" data-rt="reset">처음 루틴으로</button>' : '') +
+      '<button type="button" class="rtb" data-rt="copy">가져오기</button>' +
       '<button type="button" class="rtb" data-rt="info">제목·계획</button></div></div>';
     var st = RT_REC ? '폰에서 고친 루틴 · ' + rtAt(RT_REC) + ' 반영' : RT_STALE ? '새 루틴이 올라와서 예전에 폰에서 고친 것(' + rtAt(RT_STALE) + ')은 꺼졌어요' : '선생님 보기 · 고치면 회원님 노트에 바로 반영';
     return '<div class="rtbar"><div><b>선생님만 보여요</b><span>' + esc(st) + '</span></div>' +
@@ -2001,6 +2022,23 @@
     var fr = sh.querySelector(".rtp-free");
     if (fr) fr.addEventListener("click", function () { sh.close(); onPick(null); });
   }
+  /* 세트 빠르게 넣기 (2026-11-11 "피라미드 3세트 4세트 5세트 다양하게") */
+  var RT_PRESETS = {
+    pyr: [
+      { label: "3세트", reps: [12, 10, 8] },
+      { label: "4세트", reps: [15, 12, 10, 8] },
+      { label: "5세트", reps: [15, 12, 10, 8, 6] },
+      { label: "5세트 고반복", reps: [20, 15, 12, 10, 8] }
+    ],
+    flat: [
+      { label: "15회×3", reps: [15, 15, 15] },
+      { label: "12회×3", reps: [12, 12, 12] },
+      { label: "12회×4", reps: [12, 12, 12, 12] },
+      { label: "10회×4", reps: [10, 10, 10, 10] },
+      { label: "10회×5", reps: [10, 10, 10, 10, 10] },
+      { label: "20회×3", reps: [20, 20, 20] }
+    ]
+  };
   function rtItemSheet(dk, i, pre) {
     var d = dayByKey(dk), isNew = i < 0;
     var it = isNew ? { name: pre ? pre.name : "", en: pre ? pre.en : "", tip: pre ? pre.tip : "", sets: pre && pre.sets && pre.sets.length ? pre.sets : [[15, null], [12, null], [10, null]] } : clone(d.items[i]);
@@ -2015,7 +2053,13 @@
       }).join("") + '</div>' +
       '<label>팁<textarea id="fTip" rows="3">' + esc(it.tip) + '</textarea></label>' +
       '<div class="rts-l">세트 <small>횟수에 "30초"처럼 글자도 돼요 · 무게를 비우면 맨몸</small></div><div class="rts-sets" id="fSets"></div>' +
-      '<div class="rts-row"><button type="button" class="rtb" id="fAdd">+ 세트 추가</button><button type="button" class="rtb" id="fPyr">피라미드 15·12·10·8</button></div>' +
+      '<div class="rts-row"><button type="button" class="rtb" id="fAdd">+ 세트 추가</button></div>' +
+      '<div class="rts-pre" id="fPre"><div class="rts-l">빠르게 넣기 <small>누르면 세트가 이 모양으로 바뀌어요</small></div>' +
+      '<div class="rts-pg"><b>피라미드</b>' + RT_PRESETS.pyr.map(function (p, j) { return '<button type="button" data-p="pyr" data-j="' + j + '">' + p.label + '<small>' + p.reps.join("·") + '</small></button>'; }).join("") + '</div>' +
+      '<div class="rts-pg"><b>같은 횟수</b>' + RT_PRESETS.flat.map(function (p, j) { return '<button type="button" data-p="flat" data-j="' + j + '">' + p.label + '<small>' + p.reps.length + '세트</small></button>'; }).join("") + '</div>' +
+      '<div class="rts-pg"><b>무게</b><span class="rts-seg" id="fStep">' + [[0, "그대로"], [2, "+2kg씩"], [2.5, "+2.5kg씩"], [5, "+5kg씩"]].map(function (st, j) {
+        return '<button type="button" data-s="' + st[0] + '" aria-pressed="' + (j === 0) + '">' + st[1] + '</button>'; }).join("") + '</span></div>' +
+      '<p class="rts-hint2">무게는 1세트 칸 기준 — "+5kg씩"이면 세트마다 5kg 올라가요 (피라미드는 횟수가 줄 때 무게를 올리는 방식)</p></div>' +
       (M.forms && M.forms.length ? '<label>자세 복습지 연결 <small>자동 = 이름이 같은 복습지가 올라오면 알아서 붙음</small><select id="fForm"><option value="">자동</option><option value="-"' + (it.form === "-" ? ' selected' : '') + '>연결 안 함</option>' + M.forms.map(function (f) {
         return '<option value="' + esc(f.id) + '"' + (it.form === f.id ? ' selected' : '') + '>' + esc(f.exercise) + ' (' + esc(f.date) + ')</option>';
       }).join("") + '</select></label>' : '');
@@ -2057,10 +2101,23 @@
     sh.querySelector("#fAdd").addEventListener("click", function () {
       readSets(); var last = sets[sets.length - 1] || [12, null]; sets.push([last[0], last[1]]); drawSets();
     });
-    sh.querySelector("#fPyr").addEventListener("click", function () {
+    var step = 0;
+    sh.querySelector("#fStep").addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      step = +b.getAttribute("data-s");
+      Array.prototype.forEach.call(this.children, function (o) { o.setAttribute("aria-pressed", String(o === b)); });
+    });
+    sh.querySelector("#fPre").addEventListener("click", function (e) {
+      var b = e.target.closest("button[data-p]"); if (!b) return;
       readSets();
-      sets = [15, 12, 10, 8].map(function (r, j) { var o = sets[Math.min(j, sets.length - 1)]; return [r, o ? o[1] : null]; });
+      var reps = RT_PRESETS[b.getAttribute("data-p")][+b.getAttribute("data-j")].reps;
+      var k0 = sets.length ? sets[0][1] : null;
+      sets = reps.map(function (r, j) {
+        var k = k0 == null ? null : step ? Math.round((k0 + step * j) * 10) / 10 : (sets[j] && sets[j][1] != null ? sets[j][1] : k0);
+        return [r, k];
+      });
       drawSets();
+      Array.prototype.forEach.call(sh.querySelectorAll("#fPre button[data-p]"), function (o) { o.classList.toggle("on", o === b); });
     });
     sh.querySelector("#fTag").addEventListener("click", function (e) {
       var b = e.target.closest("button"); if (!b) return;
@@ -2144,6 +2201,68 @@
       R.cardio = cm ? { minutes: +cm, options: fv(sh, "iCo") } : null;
       rtDirty();
     });
+  }
+
+
+  /* 다른 회원 루틴 가져오기 (2026-11-11 "루틴 복사해서 시작") — 선생님 페이지 members.js 회원들의 data.js(+폰에서 고친 루틴)에서 골라 통째로 복사.
+     복습지 연결(form)은 그 회원 것이라 빼고, 순환 루틴끼리 / 요일 루틴끼리만 */
+  function rtDaySummary(R) {
+    return (R.days || []).filter(function (d) { return !d.rest; }).map(function (d) { return (ROT ? d.day.replace("DAY ", "D") : d.day) + " " + d.part; }).join(" · ");
+  }
+  function rtLoadOthers() {
+    var cp = ""; try { cp = localStorage.getItem("ptcoach") || ""; } catch (e) {}
+    if (!/^\/coach-[a-z0-9]+\/$/.test(cp)) return Promise.reject(new Error("coach"));
+    return fetch(cp + "members.js", { cache: "no-store" }).then(function (r) { return r.text(); }).then(function (t) {
+      var w = {}; new Function("window", t)(w);
+      var list = (w.COACH_MEMBERS || []).filter(function (sl) { return sl !== SLUG; });
+      return Promise.all(list.map(function (sl) {
+        return fetch("/m/" + sl + "/data.js", { cache: "no-store" }).then(function (r) { return r.text(); }).then(function (t2) {
+          var w2 = {}; new Function("window", t2)(w2);
+          var O = w2.MEMBER; if (!O || !O.routine) return null;
+          var base = rtBase(O.routine);
+          return (ATT_API ? fetch(ATT_API + "?m=" + encodeURIComponent(sl)).then(function (r) { return r.json(); }).catch(function () { return null; }) : Promise.resolve(null)).then(function (j) {
+            var R = j && j.routine && j.routine.routine && j.routine.base === base ? j.routine.routine : O.routine;
+            return { slug: sl, name: O.name, sex: O.sex, R: R, ed: R !== O.routine };
+          });
+        }).catch(function () { return null; });
+      }));
+    }).then(function (rows) {
+      return rows.filter(function (x) { return x && !!x.R.rotation === ROT && (x.R.days || []).length; });
+    });
+  }
+  function rtCopySheet() {
+    var sh = rtSheet("다른 회원 루틴 가져오기", '<p class="rts-p">고른 회원님 루틴을 통째로 복사해 와요. 가져온 뒤 무게만 고치고 저장하면 돼요.</p><div class="rtcp-list"><p class="rts-p">회원님 루틴 불러오는 중…</p></div>', null, false);
+    var box = sh.querySelector(".rtcp-list");
+    rtLoadOthers().then(function (rows) {
+      if (!rows.length) { box.innerHTML = '<p class="rts-p">가져올 수 있는 루틴이 없어요' + (ROT ? ' (순환 루틴 회원이 없어요)' : '') + '</p>'; return; }
+      box.innerHTML = rows.map(function (x, i) {
+        var nDays = (x.R.days || []).filter(function (d) { return !d.rest && !d.pick && !d.cardio_only; }).length;
+        return '<button type="button" class="rtcp" data-i="' + i + '"><span class="av ' + (x.sex === "F" ? "F" : "M") + '">' + esc(String(x.name).charAt(0)) + '</span>' +
+          '<span class="rtcp-t"><b>' + esc(x.name) + ' <small>' + esc(x.R.version || "") + (x.ed ? " ✎" : "") + ' · 주 ' + nDays + '회</small></b><small>' + esc(rtDaySummary(x.R)) + '</small></span><i aria-hidden="true">›</i></button>';
+      }).join("");
+      box.addEventListener("click", function (e) {
+        var b = e.target.closest(".rtcp"); if (!b) return;
+        var x = rows[+b.getAttribute("data-i")];
+        sh.close();
+        rtCopyConfirm(x);
+      });
+    }).catch(function () { box.innerHTML = '<p class="rts-p">불러오지 못했어요. 선생님 페이지를 한 번 열고 다시 해 주세요</p>'; });
+  }
+  function rtCopyConfirm(x) {
+    var body = '<p class="rts-p"><b>' + esc(x.name) + '</b> 회원님 루틴(' + esc(x.R.version || "") + ')으로 지금 루틴을 바꿔요. 저장하기 전까진 회원님께 안 보여요.</p>' +
+      '<div class="rtcp-pv">' + (x.R.days || []).map(function (d) {
+        if (d.rest) return '<div class="rtcp-d rest"><b>' + esc(d.day) + '</b><span>쉬는 날</span></div>';
+        return '<div class="rtcp-d"><b>' + esc(d.day) + '</b><span><em>' + esc(d.part) + '</em>' + esc((d.items || []).map(function (it) { return it.name; }).join(", ") || (d.pick ? "골라서 하는 날" : d.cardio_only ? "유산소만" : "")) + '</span></div>';
+      }).join("") + '</div>';
+    rtSheet("이 루틴으로 바꿀까요?", body, function () {
+      var src = clone(x.R), cur = M.routine;
+      (src.days || []).forEach(function (d) { (d.items || []).forEach(function (it) { delete it.form; }); });
+      src.version = cur ? cur.version : "v1";
+      src.updated = cur ? cur.updated : rtToday();
+      M.routine = src;
+      rtDirty();
+      attToast(x.name + " 회원님 루틴을 가져왔어요 — 무게 고치고 저장하세요");
+    }, "가져오기");
   }
 
   /* 저장 → 창고 */
@@ -2256,6 +2375,8 @@
         M.routine = RT_EDIT.saved; RT_EDIT = null; rerender(); return;
       }
       if (act === "save") { rtSaveSheet(); return; }
+      if (act === "copy") { rtCopySheet(); return; }
+      if (act === "createcopy") { RT_EDIT = { saved: null, dirty: 0 }; M.routine = rtNewRoutine(); location.hash = ROT ? "#routine" : "#routine-mon"; rerender(); rtCopySheet(); return; }
       if (act === "reset") { rtResetSheet(); return; }
       if (act === "info") { rtInfoSheet(); return; }
       if (!d) return;
