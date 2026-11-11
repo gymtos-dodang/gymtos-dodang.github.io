@@ -131,6 +131,30 @@ section.folded .head p { display: none; }
 section.folded .fsum:not(:empty) { display: inline; }
 .fbody { display: flex; flex-direction: column; gap: inherit; }
 @media (prefers-reduced-motion: reduce) { .fold-btn svg { transition: none; } }
+/* 아이패드 화면 (2026-11-11 "PT통합노트도 아이패드버전"): 넓은 화면이면 왼쪽 = 지금 선생님 페이지, 오른쪽 = 고른 회원 PT 노트(바로 열림) */
+.pane { display: none; }
+@media (min-width: 760px) {
+  body.pad { height: 100vh; height: 100dvh; overflow: hidden; display: grid; grid-template-columns: 380px 1fr; grid-template-rows: auto minmax(0, 1fr); }
+  body.pad .bar { grid-column: 1 / -1; }
+  body.pad .bar-in { max-width: none; }
+  body.pad .wrap { max-width: none; width: 100%; margin: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; border-right: 1px solid var(--line); padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; min-height: 0; }
+  body.pad .sbar { top: 0; }
+  body.pad .wrap > * { flex-shrink: 0; }
+  body.pad .pane { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--page); }
+  body.pad .mcard.sel { box-shadow: 0 0 0 2.5px var(--primary), 0 4px 14px rgba(30, 35, 48, .12); }
+  body.pad .mcard.sel.F { box-shadow: 0 0 0 2.5px #C2185B, 0 4px 14px rgba(30, 35, 48, .12); }
+  body.pad .hero h1 { font-size: 26px; }
+}
+@media (min-width: 1100px) { body.pad { grid-template-columns: 430px 1fr; } }
+.pane-top { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); background: var(--paper); min-height: 52px; box-sizing: border-box; }
+.pane-top .pt-name { flex: 1; min-width: 0; font-size: 15px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pane-top .pt-name small { font-size: 12px; color: var(--faint); font-weight: 700; margin-left: 6px; }
+.pane-top a, .pane-top button { flex: none; font: inherit; font-size: 13px; font-weight: 700; color: var(--primary); background: var(--tint); border: 0; border-radius: 10px; padding: 7px 12px; text-decoration: none; cursor: pointer; }
+.pane-body { flex: 1; min-height: 0; position: relative; }
+.pane-body iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: var(--page); }
+.pane-empty { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: var(--faint); padding: 24px; }
+.pane-empty b { display: block; font-size: 18px; color: var(--sub); margin-bottom: 6px; }
+.pane-empty svg { width: 64px; height: 64px; color: #C9CED8; margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -203,6 +227,13 @@ section.folded .fsum:not(:empty) { display: inline; }
     </div>
   </section>
 </main>
+<aside class="pane" id="pane" aria-label="회원 PT 노트 보기">
+  <div class="pane-top"><span class="pt-name" id="ptName">회원 PT 노트</span>
+    <button type="button" id="ptReload" hidden>새로고침</button><a id="ptOpen" href="#" target="_blank" rel="noopener" hidden>새 창으로 ↗</a></div>
+  <div class="pane-body" id="paneBody">
+    <div class="pane-empty" id="paneEmpty"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9 4v16"/></svg><b>왼쪽에서 회원님을 누르세요</b>그 회원님 PT 노트가 여기서 바로 열려요<br>(루틴 고치기·출석 보기도 여기서 그대로)</div></div>
+  </div>
+</aside>
 <script src="members.js"></script>
 <script>
 (function () {
@@ -277,7 +308,7 @@ section.folded .fsum:not(:empty) { display: inline; }
     info += '<span>루틴 <b>' + esc(R.version || "–") + (M._rted ? ' ✎' : '') + '</b></span><span>복습지 <b>' + (M.forms || []).length + '개</b></span>';
     var jt = journeyText(M);
     var stKey = !days ? "wait" : on ? "on" : rest ? "rest" : "off";
-    return '<div class="mcard" data-name="' + esc(M.name) + '" data-cho="' + esc(cho(M.name)) + '" data-st="' + stKey + '"><a class="mtop" href="' + base + '#home"><span class="av ' + sex + '">' + esc(M.name.charAt(0)) + '</span>' +
+    return '<div class="mcard ' + sex + '" data-name="' + esc(M.name) + '" data-cho="' + esc(cho(M.name)) + '" data-st="' + stKey + '"><a class="mtop" href="' + base + '#home"><span class="av ' + sex + '">' + esc(M.name.charAt(0)) + '</span>' +
       '<div><h3>' + esc(M.name) + ' 회원님</h3><p>' + esc(M.goal || "") + (jt ? ' · ' + jt : '') + '</p></div>' + st + '</a>' +
       '<div class="mrow2">' + info + '</div>' +
       '<div class="qlinks"><a class="' + sex + '" href="' + base + '#home">홈</a><a class="' + sex + '" href="' + base + '#goal">출석·목표</a>' +
@@ -345,6 +376,44 @@ section.folded .fsum:not(:empty) { display: inline; }
     function toggle() { set(!sec.classList.contains("folded"), true); }
     btn.addEventListener("click", toggle);
     h2.addEventListener("click", toggle);
+  });
+
+  /* ---------------- 아이패드 화면 (2026-11-11): 폭 760px 넘으면 두 칸 — 왼쪽 회원 목록, 오른쪽에 그 회원 PT 노트를 바로 띄움 */
+  var PAD_MQ = window.matchMedia("(min-width: 760px)"), paneFrame = null, paneSlug = "";
+  function isPad() { return PAD_MQ.matches; }
+  function padSet() { document.body.classList.toggle("pad", isPad()); }
+  padSet();
+  if (PAD_MQ.addEventListener) PAD_MQ.addEventListener("change", padSet); else if (PAD_MQ.addListener) PAD_MQ.addListener(padSet);
+  function paneMark() {
+    Array.prototype.forEach.call(document.querySelectorAll(".mcard"), function (el) {
+      var a = el.querySelector(".mtop"), m = a && a.getAttribute("href").match(/^\/m\/([^\/]+)\//);
+      el.classList.toggle("sel", !!m && m[1] === paneSlug);
+    });
+  }
+  function paneOpen(href) {
+    var m = href.match(/^\/m\/([^\/]+)\/(#.*)?$/); if (!m) return false;
+    paneSlug = m[1];
+    var body = document.getElementById("paneBody");
+    document.getElementById("paneEmpty").hidden = true;
+    if (!paneFrame) { paneFrame = document.createElement("iframe"); paneFrame.title = "회원 PT 노트"; body.appendChild(paneFrame); }
+    var cur = paneFrame.getAttribute("src") || "";
+    if (cur.split("#")[0] === "/m/" + m[1] + "/" && paneFrame.contentWindow) { try { paneFrame.contentWindow.location.hash = (m[2] || "#home"); } catch (e) { paneFrame.src = href; } }
+    else paneFrame.src = href;
+    var card = null;
+    Array.prototype.forEach.call(document.querySelectorAll(".mcard"), function (el) { if (el.querySelector('.mtop[href^="/m/' + m[1] + '/"]')) card = el; });
+    var nm = card ? card.getAttribute("data-name") : "";
+    document.getElementById("ptName").innerHTML = esc(nm ? nm + " 회원님" : "회원 PT 노트") + '<small>선생님 보기</small>';
+    var op = document.getElementById("ptOpen"); op.href = href; op.hidden = false;
+    document.getElementById("ptReload").hidden = false;
+    try { sessionStorage.setItem("ptpane", href); } catch (e) {}
+    paneMark();
+    return true;
+  }
+  document.getElementById("ptReload").addEventListener("click", function () { if (paneFrame) try { paneFrame.contentWindow.location.reload(); } catch (e) { paneFrame.src = paneFrame.src; } });
+  document.querySelector("main.wrap").addEventListener("click", function (e) {
+    if (!isPad() || e.metaKey || e.ctrlKey) return;
+    var a = e.target.closest('a[href^="/m/"]'); if (!a) return;
+    if (paneOpen(a.getAttribute("href"))) e.preventDefault();
   });
 
   /* ---------------- 이번 달 출석왕 (2026-11-11): 출석 창고 기록으로 이번 달 출석 횟수 순위 + 지난달 같은 날까지와 비교 */
@@ -459,6 +528,8 @@ section.folded .fsum:not(:empty) { display: inline; }
       rows = rows.filter(Boolean);
       box.innerHTML = rows.map(function (r) { return card(r.slug, r.M, null); }).join("");
       fsum("list", rows.length + "명");
+      if (isPad() && !paneSlug) { var last = ""; try { last = sessionStorage.getItem("ptpane") || ""; } catch (e) {} if (last) paneOpen(last); }
+      paneMark();
       applyFilter();
       var done = 0, onN = 0, restN = 0;
       rows.forEach(function (r, i) {
@@ -471,6 +542,7 @@ section.folded .fsum:not(:empty) { display: inline; }
           .then(function (days) {
             r.days = days;
             var el = box.children[i]; if (el) el.outerHTML = card(r.slug, r.M, days);
+            paneMark();
             applyFilter();
             if (days[today] != null) onN++; else if (isRestToday(r.M)) restN++;
             done++;
