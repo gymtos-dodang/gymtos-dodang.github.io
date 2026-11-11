@@ -1491,9 +1491,28 @@
       '<div class="th-tiles">' + tiles + '</div>' + go("오늘 운동 시작하기 →") +
       (ROT ? '<p class="th-hint">출석 도장 찍은 날을 세서 다음 순서를 알려줘요. 순서가 다르면 루틴 탭에서 그날 DAY를 눌러요</p>' : '') + '</div>';
   }
+  /* 회원 메모 (2026-11-12): 선생님 보기에서만 홈 맨 위 — assets/memo.js(PTMemo), 창고 coach:memo:<주소>(선생님 열쇠로만 읽힘) */
+  function cmemoDraw(list) {
+    var box = document.getElementById("cmemo"); if (!box) return;
+    var it = (list || []).slice(0, 3);
+    box.innerHTML = '<div class="cm-h"><b>📝 선생님 메모</b><small>회원님께는 안 보여요</small></div>' +
+      (it.length ? it.map(function (x) {
+        var m = String(x.d || "").match(/^\d{4}-(\d{2})-(\d{2})/);
+        return '<div class="cm-i' + (x.pin ? ' pin' : '') + '"><span>' + (x.pin ? '📌' : (m ? +m[1] + '/' + +m[2] : '')) + (x.tag ? ' · ' + esc(x.tag) : '') + '</span><p>' + esc(x.t) + '</p></div>';
+      }).join("") : '<p class="cm-e">아직 메모가 없어요 — 몸 상태·통증·일정을 적어 두세요</p>') +
+      '<button type="button" class="cm-go" id="cmGo">' + ((list || []).length > 3 ? '메모 ' + list.length + '개 모두 보기 · 쓰기' : '메모 쓰기') + ' →</button>';
+    document.getElementById("cmGo").addEventListener("click", function () { window.PTMemo.open(SLUG, M.name, cmemoDraw); });
+  }
+  function cmemoFill() {
+    if (!document.getElementById("cmemo")) return;
+    function go() { if (!window.PTMemo) return; window.PTMemo.load(SLUG).then(function (o) { cmemoDraw(o ? o[SLUG] : (window.PTMemo.cache[SLUG] || [])); }); }
+    if (window.PTMemo) return go();
+    var sc = document.createElement("script"); sc.src = BASE + "memo.js"; sc.onload = go; document.head.appendChild(sc);
+  }
   function renderHome() {
     var k = todayKey(), d = dayByKey(k), now = new Date();
     var h = '<div class="hlead"><p>' + esc(M.name) + ' 회원님 · ' + (now.getMonth() + 1) + '월 ' + now.getDate() + '일 ' + DAY_KO[DAY_KEYS[now.getDay()]] + '요일</p><h1>오늘</h1></div>';
+    if (COACH_MODE && !DEMO) { h += '<section class="cmemo" id="cmemo" aria-label="선생님 메모"><div class="cm-h"><b>📝 선생님 메모</b><small>회원님께는 안 보여요</small></div><p class="cm-e">불러오는 중…</p></section>'; setTimeout(cmemoFill, 0); }
     h += attCheckStrip();
     h += todayHero(k, d);
     h += homeWidgets();

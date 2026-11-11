@@ -204,6 +204,13 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 코드: 404.html(받아서 띄우기) · coach-tqqnlh/index.html nmLoad·nmShow·nmPost·nmDrawList(새 회원 칸), render()에서 members.js + coach:members 합침, 카드 M._dyn.
 - 선생님 보기 출석 도장은 class "ro"(예전 "view" — 본문 .view 칸 모양이 씌워져 세로로 깨지던 것 고침).
 
+## 회원 메모 — 선생님만 (2026-11-12 장동욱 "회원님들 메모 기능, 그 회원님 상태를 까먹을 수도 있으니까")
+- 선생님 페이지 회원 카드마다 금색 점선 📝 줄(고정 메모 또는 최신 메모 한 줄, 메모 2개 이상이면 개수) → 누르면 메모 창: 내용 + 꼬리표(몸 상태·통증·주의·목표·식단·일정·기타) + 📌 맨 위 고정 → 저장. 목록에서 고정/풀기·삭제(두 번).
+- 선생님 보기로 회원 노트를 열면(폰·아이패드 오른쪽 칸) 홈 맨 위 "📝 선생님 메모" 칸(고정 먼저, 최신 3개 + 메모 쓰기). 회원 폰·PT 안내서 데모에선 안 나옴(COACH_MODE && !DEMO).
+- 저장: 창고 저장소 `coach:memo:<회원주소>` = [{id, d:"YYYY-MM-DD", t, tag?, pin?}] — coach:* 라 선생님 열쇠 없이는 못 읽음(회원 쪽 GET 응답 kv에도 안 들어감). 창고 재배포 필요 없음. 폰에서 만든 회원도 똑같이 됨.
+- 코드: assets/memo.js(PTMemo.load·open·line — 창 모양·저장 전부, 선생님 페이지는 script 태그, app.js는 cmemoFill에서 BASE+"memo.js"를 불러옴) · coach-tqqnlh/index.html memoRow·memoRefresh · app.js cmemoDraw·cmemoFill · style.css .cmemo.
+- Claude가 회원 이야기를 들을 때 "메모에 적어둬"라고 하면: 내장 브라우저로 선생님 페이지를 열어 그 회원 📝에 저장(또는 kv_set coach:memo:<주소>, 기존 목록 앞에 추가).
+
 ## 새 공지 팝업 (2026-11-05 장동욱 요청)
 - data.js notices 맨 위에 새 공지를 올리면, 회원이 PT 노트를 열 때 화면 위에서 팝업이 내려왔다가 약 5초 뒤 사라짐(위로 밀어도 닫힘). 누르면 공지 탭의 그 공지로 이동해 반짝 표시.
 - 공지 하나당 팝업은 한 번만. 공지 탭을 열기 전까지 아래 '공지' 탭에 빨간 점. 14일 넘은 공지는 새 공지로 안 침.

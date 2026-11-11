@@ -46,6 +46,9 @@
 .st.rest { color: #A3A9B5; }
 .st.wait { opacity: .6; }
 .sum b.no { color: var(--bad); }
+.mmemo { display: flex; align-items: center; gap: 6px; width: 100%; font: inherit; font-size: 13px; text-align: left; color: #7A5410; background: #FFFAEF; border: 1px dashed #D9B25F; border-radius: 10px; padding: 7px 10px; cursor: pointer; min-height: 36px; }
+.mmemo span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mmemo.empty { color: #A68A55; background: #fff; }
 .mrow2 { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--sub); }
 .mrow2 b { color: var(--ink); font-variant-numeric: tabular-nums; }
 .qlinks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
@@ -275,6 +278,7 @@ section.folded .fsum:not(:empty) { display: inline; }
   </div>
 </aside>
 <script src="members.js"></script>
+<script src="/assets/memo.js"></script>
 <script>
 (function () {
   "use strict";
@@ -334,6 +338,21 @@ section.folded .fsum:not(:empty) { display: inline; }
     for (var i = 0; i < R.days.length; i++) if (R.days[i].day === key) return !!R.days[i].rest;
     return false;
   }
+  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js) */
+  var MEMO = null;
+  function memoRow(slug, name) {
+    if (!window.PTMemo || !bnKey()) return "";
+    var l = MEMO ? window.PTMemo.line(MEMO[slug]) : "";
+    return '<button type="button" class="mmemo' + (l ? '' : ' empty') + '" data-memo="' + esc(slug) + '" data-mname="' + esc(name) + '">📝 <span>' + esc(l || (MEMO ? "메모 남기기" : "메모 불러오는 중…")) + '</span>' + (MEMO && MEMO[slug] && MEMO[slug].length > 1 ? '<small>' + MEMO[slug].length + '</small>' : '') + '</button>';
+  }
+  function memoRefresh() {
+    Array.prototype.forEach.call(document.querySelectorAll(".mmemo"), function (b) { b.outerHTML = memoRow(b.getAttribute("data-memo"), b.getAttribute("data-mname")); });
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-memo]"); if (!b || !window.PTMemo) return;
+    var slug = b.getAttribute("data-memo");
+    window.PTMemo.open(slug, b.getAttribute("data-mname"), function (list) { MEMO = MEMO || {}; MEMO[slug] = list; memoRefresh(); });
+  });
   function card(slug, M, days) {
     var sex = M.sex === "F" ? "F" : "M", base = "/m/" + slug + "/";
     var on = days && days[today] != null, rest = isRestToday(M);
@@ -353,7 +372,7 @@ section.folded .fsum:not(:empty) { display: inline; }
     var stKey = !days ? "wait" : on ? "on" : rest ? "rest" : "off";
     return '<div class="mcard ' + sex + '" data-name="' + esc(M.name) + '" data-cho="' + esc(cho(M.name)) + '" data-st="' + stKey + '"><a class="mtop" href="' + base + '#home"><span class="av ' + sex + '">' + esc(M.name.charAt(0)) + '</span>' +
       '<div><h3>' + esc(M.name) + ' 회원님</h3><p>' + esc(M.goal || "") + (jt ? ' · ' + jt : '') + '</p></div>' + st + '</a>' +
-      '<div class="mrow2">' + info + '</div>' +
+      '<div class="mrow2">' + info + '</div>' + memoRow(slug, M.name) +
       '<div class="qlinks"><a class="' + sex + '" href="' + base + '#home">홈</a><a class="' + sex + '" href="' + base + '#goal">출석·목표</a>' +
       '<a class="' + sex + '" href="' + base + '#routine">루틴</a>' + (M._dyn ? '<a class="' + sex + '" href="#" data-nmedit="' + esc(slug) + '">✎ 정보</a>' : '<a class="' + sex + '" href="' + base + '#forms">복습지</a>') + '</div></div>';
   }
@@ -688,6 +707,7 @@ section.folded .fsum:not(:empty) { display: inline; }
 
   function render() {
     var box = document.getElementById("list");
+    if (window.PTMemo) window.PTMemo.load().then(function (o) { if (o) { MEMO = o; memoRefresh(); } });
     Promise.all(LIST.map(function (slug) {
       return loadMember(slug).then(function (M) { return { slug: slug, M: M }; }).catch(function () { return null; });
     }).concat([nmLoad()])).then(function (rows) {
