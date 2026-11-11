@@ -55,7 +55,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 ## 새 회원 PT 노트 만들기
 0. **PT 시작일을 꼭 받기** (장동욱이 말해줌, "10월"처럼 달만 주면 그 달 15일로). 안 알려주면 물어볼 것. → data.js journey.start
 1. 주소: `m/<이름 로마자>-<랜덤 소문자·숫자 6자>/` (예: jisu-k3x9qa). 추측하기 어렵게.
-2. `m/jihun-g9kgdo/index.html` 복사(site.js·exicons.js·app.js 스크립트 태그 그대로) → 제목·og:title·헤더 문구의 이름, og:image 경로, theme-color(여 #D6204F) 바꾸기.
+2. `m/jihun-g9kgdo/index.html`·`manifest.webmanifest` 복사(site.js·exicons.js·app.js 스크립트 태그 그대로) → 제목·og:title·헤더 문구의 이름, og:image 경로, theme-color(여 #D6204F) 바꾸기. **여 회원은 아이콘 icon-m-* → icon-f-*** (index.html 두 줄 + manifest 아이콘·색 #D6204F/#FBF3F5).
 3. data.js 작성 (아래 형식). sex "F"면 핑크 테마·핑크 아이콘 자동.
 4. og.jpg 생성: `python3 _tools/rebrand_jk.py` 가 모든 회원 og.jpg를 다시 그림(남 블랙+빨강 로고 / 여 핑크레드+흰 로고, "JANG KAREDO PT노트 · 나만의 운동 노트", "OOO 회원님", 아래 띠 "JANG KAREDO PT노트 · 담당 장동욱 트레이너") — 이미 바뀐 글자·색은 그대로라 여러 번 돌려도 됨. theme-color 남 #1A1A1E / 여 #D6204F.
 5. 위 회원 목록 표에 추가하고, coach-tqqnlh/members.js에도 주소 추가.
@@ -191,6 +191,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 홈 순서: 큰 제목(OOO 회원님 · 날짜 / "오늘") → **출석 도장**(#attBtn .stamp) → 오늘 운동 큰 카드(.thero 남 블랙 / 여 핑크레드, 종목 아이콘 옆으로 넘기기, 메인은 금색 테두리·움직임, "오늘 운동 시작하기") → 위젯 2칸(#hwid 이번 달 출석률 링 / 연속 출석 + 이번 주 7칸) → 리포트·PT 여정·인바디 띠·다음 수업·공지·복습지.
 - 출석 도장: 안 찍었으면 점선 도장이 숨쉬고 물결(눌러서 출석 도장 꾹), 누르면 빨간 도장이 쾅(기울어짐) + 점 톡톡 + 진동 + "N번째 출석 · 시각 / 오늘도 와줘서 고마워요 / 날마다 바뀌는 한마디"(app.js ST_ON·ST_OFF, 날짜로 골라서 하루 동안 같음). 다시 누르면 취소. 선생님 보기에선 움직임 없이 보기만. 색 --seal.
 - 움직이는 그라데이션(2026-11-11, 같은 날 "빠르게 지나가는 투명 띠 없애고 애플 iOS처럼"으로 다듬음): 빛줄기 없음. 출석 도장 칸 = 왼쪽(도장 쪽)에 옅은 빨강/핑크빛이 16초에 걸쳐 천천히 번짐(찍은 뒤엔 빨강 + 오른쪽 금빛, 그림자도 그 색). 오늘 운동 카드 = 번진 빛 덩어리 2개가 18·22초로 떠다니는 메시 그라데이션(남 검붉은 + 빨강빛 / 여 밝은 핑크 + 진한 로즈) + 윗빛 1px 테두리·부드러운 그림자, 버튼·위젯 누르면 살짝 눌림(style.css gSoft·gDrift1·gDrift2, --hero2·--hero3). 움직임 줄이기면 멈춤.
+- **홈 화면 앱 아이콘** (2026-11-11 "앱아이콘 A로 가자" — 앱 시안 캔버스 아이콘 A '노트 표지'): 스프링 노트 표지 + 로고 + 책갈피 + PT NOTE. 남 = 블랙·빨강(assets/icon-m-180·192·512.png), 여 = 핑크레드·흰 로고(icon-f-*). `python3 _tools/make_member_icon.py`로 다시 그림(assets/icon.png = 남 180도 같이 덮어씀). 회원 index.html의 icon·apple-touch-icon이 성별 아이콘을 가리키고, 회원 폴더마다 manifest.webmanifest(이름 "PT노트", start_url ./, 성별 아이콘·색). 이미 홈 화면에 추가한 아이콘은 아이폰에선 안 바뀜(지우고 다시 추가), 안드로이드는 manifest 생긴 뒤 설치한 것부터 자동 갱신.
 - 회원 index.html에 홈 화면 앱 메타(apple-mobile-web-app-capable 등, 이름 "PT노트") — 새 회원 껍데기도 jihun 복사라 자동.
 - 코드: app.js attSeal·attCheckStrip·homeWidgets·todayHero·meSeg / style.css 맨 아래 "앱 화면" 블록.
 
