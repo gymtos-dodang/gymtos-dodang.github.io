@@ -126,14 +126,13 @@
   var XIC = '<span class="ic no"><svg aria-hidden="true"><use href="#i-x"/></svg></span>';
   var view = document.getElementById("view");
   /* 아래 탭 (회원 페이지 공통 — 여기서 그림) */
+  /* 2026-11-11 앱 화면(시안 A "라이트 네이티브"): 아래 탭 5개 — 목표·몸변화·공지는 '나' 탭(위 칸 전환)과 오른쪽 위 종으로 */
   var TABS = [
     ["home", "홈", '<path d="M3.5 10.5 12 4l8.5 6.5V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z" stroke-linejoin="round"/>'],
-    ["goal", "목표", '<path d="M5 21V4" stroke-linecap="round"/><path d="M5 4.5h12.5l-2.5 4 2.5 4H5" stroke-linejoin="round"/>'],
-    ["body", "몸변화", '<path d="M4 18l5-5.5 4 3L20 8" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.5 8H20v4.5" stroke-linecap="round" stroke-linejoin="round"/>'],
     ["routine", "루틴", '<path d="M6.5 8v8M17.5 8v8M3.5 10v4M20.5 10v4M6.5 12h11" stroke-linecap="round"/>'],
     ["forms", "복습지", '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z" fill="currentColor"/>'],
     ["diet", "식단", '<circle cx="13" cy="13" r="6.5"/><path d="M4 4v6M6.5 4v6M4 7h2.5M5.2 10v10" stroke-linecap="round"/>'],
-    ["notice", "공지", '<path d="M4 10v4h3l6 4V6L7 10z" stroke-linejoin="round"/><path d="M16.5 9.5a3.5 3.5 0 0 1 0 5M19 7a7 7 0 0 1 0 10" stroke-linecap="round"/>']
+    ["me", "나", '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6" stroke-linecap="round"/>', "goal"]
   ];
   /* 2026-11-06 몸변화 탭 (인바디) — 그룹 PT 페이지(이름에 ·)·inbody:false 회원은 탭 없음 */
   if (/·/.test(M.name || "") || M.inbody === false) TABS = TABS.filter(function (t) { return t[0] !== "body"; });
@@ -184,9 +183,26 @@
   var tabsIn = document.querySelector(".tabs-in");
   if (tabsIn) {
     tabsIn.innerHTML = TABS.map(function (t) {
-      return '<a href="#' + t[0] + '" data-tab="' + t[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + t[2] + '</svg>' + t[1] + '</a>';
+      return '<a href="#' + (t[3] || t[0]) + '" data-tab="' + t[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + t[2] + '</svg>' + t[1] + '</a>';
     }).join("");
     tabsIn.style.gridTemplateColumns = "repeat(" + TABS.length + ", 1fr)";
+  }
+  (function () {   /* 위 막대 오른쪽: 공지 종(새 공지면 빨간 점) + 내 이름 동그라미(→ 나 탭) */
+    var bi = document.querySelector(".bar-in");
+    if (!bi || bi.querySelector(".bar-r")) return;
+    var nm = String(M.name || "").split("·")[0].trim(), ini = /·/.test(M.name || "") ? "함께" : (nm.length >= 3 ? nm.slice(1) : nm);
+    var r = document.createElement("div"); r.className = "bar-r";
+    r.innerHTML = '<a class="bell" href="#notice" aria-label="선생님 공지"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 6.5 2.5 8.5 2.5 8.5h-17S6 15.5 6 9"/><path d="M10 21h4"/></svg></a>' +
+      '<a class="ava" href="#goal" aria-label="나의 목표 · 출석">' + esc(ini) + '</a>';
+    bi.appendChild(r);
+  })();
+  function meSeg(cur) {   /* '나' 탭 위 전환 칸: 목표·출석 / 몸변화 / 공지 */
+    var L = [["goal", "목표 · 출석"]];
+    if (IB_ON) L.push(["body", "몸변화"]);
+    L.push(["notice", "공지"]);
+    return '<nav class="meseg" aria-label="나의 기록">' + L.map(function (x) {
+      return '<a href="#' + x[0] + '"' + (x[0] === cur ? ' aria-current="page"' : '') + '>' + x[1] + '</a>';
+    }).join("") + '</nav>';
   }
 
 
@@ -454,7 +470,7 @@
   }
   function renderGoal() {
     var now = journeyNow();
-    var h = '<div class="hero"><div class="hero-main"><div class="hero-l"><div class="eyebrow">MY GOAL <b>· 나의 목표</b></div>' +
+    var h = meSeg("goal") + '<div class="hero"><div class="hero-main"><div class="hero-l"><div class="eyebrow">MY GOAL <b>· 나의 목표</b></div>' +
       '<h1>' + esc(M.goal || "나의 목표") + '</h1><div class="en">' + esc(M.name) + ' 회원님 · ' + (BP ? '기초 → 벌크 → 컷팅, 바프 촬영까지 함께 가요' : '기초 → 변화 → 자립, 3단계로 함께 가요') + '</div>' +
       '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 ' + esc(TRN) + ' 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + (BP ? '목표는 하나, 바프 촬영날! 그 의지라면 충분해요. 단계마다 함께 넘어가요!' : '혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!') + '</p></div></div>';
@@ -531,18 +547,54 @@
   }
   function rateWord(r) { return r >= 80 ? ["good", "아주 좋아요!"] : r >= 50 ? ["mid", "조금만 더!"] : ["low", "다시 시작해봐요"]; }
 
-  function attCheckStrip() {   /* 홈 제목 카드 오른쪽에 들어가는 오늘 출석 체크 */
+  /* 출석 도장 (2026-11-11 "A버전에 감성적으로 출석버튼"): 홈 맨 위 카드. 누르면 도장이 쾅 찍히고 점이 톡톡 튐 + 날마다 다른 한마디 */
+  var ST_ON = ["오늘의 땀이 내일의 자신감이 돼요", "나와준 것만으로 이미 절반은 해냈어요", "어제의 나보다 한 걸음 더 왔어요",
+    "꾸준함이 쌓이는 소리, 들리시죠?", "오늘도 나와의 약속을 지켰어요", "몸은 거짓말을 안 해요. 오늘도 잘 왔어요", "이 한 번이 모여서 달라진 몸이 돼요"];
+  var ST_OFF = ["문을 열고 들어온 순간부터 운동이에요", "오늘의 나에게 도장 하나 꾹 찍어줘요", "가장 어려운 건 오는 것, 이미 반은 왔어요", "오늘 찍은 도장이 다음 달 몸이 돼요"];
+  function attSeal(on, now, tm) {
+    var md = pad2(now.getMonth() + 1) + "." + pad2(now.getDate());
+    if (on) return '<svg viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="33" fill="var(--seal)"/>' +
+      '<circle cx="36" cy="36" r="28.5" fill="none" stroke="#fff" stroke-width="1.4" opacity=".75"/>' +
+      '<text x="36" y="23.5" text-anchor="middle" font-size="7.5" font-weight="900" fill="#fff" letter-spacing="1.5" opacity=".85">JK</text>' +
+      '<text x="36" y="41" text-anchor="middle" font-size="17" font-weight="900" fill="#fff">출석</text>' +
+      '<text x="36" y="53" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" opacity=".9">' + md + '</text></svg>';
+    return '<svg viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="33" fill="#fff" stroke="var(--seal)" stroke-width="2.4" stroke-dasharray="4.6 4.2"/>' +
+      '<circle cx="36" cy="36" r="27" fill="var(--seal)" opacity=".09"/>' +
+      '<text x="36" y="40.5" text-anchor="middle" font-size="15" font-weight="900" fill="var(--seal)">출석</text>' +
+      '<text x="36" y="53" text-anchor="middle" font-size="8.5" font-weight="700" fill="var(--seal)" opacity=".75">' + md + '</text></svg>';
+  }
+  function attCheckStrip() {   /* 홈 맨 위 출석 도장 카드 (id attBtn — 출석이 바뀌면 attRefresh가 통째로 다시 그림) */
     var a = attLoad(), now = new Date(), key = ymd(now), on = attHas(a, key);
-    var m = attStats(a, new Date(now.getFullYear(), now.getMonth(), 1), now);
-    return '<button type="button" class="attq' + (on ? ' on' : '') + '" id="attBtn" aria-pressed="' + on + '" aria-label="' +
-      (now.getMonth() + 1) + '월 ' + now.getDate() + '일 출석 ' + (on ? '완료, 누르면 취소' : '체크하기') + '">' +
-      '<span class="qbox" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.2 4.2 8.8-9.4" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>' +
-      '<span class="qlab">' + (on ? '출석 완료' : '오늘 출석') + '</span>' +
-      '<span class="qrate">' + (on && attTimes[key] ? attTimes[key] + ' 체크' : '이번 달 ' + m.rate + '%') + '</span></button>';
+    var doy = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+    var msg = on ? ST_ON[doy % ST_ON.length] : ST_OFF[doy % ST_OFF.length];
+    var burst = ""; for (var i = 0; i < 10; i++) burst += '<i style="--a:' + (i * 36) + 'deg"></i>';
+    return '<button type="button" class="stamp' + (on ? ' on' : '') + '" id="attBtn" aria-pressed="' + on + '" aria-label="' +
+      (now.getMonth() + 1) + '월 ' + now.getDate() + '일 출석 ' + (on ? '완료, 다시 누르면 취소' : '도장 찍기') + '">' +
+      '<span class="st-seal">' + attSeal(on, now) + '<span class="st-burst" aria-hidden="true">' + burst + '</span></span>' +
+      '<span class="st-txt"><small>' + (on ? a.length + '번째 출석' + (attTimes[key] ? ' · ' + attTimes[key] : '') : '오늘 출석 도장') + '</small>' +
+      '<b>' + (on ? '오늘도 와줘서 고마워요' : '눌러서 출석 도장 꾹') + '</b><em>' + esc(msg) + '</em></span>' +
+      (on ? '<span class="st-undo" aria-hidden="true">다시 누르면 취소</span>' : '<span class="st-go" aria-hidden="true">›</span>') + '</button>';
+  }
+  function homeWidgets() {   /* 홈 작은 위젯 2칸: 이번 달 출석률 링 / 연속 출석 + 이번 주 7칸 */
+    var a = attLoad(), now = new Date(), today = ymd(now);
+    var m = attStats(a, new Date(now.getFullYear(), now.getMonth(), 1), now), s = attStreak(a);
+    var R = 22, C = 2 * Math.PI * R, len = C * m.rate / 100;
+    var mon = new Date(now); mon.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+    var wk = "";
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(mon); d.setDate(mon.getDate() + i);
+      var k = ymd(d), c = attHas(a, k) ? "on" : (!ROT && !isWorkoutDay(d)) ? "rest" : "";
+      wk += '<span class="' + c + (k === today ? ' today' : '') + '"></span>';
+    }
+    return '<div class="hwid" id="hwid"><a class="hw" href="#goal"><svg class="ring" viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="' + R + '" fill="none" stroke="var(--hw-track)" stroke-width="7"/>' +
+      (m.rate > 0 ? '<circle cx="27" cy="27" r="' + R + '" fill="none" stroke="var(--seal)" stroke-width="7" stroke-linecap="round" stroke-dasharray="' + (m.rate >= 100 ? C.toFixed(1) + ' 0' : len.toFixed(1) + ' ' + C.toFixed(1)) + '" transform="rotate(-90 27 27)"/>' : '') +
+      '</svg><span><small>이번 달 출석률</small><b>' + m.rate + '<i>%</i></b></span></a>' +
+      '<a class="hw col" href="#goal-badges"><small>연속 출석</small><b>' + s + '<i>회</i></b><span class="wk" aria-label="이번 주 출석">' + wk + '</span></a></div>';
   }
   function attRefresh() {   /* 출석이 바뀌면 화면의 출석 부분만 다시 그림 */
     var b = document.getElementById("attBtn");
     if (b) { b.outerHTML = attCheckStrip(); setupAttCheck(); }
+    var hw = document.getElementById("hwid"); if (hw) hw.outerHTML = homeWidgets();
     var g = document.querySelector(".attgauge"); if (g) g.outerHTML = attGauge();
     var c = document.querySelector(".cal"); if (c) { c.outerHTML = attCalendar(); setupCal(); }
     var bs = document.getElementById("badges"); if (bs) { bs.outerHTML = badgeSection(bs.getAttribute("data-num")); setupBadges(); setupFold(view.getAttribute("data-tab") || "goal"); }
@@ -582,7 +634,7 @@
       attSave(a);
       attRefresh();
       var nb = document.getElementById("attBtn");
-      if (nb && turnOn) nb.classList.add("pop");
+      if (nb && turnOn) { nb.classList.add("pop"); try { navigator.vibrate && navigator.vibrate([18, 40, 26]); } catch (e) {} }
       if (!ATT_API) return;
       if (nb) nb.classList.add("saving");
       attCall("&a=" + (turnOn ? "check" : "uncheck") + "&d=" + key + "&t=" + encodeURIComponent(tm) + "&n=" + encodeURIComponent(M._real || M.name))
@@ -943,7 +995,7 @@
     return '<div class="ibtrend panel"><p class="ibt-when">' + a[0].d.replace(/-/g, ". ") + ' → ' + a[a.length - 1].d.replace(/-/g, ". ") + ' · 기록 ' + a.length + '개</p>' + rows + '</div>';
   }
   function renderBody() {
-    var h = '<div class="hero"><div class="hero-main"><div class="hero-l"><div class="eyebrow">MY BODY <b>· 몸 변화 기록</b></div>' +
+    var h = meSeg("body") + '<div class="hero"><div class="hero-main"><div class="hero-l"><div class="eyebrow">MY BODY <b>· 몸 변화 기록</b></div>' +
       '<h1>몸 변화 기록</h1><div class="en">' + esc(M.name) + ' 회원님 · 인바디로 지난달과 비교해요</div>' +
       '<div class="who"><strong>한 달에 한 번</strong><span>담당 ' + esc(TRN) + ' 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>숫자는 한 달에 한 번! 같은 시간 · 같은 조건으로 재요</p></div></div>';
@@ -1417,39 +1469,33 @@
         (it.tag ? ' ' + tagChip(it.tag) : '') + '</li>';
     }).join("") + '</ul>';
   }
+  function todayHero(k, d) {   /* 홈 오늘 운동 큰 카드 (남 블랙 / 여 핑크레드) */
+    var go = function (t) { return '<a class="th-go" href="#routine-' + k + '">' + t + '</a>'; };
+    var top = function (eye, title, sub) { return '<div><div class="th-eye">' + eye + '</div><h2>' + title + '</h2>' + (sub ? '<p class="th-sub">' + sub + '</p>' : '') + '</div>'; };
+    var label = ROT ? dayName(k) : DAY_KO[k] + "요일";
+    if (!d) return '<div class="thero">' + top("TODAY", "루틴이 아직 없어요", "선생님이 곧 올려드릴게요") + '</div>';
+    if (d.rest) return '<div class="thero">' + top("TODAY · REST DAY", label + " 쉬는 날", "푹 쉬고 잘 먹는 것도 운동이에요") + '</div>';
+    if (d.cardio_only) return '<div class="thero">' + top("TODAY · CARDIO", label + " 유산소만!", "유산소 " + d.cardio_only + "분" + (M.routine.cardio ? " · " + esc(M.routine.cardio.options) : "")) + go("오늘 운동 보기 →") + '</div>';
+    if (d.pick) return '<div class="thero">' + top("TODAY · " + esc(d.en.toUpperCase()), "오늘은 골라서 하는 날!", esc(d.note || "이번 주에 아쉬웠던 부위 하나를 골라 그 요일 루틴 그대로 해요")) + go("부위 고르러 가기 →") + '</div>';
+    var its = d.items || [], mi = mainItem(d);
+    var tiles = its.map(function (it) {
+      var main = it === mi && it.tag === "메인";
+      return '<a class="th-tile' + (main ? ' main' : '') + '" href="#routine-' + k + '">' + (main ? '<em>메인</em>' : '') + img(iconOf(it), "icn", !main) + '<span>' + esc(it.name) + '</span></a>';
+    }).join("");
+    return '<div class="thero">' + top("TODAY · " + esc(String(d.en || "").toUpperCase()), label + " " + esc(d.part),
+        its.length + "종목" + (d.cardio && M.routine.cardio ? " · 마무리 유산소 " + M.routine.cardio.minutes + "분" : "")) +
+      '<div class="th-tiles">' + tiles + '</div>' + go("오늘 운동 시작하기 →") +
+      (ROT ? '<p class="th-hint">출석 도장 찍은 날을 세서 다음 순서를 알려줘요. 순서가 다르면 루틴 탭에서 그날 DAY를 눌러요</p>' : '') + '</div>';
+  }
   function renderHome() {
-    var k = todayKey(), d = dayByKey(k);
-    var h = '<div class="hero"><div class="hero-main"><div class="hero-l hero-home"><div class="hh-text">' +
-      '<div class="eyebrow">MY PT NOTE <b>· 나만의 운동 노트</b></div>' +
-      '<h1>' + esc(M.name) + ' 회원님</h1>' +
-      '<div class="en">' + esc(M.goal || "") + '</div>' +
-      '<div class="who"><span>' + esc(BRN) + ' · ' + esc(TRN) + ' 트레이너</span></div>' +
-      '</div>' + attCheckStrip() + '</div></div></div>';
-
+    var k = todayKey(), d = dayByKey(k), now = new Date();
+    var h = '<div class="hlead"><p>' + esc(M.name) + ' 회원님 · ' + (now.getMonth() + 1) + '월 ' + now.getDate() + '일 ' + DAY_KO[DAY_KEYS[now.getDay()]] + '요일</p><h1>오늘</h1></div>';
+    h += attCheckStrip();
+    h += todayHero(k, d);
+    h += homeWidgets();
     h += reportHomeCard();
     h += journeyHome();
     if (IB_ON) h += ibHomeStrip() || '<span class="ibstrip-slot"></span>';
-    h += '<section>' + head("", ROT ? "오늘 할 운동" : "오늘의 운동", ROT ? dayName(k) + " 차례" : DAY_KO[k] + "요일", '<a class="more" href="#routine-' + k + '">자세히 →</a>');
-    if (!d) {
-      h += '<div class="panel empty"><h3>루틴이 아직 없어요</h3><p>선생님이 곧 올려드릴게요</p></div>';
-    } else if (d.rest) {
-      h += '<div class="panel today"><div class="today-top"><div class="today-ic">' + img("rest") + '<span>' + d.day + '</span></div><div><small>REST DAY</small><h3>오늘은 쉬는 날!</h3></div></div>' +
-        '<p style="margin:0;color:var(--sub);font-size:14px">푹 쉬고 잘 먹는 것도 운동이에요</p></div>';
-    } else if (d.cardio_only) {
-      h += '<div class="panel today"><div class="today-top"><div class="today-ic">' + img("treadmill") + '<span>' + d.day + '</span></div><div><small>CARDIO DAY</small><h3>오늘은 유산소만!</h3></div></div>' +
-        '<p style="margin:0;color:var(--sub);font-size:14px">유산소 ' + d.cardio_only + '분' + (M.routine.cardio ? ' · ' + esc(M.routine.cardio.options) : '') + '</p>' +
-        '<a class="btn fill" href="#routine-' + k + '" style="align-self:flex-start">오늘 운동 보기</a></div>';
-    } else if (d.pick) {
-      h += '<div class="panel today"><div class="today-top"><div class="today-ic">' + img("dumbbell") + '<span>' + d.day + '</span></div><div><small>' + esc(d.en.toUpperCase()) + '</small><h3>오늘은 골라서 하는 날!</h3></div></div>' +
-        '<p style="margin:0;color:var(--sub);font-size:14px">' + esc(d.note || "이번 주에 아쉬웠던 부위 하나를 골라 그 요일 루틴 그대로 해요") + '</p>' +
-        '<a class="btn fill" href="#routine-' + k + '" style="align-self:flex-start">부위 고르러 가기</a></div>';
-    } else {
-      h += '<div class="panel today"><div class="today-top"><div class="today-ic">' + img(iconOf(mainItem(d))) + '<span>' + (ROT ? k.slice(1) : d.day) + '</span></div><div><small>' + esc(d.en.toUpperCase()) + '</small><h3>' + esc(d.part) + ' 하는 날</h3></div></div>' +
-        exMini(d) + (d.cardio && M.routine.cardio ? '<p style="margin:0;font-size:13.5px;color:var(--sub)">+ 마무리 유산소 ' + M.routine.cardio.minutes + '분</p>' : '') +
-        '<a class="btn fill" href="#routine-' + k + '" style="align-self:flex-start">오늘 운동 보기</a>' +
-        (ROT ? '<p class="rot-hint">출석 체크한 날을 세서 다음 순서를 알려줘요. 순서가 다르면 루틴 탭에서 그날 DAY를 눌러요</p>' : '') + '</div>';
-    }
-    h += '</section>';
 
     if (M.next_class) {
       h += '<div class="panel next"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="7" width="32" height="29" rx="6" fill="var(--primary)"/><rect x="4" y="7" width="32" height="9" rx="4" fill="var(--side)"/><rect x="11" y="3" width="4" height="9" rx="2" fill="var(--key)"/><rect x="25" y="3" width="4" height="9" rx="2" fill="var(--key)"/></svg>' +
@@ -1474,7 +1520,7 @@
       (n.link ? '<a class="btn" href="#' + esc(n.link) + '">바로 보기</a>' : '') + '</div>';
   }
   function renderNotice() {
-    var h = '<section>' + head("", "선생님 공지", "새 소식이 위에 있어요");
+    var h = meSeg("notice") + '<section>' + head("", "선생님 공지", "새 소식이 위에 있어요");
     h += (M.notices && M.notices.length) ? M.notices.map(noticeCard).join("") :
       '<div class="panel empty"><h3>아직 공지가 없어요</h3></div>';
     return h + '</section>' + remember();
@@ -1499,7 +1545,7 @@
     return (M.notices || []).filter(function (n) { var d = nDate(n); return (!d || d.getTime() >= d0) && seen.indexOf(nKey(n)) < 0; });
   }
   function nDot() {
-    var a = document.querySelector('.tabs a[data-tab="notice"]');
+    var a = document.querySelector('.bar .bell');
     if (a) a.classList.toggle("has-new", nUnseen().length > 0);
   }
   function nMarkSeen() { lsAdd(NSEEN_KEY, (M.notices || []).map(nKey)); lsAdd(NPOP_KEY, (M.notices || []).map(nKey)); nDot(); }
@@ -2462,7 +2508,7 @@
     view.innerHTML = html + rtSaveBar();
     view.setAttribute("data-tab", tab);
     Array.prototype.forEach.call(document.querySelectorAll(".tabs a"), function (a) {
-      if (a.getAttribute("data-tab") === tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      if (a.getAttribute("data-tab") === (/^(goal|body|notice)$/.test(tab) ? "me" : tab)) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
     alignText(document);
     if (/^form-/.test(hsh) && !DEMO) lsAdd(FOPEN_KEY, [hsh.slice(5)]);

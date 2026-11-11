@@ -17,7 +17,7 @@ index.html            짐토스 안내용 첫 화면 (회원 목록 없음)
 robots.txt, .nojekyll 검색 차단 / Jekyll 끔
 assets/site.js        사이트 기본 정보(2026-11-11): 트레이너 이름·센터·지점·사이트 주소·출석 창고 주소(att_api) — app.js·선생님 페이지가 읽음(회원 index.html·coach index.html에 script 태그)
 assets/style.css      공통 디자인 (남 네이비 / 여 핑크, data-sex 로 분기)
-assets/app.js         data.js를 읽어 화면을 그림 (아래 탭도 app.js가 그림: 홈·목표·루틴·복습지·식단·공지, 해시 주소 #home #goal #body(몸변화) #forms #form-<id> #routine #routine-mon~sun #diet #notice)
+assets/app.js         data.js를 읽어 화면을 그림 (아래 탭도 app.js가 그림: 2026-11-11부터 홈·루틴·복습지·식단·나 5개 — 공지는 위 종, 목표·몸변화는 '나', 해시 주소 #home #goal #body(몸변화) #forms #form-<id> #routine #routine-mon~sun #diet #notice)
 assets/exicons.js     움직이는 운동 아이콘(SVG) — PT 노트 화면은 이걸 먼저 씀 (아래 '움직이는 운동 아이콘')
 assets/icons/M|F/     루틴일지 운동 아이콘 PNG (네이비/핑크, 192px). 종목명→아이콘은 app.js의 ICON_BY_NAME — exicons.js에 없는 이름(rest·treadmill 등)과 종이 루틴일지는 이 PNG
 assets/logo.png       JANG KAREDO 로고(빨강, 투명) · logo-white.png(핑크레드 바탕용) · logo-black.png / icon.png·icon-coach-*.png = 블랙 바탕+빨강 로고 앱 아이콘
@@ -185,6 +185,13 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 여정 그래프(.jpanel 들어 있는 칸 — 홈 '나의 PT 여정/바프 여정', 목표 탭 '한눈에 보는 12개월')는 접기 없음.
 - 주소로 바로 찾아온 칸(#goal-badges·#muscle·#routine-요일의 day 칸)은 접혀 있어도 그때는 펼쳐서 보여줌. 배지 칸은 출석 기록 받은 뒤 다시 그려져도 접기 다시 붙음.
 - 코드 app.js setupFold(route 끝에서), style.css section[data-fold] (선생님 페이지 접기와 같은 모양, 머리줄 한 줄 유지·부제목 말줄임).
+
+## 앱 화면 · 출석 도장 (2026-11-11 장동욱 "A버전에 감성적으로 출석버튼" — 디자인 캔버스 "JANG KAREDO PT노트 앱 시안" A안)
+- 바탕 연회색(남 #F2F2F4 / 여 #FBF3F5) + 흰 둥근 카드(22px), 칸 제목 밑줄 없음, 아래 탭 = 떠 있는 둥근 바 5개(홈·루틴·복습지·식단·**나**). '나' = #goal(목표·출석), 그 위 전환 칸(.meseg) 목표·출석 / 몸변화 / 공지. 공지는 위 막대 오른쪽 종(.bell, 새 공지면 빨간 점 — nDot), 그 옆 이름 동그라미(.ava, 성 뺀 이름 / 그룹은 "함께") → 나.
+- 홈 순서: 큰 제목(OOO 회원님 · 날짜 / "오늘") → **출석 도장**(#attBtn .stamp) → 오늘 운동 큰 카드(.thero 남 블랙 / 여 핑크레드, 종목 아이콘 옆으로 넘기기, 메인은 금색 테두리·움직임, "오늘 운동 시작하기") → 위젯 2칸(#hwid 이번 달 출석률 링 / 연속 출석 + 이번 주 7칸) → 리포트·PT 여정·인바디 띠·다음 수업·공지·복습지.
+- 출석 도장: 안 찍었으면 점선 도장이 숨쉬고 물결(눌러서 출석 도장 꾹), 누르면 빨간 도장이 쾅(기울어짐) + 점 톡톡 + 진동 + "N번째 출석 · 시각 / 오늘도 와줘서 고마워요 / 날마다 바뀌는 한마디"(app.js ST_ON·ST_OFF, 날짜로 골라서 하루 동안 같음). 다시 누르면 취소. 선생님 보기에선 움직임 없이 보기만. 색 --seal.
+- 회원 index.html에 홈 화면 앱 메타(apple-mobile-web-app-capable 등, 이름 "PT노트") — 새 회원 껍데기도 jihun 복사라 자동.
+- 코드: app.js attSeal·attCheckStrip·homeWidgets·todayHero·meSeg / style.css 맨 아래 "앱 화면" 블록.
 
 ## 새 공지 팝업 (2026-11-05 장동욱 요청)
 - data.js notices 맨 위에 새 공지를 올리면, 회원이 PT 노트를 열 때 화면 위에서 팝업이 내려왔다가 약 5초 뒤 사라짐(위로 밀어도 닫힘). 누르면 공지 탭의 그 공지로 이동해 반짝 표시.
