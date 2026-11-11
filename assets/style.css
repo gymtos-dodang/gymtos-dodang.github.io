@@ -1305,3 +1305,16 @@ section[data-fold] > .head .fold-btn { background: #fff; }
 .navback b { font-weight: 700; color: var(--sub); }
 .navback:active { transform: scale(.96); }
 .navback:focus-visible { outline: 3px solid var(--seal); outline-offset: 2px; }
+
+/* 앱 열 때 로딩 화면 (2026-11-12 장동욱 "그냥 아이콘이랑 PT노트만") — style.css가 먼저 그려서 바로 보이고,
+   app.js가 첫 화면을 그린 뒤 body.ready → 살짝 사라짐(최소 0.6초). app.js가 안 돌아도 4초 뒤 저절로 사라짐. */
+html[data-sex] body::before { content: "PT노트"; position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center; padding-top: 150px; box-sizing: border-box;
+  background: var(--page, #F2F2F4); color: var(--ink, #1A1A1E); font-family: var(--font, sans-serif); font-size: 18px; font-weight: 800; letter-spacing: -.01em;
+  transition: opacity .35s ease, visibility .35s; animation: spOut .35s ease 4s forwards; }
+html[data-sex] body::after { content: ""; position: fixed; z-index: 301; left: 50%; top: 50%; width: 96px; height: 96px; margin: -72px 0 0 -48px; border-radius: 22px;
+  background: url("icon-m-512.png") center / cover no-repeat; box-shadow: 0 12px 30px -10px rgba(0, 0, 0, .35);
+  transition: opacity .35s ease, visibility .35s, transform .35s ease; animation: spOut .35s ease 4s forwards; }
+html[data-sex="F"] body::after { background-image: url("icon-f-512.png"); }
+html[data-sex] body.ready::before, html[data-sex] body.ready::after { opacity: 0; visibility: hidden; pointer-events: none; animation: none; }
+html[data-sex] body.ready::after { transform: scale(.92); }
+@keyframes spOut { to { opacity: 0; visibility: hidden; } }

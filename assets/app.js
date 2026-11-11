@@ -2604,6 +2604,11 @@
   window.addEventListener("hashchange", route);
   route();
   cmemoFill();
+  (function () {   /* 로딩 화면 걷기 — 앱 아이콘으로 열었을 때 0.6초는 보이게, 그 밖(아이패드 칸 안·안내서 데모)은 바로 */
+    var t0 = (window.performance && performance.timing && performance.timing.navigationStart) || Date.now();
+    var wait = window.self !== window.top || DEMO ? 0 : Math.max(0, 600 - (Date.now() - t0));
+    setTimeout(function () { document.body.classList.add("ready"); }, wait);
+  })();
   nDot();
   if (!DEMO) setTimeout(showNoticePop, 800);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { alignText(document); });

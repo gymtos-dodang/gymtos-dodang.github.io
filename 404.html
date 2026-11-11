@@ -53,6 +53,7 @@
   function boot(M) {
     if (booted) return; booted = true;
     var f = M.sex === "F";
+    document.documentElement.setAttribute("data-sex", f ? "F" : "M");
     document.getElementById("ati").href = "/assets/icon-" + (f ? "f" : "m") + "-180.png";
     document.getElementById("ic").href = "/assets/icon-" + (f ? "f" : "m") + "-192.png";
     document.getElementById("tc").content = f ? "#D6204F" : "#1A1A1E";
