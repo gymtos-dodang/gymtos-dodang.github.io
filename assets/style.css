@@ -1126,3 +1126,19 @@ html.rts-open, html.rts-open body { overflow: hidden; }
 .rtcp-d b { color: var(--primary); }
 .rtcp-d em { font-style: normal; font-weight: 800; color: var(--ink); margin-right: 6px; }
 .rtcp-d.rest { opacity: .55; }
+
+/* 칸 접기·펼치기 (2026-11-11, 회원 PT 노트 — 여정 그래프 칸은 제외) */
+section[data-fold] > .head .fold-btn { margin-left: auto; flex: none; width: 32px; height: 32px; border: 0; border-radius: 10px; background: var(--tint); color: var(--primary); display: grid; place-items: center; cursor: pointer; }
+section[data-fold] > .head .more + .fold-btn { margin-left: 4px; }
+section[data-fold] > .head .more { margin-left: auto; }
+section[data-fold] > .head .fold-btn svg { width: 18px; height: 18px; transition: transform .2s ease; }
+section[data-fold].folded > .head .fold-btn svg { transform: rotate(-90deg); }
+section[data-fold].folded > .fbody { display: none; }
+section[data-fold].folded > .head { border-bottom-style: dashed; }
+section[data-fold] > .fbody { display: flex; flex-direction: column; gap: 14px; }
+@media (prefers-reduced-motion: reduce) { section[data-fold] > .head .fold-btn svg { transition: none; } }
+section[data-fold] > .head .refresh + .fold-btn { margin-left: 4px; }
+section[data-fold] > .head { flex-wrap: nowrap; }
+section[data-fold] > .head h2 { flex: none; }
+section[data-fold] > .head p { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+section[data-fold] > .head > :not(h2):not(p):not(.num):not(.fold-btn) { flex: none; }

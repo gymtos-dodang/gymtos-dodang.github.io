@@ -545,7 +545,7 @@
     if (b) { b.outerHTML = attCheckStrip(); setupAttCheck(); }
     var g = document.querySelector(".attgauge"); if (g) g.outerHTML = attGauge();
     var c = document.querySelector(".cal"); if (c) { c.outerHTML = attCalendar(); setupCal(); }
-    var bs = document.getElementById("badges"); if (bs) { bs.outerHTML = badgeSection(bs.getAttribute("data-num")); setupBadges(); }
+    var bs = document.getElementById("badges"); if (bs) { bs.outerHTML = badgeSection(bs.getAttribute("data-num")); setupBadges(); setupFold(view.getAttribute("data-tab") || "goal"); }
     var mb = document.querySelector(".mm-body"); if (mb) mb.innerHTML = muscleBody();
     alignText(document);
   }
@@ -2402,6 +2402,40 @@
     window.addEventListener("beforeunload", function (e) { if (RT_EDIT && RT_EDIT.dirty) { e.preventDefault(); e.returnValue = ""; } });
   }
 
+  /* ---------------- 칸 접기·펼치기 (2026-11-11 "회원 PT노트도 숨기기 펼치기 — 목표 그래프만 빼고")
+     제목 줄(.head)이 있는 칸마다 오른쪽 ⌄ 버튼(제목 눌러도 됨). 접은 상태는 그 폰에 기억(ptnote:<주소>:fold, 탭+칸 이름).
+     여정 그래프(.jpanel)가 든 칸은 빼고, 주소로 바로 찾아온 칸(#muscle·#goal-badges·요일)은 접혀 있어도 그 순간엔 펼침 */
+  var FOLD_LS = "ptnote:" + SLUG + ":fold";
+  function foldGet() { try { return JSON.parse(localStorage.getItem(FOLD_LS) || "{}") || {}; } catch (e) { return {}; } }
+  function setupFold(tab, openId) {
+    var F = foldGet();
+    Array.prototype.forEach.call(view.querySelectorAll("section"), function (sec) {
+      var head = sec.firstElementChild;
+      if (!head || !head.classList.contains("head") || sec.querySelector(".jpanel") || head.querySelector(".fold-btn")) return;
+      var h2 = head.querySelector("h2");
+      var k = tab + ":" + (sec.id || (h2 ? h2.textContent : "")).replace(/\s+/g, " ").trim();
+      var body = document.createElement("div");
+      body.className = "fbody";
+      while (head.nextSibling) body.appendChild(head.nextSibling);
+      sec.appendChild(body);
+      sec.setAttribute("data-fold", "");
+      var btn = document.createElement("button");
+      btn.type = "button"; btn.className = "fold-btn";
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+      head.appendChild(btn);
+      function set(f, save) {
+        sec.classList.toggle("folded", f);
+        btn.setAttribute("aria-expanded", String(!f));
+        btn.setAttribute("aria-label", (h2 ? h2.textContent : "칸") + (f ? " 펼치기" : " 접기"));
+        if (save) { var G = foldGet(); if (f) G[k] = 1; else delete G[k]; try { localStorage.setItem(FOLD_LS, JSON.stringify(G)); } catch (e) {} }
+      }
+      set(!!F[k] && !(openId && sec.id === openId), false);
+      function tg(e) { if (e.target.closest("a")) return; set(!sec.classList.contains("folded"), true); }
+      btn.addEventListener("click", tg);
+      if (h2) { h2.style.cursor = "pointer"; h2.addEventListener("click", tg); }
+    });
+  }
+
   /* ---------------- 라우터 */
   var TAB_OF = { home: "home", forms: "forms", form: "forms", routine: "routine", diet: "diet", notice: "notice" };
   function route() {
@@ -2433,6 +2467,7 @@
     alignText(document);
     if (/^form-/.test(hsh) && !DEMO) lsAdd(FOPEN_KEY, [hsh.slice(5)]);
     litApply(tab);
+    setupFold(tab, jumpTo || (scrollDay ? "day" : null));
     setupAttCheck(); setupCal(); setupIb(); setupBadges(); setupMuscle(); setupRtEdit();
     if (after) after();
     var flashEl = null;

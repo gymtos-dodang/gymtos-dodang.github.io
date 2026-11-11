@@ -178,6 +178,12 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 순서: 내장 브라우저로 Apps Script 프로젝트 "PT노트" 편집기 열기 https://script.google.com/home/projects/1r2_6XDT0aNK_H-hTDpQHkSNHsczGIKMX2wJ6G2JMC_IcbZL5F_6gfO1T/edit → javascript로 `monaco.editor.getModels()[0].pushEditOperations([], [{range: md.getFullModelRange(), text: CODE}], ()=>null)` (CODE = _tools/attendance_apps_script.gs 내용, JSON 문자열로) → 저장 아이콘 → 배포 ▾ → 배포 관리 → 연필 → 버전 "새 버전" → 배포. 배포 ID(AKfycbwtjTpk…)는 그대로라 사이트 주소 안 바꿔도 됨.
 - 확인: github.io 탭에서 fetch(ATT_API+"?m=jihun-g9kgdo") 응답 키(ok·days·routine·bnotices·kv). 컴퓨터가 꺼져 있거나 로그인이 풀렸으면 그때만 장동욱에게 부탁.
 
+## 칸 접기·펼치기 — 회원 PT 노트 (2026-11-11 장동욱 "회원 PT노트도 숨기기 펼치기, 목표 그래프만 빼고")
+- 제목 줄(.head)이 있는 모든 칸(홈·목표·루틴·복습지·식단·공지·몸변화 탭)에 오른쪽 ⌄ 버튼, 제목 눌러도 됨. 접은 상태는 그 폰에 기억(localStorage ptnote:<주소>:fold, 키 = 탭:칸 id 또는 제목).
+- 여정 그래프(.jpanel 들어 있는 칸 — 홈 '나의 PT 여정/바프 여정', 목표 탭 '한눈에 보는 12개월')는 접기 없음.
+- 주소로 바로 찾아온 칸(#goal-badges·#muscle·#routine-요일의 day 칸)은 접혀 있어도 그때는 펼쳐서 보여줌. 배지 칸은 출석 기록 받은 뒤 다시 그려져도 접기 다시 붙음.
+- 코드 app.js setupFold(route 끝에서), style.css section[data-fold] (선생님 페이지 접기와 같은 모양, 머리줄 한 줄 유지·부제목 말줄임).
+
 ## 새 공지 팝업 (2026-11-05 장동욱 요청)
 - data.js notices 맨 위에 새 공지를 올리면, 회원이 PT 노트를 열 때 화면 위에서 팝업이 내려왔다가 약 5초 뒤 사라짐(위로 밀어도 닫힘). 누르면 공지 탭의 그 공지로 이동해 반짝 표시.
 - 공지 하나당 팝업은 한 번만. 공지 탭을 열기 전까지 아래 '공지' 탭에 빨간 점. 14일 넘은 공지는 새 공지로 안 침.
