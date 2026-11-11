@@ -118,6 +118,27 @@
 .bni button { grid-column: 2; grid-row: 1 / span 3; align-self: center; font: inherit; font-size: 12.5px; font-weight: 800; color: var(--bad); background: #fff; border: 1.5px solid #F2C9C9; border-radius: 9px; padding: 6px 10px; cursor: pointer; }
 .bni button.sure { background: var(--bad); color: #fff; border-color: var(--bad); }
 .bnempty { font-size: 13px; color: var(--faint); margin: 10px 0 0; }
+/* 새 회원 추가 (2026-11-12) */
+.nmsex { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.nmsex label { flex-direction: row; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid var(--rule); border-radius: 10px; padding: 10px; color: var(--ink); font-size: 15px; cursor: pointer; }
+.nmsex input { width: auto; margin: 0; accent-color: var(--primary); }
+.nmsex label:has(input:checked) { border-color: var(--primary); background: var(--tint); }
+.nmsex label.F:has(input:checked) { border-color: #D6204F; background: #FCE4EC; }
+.bnf .row.three { grid-template-columns: 1fr 1fr 2fr; }
+.bnf .row button.del { border-color: #F2C9C9; color: var(--bad); }
+.bnf .row button.del.sure { background: var(--bad); color: #fff; border-color: var(--bad); }
+.nmdone { display: flex; flex-direction: column; gap: 9px; margin-top: 4px; }
+.nmdone b { font-size: 16px; color: var(--ink); }
+.nmdone p { margin: 0; font-size: 13px; color: var(--sub); }
+.nmdone .url { font-size: 13.5px; font-weight: 700; color: var(--ink); background: var(--tint); border-radius: 10px; padding: 10px 12px; word-break: break-all; user-select: all; }
+.nmdone .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.nmdone .btns a, .nmdone .btns button { font: inherit; font-size: 14.5px; font-weight: 800; text-align: center; text-decoration: none; border-radius: 12px; padding: 11px 6px; cursor: pointer; border: 1.5px solid var(--primary); background: #fff; color: var(--primary); }
+.nmdone .btns .fill { background: var(--primary); color: #fff; }
+.nmlist { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.nmlist:empty { display: none; }
+.nmlist .t { font-size: 12px; font-weight: 800; color: var(--faint); margin: 2px 0 0; }
+.nmlist button { display: flex; justify-content: space-between; align-items: center; font: inherit; font-size: 14px; font-weight: 700; color: var(--ink); background: #fff; border: 1px solid var(--rule); border-radius: 10px; padding: 9px 12px; cursor: pointer; text-align: left; }
+.nmlist button small { font-weight: 500; color: var(--faint); font-size: 12px; }
 /* 칸 접기·펼치기 (2026-11-11 "공간 확보 — 가리기 누르면 저장") */
 .fold-btn { margin-left: auto; flex: none; width: 34px; height: 34px; border: 0; border-radius: 10px; background: #EEF0F4; color: var(--sub); display: grid; place-items: center; cursor: pointer; }
 .fold-btn svg { width: 18px; height: 18px; transition: transform .2s ease; }
@@ -200,6 +221,24 @@ section.folded .fsum:not(:empty) { display: inline; }
         <div class="row"><button type="button" id="bnCancel">취소</button><button type="submit" class="fill" id="bnSend">모든 회원님께 보내기</button></div>
       </form>
       <div class="bnl" id="bnList"></div>
+    </div>
+  </section>
+
+  <section data-fold="add">
+    <div class="head"><h2>새 회원 추가</h2><p>이름만 넣으면 그 회원님 PT 노트가 바로 생겨요</p></div>
+    <div class="panel">
+      <button type="button" class="bnnew" id="nmOpen">＋ 새 회원 PT 노트 만들기</button>
+      <form class="bnf" id="nmForm" hidden>
+        <label>회원 이름<input id="nmName" maxlength="20" placeholder="예: 홍길동" autocomplete="off"></label>
+        <div class="nmsex" role="radiogroup" aria-label="성별"><label><input type="radio" name="nmSex" value="M" checked>남자 회원 <small>블랙</small></label><label class="F"><input type="radio" name="nmSex" value="F">여자 회원 <small>핑크</small></label></div>
+        <label>PT 시작한 달 <small>나의 PT 여정 그래프가 여기서 시작해요</small><input id="nmStart" type="month"></label>
+        <label>목표 <small>없어도 돼요</small><input id="nmGoal" maxlength="40" placeholder="예: 다이어트 · 근력 강화" autocomplete="off"></label>
+        <label id="nmKeyWrap" hidden>선생님 열쇠 <small>처음 한 번만</small><input id="nmKey" type="password" autocomplete="off"></label>
+        <p class="bnmsg" id="nmMsg" role="status"></p>
+        <div class="row" id="nmRow"><button type="button" class="del" id="nmDel" hidden>지우기</button><button type="button" id="nmCancel">취소</button><button type="submit" class="fill" id="nmSend">PT 노트 만들기</button></div>
+      </form>
+      <div class="nmdone" id="nmDone" hidden></div>
+      <div class="nmlist" id="nmList"></div>
     </div>
   </section>
 
@@ -316,7 +355,7 @@ section.folded .fsum:not(:empty) { display: inline; }
       '<div><h3>' + esc(M.name) + ' 회원님</h3><p>' + esc(M.goal || "") + (jt ? ' · ' + jt : '') + '</p></div>' + st + '</a>' +
       '<div class="mrow2">' + info + '</div>' +
       '<div class="qlinks"><a class="' + sex + '" href="' + base + '#home">홈</a><a class="' + sex + '" href="' + base + '#goal">출석·목표</a>' +
-      '<a class="' + sex + '" href="' + base + '#routine">루틴</a><a class="' + sex + '" href="' + base + '#forms">복습지</a></div></div>';
+      '<a class="' + sex + '" href="' + base + '#routine">루틴</a>' + (M._dyn ? '<a class="' + sex + '" href="#" data-nmedit="' + esc(slug) + '">✎ 정보</a>' : '<a class="' + sex + '" href="' + base + '#forms">복습지</a>') + '</div></div>';
   }
   /* 초성 검색: "최지훈" → "ㅊㅈㅎ" */
   var CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
@@ -524,12 +563,140 @@ section.folded .fsum:not(:empty) { display: inline; }
   }
   bnLoad();
 
+  /* ---------------- 새 회원 추가 (2026-11-12 장동욱 "피티노트 안에서 이름만 추가하면 페이지 자동으로")
+     폴더 없이 창고 저장소에 회원 정보(pub:m:<주소>:member)만 넣음 → /m/<주소>/ 를 열면 404.html이 받아서 노트를 그림.
+     선생님 페이지 목록 = coach:members (선생님 열쇠로만 읽힘). 나중에 Claude가 m/<주소>/ 폴더를 만들면 그게 정식 노트(출석·루틴 그대로). */
+  var NM = [], nmEditing = null, nmTimer = null;
+  function nmKey() { return document.getElementById("nmKey").value.trim() || bnKey(); }
+  function nmPost(body) {
+    body.m = "coach"; body.key = nmKey();
+    function once() { return fetch(API, { method: "POST", body: JSON.stringify(body) }).then(function (r) { return r.json(); }); }
+    return once().catch(function () { return new Promise(function (ok) { setTimeout(ok, 2500); }).then(once); }).then(function (j) {
+      if (j && j.ok) { try { localStorage.setItem("ptkey", body.key); } catch (e) {} }
+      return j;
+    });
+  }
+  function nmLoad() {
+    if (!bnKey()) { nmDrawList(); return Promise.resolve(NM); }
+    return nmPost({ a: "kv_get", prefix: "coach:members" }).then(function (j) {
+      if (j && j.ok && j.kv && Array.isArray(j.kv["coach:members"])) NM = j.kv["coach:members"];
+      nmDrawList(); return NM;
+    }).catch(function () { return NM; });
+  }
+  function nmDrawList() {
+    var box = document.getElementById("nmList");
+    var dyn = NM.filter(function (d) { return LIST.indexOf(d.slug) < 0; });
+    fsum("add", dyn.length ? "여기서 만든 회원 " + dyn.length + "명" : "");
+    box.innerHTML = dyn.length ? '<p class="t">여기서 만든 회원 (누르면 정보 고치기)</p>' + dyn.map(function (d) {
+      return '<button type="button" data-nmedit="' + esc(d.slug) + '"><span>' + esc(d.name) + ' 회원님</span><small>' + (d.sex === "F" ? "여" : "남") + (d.start ? " · " + d.start.slice(0, 7).replace("-", ".") + " 시작" : "") + ' ✎</small></button>';
+    }).join("") : "";
+  }
+  function nmSlug() {
+    var c = "abcdefghijkmnpqrstuvwxyz23456789", s = "n", a = new Uint8Array(8);
+    (window.crypto || window.msCrypto).getRandomValues(a);
+    for (var i = 0; i < 8; i++) s += c.charAt(a[i] % c.length);
+    return s;
+  }
+  function nmUrl(slug) { return location.origin + "/m/" + slug + "/"; }
+  var nmForm = document.getElementById("nmForm"), nmOpen = document.getElementById("nmOpen"), nmDone = document.getElementById("nmDone");
+  function nmShow(d) {
+    nmEditing = d || null;
+    nmForm.hidden = false; nmOpen.hidden = true; nmDone.hidden = true;
+    document.getElementById("nmMsg").textContent = "";
+    document.getElementById("nmKeyWrap").hidden = !!bnKey();
+    document.getElementById("nmName").value = d ? d.name : "";
+    document.getElementById("nmGoal").value = d ? d.goal || "" : "";
+    var t = new Date(); document.getElementById("nmStart").value = d && d.start ? d.start.slice(0, 7) : t.getFullYear() + "-" + pad(t.getMonth() + 1);
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="nmSex"]'), function (r) { r.checked = r.value === (d ? d.sex : "M"); });
+    var del = document.getElementById("nmDel"); del.hidden = !d; del.classList.remove("sure"); del.textContent = "지우기";
+    document.getElementById("nmRow").className = "row" + (d ? " three" : "");
+    document.getElementById("nmSend").textContent = d ? "고친 내용 저장" : "PT 노트 만들기";
+    var sec = document.querySelector('section[data-fold="add"]'); if (sec && sec.classList.contains("folded")) { var h = sec.querySelector(".head h2"); if (h) h.click(); }
+    sec.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("nmName").focus();
+  }
+  function nmHide() { nmForm.hidden = true; nmOpen.hidden = false; nmEditing = null; }
+  nmOpen.addEventListener("click", function () { nmShow(null); });
+  document.getElementById("nmCancel").addEventListener("click", nmHide);
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-nmedit]"); if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    var slug = b.getAttribute("data-nmedit"), d = null;
+    NM.forEach(function (x) { if (x.slug === slug) d = x; });
+    if (d) nmShow(d);
+  }, true);
+  function nmErr(j) {
+    var e = j && j.error, m = document.getElementById("nmMsg");
+    if (e === "key") { try { localStorage.removeItem("ptkey"); } catch (x) {} document.getElementById("nmKeyWrap").hidden = false; m.textContent = "선생님 열쇠가 맞지 않아요. 다시 넣어 주세요"; }
+    else if (e === "action") m.textContent = "창고(Apps Script)를 새 버전으로 배포해야 해요";
+    else m.textContent = "저장하지 못했어요 — 잠깐 뒤 다시 눌러 주세요";
+  }
+  nmForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var m = document.getElementById("nmMsg"), name = document.getElementById("nmName").value.replace(/\s+/g, " ").trim();
+    if (!name) { m.textContent = "회원 이름을 넣어 주세요"; return; }
+    if (!nmKey()) { document.getElementById("nmKeyWrap").hidden = false; m.textContent = "선생님 열쇠를 넣어 주세요"; return; }
+    var sexEl = document.querySelector('input[name="nmSex"]:checked'), sex = sexEl ? sexEl.value : "M";
+    var mo = document.getElementById("nmStart").value, start = /^\d{4}-\d{2}$/.test(mo) ? mo + "-15" : "";
+    var goal = document.getElementById("nmGoal").value.trim();
+    var btn = document.getElementById("nmSend"); btn.disabled = true; btn.textContent = "저장 중…"; m.textContent = "";
+    /* 고칠 때는 창고에 있는 회원 정보(공지·폰에서 넣은 것)를 받아서 이름·성별·시작·목표만 바꿈 */
+    var editing = nmEditing;
+    var getOld = editing ? nmPost({ a: "kv_get", prefix: "pub:m:" + editing.slug + ":member" }).then(function (j) { return j && j.ok && j.kv ? j.kv["pub:m:" + editing.slug + ":member"] : null; }) : Promise.resolve(null);
+    getOld.then(function (old) {
+      var slug = editing ? editing.slug : nmSlug(), t = new Date();
+      var date = t.getFullYear() + ". " + (t.getMonth() + 1) + ". " + t.getDate();
+      var M = old || { notices: [{ date: date, title: "PT 노트가 열렸어요", body: "운동 루틴·출석·자세 복습지를 여기서 다 볼 수 있어요. 홈 화면에 추가해 두면 앱처럼 쓸 수 있어요!" }], next_class: null, forms: [], routine: null, diet: null, created: ymd(t) };
+      M.name = name; M.sex = sex; M.goal = goal; M.since = start ? start.slice(0, 4) + ". " + +start.slice(5, 7) : "";
+      M.journey = start ? Object.assign({}, M.journey || {}, { start: start }) : null;
+      var list = NM.filter(function (x) { return x.slug !== slug; });
+      list.push({ slug: slug, name: name, sex: sex, goal: goal, start: start, at: editing ? editing.at : ymd(t) });
+      var items = {}; items["pub:m:" + slug + ":member"] = M; items["coach:members"] = list;
+      return nmPost({ a: "kv_set", items: items }).then(function (j) {
+        if (!j || !j.ok) { nmErr(j); return; }
+        NM = list; nmDrawList(); nmHide();
+        var url = nmUrl(slug);
+        nmDone.innerHTML = '<b>' + esc(name) + ' 회원님 PT 노트가 ' + (editing ? '고쳐졌어요' : '생겼어요') + '!</b><p>이 주소를 회원님께 보내 주세요</p><div class="url">' + esc(url) + '</div>' +
+          '<div class="btns"><button type="button" class="fill" id="nmShare">링크 보내기 · 복사</button><a href="/m/' + slug + '/#routine">루틴 만들러 가기 →</a></div>';
+        nmDone.hidden = false;
+        document.getElementById("nmShare").addEventListener("click", function () {
+          var txt = name + " 회원님 PT 노트예요 💪 루틴·출석·자세 복습지를 여기서 보세요!";
+          if (navigator.share) navigator.share({ title: name + " 회원님 PT 노트", text: txt, url: url }).catch(function () {});
+          else if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { bnToast("주소를 복사했어요"); });
+        });
+        render();
+      });
+    }).catch(function () { m.textContent = "저장하지 못했어요 — 인터넷 연결을 확인하고 다시 눌러 주세요"; })
+      .then(function () { btn.disabled = false; btn.textContent = nmEditing ? "고친 내용 저장" : "PT 노트 만들기"; });
+  });
+  document.getElementById("nmDel").addEventListener("click", function () {
+    var b = this, d = nmEditing; if (!d) return;
+    if (!b.classList.contains("sure")) {
+      b.classList.add("sure"); b.textContent = "한 번 더";
+      clearTimeout(nmTimer); nmTimer = setTimeout(function () { b.classList.remove("sure"); b.textContent = "지우기"; }, 2500);
+      return;
+    }
+    b.disabled = true;
+    var list = NM.filter(function (x) { return x.slug !== d.slug; }), items = {};
+    items["pub:m:" + d.slug + ":member"] = null; items["coach:members"] = list;
+    nmPost({ a: "kv_set", items: items }).then(function (j) {
+      b.disabled = false;
+      if (!j || !j.ok) { nmErr(j); return; }
+      NM = list; nmDrawList(); nmHide(); bnToast(d.name + " 회원님 노트를 지웠어요"); render();
+    }).catch(function () { b.disabled = false; document.getElementById("nmMsg").textContent = "지우지 못했어요 — 다시 눌러 주세요"; });
+  });
+
   function render() {
     var box = document.getElementById("list");
     Promise.all(LIST.map(function (slug) {
       return loadMember(slug).then(function (M) { return { slug: slug, M: M }; }).catch(function () { return null; });
-    })).then(function (rows) {
-      rows = rows.filter(Boolean);
+    }).concat([nmLoad()])).then(function (rows) {
+      var dyn = rows.pop() || [];
+      rows = rows.filter(Boolean).concat(dyn.filter(function (d) { return LIST.indexOf(d.slug) < 0; }).map(function (d) {
+        return { slug: d.slug, M: { name: d.name, sex: d.sex, goal: d.goal || "", journey: d.start ? { start: d.start } : null, routine: null, forms: [], _dyn: 1 } };
+      }));
+      document.getElementById("sAll").textContent = rows.length;
+      document.getElementById("sub").textContent = BRN + " · 담당 회원 " + rows.length + "명";
       box.innerHTML = rows.map(function (r) { return card(r.slug, r.M, null); }).join("");
       fsum("list", rows.length + "명");
       if (isPad() && !paneSlug) { var last = ""; try { last = sessionStorage.getItem("ptpane") || ""; } catch (e) {} if (last) paneOpen(last); }
@@ -540,6 +707,7 @@ section.folded .fsum:not(:empty) { display: inline; }
         fetch(API + "?m=" + encodeURIComponent(r.slug), { cache: "no-store" }).then(function (x) { return x.json(); })
           .then(function (j) {
             /* 선생님이 폰에서 고친 루틴(창고)이 있으면 그걸로 — 쉬는 날·버전도 그대로 맞춤 */
+            if (r.M._dyn && j && j.ok && j.kv && j.kv["pub:m:" + r.slug + ":member"]) { var dm = j.kv["pub:m:" + r.slug + ":member"]; dm._dyn = 1; r.M = dm; }
             if (j && j.ok && j.routine && j.routine.routine && j.routine.base === rtBase(r.M.routine)) { r.M.routine = j.routine.routine; r.M._rted = 1; }
             return j && j.ok ? j.days : {};
           }).catch(function () { return {}; })

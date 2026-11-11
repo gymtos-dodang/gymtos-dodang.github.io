@@ -49,7 +49,7 @@ def main():
     if os.path.exists(KIT): shutil.rmtree(KIT)
     os.makedirs(KIT)
     # 1) 그대로 복사할 것
-    for f in ["index.html", "robots.txt", ".nojekyll"]:
+    for f in ["index.html", "404.html", "robots.txt", ".nojekyll"]:
         if os.path.exists(os.path.join(SRC, f)): shutil.copy(os.path.join(SRC, f), KIT)
     shutil.copytree(os.path.join(SRC, "assets"), os.path.join(KIT, "assets"))
     shutil.copytree(os.path.join(SRC, "_tools"), os.path.join(KIT, "_tools"),

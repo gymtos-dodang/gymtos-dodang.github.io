@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JANG KAREDO PT노트</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1A1A1E" id="tc">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="PT노트">
+<link rel="icon" href="/assets/icon-m-192.png" id="ic">
+<link rel="apple-touch-icon" href="/assets/icon-m-180.png" id="ati">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+.nf { margin: 18vh auto 0; max-width: 340px; text-align: center; color: var(--sub); font-size: 14px; line-height: 1.6; }
+.nf b { display: block; color: var(--ink); font-size: 18px; margin-bottom: 6px; }
+.nf .sp { width: 28px; height: 28px; margin: 0 auto 14px; border-radius: 50%; border: 3px solid #E4E4E9; border-top-color: #E1141E; animation: nfs .8s linear infinite; }
+@keyframes nfs { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<!-- 2026-11-11 장동욱 "피티노트 안에서 사람 이름만 추가하면 페이지 자동으로":
+     선생님 페이지 '＋ 새 회원'으로 만든 회원은 폴더(m/<주소>/)가 없음 → 깃허브가 이 404.html을 보여줌.
+     주소가 /m/<주소>/ 면 출석 창고 저장소(pub:m:<주소>:member)에서 회원 정보를 받아 data.js 대신 window.MEMBER로 넣고 app.js를 띄움.
+     나중에 Claude가 m/<주소>/ 폴더(data.js)를 만들면 그 폴더가 먼저 열리므로 자동으로 정식 노트가 됨(출석·루틴 그대로). -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 12 12"><path d="M2.4 6.3 5 8.7l4.6-5.2" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-x" viewBox="0 0 12 12"><path d="M3.3 3.3l5.4 5.4M8.7 3.3 3.3 8.7" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/></symbol>
+</svg>
+<header class="bar"><div class="bar-in"><a href="#home"><img src="/assets/logo.png" alt="JANG KAREDO"></a><span>PT 노트</span></div></header>
+<main class="wrap"><div class="view" id="view" aria-live="polite"><div class="nf" id="nf"><div class="sp"></div><b>PT 노트 여는 중…</b></div></div></main>
+<nav class="tabs" aria-label="메뉴" id="tabs" hidden><div class="tabs-in"></div></nav>
+<script src="/assets/site.js"></script>
+<script>
+(function () {
+  var mm = location.pathname.match(/^\/m\/([a-z0-9-]{3,40})\/?$/);
+  function msg(t, s) { document.getElementById("view").innerHTML = '<div class="nf"><b>' + t + '</b>' + (s || "") + '</div>'; }
+  if (!mm) { msg("페이지를 찾을 수 없어요", "주소를 다시 한 번 확인해 주세요."); return; }
+  var slug = mm[1];
+  if (!/\/$/.test(location.pathname)) { location.replace("/m/" + slug + "/" + location.search + location.hash); return; }
+  window.ATT_SLUG = slug;
+  var KEY = "pub:m:" + slug + ":member", LS = "ptnote:" + slug + ":member";
+  var API = (window.SITE || {}).att_api || "";
+  if (!API) { msg("PT 노트 창고 주소가 아직 없어요", "assets/site.js 의 att_api 를 채워 주세요."); return; }
+  var cached = null, booted = false;
+  try { cached = JSON.parse(localStorage.getItem(LS) || "null"); } catch (e) { cached = null; }
+  function load(src, cb) { var s = document.createElement("script"); s.src = src; s.onload = cb; s.onerror = cb; document.body.appendChild(s); }
+  function boot(M) {
+    if (booted) return; booted = true;
+    var f = M.sex === "F";
+    document.getElementById("ati").href = "/assets/icon-" + (f ? "f" : "m") + "-180.png";
+    document.getElementById("ic").href = "/assets/icon-" + (f ? "f" : "m") + "-192.png";
+    document.getElementById("tc").content = f ? "#D6204F" : "#1A1A1E";
+    document.title = M.name + " 회원님 JANG KAREDO PT노트";
+    document.querySelector(".bar-in span").textContent = M.name + " 회원님 PT 노트";
+    document.getElementById("tabs").hidden = false;
+    document.getElementById("view").innerHTML = "";
+    window.MEMBER = M;
+    load("/assets/exicons.js", function () { load("/assets/app.js"); });
+  }
+  if (cached && cached.name) boot(cached);
+  fetch(API + "?m=" + slug, { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (j) {
+    var M = j && j.ok && j.kv ? j.kv[KEY] : null;
+    if (!M || !M.name) {
+      if (j && j.ok) { try { localStorage.removeItem(LS); } catch (e) {} if (!booted) msg("없는 PT 노트예요", "주소를 다시 확인하거나 선생님께 물어봐 주세요."); }
+      return;
+    }
+    var str = JSON.stringify(M);
+    if (cached && JSON.stringify(cached) === str) return;
+    try { localStorage.setItem(LS, str); } catch (e) {}
+    if (booted) location.reload(); else boot(M);
+  }).catch(function () { if (!booted) msg("인터넷 연결을 확인해 주세요", "연결된 뒤 다시 열면 PT 노트가 보여요."); });
+})();
+</script>
+</body>
+</html>

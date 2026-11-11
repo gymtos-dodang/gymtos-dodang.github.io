@@ -1219,9 +1219,9 @@ section[data-fold] > .head .fold-btn { background: #fff; }
 .stamp.pop .st-txt { animation: stTxt .5s ease .3s both; }
 @keyframes stTxt { 0% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: none; } }
 .stamp.saving .st-txt small::after { content: " · 저장 중"; color: var(--faint); font-weight: 500; }
-.stamp.view { cursor: default; }
-.stamp.view .st-seal::before, .stamp.view .st-seal::after, .stamp.view .st-seal > svg { animation: none !important; }
-.stamp.view .st-go { display: none; }
+.stamp.ro { cursor: default; }
+.stamp.ro .st-seal::before, .stamp.ro .st-seal::after, .stamp.ro .st-seal > svg { animation: none !important; }
+.stamp.ro .st-go { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .stamp .st-seal::before, .stamp .st-seal::after, .stamp .st-seal > svg, .stamp.pop .st-burst i, .stamp.pop::after, .stamp.pop .st-txt { animation: none !important; }
 }

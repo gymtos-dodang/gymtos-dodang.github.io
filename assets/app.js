@@ -627,7 +627,7 @@
     var b = document.getElementById("attBtn");
     if (!b) return;
     if (COACH_MODE) {   /* 선생님 휴대폰에서는 보기만 (실수로 눌러 회원 출석이 바뀌지 않게) */
-      b.classList.add("view");
+      b.classList.add("ro");
       b.addEventListener("click", function () { attToast("선생님 보기에서는 출석을 바꿀 수 없어요"); });
       return;
     }

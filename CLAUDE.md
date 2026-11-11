@@ -196,6 +196,14 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 회원 index.html에 홈 화면 앱 메타(apple-mobile-web-app-capable 등, 이름 "PT노트") — 새 회원 껍데기도 jihun 복사라 자동.
 - 코드: app.js attSeal·attCheckStrip·homeWidgets·todayHero·meSeg / style.css 맨 아래 "앱 화면" 블록.
 
+## 새 회원 바로 추가 — 선생님 폰에서 (2026-11-12 장동욱 "클로드로 항상 추가하는 게 아니라 피티노트 안에서 이름만 추가하면 페이지 자동으로")
+- 선생님 페이지 "새 회원 추가" 칸 → 이름·성별(남 블랙/여 핑크)·PT 시작한 달(→ 그 달 15일)·목표(선택) → "PT 노트 만들기" → 바로 주소 `https://gymtos-dodang.github.io/m/n<랜덤 8자>/` + "링크 보내기·복사"(공유 시트) + "루틴 만들러 가기"(폰 루틴 고치기 '새 루틴 만들기' / '다른 회원 루틴 복사'). 만든 회원은 회원 목록 카드에 같이 나오고(✎ 정보 = 이름·성별·시작·목표 고치기·지우기(두 번)), 출석·출석왕·전체 공지·배지·인바디·루틴 고치기 다 그대로 됨.
+- 원리: 폴더(m/<주소>/)를 안 만듦. 창고 저장소에 `pub:m:<주소>:member`(data.js의 window.MEMBER와 같은 모양: name·sex·goal·since·journey·notices["PT 노트가 열렸어요"]·forms[]·routine:null·diet:null·created) + 선생님 목록 `coach:members`([{slug,name,sex,goal,start,at}], 선생님 열쇠로만 읽힘). 회원이 /m/<주소>/ 를 열면 폴더가 없어서 깃허브가 **404.html**을 보여주고, 404.html이 창고에서 회원 정보를 받아(폰에 ptnote:<주소>:member로 기억 → 다음부터 바로 뜨고, 바뀌었으면 새로고침) window.MEMBER로 넣고 app.js를 띄움. 아이콘·theme-color도 성별로 바꿈. 창고 재배포 필요 없음(기존 kv_get·kv_set).
+- 한계: 카톡 미리보기 그림(og.jpg) 없음, PT 안내서 '관리 현황' 숫자·'다른 회원 루틴 가져오기' 목록엔 안 들어감, 자세 복습지·식단은 Claude가 올려야 함(영상 파일이 필요해서).
+- **정식 노트로 옮기기**(그 회원 복습지·식단을 Claude에게 부탁받으면): 같은 주소로 `m/<그 주소>/` 폴더(index.html·manifest·data.js·og.jpg)를 만들면 폴더가 먼저 열려서 자동으로 정식 노트가 됨 — 주소가 같아서 출석·폰 루틴 그대로. data.js는 창고의 pub:m:<주소>:member 내용으로 시작(내장 브라우저로 github.io 탭에서 fetch(ATT_API+"?m=<주소>")의 kv), members.js에 주소 추가, 회원 목록 표에 추가. 창고의 coach:members에서는 빼도 되고 놔둬도 됨(members.js에 있으면 선생님 목록에서 겹치지 않게 걸러짐).
+- 코드: 404.html(받아서 띄우기) · coach-tqqnlh/index.html nmLoad·nmShow·nmPost·nmDrawList(새 회원 칸), render()에서 members.js + coach:members 합침, 카드 M._dyn.
+- 선생님 보기 출석 도장은 class "ro"(예전 "view" — 본문 .view 칸 모양이 씌워져 세로로 깨지던 것 고침).
+
 ## 새 공지 팝업 (2026-11-05 장동욱 요청)
 - data.js notices 맨 위에 새 공지를 올리면, 회원이 PT 노트를 열 때 화면 위에서 팝업이 내려왔다가 약 5초 뒤 사라짐(위로 밀어도 닫힘). 누르면 공지 탭의 그 공지로 이동해 반짝 표시.
 - 공지 하나당 팝업은 한 번만. 공지 탭을 열기 전까지 아래 '공지' 탭에 빨간 점. 14일 넘은 공지는 새 공지로 안 침.
