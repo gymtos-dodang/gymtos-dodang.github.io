@@ -117,6 +117,20 @@
 .bni button { grid-column: 2; grid-row: 1 / span 3; align-self: center; font: inherit; font-size: 12.5px; font-weight: 800; color: var(--bad); background: #fff; border: 1.5px solid #F2C9C9; border-radius: 9px; padding: 6px 10px; cursor: pointer; }
 .bni button.sure { background: var(--bad); color: #fff; border-color: var(--bad); }
 .bnempty { font-size: 13px; color: var(--faint); margin: 10px 0 0; }
+/* 칸 접기·펼치기 (2026-11-11 "공간 확보 — 가리기 누르면 저장") */
+.fold-btn { margin-left: auto; flex: none; width: 34px; height: 34px; border: 0; border-radius: 10px; background: #EEF0F4; color: var(--sub); display: grid; place-items: center; cursor: pointer; }
+.fold-btn svg { width: 18px; height: 18px; transition: transform .2s ease; }
+.refresh + .fold-btn { margin-left: 0; }
+.head .refresh { margin-left: auto; }
+section[data-fold] .head h2 { cursor: pointer; }
+section.folded .fold-btn svg { transform: rotate(-90deg); }
+section.folded .fbody { display: none; }
+section.folded .head { border-bottom-style: dashed; }
+section.folded .head p { display: none; }
+.fsum { display: none; font-size: 12.5px; font-weight: 700; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+section.folded .fsum:not(:empty) { display: inline; }
+.fbody { display: flex; flex-direction: column; gap: inherit; }
+@media (prefers-reduced-motion: reduce) { .fold-btn svg { transition: none; } }
 </style>
 </head>
 <body>
@@ -134,7 +148,7 @@
     <span class="sc-go" aria-hidden="true">›</span>
   </a>
 
-  <section>
+  <section data-fold="today">
     <div class="head"><h2>오늘 한눈에</h2><p id="today"></p><button class="refresh" id="refresh" type="button">새로고침</button></div>
     <div class="sum">
       <div><b class="ok" id="sOn">–</b><small>오늘 출석</small></div>
@@ -143,12 +157,12 @@
     </div>
   </section>
 
-  <section id="rankSec">
+  <section id="rankSec" data-fold="rank">
     <div class="head"><h2>이번 달 출석왕</h2><p id="rankSub">출석 불러오는 중…</p></div>
     <div class="panel rank" id="rank"></div>
   </section>
 
-  <section>
+  <section data-fold="bn">
     <div class="head"><h2>전체 공지</h2><p>쓰면 모든 회원님 노트에 바로 떠요</p></div>
     <div class="panel">
       <button type="button" class="bnnew" id="bnOpen">📣 새 전체 공지 쓰기</button>
@@ -164,7 +178,7 @@
     </div>
   </section>
 
-  <section>
+  <section data-fold="list">
     <div class="head"><h2>회원 목록</h2><p>이름을 누르면 그 회원님 PT 노트로</p></div>
     <div class="sbar" id="sbar">
       <label class="sbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 20 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
@@ -180,7 +194,7 @@
     <div class="mlist" id="list"><div class="panel empty"><h3>불러오는 중…</h3></div></div>
   </section>
 
-  <section>
+  <section data-fold="howto">
     <div class="head"><h2>앱처럼 쓰기</h2></div>
     <div class="panel howto">
       <p style="margin:0 0 6px"><b>아이폰</b> 사파리에서 이 페이지 열기 → 아래 공유 버튼 → <b>홈 화면에 추가</b></p>
@@ -306,6 +320,33 @@
     });
   });
 
+  /* ---------------- 칸 접기·펼치기 (2026-11-11): 제목이나 ⌄ 누르면 접힘/펼침, 이 폰에 기억(localStorage ptcoach:fold) */
+  var FOLD_KEY = "ptcoach:fold", FOLDED = {};
+  try { FOLDED = JSON.parse(localStorage.getItem(FOLD_KEY) || "{}") || {}; } catch (e) { FOLDED = {}; }
+  function fsum(k, t) { var el = document.querySelector('section[data-fold="' + k + '"] .fsum'); if (el) el.textContent = t || ""; }
+  Array.prototype.forEach.call(document.querySelectorAll("section[data-fold]"), function (sec) {
+    var k = sec.getAttribute("data-fold"), head = sec.querySelector(".head"), body = document.createElement("div");
+    body.className = "fbody"; body.id = "fb-" + k;
+    while (head.nextSibling) body.appendChild(head.nextSibling);
+    sec.appendChild(body);
+    var h2 = head.querySelector("h2"), sum = document.createElement("span");
+    sum.className = "fsum"; h2.insertAdjacentElement("afterend", sum);
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "fold-btn"; btn.setAttribute("aria-controls", body.id);
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+    head.appendChild(btn);
+    function set(f, save) {
+      sec.classList.toggle("folded", f);
+      btn.setAttribute("aria-expanded", String(!f));
+      btn.setAttribute("aria-label", h2.textContent + (f ? " 펼치기" : " 접기"));
+      if (save) { if (f) FOLDED[k] = 1; else delete FOLDED[k]; try { localStorage.setItem(FOLD_KEY, JSON.stringify(FOLDED)); } catch (e) {} }
+    }
+    set(!!FOLDED[k], false);
+    function toggle() { set(!sec.classList.contains("folded"), true); }
+    btn.addEventListener("click", toggle);
+    h2.addEventListener("click", toggle);
+  });
+
   /* ---------------- 이번 달 출석왕 (2026-11-11): 출석 창고 기록으로 이번 달 출석 횟수 순위 + 지난달 같은 날까지와 비교 */
   function renderRank(rows) {
     var ym = today.slice(0, 7), dd = +today.slice(8);
@@ -329,6 +370,7 @@
     }).join("");
     if (list.length > 5) h += '<button type="button" class="rkmore" id="rkMore">전체 순위 보기 (' + list.length + '명)</button>';
     var box = document.getElementById("rank"); box.classList.remove("all"); box.innerHTML = h;
+    fsum("rank", "1등 " + list[0].r.M.name + " " + list[0].c + "회");
     var mb = document.getElementById("rkMore");
     if (mb) mb.addEventListener("click", function () { var on = box.classList.toggle("all"); mb.textContent = on ? "접기" : "전체 순위 보기 (" + list.length + "명)"; });
   }
@@ -339,6 +381,7 @@
   function bnDraw(list) {
     var box = document.getElementById("bnList");
     if (list === null) { box.innerHTML = '<p class="bnempty">창고(Apps Script)를 새 버전으로 배포하면 쓸 수 있어요</p>'; return; }
+    fsum("bn", list.length ? "보낸 공지 " + list.length + "개 · 최근 " + list[0].title : "보낸 공지 없음");
     box.innerHTML = list.length ? list.map(function (n) {
       return '<div class="bni"><time>' + esc(n.date) + ' · 모든 회원님께 보냄</time><b>' + esc(n.title) + '</b>' + (n.body ? '<p>' + esc(n.body) + '</p>' : '') +
         '<button type="button" data-id="' + esc(n.id) + '">삭제</button></div>';
@@ -415,6 +458,7 @@
     })).then(function (rows) {
       rows = rows.filter(Boolean);
       box.innerHTML = rows.map(function (r) { return card(r.slug, r.M, null); }).join("");
+      fsum("list", rows.length + "명");
       applyFilter();
       var done = 0, onN = 0, restN = 0;
       rows.forEach(function (r, i) {
@@ -432,6 +476,7 @@
             done++;
             document.getElementById("sOn").textContent = onN;
             document.getElementById("sWait").textContent = done === rows.length ? (rows.length - onN - restN) : "…";
+            if (done === rows.length) fsum("today", "출석 " + onN + " · 미출석 " + (rows.length - onN - restN));
             if (done === rows.length) renderRank(rows);
           });
       });
