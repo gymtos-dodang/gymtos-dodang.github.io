@@ -211,6 +211,10 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 코드: assets/memo.js(PTMemo.load·open·line — 창 모양·저장 전부, 선생님 페이지는 script 태그, app.js는 cmemoFill에서 BASE+"memo.js"를 불러옴) · coach-tqqnlh/index.html memoRow·memoRefresh · app.js cmemoDraw·cmemoFill · style.css .cmemo.
 - Claude가 회원 이야기를 들을 때 "메모에 적어둬"라고 하면: 내장 브라우저로 선생님 페이지를 열어 그 회원 📝에 저장(또는 kv_set coach:memo:<주소>, 기존 목록 앞에 추가).
 
+## 뒤로 가기 버튼 (2026-11-12 장동욱 "태블릿·PC에서 종목 보다가 자세 복습지 연결 누르면 뒤로가기가 없어 불편")
+- 회원 노트 본문 속 링크(루틴 종목 "▶ 자세 복습지 보기", 홈 오늘 운동 → 루틴 요일, 리포트·배지 등)로 넘어가면 화면 왼쪽 위에 "‹ 뒤로 · 루틴" 알약 버튼이 스크롤해도 붙어 다님(sticky). 누르면 직전 화면 + 보던 스크롤 위치로 돌아감(여러 번 넘어갔으면 차례로). 아래 탭·위 막대(종·이름)·나 탭 전환 칸을 누르면 새 출발이라 기록을 비움. 폰·아이패드 오른쪽 칸·PC 다 됨.
+- 코드 app.js NAVS·navName·navBackDraw(route 안), style.css .navback.
+
 ## 새 공지 팝업 (2026-11-05 장동욱 요청)
 - data.js notices 맨 위에 새 공지를 올리면, 회원이 PT 노트를 열 때 화면 위에서 팝업이 내려왔다가 약 5초 뒤 사라짐(위로 밀어도 닫힘). 누르면 공지 탭의 그 공지로 이동해 반짝 표시.
 - 공지 하나당 팝업은 한 번만. 공지 탭을 열기 전까지 아래 '공지' 탭에 빨간 점. 14일 넘은 공지는 새 공지로 안 침.

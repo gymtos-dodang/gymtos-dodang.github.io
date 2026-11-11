@@ -2507,8 +2507,40 @@
 
   /* ---------------- 라우터 */
   var TAB_OF = { home: "home", forms: "forms", form: "forms", routine: "routine", diet: "diet", notice: "notice" };
+  /* 뒤로 가기 (2026-11-12 장동욱 "태블릿·PC에서 종목 보다가 자세 복습지 누르면 뒤로가기가 없어서 다시 루틴 들어가야 함")
+     본문 속 링크(루틴 → 복습지, 홈 → 루틴 요일, 리포트·배지 등)로 넘어가면 화면 위에 "‹ 뒤로 · 루틴" 버튼이 붙어 다님.
+     누르면 직전 화면 + 보던 위치(스크롤)로 돌아감. 아래 탭·위 막대·나 탭 전환 칸을 누르면 새 출발이라 기록을 비움. */
+  var NAVS = [], NAV_BACK = null;
+  function navName(h) {
+    h = String(h || "").replace(/^#/, "") || "home";
+    if (/^routine/.test(h)) return "루틴"; if (/^form-/.test(h)) return "자세 복습지"; if (h === "forms") return "복습지";
+    if (h === "diet") return "식단"; if (/^goal/.test(h)) return "목표"; if (h === "body") return "몸변화"; if (h === "notice") return "공지";
+    if (/^report/.test(h)) return "리포트"; if (h === "muscle") return "근육 지도"; return "홈";
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]'); if (!a) return;
+    var to = a.getAttribute("href"), cur = location.hash || "#home";
+    if (to === "#" || to === cur) return;
+    if (a.closest(".tabs") || a.closest(".bar") || a.closest(".meseg")) { NAVS = []; return; }
+    NAVS.push({ h: cur, y: window.scrollY });
+    if (NAVS.length > 20) NAVS.shift();
+  }, true);
+  function navBackDraw(view) {
+    if (!NAVS.length) return;
+    var top = NAVS[NAVS.length - 1], bar = document.querySelector(".bar");
+    view.insertAdjacentHTML("afterbegin", '<button type="button" class="navback" id="navBack" aria-label="' + navName(top.h) + '(으)로 돌아가기"><span aria-hidden="true">‹</span> 뒤로 <b>· ' + navName(top.h) + '</b></button>');
+    var nb = document.getElementById("navBack");
+    if (bar) nb.style.top = (Math.round(bar.getBoundingClientRect().height) + 8) + "px";
+    nb.addEventListener("click", function () {
+      var want = NAVS[NAVS.length - 1].h, was = location.hash;
+      history.back();
+      setTimeout(function () { if (location.hash === was) location.hash = want; }, 350);
+    });
+  }
   function route() {
     var hsh = (location.hash || "").replace(/^#/, "");
+    var navTop = NAVS[NAVS.length - 1];
+    if (navTop && navTop.h === (location.hash || "#home")) NAV_BACK = NAVS.pop();
     var html, tab = "home", after = null, scrollDay = false, jumpTo = null;
     if (!hsh || hsh === "home") { html = renderHome(); }
     else if (hsh === "forms") { html = renderForms(); tab = "forms"; }
@@ -2549,8 +2581,12 @@
         pendingNotice = null;
       }
     }
+    navBackDraw(view);
     var jumpEl = jumpTo && document.getElementById(jumpTo);
-    if (jumpEl) {
+    if (NAV_BACK) {
+      var by = NAV_BACK.y; NAV_BACK = null;
+      window.scrollTo(0, by); setTimeout(function () { window.scrollTo(0, by); }, 60);
+    } else if (jumpEl) {
       jumpEl.scrollIntoView({ block: "start" });
     } else if (flashEl) {
       flashEl.scrollIntoView({ block: "center" });
