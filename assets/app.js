@@ -2513,7 +2513,23 @@
   /* 뒤로 가기 (2026-11-12 장동욱 "태블릿·PC에서 종목 보다가 자세 복습지 누르면 뒤로가기가 없어서 다시 루틴 들어가야 함")
      본문 속 링크(루틴 → 복습지, 홈 → 루틴 요일, 리포트·배지 등)로 넘어가면 화면 위에 "‹ 뒤로 · 루틴" 버튼이 붙어 다님.
      누르면 직전 화면 + 보던 위치(스크롤)로 돌아감. 아래 탭·위 막대·나 탭 전환 칸을 누르면 새 출발이라 기록을 비움. */
-  var NAVS = [], NAV_BACK = null;
+  var NAVS = [], NAV_BACK = null, ZOOM = null;
+  function zoomRun(view) {   /* 화면(view) 중 지금 보이는 부분을 누른 칸 크기·자리에서 시작해 화면 가득 커지게 */
+    var z = ZOOM; ZOOM = null;
+    if (!z || Date.now() - z.at > 1500 || !view.animate) return false;
+    try { if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return false; } catch (e) {}
+    var W = window.innerWidth, H = window.innerHeight, vr = view.getBoundingClientRect();
+    var ox = -vr.left, oy = -vr.top;
+    var clip0 = "inset(" + Math.max(0, oy) + "px " + Math.max(0, vr.width - (W - vr.left)) + "px " + Math.max(0, vr.height - (H - vr.top)) + "px " + Math.max(0, ox) + "px round ";
+    view.style.transformOrigin = ox + "px " + oy + "px";
+    var an = view.animate([
+      { transform: "translate(" + z.l + "px," + z.t + "px) scale(" + (z.w / W).toFixed(4) + "," + (z.h / H).toFixed(4) + ")", clipPath: clip0 + "60px)", opacity: 0.35 },
+      { opacity: 1, offset: 0.45 },
+      { transform: "none", clipPath: clip0 + "0px)", opacity: 1 }
+    ], { duration: 460, easing: "cubic-bezier(.2,.85,.25,1)" });
+    an.onfinish = an.oncancel = function () { view.style.transformOrigin = ""; };
+    return true;
+  }
   function navName(h) {
     h = String(h || "").replace(/^#/, "") || "home";
     if (/^routine/.test(h)) return "루틴"; if (/^form-/.test(h)) return "자세 복습지"; if (h === "forms") return "복습지";
@@ -2526,6 +2542,10 @@
     if (to === "#" || to === cur) return;
     if (a.closest(".tabs") || a.closest(".bar") || a.closest(".meseg")) { NAVS = []; return; }
     NAVS.push({ h: cur, y: window.scrollY });
+    /* B안 (2026-11-12 "아이콘이 퍼지며 화면 들어가기 — B안으로"): 누른 칸 자리에서 다음 화면이 커지며 열림 → 그 칸 위치를 기억 */
+    var zEl = a.closest(".th-tile, .card-link, .hw, .ex, .thero, .stamp, .ibstrip, .rp-home") || ((a.offsetHeight < 56) && a.closest(".panel, section")) || a;
+    var zr = zEl.getBoundingClientRect();
+    if (zr.width > 8 && zr.height > 8) ZOOM = { l: zr.left, t: zr.top, w: zr.width, h: zr.height, at: Date.now() };
     if (NAVS.length > 20) NAVS.shift();
   }, true);
   function navBackDraw(view) {
@@ -2575,7 +2595,8 @@
     view.setAttribute("data-tab", tab);
     /* 화면 넘어갈 때 효과 D안 (2026-11-12 "D안으로 가자"): 칸들이 위에서부터 차례로 톡톡 올라옴 — 주소가 바뀔 때만(같은 화면 다시 그리기는 X) */
     var curH = location.hash || "#home";
-    if (route.lastH !== undefined && route.lastH !== curH) {
+    var hashChanged = route.lastH !== undefined && route.lastH !== curH;
+    if (route.lastH !== undefined && route.lastH !== curH && !(ZOOM && Date.now() - ZOOM.at < 1500)) {
       view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");
       clearTimeout(route.enterT); route.enterT = setTimeout(function () { view.classList.remove("enter"); }, 900);
     }
@@ -2616,6 +2637,7 @@
     } else {
       window.scrollTo(0, 0);
     }
+    if (ZOOM) { if (hashChanged) zoomRun(view); else ZOOM = null; }
   }
   window.addEventListener("hashchange", route);
   route();
