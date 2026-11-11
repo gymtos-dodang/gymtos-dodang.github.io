@@ -1,6 +1,9 @@
 // GYMTOS PT 노트 창고 (출석 + 인바디) — 이 코드를 Apps Script에 그대로 붙여넣고 "웹 앱"으로 배포하세요.
 // 2026-11-06 인바디 추가: 시트 "인바디" 탭에 숫자, 구글 드라이브 "PT노트 인바디 사진" 폴더에 결과지 사진.
 // 2026-11-06 결과지 자동 읽기(OCR): 왼쪽 "서비스 +" 에서 "Drive API"를 추가해야 동작 (없으면 회원이 숫자를 직접 넣으면 됨).
+// 2026-11-11 범용 저장소(시트 "저장소" 탭) — 앞으로 새 기능은 이걸 써서 창고를 다시 배포하지 않아도 되게:
+//   이름이 pub: 로 시작 = 누구나 읽기·선생님만 쓰기 / mw: = 회원도 쓰기(작은 것만) / 그 밖 = 선생님만 읽기·쓰기.
+//   출석 보기(GET) 응답에 kv = pub:all:* + pub:m:<회원>:* + mw:<회원>:* 를 같이 보냄.
 // 2026-11-11 전체 공지: 선생님 페이지에서 쓴 공지를 시트 "전체공지" 탭에 저장 → 모든 회원 노트 공지에 같이 나옴(60일 지난 건 안 보냄).
 // 2026-11-11 보기(GET)는 잠그지 않게 바꿈 — 여러 명을 한꺼번에 불러도 실패하지 않음.
 // 2026-11-10 루틴 고치기: 선생님이 폰에서 고친 루틴을 시트 "루틴" 탭에 저장 → 회원 PT 노트가 열릴 때 바로 바뀜.
@@ -9,6 +12,7 @@ const SHEET = '출석';
 const RT_SHEET = '루틴';
 const RT_LOG = '루틴기록';
 const BN_SHEET = '전체공지';
+const KV_SHEET = '저장소';
 const RT_KEY_HASH = '4756ec53d712de9927d43e17e7efda99bb0a8312a08e1b82be440c1f2cf5da25';
 const IB_SHEET = '인바디';
 const IB_FOLDER = 'PT노트 인바디 사진';
@@ -145,6 +149,29 @@ function bnList_() {
   return out;
 }
 
+/* ---------------- 범용 저장소 (이름 → JSON 값) */
+function kvSheet_() { return rtSheet_(KV_SHEET, ['이름', '값(JSON)', '기록시각']); }
+function kvAll_() {
+  const v = kvSheet_().getDataRange().getValues(), o = {};
+  for (let i = 1; i < v.length; i++) { try { o[String(v[i][0])] = JSON.parse(String(v[i][1])); } catch (e) {} }
+  return o;
+}
+function kvFor_(m) {   // 회원 노트가 받는 것
+  const all = kvAll_(), o = {};
+  Object.keys(all).forEach(function (k) {
+    if (k.indexOf('pub:all:') === 0 || k.indexOf('pub:m:' + m + ':') === 0 || k.indexOf('mw:' + m + ':') === 0) o[k] = all[k];
+  });
+  return o;
+}
+function kvSet_(k, val) {   // val === null 이면 지움
+  const s = kvSheet_(), v = s.getDataRange().getValues();
+  let row = -1;
+  for (let i = 1; i < v.length; i++) if (String(v[i][0]) === k) { row = i + 1; break; }
+  if (val === null) { if (row > 0) s.deleteRow(row); return; }
+  const line = [k, JSON.stringify(val), new Date()];
+  if (row > 0) s.getRange(row, 1, 1, 3).setValues([line]); else s.appendRow(line);
+}
+
 /* ---------------- GET: 출석 + 인바디 보기·사진·삭제 */
 function doGet(e) {
   const p = (e && e.parameter) || {};
@@ -203,10 +230,11 @@ function doGet(e) {
   for (let i = 1; i < all.length; i++) {
     if (all[i][0] === m) days[txt_(all[i][2], 'yyyy-MM-dd')] = txt_(all[i][3], 'HH:mm');
   }
-  let routine = null, bnotices = [];
+  let routine = null, bnotices = [], kv = {};
   try { routine = rtGet_(m); } catch (err) {}
   try { bnotices = bnList_(); } catch (err) {}
-  return json_({ ok: true, days: days, routine: routine, bnotices: bnotices });
+  try { kv = kvFor_(m); } catch (err) {}
+  return json_({ ok: true, days: days, routine: routine, bnotices: bnotices, kv: kv });
 }
 
 /* 결과지 사진 → 글자 (구글 드라이브 OCR: 사진을 구글 문서로 바꿔 글자만 읽고 바로 휴지통) */
@@ -235,6 +263,34 @@ function doPost(e) {
     if (!b.img || String(b.img).length > 8000000) return json_({ ok: false, error: 'img' });
     try { return json_({ ok: true, text: ocr_(String(b.img)) }); }
     catch (err) { return json_({ ok: false, error: 'ocr', msg: String(err) }); }
+  }
+  if (b.a === 'kv_get') {   // 선생님: 이름 앞부분(prefix)으로 읽기
+    if (!keyOk_(b.key)) return json_({ ok: false, error: 'key' });
+    const all = kvAll_(), pre = String(b.prefix || ''), o = {};
+    Object.keys(all).forEach(function (k) { if (k.indexOf(pre) === 0) o[k] = all[k]; });
+    return json_({ ok: true, kv: o });
+  }
+  if (b.a === 'kv_set') {   // {k, v} 또는 {items:{k:v,…}} — v가 null이면 지움
+    const items = b.items && typeof b.items === 'object' ? b.items : (function () { const o = {}; o[String(b.k || '')] = b.v === undefined ? null : b.v; return o; })();
+    const ks = Object.keys(items);
+    if (!ks.length || ks.length > 50) return json_({ ok: false, error: 'items' });
+    const coach = keyOk_(b.key);
+    for (let i = 0; i < ks.length; i++) {
+      const k = ks[i];
+      if (!/^[a-z0-9:_\-.]{3,120}$/i.test(k)) return json_({ ok: false, error: 'name' });
+      if (JSON.stringify(items[k]).length > 40000) return json_({ ok: false, error: 'size' });
+      const memberW = k.indexOf('mw:' + m + ':') === 0 && JSON.stringify(items[k]).length <= 4000;
+      if (!coach && !memberW) return json_({ ok: false, error: 'key' });
+    }
+    const lock = LockService.getScriptLock();
+    lock.waitLock(25000);
+    try {
+      ks.forEach(function (k) { kvSet_(k, items[k] === undefined ? null : items[k]); });
+      SpreadsheetApp.flush();
+      return json_({ ok: true });
+    } finally {
+      lock.releaseLock();
+    }
   }
   if (b.a === 'bn_add' || b.a === 'bn_del') {
     if (!keyOk_(b.key)) return json_({ ok: false, error: 'key' });
