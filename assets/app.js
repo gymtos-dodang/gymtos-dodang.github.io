@@ -2817,6 +2817,32 @@
     setTimeout(function () { mt.setAttribute("content", c); }, 300);
   }
   window.addEventListener("hashchange", function () { setTimeout(vpFix, 500); });
+  /* 화면 잘림 진단 (2026-11-12) — 선생님 보기에서만: 페이지 폭이 폰 화면보다 넓어지면 위에 빨간 띠로 범인 칸을 알려 줌 + 맨 아래 버전 표시 */
+  function ovDiag() {
+    if (!COACH_MODE || DEMO) return;
+    var sw = Math.min(screen.width, screen.height) <= 500 && window.matchMedia("(orientation: portrait)").matches ? screen.width : window.innerWidth;
+    var cw = document.documentElement.clientWidth, bad = [];
+    Array.prototype.forEach.call(document.querySelectorAll("body *"), function (e) {
+      var r = e.getBoundingClientRect(); if (!r.width || r.right <= sw + 1) return;
+      var p = e.parentElement, clipped = false;
+      while (p && p !== document.body) { var cs = getComputedStyle(p); if (cs.overflowX !== "visible" && p.getBoundingClientRect().right <= sw + 1) { clipped = true; break; } p = p.parentElement; }
+      if (!clipped) bad.push(e);
+    });
+    var box = document.getElementById("ovdiag");
+    if (cw <= sw + 1 && !bad.length) { if (box) box.remove(); return; }
+    if (!box) { box = document.createElement("div"); box.id = "ovdiag"; box.style.cssText = "position:fixed;left:8px;right:8px;top:calc(env(safe-area-inset-top,0px) + 6px);z-index:999;background:#E1141E;color:#fff;font:700 11px/1.4 sans-serif;padding:6px 9px;border-radius:10px;word-break:break-all"; document.body.appendChild(box); box.addEventListener("click", function () { box.remove(); }); }
+    box.textContent = "[선생님만 보임] 화면 넘침: 페이지 " + cw + " / 폰 " + sw + " · " + bad.slice(0, 4).map(function (e) {
+      var c = typeof e.className === "string" ? e.className : (e.className && e.className.baseVal) || "";
+      return e.tagName.toLowerCase() + (c ? "." + c.split(" ").join(".") : "") + "(" + Math.round(e.getBoundingClientRect().right) + ")";
+    }).join(", ") + " — 이 화면 캡처해서 보내 주세요";
+  }
+  window.addEventListener("hashchange", function () { setTimeout(ovDiag, 900); });
+  [1500, 4000, 8000].forEach(function (t) { setTimeout(ovDiag, t); });
+  if (COACH_MODE && !DEMO) {
+    var vm = (SCRIPT && SCRIPT.src.match(/[?&]v=(\w+)/) || [])[1] || "?";
+    var vt = document.createElement("div"); vt.style.cssText = "text-align:center;font-size:10px;color:#B4B4BE;padding:4px 0 110px"; vt.textContent = "PT노트 버전 " + vm;
+    document.body.appendChild(vt);
+  }
   window.addEventListener("hashchange", route);
   route();
   cmemoFill();
