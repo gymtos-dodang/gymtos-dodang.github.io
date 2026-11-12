@@ -287,6 +287,51 @@ body, body.pad .pane { background: #F2F2F4; }
 .fchips button { border: 0; box-shadow: 0 0 0 1px rgba(20, 20, 30, .07); }
 .bnnew { border-radius: 16px; background: #1A1A1E; }
 @media (prefers-reduced-motion: reduce) { .ct-card::before { animation: none; } .ct-ring .fg { transition: none; } }
+/* ---- 오늘 수업한 회원 · 회원 아이콘 칸 · 회원 정보 창 (2026-11-13) ---- */
+.tdy { display: flex; flex-direction: column; gap: 8px; }
+.tdy .cempty small { color: #A3A9B5; font-size: 12px; }
+.tr { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 20px; padding: 11px 12px 11px 13px; box-shadow: 0 1px 2px rgba(20, 20, 30, .04), 0 6px 18px rgba(20, 20, 30, .05); }
+.tr.new { box-shadow: 0 0 0 1.5px rgba(46, 139, 87, .35), 0 8px 20px rgba(46, 139, 87, .12); }
+.tr-l { flex: 1; min-width: 0; display: flex; align-items: center; gap: 11px; text-decoration: none; color: inherit; }
+.tr .av { width: 42px; height: 42px; font-size: 17px; position: relative; }
+.av i.ok { position: absolute; right: -2px; bottom: -2px; width: 15px; height: 15px; border-radius: 50%; background: #2ECC71; border: 2.5px solid #fff; box-shadow: 0 0 8px rgba(46, 204, 113, .6); }
+.tr-t { min-width: 0; display: flex; flex-direction: column; }
+.tr-t b { font-size: 15.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tr-t small { font-size: 12px; color: var(--good); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tr-b { flex: none; display: flex; gap: 5px; }
+.tb { font: inherit; font-size: 12.5px; font-weight: 800; text-decoration: none; color: #1A1A1E; background: #F2F2F4; border: 0; border-radius: 99px; padding: 8px 12px; cursor: pointer; }
+.tb:active { transform: scale(.95); }
+/* 아이콘 칸 */
+#list.mlist { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 4px; background: #fff; border-radius: 24px; padding: 18px 8px 14px; box-shadow: 0 1px 2px rgba(20, 20, 30, .04), 0 6px 18px rgba(20, 20, 30, .05); }
+#list.mlist > .panel { grid-column: 1 / -1; box-shadow: none; }
+.mcard.mt { background: none; box-shadow: none; padding: 0; border-radius: 0; gap: 0; min-width: 0; }
+.mt .mtop { flex-direction: column; align-items: center; gap: 5px; text-align: center; transition: transform .15s; }
+.mt .mtop:active { transform: scale(.93); }
+.mt .av { width: 60px; height: 60px; border-radius: 20px; font-size: 24px; position: relative; }
+.mt .av i { position: absolute; right: -3px; bottom: -3px; width: 16px; height: 16px; border-radius: 50%; border: 3px solid #fff; background: #D5D8DF; }
+.mt.s-on .av i { background: #2ECC71; box-shadow: 0 0 8px rgba(46, 204, 113, .7); animation: ledon 2.4s ease-in-out infinite; }
+.mt.s-off .av i { background: #FF4F57; }
+.mt.s-rest .av i { background: #B7BCC6; }
+.mt.s-wait .av i { background: #EEF0F4; }
+.mt.s-on .av { box-shadow: 0 0 0 2.5px #fff, 0 0 0 4.5px #2ECC71, 0 6px 14px rgba(46, 204, 113, .25); }
+.mt .mtop b { font-size: 13px; font-weight: 800; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mt .mtop small { font-size: 11px; color: var(--faint); font-weight: 700; margin-top: -4px; white-space: nowrap; }
+.mt.s-on .mtop small { color: var(--good); }
+.mt.s-off .mtop small { color: #D64545; }
+body.pad .mcard.mt.sel { box-shadow: none; }
+body.pad .mt.sel .av { box-shadow: 0 0 0 2.5px #fff, 0 0 0 4.5px #1A1A1E; }
+body.pad .mt.sel.F .av { box-shadow: 0 0 0 2.5px #fff, 0 0 0 4.5px #D6204F; }
+body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.sbar { margin-bottom: 0; }
+/* 회원 정보 창 (아래에서 올라옴) */
+.msh { position: fixed; inset: 0; z-index: 60; }
+.msh-bg { position: absolute; inset: 0; background: rgba(15, 15, 20, .38); opacity: 0; transition: opacity .25s; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
+.msh-p { position: absolute; left: 0; right: 0; bottom: 0; max-height: 86vh; overflow-y: auto; background: #F2F2F4; border-radius: 26px 26px 0 0; padding: 10px 12px calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateY(100%); transition: transform .3s cubic-bezier(.2, .8, .2, 1); max-width: 560px; margin: 0 auto; box-sizing: border-box; }
+.msh.on .msh-bg { opacity: 1; }
+.msh.on .msh-p { transform: none; }
+.msh-grab { display: block; width: 40px; height: 5px; border-radius: 99px; background: #CFD2D9; margin: 0 auto 10px; }
+.msh-p .mcard { box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { .msh-p, .msh-bg { transition: none; } .mt.s-on .av i { animation: none; } }
 </style>
 </head>
 <body>
@@ -302,7 +347,7 @@ body, body.pad .pane { background: #F2F2F4; }
       <div class="ct-ring"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="bg" cx="50" cy="50" r="42"/><circle class="fg" id="ctRing" cx="50" cy="50" r="42" pathLength="100" stroke-dasharray="0 100"/></svg>
         <div><b id="sOn">–</b><small>/ <span id="sAll">–</span>명</small></div></div>
       <div class="ct-txt"><small>TODAY</small><h2>오늘 출석</h2>
-        <div class="ct-nums"><span><b id="sWait">–</b>미출석</span><span><b id="sRest">–</b>쉬는 날</span><span><b id="sCare">–</b>챙길 회원</span></div></div>
+        <div class="ct-nums"><span><b id="sWait">–</b>미출석</span><span><b id="sRest">–</b>쉬는 날</span><span><b id="sMon">–</b>이번 달</span></div></div>
     </div>
   </section>
 
@@ -312,14 +357,25 @@ body, body.pad .pane { background: #F2F2F4; }
     <button type="button" class="cq" data-go="add"><i aria-hidden="true">＋</i><b>새 회원</b><small>노트 만들기</small></button>
   </nav>
 
-  <section data-fold="care" id="careSec">
-    <div class="head"><h2>챙겨야 할 회원</h2><p>3일 넘게 출석 소식이 없어요</p></div>
-    <div class="care" id="care"><p class="cempty">출석 불러오는 중…</p></div>
+  <section data-fold="tdy" id="tdySec">
+    <div class="head"><h2>오늘 수업한 회원</h2><p>출석하면 여기 위로 올라와요 · 노트 최신화</p></div>
+    <div class="tdy" id="tdy"><p class="cempty">출석 불러오는 중…</p></div>
   </section>
 
-  <section data-fold="todo" id="todoSec">
-    <div class="head"><h2>노트 채우기</h2><p>아직 비어 있는 곳이에요</p></div>
-    <div class="todo" id="todo"><p class="cempty">불러오는 중…</p></div>
+  <section data-fold="list">
+    <div class="head"><h2>회원 목록</h2><p>누르면 그 회원님 정보 · 바로가기</p></div>
+    <div class="sbar" id="sbar">
+      <label class="sbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 20 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <input type="search" id="q" placeholder="회원 이름 검색 (초성도 돼요 · ㅊㅈㅎ)" autocomplete="off" aria-label="회원 이름 검색">
+        <button type="button" id="qclear" aria-label="검색어 지우기" hidden>✕</button></label>
+      <div class="fchips" role="group" aria-label="출석으로 거르기">
+        <button type="button" data-f="all" aria-pressed="true">전체 <b id="cAll">0</b></button>
+        <button type="button" data-f="on" aria-pressed="false">출석 <b id="cOn">0</b></button>
+        <button type="button" data-f="off" aria-pressed="false">미출석 <b id="cOff">0</b></button>
+      </div>
+    </div>
+    <p class="nores" id="nores" hidden>찾는 회원님이 없어요</p>
+    <div class="mlist" id="list"><div class="panel empty"><h3>불러오는 중…</h3></div></div>
   </section>
 
   <section id="rankSec" data-fold="rank">
@@ -361,21 +417,6 @@ body, body.pad .pane { background: #F2F2F4; }
     </div>
   </section>
 
-  <section data-fold="list">
-    <div class="head"><h2>회원 목록</h2><p>이름을 누르면 그 회원님 PT 노트로</p></div>
-    <div class="sbar" id="sbar">
-      <label class="sbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 20 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-        <input type="search" id="q" placeholder="회원 이름 검색 (초성도 돼요 · ㅊㅈㅎ)" autocomplete="off" aria-label="회원 이름 검색">
-        <button type="button" id="qclear" aria-label="검색어 지우기" hidden>✕</button></label>
-      <div class="fchips" role="group" aria-label="출석으로 거르기">
-        <button type="button" data-f="all" aria-pressed="true">전체 <b id="cAll">0</b></button>
-        <button type="button" data-f="on" aria-pressed="false">출석 <b id="cOn">0</b></button>
-        <button type="button" data-f="off" aria-pressed="false">미출석 <b id="cOff">0</b></button>
-      </div>
-    </div>
-    <p class="nores" id="nores" hidden>찾는 회원님이 없어요</p>
-    <div class="mlist" id="list"><div class="panel empty"><h3>불러오는 중…</h3></div></div>
-  </section>
 
   <section data-fold="howto">
     <div class="head"><h2>앱처럼 쓰기</h2></div>
@@ -838,84 +879,48 @@ body, body.pad .pane { background: #F2F2F4; }
     }).catch(function () { b.disabled = false; document.getElementById("nmMsg").textContent = "지우지 못했어요 — 다시 눌러 주세요"; });
   });
 
-  /* ---------------- 챙겨야 할 회원 · 노트 채우기 (2026-11-13 장동욱 "1,2 ㄱ")
-     챙겨야 할 회원 = 마지막 출석이 3일 넘게 지났거나 출석 기록이 없는 회원 → 안부 보내기(공유 시트/복사)
-     노트 채우기 = 루틴·복습지·식단·처음 무게·목표가 비어 있는 회원 → 칩 누르면 그 회원 그 화면으로 */
+  /* ---------------- 오늘 수업한 회원 (2026-11-13 장동욱 "챙겨야 될 회원 → 오늘 수업한 사람 기준 우선 목록, 출석하면 뜨게")
+     오늘 출석 도장 찍은 회원을 늦게 찍은 순으로 맨 위에 — 루틴 고치기·메모·노트로 바로 (노트 최신화용) */
   function fname(M) { var n = String(M.name || ""); return /·/.test(n) ? n : (n.length >= 3 ? n.slice(1) : n); }
-  function gapDays(a, b) { var p = a.split("-"), q = b.split("-"); return Math.round((new Date(+q[0], +q[1] - 1, +q[2]) - new Date(+p[0], +p[1] - 1, +p[2])) / 86400000); }
-  var CARE = [];
-  function careMsg(x) {
-    var n = fname(x.r.M) + "님";
-    if (x.gap == null) return n + "! 운동 오신 날엔 PT 노트 홈에서 출석 도장 꾹 눌러 주세요 😊 기록이 쌓이면 배지랑 월간 리포트도 생겨요 💪";
-    if (x.gap >= 7) return n + " 잘 지내고 계시죠? 한동안 못 뵌 것 같아서 연락드려요 😊 몸 상태는 괜찮으세요? 편하실 때 운동 같이 다시 시작해 봐요. 기다리고 있을게요 💪";
-    return n + " 요즘 많이 바쁘시죠? 😊 컨디션은 괜찮으세요? 이번 주에 운동 같이 꼭 챙겨 봐요 💪";
+  function renderToday(rows) {
+    var list = rows.filter(function (r) { return r.days && r.days[today] != null; })
+      .sort(function (a, b) { return String(b.days[today] || "").localeCompare(String(a.days[today] || "")); });
+    fsum("tdy", list.length ? list.length + "명 · 최근 " + list[0].M.name : "아직 없음");
+    var box = document.getElementById("tdy");
+    if (!list.length) { box.innerHTML = '<p class="cempty">아직 오늘 출석 도장을 찍은 회원님이 없어요<br><small>회원님이 출석하면 여기 위로 올라와요</small></p>'; return; }
+    box.innerHTML = list.map(function (r, i) {
+      var M = r.M, sex = M.sex === "F" ? "F" : "M", base = "/m/" + r.slug + "/", R = M.routine || {};
+      return '<div class="tr' + (i === 0 ? ' new' : '') + '"><a class="tr-l" href="' + base + '#home"><span class="av ' + sex + '">' + esc(M.name.charAt(0)) + '<i class="ok"></i></span>' +
+        '<span class="tr-t"><b>' + esc(M.name) + '</b><small>' + (r.days[today] ? esc(r.days[today]) + ' 출석' : '오늘 출석') + (R.version ? ' · 루틴 ' + esc(R.version) + (M._rted ? ' ✎' : '') : ' · 루틴 없음') + '</small></span></a>' +
+        '<div class="tr-b"><a href="' + base + '#routine" class="tb">루틴</a><button type="button" class="tb" data-memo="' + esc(r.slug) + '" data-mname="' + esc(M.name) + '">메모</button></div></div>';
+    }).join("");
   }
-  function renderCare(rows) {
-    CARE = rows.map(function (r) {
-      var last = ""; Object.keys(r.days || {}).forEach(function (k) { if (k > last) last = k; });
-      return { r: r, last: last, gap: last ? gapDays(last, today) : null };
-    }).filter(function (x) { return x.gap == null || x.gap >= 3; })
-      .sort(function (a, b) { return (a.gap == null) - (b.gap == null) || (b.gap || 0) - (a.gap || 0); });
-    document.getElementById("sCare").textContent = CARE.length;
-    fsum("care", CARE.length ? CARE.length + "명" : "다 잘 나오고 있어요");
-    var box = document.getElementById("care");
-    if (!CARE.length) { box.innerHTML = '<p class="cempty ok">🎉 모든 회원님이 3일 안에 출석했어요</p>'; return; }
-    box.innerHTML = CARE.map(function (x, i) {
-      var M = x.r.M, sex = M.sex === "F" ? "F" : "M";
-      var lv = x.gap == null ? "none" : x.gap >= 7 ? "hot" : "warm";
-      var tx = x.gap == null ? "출석 도장 기록이 아직 없어요" : x.gap + "일째 소식 없어요 · 마지막 " + (+x.last.slice(5, 7)) + "/" + (+x.last.slice(8));
-      return '<div class="cr ' + lv + (i >= 5 ? ' crhide' : '') + '"><a class="cr-l" href="/m/' + x.r.slug + '/#goal"><span class="av ' + sex + '">' + esc(M.name.charAt(0)) + '</span>' +
-        '<span class="cr-t"><b>' + esc(M.name) + '</b><small>' + tx + '</small></span></a>' +
-        '<button type="button" class="cr-b" data-care="' + i + '">안부 보내기</button></div>';
-    }).join("") + (CARE.length > 5 ? '<button type="button" class="rkmore" id="crMore">' + (CARE.length - 5) + '명 더 보기</button>' : '');
-    var mb = document.getElementById("crMore");
-    if (mb) mb.addEventListener("click", function () { var on = box.classList.toggle("all"); mb.textContent = on ? "접기" : (CARE.length - 5) + "명 더 보기"; });
+  /* 회원 목록 = 아이콘 칸 (2026-11-13 "회원목록 앞에, 아이콘으로 — 밑에 쭉 있어서 어지러움"): 누르면 그 회원 정보 창(폰) / 아이패드는 오른쪽에 바로 노트 */
+  var ROWS = {};
+  function tile(slug, M, days) {
+    var sex = M.sex === "F" ? "F" : "M", on = days && days[today] != null, rest = isRestToday(M);
+    var stKey = !days ? "wait" : on ? "on" : rest ? "rest" : "off";
+    var sub = !days ? "…" : on ? (days[today] || "출석") : rest ? "쉬는 날" : "미출석";
+    return '<div class="mcard mt ' + sex + ' s-' + stKey + '" data-name="' + esc(M.name) + '" data-cho="' + esc(cho(M.name)) + '" data-st="' + stKey + '" data-slug="' + esc(slug) + '">' +
+      '<a class="mtop" href="/m/' + slug + '/#home"><span class="av ' + sex + '">' + esc(M.name.charAt(0)) + '<i></i></span><b>' + esc(fname(M)) + '</b><small>' + esc(sub) + '</small></a></div>';
   }
-  document.getElementById("care").addEventListener("click", function (e) {
-    var b = e.target.closest("[data-care]"); if (!b) return;
-    var x = CARE[+b.getAttribute("data-care")]; if (!x) return;
-    var msg = careMsg(x);
-    function copied() { b.textContent = "복사됐어요 ✓"; b.classList.add("done"); bnToast("안부 문구를 복사했어요 — 카톡에 붙여 넣으세요"); setTimeout(function () { b.textContent = "안부 보내기"; b.classList.remove("done"); }, 2600); }
-    function copy() {
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(msg).then(copied, function () { window.prompt("길게 눌러 복사하세요", msg); });
-      else window.prompt("길게 눌러 복사하세요", msg);
-    }
-    if (navigator.share && /iPhone|iPad|Android/i.test(navigator.userAgent)) navigator.share({ text: msg }).then(function () { b.textContent = "보냈어요 ✓"; b.classList.add("done"); }, function (err) { if (!err || err.name !== "AbortError") copy(); });
-    else copy();
-  });
-
-  var TODO_T = [["routine", "루틴", "#routine"], ["forms", "복습지", "#forms"], ["diet", "식단", "#diet"], ["sw", "처음 무게", "#growth"], ["goal", "목표", "#goal"]], TODO_F = "", TODO_ROWS = [], TODO_ALL = false;
-  function todoOf(r) {
-    var M = r.M, out = [];
-    if (!M.routine) out.push("routine");
-    if (!(M.forms || []).length) out.push("forms");
-    if (!M.diet) out.push("diet");
-    var g = r.kv && r.kv["pub:m:" + r.slug + ":growth"], w = (g && g.w) || M.start_weights;
-    if (M.routine && !(w && Object.keys(w).length)) out.push("sw");
-    if (!M.goal) out.push("goal");
-    return out;
+  function sheetOpen(slug) {
+    var r = ROWS[slug]; if (!r) return;
+    var old = document.getElementById("msheet"); if (old) old.remove();
+    var w = document.createElement("div"); w.id = "msheet"; w.className = "msh";
+    w.innerHTML = '<div class="msh-bg"></div><div class="msh-p" role="dialog" aria-modal="true" aria-label="' + esc(r.M.name) + ' 회원님"><span class="msh-grab"></span>' + card(slug, r.M, r.days || null) + '</div>';
+    document.body.appendChild(w);
+    requestAnimationFrame(function () { w.classList.add("on"); });
+    function close() { w.classList.remove("on"); setTimeout(function () { w.remove(); }, 260); }
+    w.querySelector(".msh-bg").addEventListener("click", close);
+    var y0 = null, p = w.querySelector(".msh-p");
+    p.addEventListener("touchstart", function (e) { y0 = e.touches[0].clientY; }, { passive: true });
+    p.addEventListener("touchend", function (e) { if (y0 != null && e.changedTouches[0].clientY - y0 > 70) close(); y0 = null; }, { passive: true });
+    w.addEventListener("click", function (e) { if (e.target.closest("a[href]")) setTimeout(close, 400); });
   }
-  function renderTodo(rows) {
-    TODO_ROWS = rows.map(function (r) { return { r: r, t: todoOf(r) }; });
-    var cnt = {}; TODO_ROWS.forEach(function (x) { x.t.forEach(function (k) { cnt[k] = (cnt[k] || 0) + 1; }); });
-    var full = TODO_ROWS.filter(function (x) { return !x.t.length; }).length;
-    fsum("todo", full + "/" + rows.length + "명 완성");
-    var h = '<div class="td-prog"><div class="td-bar"><i style="width:' + Math.round(full / Math.max(1, rows.length) * 100) + '%"></i></div><span><b>' + full + '</b> / ' + rows.length + '명 다 채움</span></div>' +
-      '<div class="td-chips" role="group" aria-label="빈 곳으로 거르기"><button type="button" data-td="" aria-pressed="' + !TODO_F + '">전체</button>' +
-      TODO_T.filter(function (t) { return cnt[t[0]]; }).map(function (t) { return '<button type="button" data-td="' + t[0] + '" aria-pressed="' + (TODO_F === t[0]) + '">' + t[1] + ' 없음 <b>' + cnt[t[0]] + '</b></button>'; }).join("") + '</div>';
-    var list = TODO_ROWS.filter(function (x) { return x.t.length && (!TODO_F || x.t.indexOf(TODO_F) >= 0); })
-      .sort(function (a, b) { return b.t.length - a.t.length; });
-    h += list.length ? '<div class="td-list' + (TODO_ALL ? ' all' : '') + '">' + list.map(function (x, i) {
-      var M = x.r.M, sex = M.sex === "F" ? "F" : "M";
-      return '<div class="td' + (i >= 5 ? ' tdhide' : '') + '"><span class="av ' + sex + '">' + esc(M.name.charAt(0)) + '</span><div><b>' + esc(M.name) + '</b><div class="td-need">' +
-        x.t.map(function (k) { var t = TODO_T.filter(function (y) { return y[0] === k; })[0]; return '<a class="nd ' + k + '" href="/m/' + x.r.slug + '/' + t[2] + '">' + t[1] + '</a>'; }).join("") + '</div></div></div>';
-    }).join("") + '</div>' + (list.length > 5 ? '<button type="button" class="rkmore" id="tdMore">' + (TODO_ALL ? "접기" : (list.length - 5) + "명 더 보기") + '</button>' : '') : '<p class="cempty ok">🎉 다 채워졌어요</p>';
-    document.getElementById("todo").innerHTML = h;
-  }
-  document.getElementById("todo").addEventListener("click", function (e) {
-    if (e.target.closest("#tdMore")) { TODO_ALL = !TODO_ALL; renderTodo(TODO_ROWS.map(function (x) { return x.r; })); return; }
-    var b = e.target.closest("[data-td]"); if (!b) return;
-    TODO_F = b.getAttribute("data-td"); renderTodo(TODO_ROWS.map(function (x) { return x.r; }));
+  document.getElementById("list").addEventListener("click", function (e) {
+    var a = e.target.closest(".mt .mtop"); if (!a || isPad() || e.metaKey || e.ctrlKey) return;
+    e.preventDefault(); sheetOpen(a.parentNode.getAttribute("data-slug"));
   });
   /* 빠른 버튼: 전체 공지·새 회원 칸으로 가서 바로 쓰기 창 열기 */
   Array.prototype.forEach.call(document.querySelectorAll(".cquick [data-go]"), function (b) {
@@ -945,7 +950,8 @@ body, body.pad .pane { background: #F2F2F4; }
       }));
       document.getElementById("sAll").textContent = rows.length;
       document.getElementById("sub").textContent = "담당 회원 " + rows.length + "명";
-      box.innerHTML = rows.map(function (r) { return card(r.slug, r.M, null); }).join("");
+      ROWS = {}; rows.forEach(function (r) { ROWS[r.slug] = r; });
+      box.innerHTML = rows.map(function (r) { return tile(r.slug, r.M, null); }).join("");
       fsum("list", rows.length + "명");
       if (isPad() && !paneSlug) { var last = ""; try { last = sessionStorage.getItem("ptpane") || ""; } catch (e) {} if (last) paneOpen(last); }
       paneMark();
@@ -962,7 +968,7 @@ body, body.pad .pane { background: #F2F2F4; }
           }).catch(function () { return {}; })
           .then(function (days) {
             r.days = days;
-            var el = box.children[i]; if (el) el.outerHTML = card(r.slug, r.M, days);
+            var el = box.children[i]; if (el) el.outerHTML = tile(r.slug, r.M, days);
             paneMark();
             applyFilter();
             if (days[today] != null) onN++; else if (isRestToday(r.M)) restN++;
@@ -971,7 +977,10 @@ body, body.pad .pane { background: #F2F2F4; }
             document.getElementById("sWait").textContent = done === rows.length ? (rows.length - onN - restN) : "…";
             document.getElementById("sRest").textContent = restN;
             ringSet(onN, rows.length);
-            if (done === rows.length) { renderRank(rows); renderCare(rows); renderTodo(rows); }
+            renderToday(rows);
+            var mon = 0, ym = today.slice(0, 7); rows.forEach(function (x) { Object.keys(x.days || {}).forEach(function (k) { if (k.slice(0, 7) === ym) mon++; }); });
+            document.getElementById("sMon").textContent = mon;
+            if (done === rows.length) renderRank(rows);
           });
       });
     });
