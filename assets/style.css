@@ -1509,7 +1509,7 @@ html.vt-back::view-transition-new(root) { animation-name: vtInL; }
 html.nosp body::before, html.nosp body::after { display: none !important; }
 
 /* ---- 복습지 부위별 보기 칩 (2026-11-12) ---- */
-.fcat { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin: 0 -2px 12px; padding: 2px; }
+.fcat { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin: 0 0 12px; padding: 2px 0; }
 .fcat::-webkit-scrollbar { display: none; }
 .fcat button { flex: none; font: inherit; font-size: 13.5px; font-weight: 700; border: 0; border-radius: 99px; padding: 8px 13px; background: #fff; color: #5B6170; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 2px rgba(20,20,30,.05), 0 0 0 1px rgba(20,20,30,.06); transition: background .2s, color .2s; }
 .fcat button b { font-weight: 800; font-size: 11.5px; opacity: .6; margin-left: 2px; }
