@@ -1373,3 +1373,32 @@ a, button, [role="button"], label { -webkit-tap-highlight-color: transparent; }
 .view.back .jc-lab, .view.back .bp-area { animation: none; opacity: 1; }
 .view.back .jc-ahead { opacity: .6; animation: jcMarch .8s linear infinite; }
 .view.back .jc-sonar, .view.back .bp-sonar { animation-delay: 0s; }
+
+/* 첫날 vs 오늘 · 성장 기록 카드 (2026-11-12, #growth — 월간 리포트 카드 틀 그대로) */
+.gr-navt { font-size: 15px; font-weight: 900; }
+.gr-mid { align-items: stretch; }
+.gr-lifts { width: 520px; flex: none; gap: 0; }
+.gr-lifts h4 { margin-bottom: 8px; }
+.gr-l { display: flex; flex-direction: column; gap: 0; border-bottom: 2px solid #26262C; padding: 10px 0; }
+.gr-l:last-child { border-bottom: 0; padding-bottom: 0; }
+.gr-l span { font-size: 23px; font-weight: 700; color: #CDBFC0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gr-l p { margin: 0; display: flex; align-items: baseline; gap: 12px; }
+.gr-l i { font-style: normal; font-family: Oswald, var(--font); font-size: 34px; font-weight: 600; color: #8E8486; }
+.gr-l em { font-style: normal; font-size: 28px; color: #6E6466; }
+.gr-l b { font-family: Oswald, var(--font); font-size: 46px; font-weight: 700; color: #fff; line-height: 1.05; }
+.gr-l b small { font-size: 22px; margin-left: 3px; }
+.gr-l u { text-decoration: none; margin-left: auto; font-family: Oswald, var(--font); font-size: 26px; font-weight: 700; color: #121214; background: #5BD08A; border-radius: 99px; padding: 2px 14px; }
+.gr-path p { font-size: 24px; }
+.gr-path b { color: #fff; }
+.gr .rp-ib { flex: none; }
+.gr-path { flex: 1; justify-content: center; }
+.gr-link { margin-top: 2px; }
+.gr-link .rh-ic { background: #5BD08A; color: #121214; }
+.gr-link::before { background: #5BD08A; }
+.btn.gr-edit { border: 2px dashed #C9A24B; color: #8A6514; background: #FFF9EC; }
+.gr-rows { display: flex; flex-direction: column; gap: 6px; margin: 6px 0 10px; }
+.gr-row { display: flex; align-items: center; gap: 10px; }
+.gr-row span { flex: 1; min-width: 0; font-size: 14px; font-weight: 700; }
+.gr-row span small { display: block; font-size: 12px; font-weight: 500; color: var(--faint); }
+.rts-body .gr-row input:not([type=checkbox]) { width: 104px; flex: none; text-align: right; }
+.rtb.gr-fill { width: 100%; margin: 4px 0 2px; }

@@ -374,7 +374,7 @@ section.folded .fsum:not(:empty) { display: inline; }
       '<div><h3>' + esc(M.name) + ' 회원님</h3><p>' + esc(M.goal || "") + (jt ? ' · ' + jt : '') + '</p></div>' + st + '</a>' +
       '<div class="mrow2">' + info + '</div>' + memoRow(slug, M.name) +
       '<div class="qlinks"><a class="' + sex + '" href="' + base + '#home">홈</a><a class="' + sex + '" href="' + base + '#goal">출석·목표</a>' +
-      '<a class="' + sex + '" href="' + base + '#routine">루틴</a>' + (M._dyn ? '<a class="' + sex + '" href="#" data-nmedit="' + esc(slug) + '">✎ 정보</a>' : '<a class="' + sex + '" href="' + base + '#forms">복습지</a>') + '</div></div>';
+      '<a class="' + sex + '" href="' + base + '#routine">루틴</a><a class="' + sex + '" href="' + base + '#growth">성장</a>' + (M._dyn ? '<a class="' + sex + '" href="#" data-nmedit="' + esc(slug) + '">✎ 정보</a>' : '<a class="' + sex + '" href="' + base + '#forms">복습지</a>') + '</div></div>';
   }
   /* 초성 검색: "최지훈" → "ㅊㅈㅎ" */
   var CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";

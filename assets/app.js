@@ -479,6 +479,7 @@
       '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 ' + esc(TRN) + ' 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + (BP ? '목표는 하나, 바프 촬영날! 그 의지라면 충분해요. 단계마다 함께 넘어가요!' : '혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!') + '</p></div></div>';
     var n4 = "03", n5 = "04";   /* 몸 변화 기록은 2026-11-06 '몸변화' 탭(#body)으로, 근육 지도는 2026-11-08 루틴 탭으로 이동 */
+    h += grLink();
     var attSec = '<section id="att">' + head("01", "출석률 · 출석 달력", "얼마나 꾸준히 나왔는지 봐요") + '<div class="panel attcard">' + attGauge() + attCalendar() + '</div></section>';
     if (!now) {
       return h + attSec + badgeSection("02") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
@@ -633,7 +634,7 @@
   function attCall(q) {
     return fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + (q || ""), { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw new Error("save"); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); return j; });
+      .then(function (j) { if (!j || !j.ok) throw new Error("save"); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) grServer(j.kv); return j; });
   }
   function attSync() {
     if (!ATT_API) return;
@@ -1448,7 +1449,7 @@
     b.addEventListener("click", function () {
       var r = document.getElementById("rp"); if (!r || b.disabled) return;
       b.disabled = true; b.classList.add("saving");
-      var name = "PT리포트-" + (location.hash.match(/\d{4}-\d{2}/) || [ymOf(new Date())])[0] + ".png";
+      var name = /^#growth/.test(location.hash) ? "PT성장기록-" + ymd(new Date()) + ".png" : "PT리포트-" + (location.hash.match(/\d{4}-\d{2}/) || [ymOf(new Date())])[0] + ".png";
       var holder = document.createElement("div");
       holder.style.cssText = "position:fixed;left:-12000px;top:0;width:1080px;height:1350px;overflow:hidden";
       var c = r.cloneNode(true); c.removeAttribute("id"); c.style.transform = "none";
@@ -1465,7 +1466,7 @@
           var file = null;
           try { file = new File([blob], name, { type: "image/png" }); } catch (e) {}
           if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
-            navigator.share({ files: [file], title: M.name + " 회원님 월간 리포트" }).catch(function (e) { if (!e || e.name !== "AbortError") rpShow(url, name); });
+            navigator.share({ files: [file], title: M.name + (/^#growth/.test(location.hash) ? " 회원님 성장 기록" : " 회원님 월간 리포트") }).catch(function (e) { if (!e || e.name !== "AbortError") rpShow(url, name); });
           } else rpShow(url, name);
         }, "image/png");
       }).catch(function () {
@@ -1473,6 +1474,143 @@
         attToast("그림을 못 만들었어요. 인터넷 연결을 확인해 주세요");
       });
     });
+  }
+  /* ---- 첫날 vs 오늘 · 성장 기록 카드 (2026-11-12 장동욱 "재등록 아이디어 1번 — 회원이 얼마나 변했는지 숫자로")
+     #growth. 처음 무게 = data.js start_weights + 창고 pub:m:<주소>:growth {w:{종목:kg}, note, at} (선생님 폰에서 넣음, 루틴 저장할 때 새 종목은 그때 무게로 자동 기록)
+     지금 무게 = 지금 루틴(폰에서 고친 것 포함) 종목별 가장 무거운 세트. 인바디 = 첫 기록 vs 최근 기록. */
+  var GR_LS = "ptnote:" + SLUG + ":growth", GR = null;
+  try { GR = JSON.parse(localStorage.getItem(GR_LS) || "null"); } catch (e) {}
+  function grServer(kv) {
+    var v = kv && kv["pub:m:" + SLUG + ":growth"] || null;
+    if (JSON.stringify(v) === JSON.stringify(GR)) return;
+    GR = v;
+    try { if (v) localStorage.setItem(GR_LS, JSON.stringify(v)); else localStorage.removeItem(GR_LS); } catch (e) {}
+    if (/^#growth/.test(location.hash)) rerender();
+  }
+  function grNowW() {   /* 지금 루틴: 종목 → 가장 무거운 kg */
+    var o = {};
+    ((M.routine && M.routine.days) || []).forEach(function (d) {
+      (d.items || []).forEach(function (it) {
+        (it.sets || []).forEach(function (st) { var kg = +st[1]; if (st[1] != null && kg > 0 && (!o[it.name] || kg > o[it.name])) o[it.name] = kg; });
+      });
+    });
+    return o;
+  }
+  function grBase() { var o = {}, k, a = M.start_weights || {}, b = (GR && GR.w) || {}; for (k in a) o[k] = +a[k]; for (k in b) if (b[k] != null && b[k] !== "") o[k] = +b[k]; return o; }
+  function grData() {
+    var now = new Date(), st = M.journey && M.journey.start ? jDate(M.journey.start) : null, a = attLoad().slice().sort();
+    if (!st && a.length) { var p = a[0].split("-"); st = new Date(+p[0], +p[1] - 1, +p[2]); }
+    var days = st ? Math.max(1, Math.floor((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - st) / 86400000) + 1) : 0;
+    var nw = grNowW(), bw = grBase(), lifts = [], top = [];
+    Object.keys(nw).forEach(function (k) {
+      if (bw[k] > 0 && nw[k] > bw[k]) lifts.push({ name: k, a: bw[k], b: nw[k], up: nw[k] - bw[k], pct: (nw[k] - bw[k]) / bw[k] });
+      top.push({ name: k, b: nw[k] });
+    });
+    lifts.sort(function (x, y) { return y.pct - x.pct || y.up - x.up; });
+    top.sort(function (x, y) { return y.b - x.b; });
+    var ib = null;
+    if (IB_ON && ibData && ibData.length > 1) { var r = ibData.slice().sort(function (x, y) { return x.d < y.d ? -1 : 1; }); ib = { a: r[0], b: r[r.length - 1] }; }
+    return { st: st, days: days, att: a.length, forms: (M.forms || []).length, badges: badgeList().filter(function (b) { return b.on; }).length,
+      lifts: lifts.slice(0, 4), top: top.slice(0, 4), ib: ib, ver: M.routine && M.routine.version, now: journeyNow() };
+  }
+  function grKg(n) { return (Math.round(n * 10) / 10) + ""; }
+  function grCard(G) {
+    var tile = function (lab, v, unit, cls) { return '<div class="rp-tile ' + (cls || '') + '"><span>' + lab + '</span><p><b>' + v + '</b><small>' + unit + '</small></p></div>'; };
+    var left;
+    if (G.lifts.length) {
+      left = '<div class="rp-box gr-lifts"><h4>처음 무게 → 지금 무게</h4>' + G.lifts.map(function (l) {
+        return '<div class="gr-l"><span>' + esc(l.name) + '</span><p><i>' + grKg(l.a) + '</i><em>→</em><b>' + grKg(l.b) + '<small>kg</small></b><u>+' + grKg(l.up) + 'kg</u></p></div>';
+      }).join("") + '</div>';
+    } else {
+      left = '<div class="rp-box gr-lifts"><h4>지금 나의 무게</h4>' + (G.top.length ? G.top.map(function (l) {
+        return '<div class="gr-l"><span>' + esc(l.name) + '</span><p><b>' + grKg(l.b) + '<small>kg</small></b></p></div>';
+      }).join("") : '<p>루틴이 올라오면 여기에 무게가 쌓여요</p>') + '</div>';
+    }
+    var right = '';
+    if (G.ib) {
+      right += '<div class="rp-box rp-ib"><h4>인바디 · 첫 기록 → 지금</h4>' + [["골격근량", "smm", 1], ["체지방량", "bfm", -1], ["체중", "w", 0]].map(function (r) {
+        var dl = Math.round((G.ib.b[r[1]] - G.ib.a[r[1]]) * 10) / 10, cls = !r[2] || !dl ? "" : (dl > 0) === (r[2] > 0) ? "up" : "down";
+        return '<div class="rp-ibr"><span>' + r[0] + '</span><b class="' + cls + '">' + (dl > 0 ? "+" : dl < 0 ? "−" : "") + ibFmt(Math.abs(dl)) + '<small> kg</small></b></div>';
+      }).join("") + '</div>';
+    }
+    right += '<div class="rp-box gr-path"><h4>지금 나의 자리</h4>' +
+      (G.now ? '<p><b>' + (G.now.month ? G.now.month + '개월차' : '시작') + '</b> · ' + G.now.stage.no + '단계 ' + esc(G.now.stage.short) + '</p>' : '') +
+      (G.ver ? (parseInt(String(G.ver).replace(/\D/g, ""), 10) > 1 ? '<p>루틴을 <b>' + esc(G.ver) + '</b>까지 함께 바꿔 왔어요</p>' : '<p>나만의 루틴 <b>' + esc(G.ver) + '</b>로 운동 중</p>') : '') +
+      '<p>배운 자세 <b>' + G.forms + '개</b> · 받은 배지 <b>' + G.badges + '개</b></p></div>';
+    var quote, qwho;
+    if (GR && GR.note) { quote = esc(GR.note).replace(/\n/g, "<br>"); qwho = TRN + " 트레이너의 한마디"; }
+    else {
+      qwho = "지금까지 한 줄 요약";
+      quote = G.lifts.length ? "처음 " + esc(G.lifts[0].name) + " " + grKg(G.lifts[0].a) + "kg에서 지금 " + grKg(G.lifts[0].b) + "kg까지 왔어요.<br>다음 목표도 같이 만들어 가요!" :
+        G.days > 1 ? G.days + "일 동안 함께 걸어왔어요.<br>이 꾸준함이 몸을 바꿔요!" : "오늘이 첫날이에요.<br>여기서부터 같이 쌓아 가요!";
+    }
+    var d = new Date();
+    return '<div class="rp gr" id="rp"><i class="rp-stripe"></i><i class="rp-c1"></i><i class="rp-c2"></i>' +
+      '<div class="rp-top"><div class="rp-brand"><b>' + esc(BRAND) + '</b><span>' + esc(BRANCH) + '</span></div><span class="rp-k">MY GROWTH · ' + d.getFullYear() + '. ' + pad2(d.getMonth() + 1) + '. ' + pad2(d.getDate()) + '</span></div>' +
+      '<div class="rp-title"><span>' + esc(M.name) + ' 회원님의</span><h2>첫날 vs 오늘</h2>' +
+      (G.st ? '<em>' + G.st.getFullYear() + '. ' + (G.st.getMonth() + 1) + '. ' + G.st.getDate() + ' 시작 · 함께한 지 ' + G.days + '일</em>' : '') + '</div>' +
+      '<div class="rp-tiles">' + tile("함께한 날", G.days, "일", "pk") + tile("출석 도장", G.att, "회") + tile("배운 자세", G.forms, "개") + tile("받은 배지", G.badges, "개", "gd") + '</div>' +
+      '<div class="rp-mid gr-mid">' + left + '<div class="rp-side">' + right + '</div></div>' +
+      '<div class="rp-quote"><span aria-hidden="true">“</span><div><p>' + quote + '</p><small>' + qwho + '</small></div></div>' +
+      '<div class="rp-foot"><span><b>MY PT NOTE</b> · 나만의 운동 노트</span><span>' + esc(BRN) + ' · 담당 ' + esc(TRN) + ' 트레이너</span></div></div>';
+  }
+  function renderGrowth() {
+    var G = grData(), coach = COACH_MODE && !DEMO;
+    return '<div class="rp-nav"><a href="#goal" class="rp-back">← 목표</a><b class="gr-navt">성장 기록</b></div>' +
+      '<div class="rp-frame" id="rpFrame">' + grCard(G) + '</div>' +
+      '<button type="button" class="btn fill rp-save" id="rpSave"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg>이미지로 저장 · 공유</button>' +
+      (coach ? '<button type="button" class="btn gr-edit" id="grEdit">✎ 처음 무게 · 선생님 한마디 넣기</button>' +
+        '<p class="rp-hint">선생님 보기에만 보여요. 첫날 무게를 넣으면 "처음 → 지금"으로 비교돼요.' + (G.lifts.length ? '' : ' 지금은 처음 무게가 없어서 "지금 나의 무게"로 나와요.') + '</p>' :
+        '<p class="rp-hint">처음 왔던 날과 비교해 봐요. 숫자는 출석·루틴·인바디로 자동으로 바뀌어요.</p>') + remember();
+  }
+  function grSheet() {
+    var nw = grNowW(), bw = grBase(), names = Object.keys(nw);
+    var rows = names.length ? names.map(function (k, i) {
+      return '<div class="gr-row"><span>' + esc(k) + '<small>지금 ' + grKg(nw[k]) + 'kg</small></span><input id="gw' + i + '" data-n="' + esc(k) + '" type="number" inputmode="decimal" step="0.5" min="0" placeholder="처음 kg" value="' + (bw[k] > 0 ? grKg(bw[k]) : '') + '"></div>';
+    }).join("") : '<p class="rts-note">루틴에 무게가 있는 종목이 없어요.</p>';
+    var body = '<p class="rts-note">회원님이 처음 왔을 때 무게(kg)를 넣어 주세요. 비운 종목은 비교에서 빠져요.</p>' +
+      (names.length ? '<button type="button" class="rtb gr-fill" id="grFill">빈 칸은 지금 무게로 채우기</button>' : '') +
+      '<div class="gr-rows">' + rows + '</div>' +
+      '<label>선생님 한마디 <small>(비우면 자동 요약)</small><textarea id="grNote" rows="3" placeholder="처음엔 랫풀다운 20kg도 버거웠는데…">' + esc(GR && GR.note || "") + '</textarea></label>' +
+      '<label id="grKeyWrap"' + (rtKey() ? ' hidden' : '') + '>선생님 열쇠 <small>처음 한 번만</small><input id="grKey" type="password" autocomplete="off"></label>';
+    var sh = rtSheet("첫날 vs 오늘 · 처음 기록", body, function (sh) {
+      var key = fv(sh, "grKey") || rtKey();
+      if (!key) { sh.querySelector("#grKeyWrap").hidden = false; return "선생님 열쇠를 넣어 주세요"; }
+      var w = {};
+      Array.prototype.forEach.call(sh.querySelectorAll(".gr-rows input"), function (x) { var v = parseFloat(x.value); if (v > 0) w[x.getAttribute("data-n")] = v; });
+      var old = (GR && GR.w) || {}, k;
+      for (k in old) if (!(k in nw) && !(k in w)) w[k] = old[k];   /* 지금 루틴에 없는 옛 종목 기록은 그대로 둠 */
+      var v = { w: w, note: fv(sh, "grNote"), at: ymd(new Date()) };
+      var ok = sh.querySelector("[data-ok]"); ok.disabled = true; ok.textContent = "저장 중…"; sh.msg("");
+      rtPost({ a: "kv_set", key: key, k: "pub:m:" + SLUG + ":growth", v: v }).then(function (j) {
+        if (!j || !j.ok) { ok.disabled = false; ok.textContent = "저장"; sh.msg(j && j.error === "key" ? "선생님 열쇠가 맞지 않아요" : rtNetMsg()); if (j && j.error === "key") sh.querySelector("#grKeyWrap").hidden = false; return; }
+        try { localStorage.setItem("ptkey", key); localStorage.setItem(GR_LS, JSON.stringify(v)); } catch (x) {}
+        GR = v; sh.close(); rerender(); attToast("성장 기록에 바로 반영됐어요");
+      }).catch(function () { ok.disabled = false; ok.textContent = "저장"; sh.msg(rtNetMsg()); });
+      return true;
+    }, "저장");
+    var fb = sh.querySelector("#grFill");
+    if (fb) fb.addEventListener("click", function () {
+      Array.prototype.forEach.call(sh.querySelectorAll(".gr-rows input"), function (x) { if (!x.value) x.value = grKg(nw[x.getAttribute("data-n")]); });
+    });
+  }
+  function grSeed(key) {   /* 선생님이 루틴을 저장할 때: 처음 기록이 없는 종목은 그때 무게를 처음 무게로 */
+    var nw = grNowW(), bw = grBase(), w = {}, add = 0, k;
+    for (k in (GR && GR.w) || {}) w[k] = GR.w[k];
+    for (k in nw) if (!(bw[k] > 0)) { w[k] = nw[k]; add++; }
+    if (!add) return;
+    var v = { w: w, note: GR && GR.note || "", at: GR && GR.at || ymd(new Date()) };
+    rtPost({ a: "kv_set", key: key, k: "pub:m:" + SLUG + ":growth", v: v }).then(function (j) {
+      if (j && j.ok) { GR = v; try { localStorage.setItem(GR_LS, JSON.stringify(v)); } catch (x) {} }
+    }).catch(function () {});
+  }
+  function setupGrowth() {
+    setupReport();
+    var e = document.getElementById("grEdit"); if (e) e.addEventListener("click", grSheet);
+  }
+  function grLink() {
+    return '<a class="rp-home gr-link" href="#growth"><span class="rh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span>' +
+      '<span class="rh-t"><small>MY GROWTH</small><b>첫날 vs 오늘 · 나의 성장 기록</b><em>처음 왔던 날과 지금을 숫자로 비교해요</em></span><span class="rh-go" aria-hidden="true">›</span></a>';
   }
   function reportHomeCard() {   /* 매달 1~7일: 지난달 리포트 도착 */
     var now = new Date();
@@ -2402,6 +2540,7 @@
         if (!j || !j.ok || !j.routine) { ok.disabled = false; ok.textContent = "반영하기"; rtErr(j && j.ok ? { error: "action" } : j, sh); return; }
         try { localStorage.setItem("ptkey", key); localStorage.setItem(RT_LS, JSON.stringify(j.routine)); } catch (x) {}
         RT_EDIT = null; rtUse(j.routine); RT_STALE = null;
+        grSeed(key);
         sh.close(); rerender();
         attToast("회원님 노트에 바로 반영됐어요");
       }).catch(function () { ok.disabled = false; ok.textContent = "반영하기"; sh.msg(rtNetMsg()); });
@@ -2549,7 +2688,7 @@
     h = String(h || "").replace(/^#/, "") || "home";
     if (/^routine/.test(h)) return "루틴"; if (/^form-/.test(h)) return "자세 복습지"; if (h === "forms") return "복습지";
     if (h === "diet") return "식단"; if (/^goal/.test(h)) return "목표"; if (h === "body") return "몸변화"; if (h === "notice") return "공지";
-    if (/^report/.test(h)) return "리포트"; if (h === "muscle") return "근육 지도"; return "홈";
+    if (/^report/.test(h)) return "리포트"; if (h === "growth") return "성장 기록"; if (h === "muscle") return "근육 지도"; return "홈";
   }
   document.addEventListener("touchstart", function () {}, { passive: true });   /* 아이폰에서 :active(살짝 눌림)가 먹게 */
   document.addEventListener("click", function (e) {
@@ -2607,6 +2746,7 @@
     else if (hsh === "goal" || hsh === "journey") { html = renderGoal(); tab = "goal"; }
     else if (hsh === "goal-badges" || hsh === "badges") { html = renderGoal(); tab = "goal"; jumpTo = "badges"; }
     else if (hsh === "muscle") { html = renderRoutine(); tab = "routine"; jumpTo = "muscle"; }
+    else if (hsh === "growth") { html = renderGrowth(); tab = "goal"; after = setupGrowth; }
     else if (hsh === "report" || /^report-\d{4}-\d{2}$/.test(hsh)) { html = renderReport(hsh.slice(7)); tab = "routine"; after = setupReport; }
     else if ((hsh === "body" || hsh === "inbody") && IB_ON) { html = renderBody(); tab = "body"; }
     else { html = renderHome(); }
