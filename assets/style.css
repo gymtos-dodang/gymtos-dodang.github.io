@@ -1492,3 +1492,18 @@ section[data-fold] > .head .more { flex: none; white-space: nowrap; }
 .ins-x { position: absolute; top: 6px; right: 8px; width: 28px; height: 28px; border: 0; background: none; font-size: 18px; color: #A0A5B0; cursor: pointer; }
 .ins-card a i { margin-right: -14px; }
 @media (prefers-reduced-motion: reduce) { .imk .on::after { animation: none; } }
+
+/* ---- 페이지 사이 부드러운 전환 (2026-11-12 "통합노트 → 회원 PT노트 → 회원 목록 돌아갈 때 부드럽게") ----
+   같은 사이트 페이지끼리 넘어갈 때(선생님 페이지 ↔ 회원 노트) 브라우저 View Transition: 들어갈 땐 새 화면이 오른쪽에서, '← 회원 목록'·뒤로는 왼쪽에서.
+   방향은 각 html head의 작은 스크립트(pagereveal)가 html.vt-back으로. 선생님 폰(ptcoach)에서는 회원 노트 로딩 화면(html.nosp) 없이 바로. */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: vtOutL .34s cubic-bezier(.4, 0, .2, 1) both; }
+::view-transition-new(root) { animation: vtInR .4s cubic-bezier(.2, .8, .2, 1) both; }
+html.vt-back::view-transition-old(root) { animation-name: vtOutR; }
+html.vt-back::view-transition-new(root) { animation-name: vtInL; }
+@keyframes vtInR { from { transform: translateX(24%); opacity: 0; } }
+@keyframes vtOutL { to { transform: translateX(-10%); opacity: 0; } }
+@keyframes vtInL { from { transform: translateX(-10%); opacity: 0; } }
+@keyframes vtOutR { to { transform: translateX(24%); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { ::view-transition-old(root), ::view-transition-new(root) { animation: none; } }
+html.nosp body::before, html.nosp body::after { display: none !important; }

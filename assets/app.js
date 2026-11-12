@@ -178,6 +178,7 @@
     } else if (coachPath && barIn && /^\/coach-[a-z0-9]+\/$/.test(coachPath) && window.self === window.top) {   /* 아이패드 선생님 페이지 오른쪽 칸(iframe) 안에선 안 붙임 */
       var cb = document.createElement("a");
       cb.href = coachPath; cb.className = "coachback"; cb.textContent = "← 회원 목록";
+      cb.addEventListener("click", function () { try { sessionStorage.setItem("vtdir", "back"); } catch (e) {} });
       barIn.insertBefore(cb, barIn.children[1] || null);
     }
   } catch (e) {}

@@ -15,7 +15,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
-<link rel="stylesheet" href="/assets/style.css?v=2611121548">
+<script>/* 페이지 넘어갈 때 부드럽게 (2026-11-12) */try{if(localStorage.getItem("ptcoach")||sessionStorage.getItem("ptcoach"))document.documentElement.classList.add("nosp")}catch(e){}addEventListener("pagereveal",function(e){if(!e.viewTransition)return;var d=null;try{d=sessionStorage.getItem("vtdir");sessionStorage.removeItem("vtdir")}catch(x){}var n=window.navigation&&navigation.activation;if(d==="back"||(d!=="fwd"&&n&&n.navigationType==="traverse"))document.documentElement.classList.add("vt-back");e.viewTransition.finished.then(function(){document.documentElement.classList.remove("vt-back")},function(){})});</script>
+<link rel="stylesheet" href="/assets/style.css?v=2611121729">
 <style>
 .nf { margin: 18vh auto 0; max-width: 340px; text-align: center; color: var(--sub); font-size: 14px; line-height: 1.6; }
 .nf b { display: block; color: var(--ink); font-size: 18px; margin-bottom: 6px; }
@@ -35,7 +36,7 @@
 <header class="bar"><div class="bar-in"><a href="#home"><img src="/assets/logo.png" alt="JANG KAREDO"></a><span>PT 노트</span></div></header>
 <main class="wrap"><div class="view" id="view" aria-live="polite"><div class="nf" id="nf"><div class="sp"></div><b>PT 노트 여는 중…</b></div></div></main>
 <nav class="tabs" aria-label="메뉴" id="tabs" hidden><div class="tabs-in"></div></nav>
-<script src="/assets/site.js?v=2611121548"></script>
+<script src="/assets/site.js?v=2611121729"></script>
 <script>
 (function () {
   var mm = location.pathname.match(/^\/m\/([a-z0-9-]{3,40})\/?$/);
@@ -46,7 +47,7 @@
   window.ATT_SLUG = slug;
   var KEY = "pub:m:" + slug + ":member", LS = "ptnote:" + slug + ":member";
   var API = (window.SITE || {}).att_api || "";
-  if (!API) { msg("PT 노트 창고 주소가 아직 없어요", "assets/site.js?v=2611121548 의 att_api 를 채워 주세요."); return; }
+  if (!API) { msg("PT 노트 창고 주소가 아직 없어요", "assets/site.js?v=2611121729 의 att_api 를 채워 주세요."); return; }
   var cached = null, booted = false;
   try { cached = JSON.parse(localStorage.getItem(LS) || "null"); } catch (e) { cached = null; }
   function load(src, cb) { var s = document.createElement("script"); s.src = src; s.onload = cb; s.onerror = cb; document.body.appendChild(s); }
@@ -62,7 +63,7 @@
     document.getElementById("tabs").hidden = false;
     document.getElementById("view").innerHTML = "";
     window.MEMBER = M;
-    load("/assets/exicons.js?v=2611121548", function () { load("/assets/app.js?v=2611121548"); });
+    load("/assets/exicons.js?v=2611121729", function () { load("/assets/app.js?v=2611121729"); });
   }
   if (cached && cached.name) boot(cached);
   fetch(API + "?m=" + slug, { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (j) {
