@@ -2525,7 +2525,10 @@
   /* 뒤로 가기 (2026-11-12 장동욱 "태블릿·PC에서 종목 보다가 자세 복습지 누르면 뒤로가기가 없어서 다시 루틴 들어가야 함")
      본문 속 링크(루틴 → 복습지, 홈 → 루틴 요일, 리포트·배지 등)로 넘어가면 화면 위에 "‹ 뒤로 · 루틴" 버튼이 붙어 다님.
      누르면 직전 화면 + 보던 위치(스크롤)로 돌아감. 아래 탭·위 막대·나 탭 전환 칸을 누르면 새 출발이라 기록을 비움. */
-  var NAVS = [], NAV_BACK = null, ZOOM = null, SOFT = 0, LINKAT = 0;
+  var NAVS = [], NAV_BACK = null, ZOOM = null, SOFT = 0, LINKAT = 0, SCR = {};
+  /* 화면마다 보던 스크롤 위치 기억 — 뒤로 오면 그 자리 그대로 (브라우저가 따로 맞추지 않게 manual) */
+  try { history.scrollRestoration = "manual"; } catch (e) {}
+  window.addEventListener("scroll", function () { if (route.lastH && Date.now() - (route.at || 0) > 400) SCR[route.lastH] = window.scrollY; }, { passive: true });
   function zoomRun(view) {   /* 화면(view) 중 지금 보이는 부분을 누른 칸 크기·자리에서 시작해 화면 가득 커지게 */
     var z = ZOOM; ZOOM = null;
     if (!z || Date.now() - z.at > 1500 || !view.animate) return false;
@@ -2619,7 +2622,8 @@
       view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");
       clearTimeout(route.enterT); route.enterT = setTimeout(function () { view.classList.remove("enter"); }, 900);
     }
-    route.lastH = curH;
+    route.lastH = curH; route.at = Date.now();
+    view.classList.toggle("back", !!(goingBack && hashChanged));
     Array.prototype.forEach.call(document.querySelectorAll(".tabs a"), function (a) {
       if (a.getAttribute("data-tab") === (/^(goal|body|notice)$/.test(tab) ? "me" : tab)) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
@@ -2642,8 +2646,8 @@
     }
     navBackDraw(view);
     var jumpEl = jumpTo && document.getElementById(jumpTo);
-    if (NAV_BACK) {
-      var by = NAV_BACK.y; NAV_BACK = null;
+    if (NAV_BACK || (goingBack && hashChanged && SCR[curH] != null)) {
+      var by = NAV_BACK ? NAV_BACK.y : SCR[curH]; NAV_BACK = null;
       window.scrollTo(0, by); setTimeout(function () { window.scrollTo(0, by); }, 60);
     } else if (jumpEl) {
       jumpEl.scrollIntoView({ block: "start" });

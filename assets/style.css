@@ -1367,3 +1367,9 @@ html[data-sex] body.ready::after { transform: scale(1.08); }
 
 /* 아이폰에서 누른 칸에 회색 상자가 1초쯤 남던 것 없앰 (2026-11-12) — 누른 느낌은 각 칸의 살짝 눌림(scale)으로 */
 a, button, [role="button"], label { -webkit-tap-highlight-color: transparent; }
+/* 뒤로 돌아온 화면은 여정 그래프 다시 그리기 같은 처음 등장 움직임 없이 다 그려진 상태로 (2026-11-12 "여전히 새로고침 약간") */
+.view.back .jc-done, .view.back .bp-done { animation: none; stroke-dashoffset: 0; }
+.view.back .jc-pop { animation: none; transform: none; }
+.view.back .jc-lab, .view.back .bp-area { animation: none; opacity: 1; }
+.view.back .jc-ahead { opacity: .6; animation: jcMarch .8s linear infinite; }
+.view.back .jc-sonar, .view.back .bp-sonar { animation-delay: 0s; }
