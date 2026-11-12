@@ -193,6 +193,16 @@
     hl: function (P) { return [seg(P.sh, P.hip, .08, .6, 13)]; },
     back: function (P) { return [floor(8, 82), L("eq2", [[12, 4], [12, 93]], 3.5), L("eq2", [[14, 8], P.ha], 2), D("eq2", [14, 8], 3.2)]; },
     front: function (P) { return [D("eq", P.ha, 3.6)]; } };
+  /* 뉴텍 엠토처 시티드 로우 (2026-11-13 정미경님 영상): 가슴 패드 없이 앉아 발판에 발을 대고, 앞쪽 바닥 축에서 올라온 지렛대 손잡이를 옆구리로 당김 */
+  EX.mtorture_row = { t: .9,
+    p0: { head: [30, 21], sh: [30, 36], hip: [32, 64], kn: [52, 58], ft: [64, 74], toe: [69, 68], el: [46, 44], ha: [62, 45] },
+    p1: { head: [28, 21], sh: [28, 36], el: [18, 49], ha: [36, 51] },
+    bones: SIDE,
+    hl: function (P) { return [seg(P.sh, P.hip, .04, .52, 13)]; },
+    back: function (P) { var pv = [86, 90], pl = mix(pv, P.ha, .16);
+      return [floor(10, 92), L("eq2", [[33, 74], [33, 93]], 3), L("eq2", [[22, 71.5], [44, 71.5]], 5), L("eq2", [[66, 80], [74, 64]], 4.5), L("eq2", [[67, 79], [64, 93]], 3),
+        L("eq", [pv, P.ha], 3.4), D("eq2", pv, 3.4), R("eq", pl, 6.5, 3.2)]; },
+    front: function (P) { return [grip(P.ha, 5.5)]; } };
   EX.seated_row_machine = { t: .9, p0: ext(sit(34, 65), { el: [48, 42], ha: [64, 43] }), p1: { el: [24, 49], ha: [45, 46] }, bones: SIDE,
     hl: function (P) { return [seg(P.sh, P.hip, .04, .52, 13)]; },
     back: function (P) { return seatEq(34, 65, false).concat([L("eq2", [[43, 58], [47, 93]], 3), L("eq2", [[43, 35], [43, 58]], 5.5), L("eq2", [P.ha, [82, 88]], 3), D("eq2", [82, 88], 3.2)]); },

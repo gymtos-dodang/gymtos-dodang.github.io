@@ -1,6 +1,6 @@
 """스미스 머신 아이콘 등 추가분 (2026-11-05, 최용민·고은성 그룹 PT): 스미스 벤치·로우·숄더, 스미스 슈러그, 밴드 푸쉬업
 python3 make_icons_smith.py <폴더> "#1F3864" [이름,이름]  — make_icons.py와 같은 그림 규칙, 새 아이콘만 저장 (세 번째 칸에 이름을 주면 그것만)
-2026-11-11 어시스트 친업(assisted_chin_up) · 2026-11-13 케이블 체스트 프레스(cable_chest_press) 추가 — 남 "#1A1A1E" / 여 "#D6204F"
+2026-11-11 어시스트 친업(assisted_chin_up) · 2026-11-13 케이블 체스트 프레스(cable_chest_press) · 뉴텍 엠토처 시티드 로우(mtorture_row) 추가 — 남 "#1A1A1E" / 여 "#D6204F"
 """
 import sys, math
 import make_icons as mi
@@ -167,9 +167,29 @@ def cable_chest_press(c):
     c.arrow((W[0] + 6, W[1] - 9), (W[0] + 20, W[1] - 9))
 
 
+def mtorture_row(c):
+    """2026-11-13 뉴텍 엠토처 시티드 로우: 가슴 패드 없이 앉아 발판에 발, 앞 바닥 축 지렛대 손잡이를 옆구리로 당김"""
+    p = side((32, 36), 92, 92, arm=(-118, 8), leg=(18, -38, 62))
+    W = p["arm"][1]
+    floor(c, 4, 8, 94)
+    c.stroke([(32, 31), (32, 4)], 3, GRAY)
+    pill(c, (21, 30.5), (44, 30.5), 5.2)
+    c.stroke([(67, 20), (75, 37)], 4.4, GRAY)
+    c.stroke([(68, 21), (66, 4)], 2.8, GRAY)
+    pv = (88, 8)
+    c.stroke([pv, W], 3, GRAY)
+    pc = (pv[0] + (W[0] - pv[0]) * 0.17, pv[1] + (W[1] - pv[1]) * 0.17)
+    c.circle(pc, 6.4, fill=GRAY)
+    c.circle(pc, 2.2, fill=WHITE)
+    mi.pulley(c, pv, 3.0)
+    draw_side(c, p)
+    pill(c, (W[0] + 0.4, W[1] - 4.8), (W[0] + 0.4, W[1] + 4.8), 3.4)
+    c.arrow((W[0] + 30, W[1] + 14), (W[0] + 14, W[1] + 14))
+
+
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
        "smith_shrug": smith_shrug, "band_push_up": band_push_up,
-       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press}
+       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row}
 
 
 if __name__ == "__main__":
