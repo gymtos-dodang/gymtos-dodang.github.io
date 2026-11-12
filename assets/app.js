@@ -600,7 +600,7 @@
     var bell = '<span class="hi-ic bellc' + (nNew ? ' new' : '') + '" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 6.5 2.5 8.5 2.5 8.5h-17S6 15.5 6 9"/><path d="M10 21h4"/></svg></span>';
     var h = '<div class="hwid hinfo">';
     h += '<a class="hw col hi" href="#notice"' + (n ? ' data-nk="' + esc(nKey(n)) + '"' : '') + '><span class="hi-top">' + bell + (nNew ? '<i class="hi-new">NEW</i>' : '<i class="hi-go">›</i>') + '</span>' +
-      '<small>선생님 공지' + (n && n.date ? ' · ' + String(n.date).slice(5).split("-").map(Number).join("월 ") + '일' : '') + '</small>' +
+      '<small>선생님 공지' + (n && /(\d{1,2})\D+(\d{1,2})\D*$/.test(n.date || "") ? ' · ' + String(n.date).replace(/^.*?(\d{1,2})\D+(\d{1,2})\D*$/, function (x, a, b) { return +a + "월 " + +b + "일"; }) : '') + '</small>' +
       '<b class="hi-t">' + (n ? esc(n.title) : '아직 공지가 없어요') + '</b></a>';
     if (f) {
       var key = iconOf({ name: f.exercise }), ic = key !== "dumbbell" && window.EXI && EXI.has(key) ? img(key, "hi-ex", true) : '<img class="hi-ph" src="' + esc(f.dir) + 'poster.jpg" alt="" loading="lazy">';
