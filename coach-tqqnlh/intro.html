@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Oswald:wght@500;600;700&display=swap">
 <!-- PT 안내서 아이패드(가로) 버전 — 2026-11-07. 내용은 Claude 슬라이드 "장동욱 트레이너 소개"를 옮긴 것. 폰 버전은 guide.html -->
 <style>
-html, body { margin: 0; height: 100%; background: #0B1322; overflow: hidden; -webkit-text-size-adjust: 100%; }
+html, body { margin: 0; height: 100%; background: #141416; overflow: hidden; -webkit-text-size-adjust: 100%; }
 body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; touch-action: pan-y; }
 #stage { position: fixed; inset: 0; }
 #deck { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
@@ -86,14 +86,22 @@ body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; touch-act
   -webkit-background-clip: text; background-clip: text; color: transparent !important; animation: gflow 9s ease-in-out infinite; }
 .slide [style*="background:#D6204F" i], .slide [style*="background: #D6204F" i], .itiles div:first-child {
   background: linear-gradient(120deg, #D6204F, #E1141E 35%, #FF4F57 50%, #E1141E 65%, #D6204F) !important; background-size: 220% 100% !important; animation: gflow 6s ease-in-out infinite; }
-.slide div[style*="height:40px;border-radius:20px;background:#"]:not([style*="C2185B"]) { background-image: linear-gradient(90deg, rgba(255, 255, 255, .45), rgba(255, 255, 255, 0)) !important; }
+.slide div[style*="height:40px;border-radius:20px;background:#"]:not([style*="D6204F" i]) { background-image: linear-gradient(90deg, rgba(255, 255, 255, .45), rgba(255, 255, 255, 0)) !important; }
 .slide [style*="background:#E8E0E0" i] { background: linear-gradient(180deg, #F2ECEC, #D3DCEC) !important; }
-.slide [style*="background:#6E5D5E" i][style*="height:215px"] { background: linear-gradient(180deg, #6582B6, #6E5D5E) !important; }
-.slide [style*="background:#121214" i][style*="height:300px"] { background: linear-gradient(180deg, #24406F, #121214) !important; }
+.slide [style*="background:#6E5D5E" i][style*="height:215px"] { background: linear-gradient(180deg, #55555C, #6E5D5E) !important; }
+.slide [style*="background:#121214" i][style*="height:300px"] { background: linear-gradient(180deg, #C4121B, #121214) !important; }
 .slide [style*="background:#e3b341" i] { background: linear-gradient(120deg, #D9A62C, #F3CF6B 50%, #D9A62C) !important; background-size: 220% 100% !important; animation: gflow 5s ease-in-out infinite; }
 .itiles div { background-image: linear-gradient(150deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, 0) 60%); }
-.itiles div:not(:first-child) em { background: linear-gradient(180deg, #FFFFFF 40%, #C9D6F0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.itiles div:not(:first-child) em { background: linear-gradient(180deg, #FFFFFF 40%, #F2B8BB); -webkit-background-clip: text; background-clip: text; color: transparent; }
 @media (prefers-reduced-motion: reduce) { .slide *, .itiles div { animation: none !important; } }
+
+/* ---- 앱 화면처럼 (2026-11-12) — 흰 칸에 앱 카드 그림자, 연회색 바탕, 아래 버튼 한 막대로 ---- */
+.slide[style*="background:#F5F3F3"] { background: #F2F2F4 !important; }
+.slide div[style*="background:#FFFFFF"][style*="border-radius"], .slide p[style*="background:#FFFFFF"][style*="border-radius"], .ifeed { box-shadow: 0 2px 4px rgba(20, 20, 30, .04), 0 12px 32px rgba(20, 20, 30, .07); }
+.slide div[style*="border:3px solid #D6204F"] { box-shadow: 0 14px 36px rgba(225, 20, 30, .16); }
+.tbtn, .cnt { background: #fff; box-shadow: 0 2px 10px rgba(0, 0, 0, .25); }
+.dots button.on { background: #E1141E; }
+.nav { background: #fff; }
 </style>
 </head>
 <body>
