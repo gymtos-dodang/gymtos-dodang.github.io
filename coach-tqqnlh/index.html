@@ -332,14 +332,43 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .msh-grab { display: block; width: 40px; height: 5px; border-radius: 99px; background: #CFD2D9; margin: 0 auto 10px; }
 .msh-p .mcard { box-shadow: none; }
 @media (prefers-reduced-motion: reduce) { .msh-p, .msh-bg { transition: none; } .mt.s-on .av i { animation: none; } }
+/* ---- 위 작은 아이콘 + 아래에서 올라오는 창 (2026-11-13) ---- */
+.chead { flex-direction: column; align-items: stretch; gap: 4px; }
+.ch-top { display: flex; align-items: center; gap: 8px; }
+.ch-top small { flex: 1; min-width: 0; font-size: 13px; font-weight: 800; color: #E1141E; white-space: nowrap; }
+.ch-ic { display: flex; gap: 8px; flex: none; }
+.ci { position: relative; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; background: #fff; color: #1A1A1E; display: grid; place-items: center; cursor: pointer; text-decoration: none; box-shadow: 0 2px 10px rgba(20, 20, 30, .1); transition: transform .15s; }
+.ci:active { transform: scale(.92); }
+.ci svg { width: 20px; height: 20px; }
+.ci span { position: absolute; top: calc(100% + 3px); left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: 800; color: var(--faint); white-space: nowrap; }
+.ci.red { background: linear-gradient(140deg, #FF3B45, #B80D16); color: #fff; box-shadow: 0 6px 14px rgba(225, 20, 30, .3); }
+.chead .ch-l { margin-top: 14px; }
+.chead #refresh:active svg { transform: rotate(-90deg); transition: transform .3s; }
+.mt .mtop { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.csh { position: fixed; inset: 0; z-index: 60; }
+.csh[hidden] { display: none; }
+.csh-bg { position: absolute; inset: 0; background: rgba(15, 15, 20, .38); opacity: 0; transition: opacity .25s; }
+.csh-p { position: absolute; left: 0; right: 0; bottom: 0; max-height: 88vh; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; background: #F2F2F4; border-radius: 26px 26px 0 0; padding: 10px 14px calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateY(100%); transition: transform .32s cubic-bezier(.2, .8, .2, 1); max-width: 560px; margin: 0 auto; box-sizing: border-box; }
+.csh.on .csh-bg { opacity: 1; }
+.csh.on .csh-p { transform: none; }
+.csh-sec .head { flex-wrap: nowrap; }
+.csh-sec .head p { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.csh-x { order: 9; margin-left: auto; flex: none; width: 34px; height: 34px; border: 0; border-radius: 50%; background: #fff; color: var(--sub); font-size: 14px; cursor: pointer; box-shadow: 0 1px 3px rgba(20, 20, 30, .1); }
+@media (prefers-reduced-motion: reduce) { .csh-p, .csh-bg { transition: none; } }
 </style>
 </head>
 <body>
 <header class="bar"><div class="bar-in"><img src="/assets/logo.png" alt="JANG KAREDO"><span>선생님 페이지</span></div></header>
 <main class="wrap">
   <div class="chead">
-    <div class="ch-l"><small id="today"></small><h1 id="hello">안녕하세요</h1><p><span id="trn">장동욱 트레이너</span> · <span id="sub">JANG KAREDO</span></p></div>
-    <button class="refresh" id="refresh" type="button" aria-label="새로고침"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button>
+    <div class="ch-top"><small id="today"></small>
+      <div class="ch-ic">
+        <a href="guide.html" class="ci red" aria-label="PT 안내서"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><span>안내서</span></a>
+        <button type="button" class="ci" data-sh="bn" aria-label="전체 공지"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M4 10v4h3l7 4.5v-13L7 10z"/><path d="M17.5 9.5a3.5 3.5 0 0 1 0 5M20 7a7 7 0 0 1 0 10"/></svg><span>공지</span></button>
+        <button type="button" class="ci" data-sh="add" aria-label="새 회원 추가"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="8" r="3.6"/><path d="M3.5 19.5c.8-3.4 3.5-5 6.5-5s5.7 1.6 6.5 5"/><path d="M18.5 7.5v6M15.5 10.5h6"/></svg><span>새 회원</span></button>
+        <button class="ci" id="refresh" type="button" aria-label="새로고침"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span>새로고침</span></button>
+      </div></div>
+    <div class="ch-l"><h1 id="hello">안녕하세요</h1><p><span id="trn">장동욱 트레이너</span> · <span id="sub">JANG KAREDO</span></p></div>
   </div>
 
   <section class="ctoday" aria-label="오늘 한눈에">
@@ -351,11 +380,6 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     </div>
   </section>
 
-  <nav class="cquick" aria-label="바로가기">
-    <a href="guide.html" class="cq red"><i aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg></i><b>PT 안내서</b><small>상담할 때</small></a>
-    <button type="button" class="cq" data-go="bn"><i aria-hidden="true">📣</i><b>전체 공지</b><small>모두에게</small></button>
-    <button type="button" class="cq" data-go="add"><i aria-hidden="true">＋</i><b>새 회원</b><small>노트 만들기</small></button>
-  </nav>
 
   <section data-fold="tdy" id="tdySec">
     <div class="head"><h2>오늘 수업한 회원</h2><p>출석하면 여기 위로 올라와요 · 노트 최신화</p></div>
@@ -363,7 +387,7 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   </section>
 
   <section data-fold="list">
-    <div class="head"><h2>회원 목록</h2><p>누르면 그 회원님 정보 · 바로가기</p></div>
+    <div class="head"><h2>회원 목록</h2><p>누르면 바로 노트 · 꾹 누르면 정보 · 메모</p></div>
     <div class="sbar" id="sbar">
       <label class="sbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 20 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
         <input type="search" id="q" placeholder="회원 이름 검색 (초성도 돼요 · ㅊㅈㅎ)" autocomplete="off" aria-label="회원 이름 검색">
@@ -383,8 +407,22 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     <div class="panel rank" id="rank"></div>
   </section>
 
-  <section data-fold="bn">
-    <div class="head"><h2>전체 공지</h2><p>쓰면 모든 회원님 노트에 바로 떠요</p></div>
+
+
+
+  <section data-fold="howto">
+    <div class="head"><h2>앱처럼 쓰기</h2></div>
+    <div class="panel howto">
+      <p style="margin:0 0 6px"><b>아이폰</b> 사파리에서 이 페이지 열기 → 아래 공유 버튼 → <b>홈 화면에 추가</b></p>
+      <p style="margin:0">갤럭시 크롬에서 이 페이지 열기 → 오른쪽 위 ⋮ → <b>홈 화면에 추가 / 앱 설치</b></p>
+      <p style="margin:8px 0 0;color:var(--faint);font-size:12px">이 주소는 선생님만 아시면 돼요. 회원님께는 각자 PT 노트 주소만 보내주세요.</p>
+      <p style="margin:8px 0 0;font-size:13px"><b>회원님 설치 안내</b> = 그 회원 PT 노트 주소 끝에 <b>#app</b> 을 붙여 보내면(예: …/m/주소/#app) 폰에 맞는 그림 안내가 바로 열려요. 아직 앱으로 안 쓰는 회원님 폰엔 홈에도 "홈 화면에 PT노트 앱 만들기" 카드가 떠요.</p>
+    </div>
+  </section>
+</main>
+<div class="csh" id="csh-bn" hidden><div class="csh-bg" data-shx></div><div class="csh-p" role="dialog" aria-modal="true"><span class="msh-grab"></span>
+  <section class="csh-sec">
+    <div class="head"><button type="button" class="csh-x" data-shx aria-label="닫기">✕</button><h2>전체 공지</h2><p>쓰면 모든 회원님 노트에 바로 떠요</p></div>
     <div class="panel">
       <button type="button" class="bnnew" id="bnOpen">📣 새 전체 공지 쓰기</button>
       <form class="bnf" id="bnForm" hidden>
@@ -398,9 +436,10 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       <div class="bnl" id="bnList"></div>
     </div>
   </section>
-
-  <section data-fold="add">
-    <div class="head"><h2>새 회원 추가</h2><p>이름만 넣으면 그 회원님 PT 노트가 바로 생겨요</p></div>
+</div></div>
+<div class="csh" id="csh-add" hidden><div class="csh-bg" data-shx></div><div class="csh-p" role="dialog" aria-modal="true"><span class="msh-grab"></span>
+  <section class="csh-sec">
+    <div class="head"><button type="button" class="csh-x" data-shx aria-label="닫기">✕</button><h2>새 회원 추가</h2><p>이름만 넣으면 그 회원님 PT 노트가 바로 생겨요</p></div>
     <div class="panel">
       <button type="button" class="bnnew" id="nmOpen">＋ 새 회원 PT 노트 만들기</button>
       <form class="bnf" id="nmForm" hidden>
@@ -416,18 +455,8 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       <div class="nmlist" id="nmList"></div>
     </div>
   </section>
+</div></div>
 
-
-  <section data-fold="howto">
-    <div class="head"><h2>앱처럼 쓰기</h2></div>
-    <div class="panel howto">
-      <p style="margin:0 0 6px"><b>아이폰</b> 사파리에서 이 페이지 열기 → 아래 공유 버튼 → <b>홈 화면에 추가</b></p>
-      <p style="margin:0">갤럭시 크롬에서 이 페이지 열기 → 오른쪽 위 ⋮ → <b>홈 화면에 추가 / 앱 설치</b></p>
-      <p style="margin:8px 0 0;color:var(--faint);font-size:12px">이 주소는 선생님만 아시면 돼요. 회원님께는 각자 PT 노트 주소만 보내주세요.</p>
-      <p style="margin:8px 0 0;font-size:13px"><b>회원님 설치 안내</b> = 그 회원 PT 노트 주소 끝에 <b>#app</b> 을 붙여 보내면(예: …/m/주소/#app) 폰에 맞는 그림 안내가 바로 열려요. 아직 앱으로 안 쓰는 회원님 폰엔 홈에도 "홈 화면에 PT노트 앱 만들기" 카드가 떠요.</p>
-    </div>
-  </section>
-</main>
 <aside class="pane" id="pane" aria-label="회원 PT 노트 보기">
   <div class="pane-top"><span class="pt-name" id="ptName">회원 PT 노트</span>
     <button type="button" id="ptReload" hidden>새로고침</button><a id="ptOpen" href="#" target="_blank" rel="noopener" hidden>새 창으로 ↗</a></div>
@@ -804,9 +833,7 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     var del = document.getElementById("nmDel"); del.hidden = !d; del.classList.remove("sure"); del.textContent = "지우기";
     document.getElementById("nmRow").className = "row" + (d ? " three" : "");
     document.getElementById("nmSend").textContent = d ? "고친 내용 저장" : "PT 노트 만들기";
-    var sec = document.querySelector('section[data-fold="add"]'); if (sec && sec.classList.contains("folded")) { var h = sec.querySelector(".head h2"); if (h) h.click(); }
-    sec.scrollIntoView({ behavior: "smooth", block: "start" });
-    document.getElementById("nmName").focus();
+    setTimeout(function () { try { document.getElementById("nmName").focus({ preventScroll: true }); } catch (e) {} }, 340);
   }
   function nmHide() { nmForm.hidden = true; nmOpen.hidden = false; nmEditing = null; }
   nmOpen.addEventListener("click", function () { nmShow(null); });
@@ -816,7 +843,7 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     e.preventDefault(); e.stopPropagation();
     var slug = b.getAttribute("data-nmedit"), d = null;
     NM.forEach(function (x) { if (x.slug === slug) d = x; });
-    if (d) nmShow(d);
+    if (d) { nmShow(d); var ms = document.getElementById("msheet"); if (ms) ms.remove(); shOpen("add", false); }
   }, true);
   function nmErr(j) {
     var e = j && j.error, m = document.getElementById("nmMsg");
@@ -918,18 +945,31 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     p.addEventListener("touchend", function (e) { if (y0 != null && e.changedTouches[0].clientY - y0 > 70) close(); y0 = null; }, { passive: true });
     w.addEventListener("click", function (e) { if (e.target.closest("a[href]")) setTimeout(close, 400); });
   }
-  document.getElementById("list").addEventListener("click", function (e) {
-    var a = e.target.closest(".mt .mtop"); if (!a || isPad() || e.metaKey || e.ctrlKey) return;
-    e.preventDefault(); sheetOpen(a.parentNode.getAttribute("data-slug"));
-  });
-  /* 빠른 버튼: 전체 공지·새 회원 칸으로 가서 바로 쓰기 창 열기 */
-  Array.prototype.forEach.call(document.querySelectorAll(".cquick [data-go]"), function (b) {
-    b.addEventListener("click", function () {
-      var k = b.getAttribute("data-go"), sec = document.querySelector('section[data-fold="' + k + '"]'); if (!sec) return;
-      if (sec.classList.contains("folded")) sec.querySelector(".fold-btn").click();
-      var ob = document.getElementById(k === "bn" ? "bnOpen" : "nmOpen"); if (ob && !ob.hidden) ob.click();
-      sec.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+  /* 한 번 누르면 바로 그 회원 노트로, 꾹 누르면(0.5초) 회원 정보 창 (2026-11-13 "두 번 눌러 들어가는 게 불편") */
+  (function () {
+    var lp = null, fired = false, list = document.getElementById("list");
+    list.addEventListener("touchstart", function (e) {
+      var a = e.target.closest(".mt .mtop"); fired = false; if (!a) return;
+      lp = setTimeout(function () { fired = true; if (navigator.vibrate) navigator.vibrate(12); sheetOpen(a.parentNode.getAttribute("data-slug")); }, 500);
+    }, { passive: true });
+    ["touchend", "touchmove", "touchcancel"].forEach(function (ev) { list.addEventListener(ev, function () { clearTimeout(lp); }, { passive: true }); });
+    list.addEventListener("contextmenu", function (e) { if (e.target.closest(".mt")) e.preventDefault(); });
+    list.addEventListener("click", function (e) { if (fired && e.target.closest(".mt")) { e.preventDefault(); e.stopPropagation(); fired = false; } }, true);
+  })();
+  /* 위 작은 아이콘 → 아래에서 올라오는 창 (2026-11-13 "전체공지·새 회원추가를 상단 작은 아이콘으로, 항목 자체를 아이콘 안에") */
+  function shOpen(k, auto) {
+    var w = document.getElementById("csh-" + k); if (!w) return;
+    w.hidden = false; requestAnimationFrame(function () { w.classList.add("on"); });
+    if (auto) { var ob = document.getElementById(k === "bn" ? "bnOpen" : "nmOpen"); if (ob && !ob.hidden) ob.click(); }
+  }
+  function shClose(w) { w.classList.remove("on"); setTimeout(function () { w.hidden = true; }, 280); }
+  ["bnCancel", "nmCancel"].forEach(function (id) { document.getElementById(id).addEventListener("click", function () { var w = this.closest(".csh"); if (w) shClose(w); }); });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-sh]"), function (b) { b.addEventListener("click", function () { shOpen(b.getAttribute("data-sh"), true); }); });
+  Array.prototype.forEach.call(document.querySelectorAll(".csh"), function (w) {
+    w.addEventListener("click", function (e) { if (e.target.closest("[data-shx]")) shClose(w); });
+    var y0 = null, p = w.querySelector(".csh-p");
+    p.addEventListener("touchstart", function (e) { y0 = p.scrollTop <= 0 ? e.touches[0].clientY : null; }, { passive: true });
+    p.addEventListener("touchend", function (e) { if (y0 != null && e.changedTouches[0].clientY - y0 > 80) shClose(w); y0 = null; }, { passive: true });
   });
   function ringSet(on, all) { var r = document.getElementById("ctRing"); if (r) r.setAttribute("stroke-dasharray", (all ? Math.round(on / all * 100) : 0) + " 100"); }
   (function () {
