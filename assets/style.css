@@ -1599,3 +1599,32 @@ html.nosp body::before, html.nosp body::after { display: none !important; }
 :root[data-sex="F"] .jmerge.bp .js-n.on::after { background: rgba(255, 250, 252, .97); }
 :root[data-sex="F"] .jmerge.bp .js-n.cur i { color: #6B0D35; }
 @media (prefers-reduced-motion: reduce) { .jmerge .js-track i, .js-n.cur i, .jdet .jcard { animation: none !important; } }
+
+/* ---- 플랜카드 통일 (2026-11-13 "오늘 운동 카드처럼 다른 플랜카드도 그라데이션, 통일성") ----
+   탭 맨 위 큰 카드(.hero: 루틴·목표·복습지·식단·공지·몸변화)와 띠 카드(.rp-home: 성장 기록·리포트·앱 추가)에
+   오늘 운동 카드(.thero)와 같은 떠다니는 빛 덩어리 2개(gDrift1·gDrift2) + 윗빛 테두리 + 부드러운 그림자 */
+.hero, .rp-home { position: relative; isolation: isolate; overflow: hidden; contain: paint; background: var(--hero); color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 18px 36px -20px var(--hero-sh); }
+.hero::before, .rp-home::before { content: ""; position: absolute; left: -30%; right: auto; top: auto; bottom: -45%; width: 95%; height: 120%; border-radius: 50%; pointer-events: none; z-index: -1;
+  background: radial-gradient(closest-side, var(--hero2), transparent); opacity: .9; animation: gDrift1 18s ease-in-out infinite alternate; }
+.hero::after, .rp-home::after { content: ""; position: absolute; right: -35%; top: -50%; width: 90%; height: 115%; border-radius: 50%; pointer-events: none; z-index: -1;
+  background: radial-gradient(closest-side, var(--hero3), transparent); opacity: .85; animation: gDrift2 22s ease-in-out infinite alternate; }
+:root[data-sex="M"] .hero::after, :root[data-sex="M"] .rp-home::after { background: radial-gradient(closest-side, rgba(225, 20, 30, .30), transparent); }
+/* 띠 카드는 납작해서 빛 덩어리를 조금 작게·박자 다르게 */
+.rp-home { border-radius: 22px; }
+.rp-home::before { width: 70%; height: 260%; bottom: -120%; animation-duration: 20s; }
+.rp-home::after { width: 60%; height: 240%; top: -110%; animation-duration: 24s; }
+.hero-l { background: transparent; }
+.hero-r { background: rgba(0, 0, 0, .2); }
+:root[data-sex="F"] .hero-r { background: rgba(110, 8, 40, .2); }
+/* KEY POINT 띠: 같은 색 안에서 밝은 빛이 아주 천천히 지나감 */
+.keypoint { background: linear-gradient(110deg, var(--key) 0%, var(--kp-hi) 50%, var(--key) 100%) 0 0 / 220% 100%; animation: kpFlow 14s ease-in-out infinite alternate; }
+:root { --kp-hi: #FF5058; }
+:root[data-sex="F"] { --kp-hi: #C42A63; }
+@keyframes kpFlow { to { background-position: 100% 0; } }
+/* 띠 카드 글자·아이콘: 남 = 그대로(블랙 바탕), 여 = 핑크 바탕에 맞게 */
+:root[data-sex="F"] .rh-t small, :root[data-sex="F"] .rh-go { color: var(--hero-eye); }
+:root[data-sex="F"] .rh-t em { color: var(--hero-sub); }
+:root[data-sex="F"] .rh-ic { background: #fff; color: var(--primary); }
+.gr-link .rh-ic { background: #5BD08A; color: #121214; }
+@media (prefers-reduced-motion: reduce) { .hero::before, .hero::after, .rp-home::before, .rp-home::after, .keypoint { animation: none !important; } }
