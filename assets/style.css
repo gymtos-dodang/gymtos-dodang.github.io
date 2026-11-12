@@ -1420,3 +1420,6 @@ body { touch-action: manipulation; }
 .bar-in:has(.coachback) .bar-r > .bell, .bar-in:has(.coachback) .bar-r > .ava, .bar-in:has(.coachback) .bar-r > .memob { width: 36px; height: 36px; }
 .bar-in .coachback { flex: none; }
 @media (max-width: 400px) { .bar-in .coachback { padding: 5px 9px; font-size: 12px; } }
+/* 마지막 안전장치 (2026-11-12): 몸통 전체에서 가로로 넘치는 건 무조건 잘라냄 — clip은 스크롤 상자를 안 만들어서 위 막대(sticky)·뒤로 버튼은 그대로 붙어 다님 */
+html { overflow-x: hidden; }   /* html이 visible이면 body 값이 화면 전체로 넘어가 버려서 body가 직접 못 자름 → html에 hidden을 줘야 body clip이 진짜로 먹음 */
+body { overflow-x: clip; max-width: 100%; }

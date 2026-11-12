@@ -16,8 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
-<link rel="stylesheet" href="/assets/style.css?v=2611121205">
-<script src="/assets/site.js?v=2611121205"></script>
+<link rel="stylesheet" href="/assets/style.css?v=2611121211">
+<script src="/assets/site.js?v=2611121211"></script>
 <style>
 .wrap { padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
 .sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -51,8 +51,8 @@
 .mmemo.empty { color: #A68A55; background: #fff; }
 .mrow2 { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--sub); }
 .mrow2 b { color: var(--ink); font-variant-numeric: tabular-nums; }
-.qlinks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.qlinks a { text-align: center; text-decoration: none; font-size: 13px; font-weight: 700; color: var(--primary); background: var(--tint); border-radius: 10px; padding: 9px 4px; }
+.qlinks { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.qlinks a { text-align: center; text-decoration: none; font-size: 12.5px; white-space: nowrap; overflow: hidden; font-weight: 700; color: var(--primary); background: var(--tint); border-radius: 10px; padding: 9px 4px; }
 .qlinks a.F { color: #D6204F; background: #FCE4EC; }
 .qlinks a:focus-visible, .mtop:focus-visible { outline: 3px solid var(--key); outline-offset: 2px; }
 .refresh { font: inherit; font-size: 13px; font-weight: 700; color: var(--primary); background: none; border: 0; cursor: pointer; margin-left: auto; padding: 4px; }
@@ -278,7 +278,7 @@ section.folded .fsum:not(:empty) { display: inline; }
   </div>
 </aside>
 <script src="members.js"></script>
-<script src="/assets/memo.js?v=2611121205"></script>
+<script src="/assets/memo.js?v=2611121211"></script>
 <script>
 (function () {
   "use strict";
@@ -338,7 +338,7 @@ section.folded .fsum:not(:empty) { display: inline; }
     for (var i = 0; i < R.days.length; i++) if (R.days[i].day === key) return !!R.days[i].rest;
     return false;
   }
-  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611121205) */
+  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611121211) */
   var MEMO = null;
   function memoRow(slug, name) {
     if (!window.PTMemo || !bnKey()) return "";
