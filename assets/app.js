@@ -1790,15 +1790,47 @@
     });
   }
 
+  /* 복습지 부위별 보기 (2026-11-12 장동욱 "복습지 영상들 부위별로 볼 수 있게 구분칸") — part 글자로 부위를 찾음("어깨·등"은 둘 다) */
+  var FCATS = [["가슴", /가슴/], ["등", /등/], ["어깨", /어깨/], ["팔", /팔|삼두|이두/], ["하체", /하체|다리|허벅지/], ["엉덩이", /엉덩이|힙/], ["복근", /복근|코어/]];
+  var FCAT_K = "ptnote:" + SLUG + ":fcat";
+  function formCats(f) {
+    var p = String(f.part || ""), out = FCATS.filter(function (c) { return c[1].test(p); }).map(function (c) { return c[0]; });
+    return out.length ? out : ["기타"];
+  }
   function formCard(f) {
-    return '<a class="card-link" href="#form-' + esc(f.id) + '"><div class="thumb"><img src="' + esc(f.dir) + 'poster.jpg" alt="" loading="lazy"></div>' +
+    return '<a class="card-link" data-cat="' + esc(formCats(f).join(" ")) + '" href="#form-' + esc(f.id) + '"><div class="thumb"><img src="' + esc(f.dir) + 'poster.jpg" alt="" loading="lazy"></div>' +
       '<div><span class="tagc">' + esc(f.part) + '</span>' + (formNew(f) ? '<span class="fnew">NEW</span>' : '') + '<h3>' + esc(f.exercise) + '</h3><p>' + esc(f.exercise_en) + ' · ' + esc(f.date) + '</p></div></a>';
   }
   function renderForms() {
     var h = '<section>' + head("", "자세 복습지", "수업에서 배운 자세를 영상으로 다시 봐요");
-    h += M.forms.length ? '<div class="flist">' + M.forms.map(formCard).join("") + '</div>' :
-      '<div class="panel empty"><h3>아직 복습지가 없어요</h3><p>수업에서 배운 자세가 여기에 쌓여요</p></div>';
+    if (M.forms.length) {
+      var cnt = {}; M.forms.forEach(function (f) { formCats(f).forEach(function (c) { cnt[c] = (cnt[c] || 0) + 1; }); });
+      var cats = FCATS.map(function (c) { return c[0]; }).concat(["기타"]).filter(function (c) { return cnt[c]; });
+      if (cats.length > 1) {
+        h += '<div class="fcat" role="tablist" aria-label="부위별 보기"><button type="button" role="tab" data-fc="" aria-selected="true">전체 <b>' + M.forms.length + '</b></button>' +
+          cats.map(function (c) { return '<button type="button" role="tab" data-fc="' + c + '" aria-selected="false">' + c + ' <b>' + cnt[c] + '</b></button>'; }).join("") + '</div>';
+      }
+      h += '<div class="flist">' + M.forms.map(formCard).join("") + '</div>';
+    } else h += '<div class="panel empty"><h3>아직 복습지가 없어요</h3><p>수업에서 배운 자세가 여기에 쌓여요</p></div>';
     return h + '</section>' + remember();
+  }
+  function setupForms() {
+    var bar = view.querySelector(".fcat"), list = view.querySelector(".flist");
+    if (!bar || !list) return;
+    function apply(c, save) {
+      var ok = false;
+      Array.prototype.forEach.call(bar.children, function (b) { var on = b.getAttribute("data-fc") === c; if (on) ok = true; b.setAttribute("aria-selected", on ? "true" : "false"); });
+      if (!ok) { c = ""; bar.children[0].setAttribute("aria-selected", "true"); }
+      Array.prototype.forEach.call(list.children, function (a) { a.hidden = !!c && (" " + a.getAttribute("data-cat") + " ").indexOf(" " + c + " ") < 0; });
+      if (save) { try { localStorage.setItem(FCAT_K, c); } catch (e) {} }
+    }
+    bar.addEventListener("click", function (e) {
+      var b = e.target.closest("button[data-fc]"); if (!b) return;
+      apply(b.getAttribute("data-fc"), true);
+      b.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+    });
+    var c0 = ""; try { c0 = localStorage.getItem(FCAT_K) || ""; } catch (e) {}
+    apply(c0, false);
   }
 
   /* ---------------- 복습지 상세 */
@@ -2902,7 +2934,7 @@
     }
     var html, tab = "home", after = null, scrollDay = false, jumpTo = null;
     if (!hsh || hsh === "home") { html = renderHome(); }
-    else if (hsh === "forms") { html = renderForms(); tab = "forms"; }
+    else if (hsh === "forms") { html = renderForms(); tab = "forms"; after = setupForms; }
     else if (hsh.indexOf("form-") === 0) {
       var f = findForm(hsh.slice(5));
       html = f ? renderForm(f) : renderForms(); tab = "forms"; if (f) after = setupPlayer;
