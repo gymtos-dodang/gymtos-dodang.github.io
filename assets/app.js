@@ -2809,17 +2809,7 @@
       if (dEl && dEl.animate) { try { if (!matchMedia("(prefers-reduced-motion: reduce)").matches) dEl.animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], { duration: 280, easing: "ease-out" }); } catch (e) {} }
     }
   }
-  function vpFix() {   /* 아이폰이 페이지를 축소·확대한 채로 남아 있으면(화면 잘림) 뷰포트를 한 번 다시 맞춤 */
-    var vv = window.visualViewport, mt = document.querySelector('meta[name="viewport"]');
-    var wide = document.documentElement.scrollWidth > (window.innerWidth || 0) + 1;
-    if (!vv || !mt || (Math.abs(vv.scale - 1) < 0.02 && !wide)) return;
-    var c = mt.getAttribute("content");
-    mt.setAttribute("content", "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover");
-    setTimeout(function () { mt.setAttribute("content", c); }, 300);
-  }
-  window.addEventListener("hashchange", function () { setTimeout(vpFix, 500); });
-  window.addEventListener("pageshow", function () { setTimeout(vpFix, 300); });
-  [600, 2000].forEach(function (t) { setTimeout(vpFix, t); });
+  /* vpFix(뷰포트 다시 맞추기)는 2026-11-12 뺐음 — 아이폰에서 오히려 화면이 옆으로 점점 늘어났음. 뷰포트 meta를 코드로 건드리지 말 것 */
   /* 화면 잘림 진단 (2026-11-12) — 선생님 보기에서만: 페이지 폭이 폰 화면보다 넓어지면 위에 빨간 띠로 범인 칸을 알려 줌 + 맨 아래 버전 표시 */
   function ovDiag() {
     if (!COACH_MODE || DEMO) return;

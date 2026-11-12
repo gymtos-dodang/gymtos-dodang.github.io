@@ -1420,6 +1420,11 @@ body { touch-action: manipulation; }
 .bar-in:has(.coachback) .bar-r > .bell, .bar-in:has(.coachback) .bar-r > .ava, .bar-in:has(.coachback) .bar-r > .memob { width: 36px; height: 36px; }
 .bar-in .coachback { flex: none; }
 @media (max-width: 400px) { .bar-in .coachback { padding: 5px 9px; font-size: 12px; } }
-/* 마지막 안전장치 (2026-11-12): 몸통 전체에서 가로로 넘치는 건 무조건 잘라냄 — clip은 스크롤 상자를 안 만들어서 위 막대(sticky)·뒤로 버튼은 그대로 붙어 다님 */
-html { overflow-x: hidden; }   /* html이 visible이면 body 값이 화면 전체로 넘어가 버려서 body가 직접 못 자름 → html에 hidden을 줘야 body clip이 진짜로 먹음 */
-body { overflow-x: clip; max-width: 100%; }
+/* (2026-11-12) html overflow-x hidden + body clip 안전장치는 뺐음 — 아이폰에서 화면이 옆으로 점점 늘어나는 현상과 같이 나와서. 넘침은 .wrap·.bar clip과 contain: paint로만 막음 */
+/* ★ 화면이 옆으로 넓어지던 진짜 원인 (2026-11-12): 루틴 탭 '이번 달 근육 지도' 제목줄(번호+제목+부제목+"11월 리포트 →"+접기 버튼)이
+   한 줄로 안 들어가 화면보다 넓어짐 → 본문 전체가 그 폭으로 늘어나고(회원 폰도), 아이폰은 페이지 폭 자체를 넓혀서 홈에 돌아와도 잘림.
+   → 본문·칸은 절대 화면 폭보다 넓어지지 않게(min-width 0), 제목줄 글자는 줄임표로 */
+.view, .view > * { min-width: 0; max-width: 100%; }
+section[data-fold] > .head { min-width: 0; }
+section[data-fold] > .head h2 { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+section[data-fold] > .head .more { flex: none; white-space: nowrap; }
