@@ -14,10 +14,20 @@
   function R(k, c, r, w) { return { k: k, ring: c, r: r, w: w }; }
   function seg(a, b, f0, f1, w) { return { line: [mix(a, b, f0), mix(a, b, f1)], w: w }; }
   function floor(a, b) { return L("floor", [[a, 95], [b, 95]], 3); }
-  function db(c, d, half) {   /* 옆에서 본 덤벨 */
-    var a = [c[0] - d[0] * half, c[1] - d[1] * half], b = [c[0] + d[0] * half, c[1] + d[1] * half];
-    var a2 = [c[0] - d[0] * (half - 3.2), c[1] - d[1] * (half - 3.2)], b2 = [c[0] + d[0] * (half - 3.2), c[1] + d[1] * (half - 3.2)];
-    return [L("eq", [a, b], 2.6), L("eq", [a, a2], 8.5), L("eq", [b, b2], 8.5)];
+  function db(c, d, half) {   /* 옆에서 본 덤벨 (2026-11-12 "더 덤벨같이"): 가는 손잡이 + 양쪽 큰 원판·작은 원판 + 끝 마개 */
+    var n = [-d[1], d[0]];
+    half *= 1.12;
+    function at(s) { return [c[0] + d[0] * s, c[1] + d[1] * s]; }
+    function plate(s0, s1, h, k) {   /* 손잡이 방향 s0~s1, 위아래 높이 h 인 둥근 네모 원판 */
+      var a = at(s0), b = at(s1);
+      return { k: k, poly: [[a[0] + n[0] * h, a[1] + n[1] * h], [b[0] + n[0] * h, b[1] + n[1] * h], [b[0] - n[0] * h, b[1] - n[1] * h], [a[0] - n[0] * h, a[1] - n[1] * h]], w: 1.2 };
+    }
+    var hi = half * .4, h1 = half * .74, h2 = half * .5;
+    return [L("eq", [at(-half - .4), at(half + .4)], 1.8),
+      plate(-half + .3, -hi, h1, "eq"), plate(hi, half - .3, h1, "eq"),
+      plate(-half - .6, -half + .6, h2, "eq"), plate(half - .6, half + .6, h2, "eq"),
+      ridge(-(half + hi) / 2), ridge((half + hi) / 2)];
+    function ridge(s) { var m = at(s); return L("eq2", [[m[0] + n[0] * h1 * .62, m[1] + n[1] * h1 * .62], [m[0] - n[0] * h1 * .62, m[1] - n[1] * h1 * .62]], .9); }
   }
   function grip(p, h) { return L("eq", [[p[0], p[1] - (h || 6)], [p[0], p[1] + (h || 6)]], 3.6); }
   function mir(o) {   /* 왼쪽(…L)만 적으면 오른쪽(…R)은 좌우 대칭으로 — 이미 있던 오른쪽 값도 항상 왼쪽을 따라감 */
