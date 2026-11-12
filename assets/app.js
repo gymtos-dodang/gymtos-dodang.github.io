@@ -2668,20 +2668,22 @@
   /* 화면마다 보던 스크롤 위치 기억 — 뒤로 오면 그 자리 그대로.
      history.scrollRestoration = "manual"은 쓰지 않음: 아이폰에서 밀어서 뒤로 갈 때 이전 화면 그림 대신 백지가 보였음(2026-11-12) */
   window.addEventListener("scroll", function () { if (route.lastH && Date.now() - (route.at || 0) > 400) SCR[route.lastH] = window.scrollY; }, { passive: true });
-  function zoomRun(view) {   /* 화면(view) 중 지금 보이는 부분을 누른 칸 크기·자리에서 시작해 화면 가득 커지게 */
+  function zoomRun(view) {   /* 누른 칸 자리·크기에서 다음 화면이 펼쳐지며 열림.
+       2026-11-12: 예전엔 view를 transform(이동·축소)으로 움직였는데, 옆으로 넘기는 칸(화면 밖에 걸친 아이콘)에서 시작하면
+       잠깐 화면 밖으로 삐져나가 아이폰이 페이지 폭을 넓혀 버림(화면 오른쪽 잘림) → 이제 clip-path만 씀(자리·폭은 그대로라 넘칠 일 없음) */
     var z = ZOOM; ZOOM = null;
     if (!z || Date.now() - z.at > 1500 || !view.animate) return false;
     try { if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return false; } catch (e) {}
-    var W = window.innerWidth, H = window.innerHeight, vr = view.getBoundingClientRect();
-    var ox = -vr.left, oy = -vr.top;
-    var clip0 = "inset(" + Math.max(0, oy) + "px " + Math.max(0, vr.width - (W - vr.left)) + "px " + Math.max(0, vr.height - (H - vr.top)) + "px " + Math.max(0, ox) + "px round ";
-    view.style.transformOrigin = ox + "px " + oy + "px";
+    var W = document.documentElement.clientWidth, vr = view.getBoundingClientRect();
+    var l = Math.max(0, Math.min(W, z.l)), r = Math.max(0, Math.min(W, z.l + z.w));
+    var L = Math.max(0, l - vr.left), R = Math.max(0, vr.right - r);
+    var T = Math.max(0, z.t - vr.top), B = Math.max(0, vr.bottom - (z.t + z.h));
+    if (L + R >= vr.width - 4 || T + B >= vr.height - 4) return false;
     var an = view.animate([
-      { transform: "translate(" + z.l + "px," + z.t + "px) scale(" + (z.w / W).toFixed(4) + "," + (z.h / H).toFixed(4) + ")", clipPath: clip0 + "60px)", opacity: 0.35 },
-      { opacity: 1, offset: 0.45 },
-      { transform: "none", clipPath: clip0 + "0px)", opacity: 1 }
-    ], { duration: 460, easing: "cubic-bezier(.2,.85,.25,1)" });
-    an.onfinish = an.oncancel = function () { view.style.transformOrigin = ""; };
+      { clipPath: "inset(" + T + "px " + R + "px " + B + "px " + L + "px round 22px)", opacity: 0.5 },
+      { opacity: 1, offset: 0.5 },
+      { clipPath: "inset(0px 0px 0px 0px round 0px)", opacity: 1 }
+    ], { duration: 420, easing: "cubic-bezier(.2,.85,.25,1)" });
     return true;
   }
   function navName(h) {
