@@ -2665,8 +2665,8 @@
      본문 속 링크(루틴 → 복습지, 홈 → 루틴 요일, 리포트·배지 등)로 넘어가면 화면 위에 "‹ 뒤로 · 루틴" 버튼이 붙어 다님.
      누르면 직전 화면 + 보던 위치(스크롤)로 돌아감. 아래 탭·위 막대·나 탭 전환 칸을 누르면 새 출발이라 기록을 비움. */
   var NAVS = [], NAV_BACK = null, ZOOM = null, SOFT = 0, LINKAT = 0, SCR = {};
-  /* 화면마다 보던 스크롤 위치 기억 — 뒤로 오면 그 자리 그대로 (브라우저가 따로 맞추지 않게 manual) */
-  try { history.scrollRestoration = "manual"; } catch (e) {}
+  /* 화면마다 보던 스크롤 위치 기억 — 뒤로 오면 그 자리 그대로.
+     history.scrollRestoration = "manual"은 쓰지 않음: 아이폰에서 밀어서 뒤로 갈 때 이전 화면 그림 대신 백지가 보였음(2026-11-12) */
   window.addEventListener("scroll", function () { if (route.lastH && Date.now() - (route.at || 0) > 400) SCR[route.lastH] = window.scrollY; }, { passive: true });
   function zoomRun(view) {   /* 화면(view) 중 지금 보이는 부분을 누른 칸 크기·자리에서 시작해 화면 가득 커지게 */
     var z = ZOOM; ZOOM = null;
