@@ -212,6 +212,12 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 회원 index.html에 홈 화면 앱 메타(apple-mobile-web-app-capable 등, 이름 "PT노트") — 새 회원 껍데기도 jihun 복사라 자동.
 - 코드: app.js attSeal·attCheckStrip·homeWidgets·todayHero·meSeg / style.css 맨 아래 "앱 화면" 블록.
 
+## 앱으로 설치 안내 (2026-11-12 장동욱 "회원들이 아이폰/갤럭시 주소 어플화할 수 있게 튜토리얼")
+- 회원 노트 #app (회원에게 보낼 링크 = `https://gymtos-dodang.github.io/m/<주소>/#app`). 기기·브라우저를 알아서 골라(아이폰 / 갤럭시·크롬 / 삼성 인터넷 칩으로 바꾸기) 단계마다 작은 폰 그림 + 누를 곳에 빨간 동그라미 깜빡. 4단계 끝은 홈 화면에 성별 앱 아이콘.
+- 카톡·인스타 등 앱 안에서 열었으면 맨 위 주황 칸 "먼저 사파리/크롬으로 열어 주세요" + 버튼(카톡 kakaotalk://web/openExternal, 안드로이드 intent:// 크롬) + 주소 복사. 안드로이드 크롬은 beforeinstallprompt로 "한 번에 앱 설치하기" 버튼. 이미 홈 화면 아이콘으로 열었으면(standalone) "✓ 이미 앱으로 쓰고 있어요"만.
+- 홈: 폰인데 아직 앱으로 안 쓰는 회원에게만 위젯 아래 "홈 화면에 PT노트 앱 만들기" 카드(× 닫으면 그 폰에선 안 뜸, ptnote:<주소>:instx). 선생님 보기·안내서 데모에선 안 뜸. 나 탭 성장 기록 띠 아래 "PT노트를 앱처럼 쓰기" 띠.
+- 코드 app.js instEnv·instMock·INST_GUIDES·renderInstall·setupInstall·instHomeCard·instLink, style.css "앱으로 설치 안내" 블록. 그림 바깥 class는 "imk k-<종류>"(안쪽 .imk-dlg·.imk-home과 이름 겹치면 깨짐).
+
 ## 새 회원 바로 추가 — 선생님 폰에서 (2026-11-12 장동욱 "클로드로 항상 추가하는 게 아니라 피티노트 안에서 이름만 추가하면 페이지 자동으로")
 - 선생님 페이지 "새 회원 추가" 칸 → 이름·성별(남 블랙/여 핑크)·PT 시작한 달(→ 그 달 15일)·목표(선택) → "PT 노트 만들기" → 바로 주소 `https://gymtos-dodang.github.io/m/n<랜덤 8자>/` + "링크 보내기·복사"(공유 시트) + "루틴 만들러 가기"(폰 루틴 고치기 '새 루틴 만들기' / '다른 회원 루틴 복사'). 만든 회원은 회원 목록 카드에 같이 나오고(✎ 정보 = 이름·성별·시작·목표 고치기·지우기(두 번)), 출석·출석왕·전체 공지·배지·인바디·루틴 고치기 다 그대로 됨.
 - 원리: 폴더(m/<주소>/)를 안 만듦. 창고 저장소에 `pub:m:<주소>:member`(data.js의 window.MEMBER와 같은 모양: name·sex·goal·since·journey·notices["PT 노트가 열렸어요"]·forms[]·routine:null·diet:null·created) + 선생님 목록 `coach:members`([{slug,name,sex,goal,start,at}], 선생님 열쇠로만 읽힘). 회원이 /m/<주소>/ 를 열면 폴더가 없어서 깃허브가 **404.html**을 보여주고, 404.html이 창고에서 회원 정보를 받아(폰에 ptnote:<주소>:member로 기억 → 다음부터 바로 뜨고, 바뀌었으면 새로고침) window.MEMBER로 넣고 app.js를 띄움. 아이콘·theme-color도 성별로 바꿈. 창고 재배포 필요 없음(기존 kv_get·kv_set).

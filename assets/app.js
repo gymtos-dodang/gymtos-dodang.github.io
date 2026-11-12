@@ -479,7 +479,7 @@
       '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 ' + esc(TRN) + ' 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + (BP ? '목표는 하나, 바프 촬영날! 그 의지라면 충분해요. 단계마다 함께 넘어가요!' : '혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!') + '</p></div></div>';
     var n4 = "03", n5 = "04";   /* 몸 변화 기록은 2026-11-06 '몸변화' 탭(#body)으로, 근육 지도는 2026-11-08 루틴 탭으로 이동 */
-    h += grLink();
+    h += grLink() + instLink();
     var attSec = '<section id="att">' + head("01", "출석률 · 출석 달력", "얼마나 꾸준히 나왔는지 봐요") + '<div class="panel attcard">' + attGauge() + attCalendar() + '</div></section>';
     if (!now) {
       return h + attSec + badgeSection("02") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
@@ -1677,6 +1677,7 @@
     h += attCheckStrip();
     h += todayHero(k, d);
     h += homeWidgets();
+    h += instHomeCard();
     h += reportHomeCard();
     h += journeyHome();
     if (IB_ON) h += ibHomeStrip() || '<span class="ibstrip-slot"></span>';
@@ -2687,11 +2688,146 @@
     an.onfinish = an.oncancel = function () { view.style.transformOrigin = ""; };
     return true;
   }
+  /* ---- 앱으로 설치 안내 (#app, 2026-11-12 장동욱 "회원들이 아이폰·갤럭시에서 주소를 어플화할 수 있게 튜토리얼") ----
+     기기·브라우저를 알아서 골라 그림으로 단계 안내. 카톡 안에서 열었으면 먼저 사파리/크롬으로 열기. 안드로이드 크롬은 '앱 설치' 버튼 한 번(beforeinstallprompt). */
+  var INST_EVT = null, INST_X = "ptnote:" + SLUG + ":instx";
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault(); INST_EVT = e;
+    var b = document.getElementById("instGo"); if (b) b.hidden = false;
+  });
+  window.addEventListener("appinstalled", function () { INST_EVT = null; try { localStorage.setItem(INST_X, "1"); } catch (e) {} });
+  function instEnv() {
+    var ua = navigator.userAgent || "";
+    var ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    var and = /Android/i.test(ua);
+    var kakao = /KAKAOTALK/i.test(ua);
+    var inapp = kakao || /NAVER\(inapp|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp/i.test(ua);
+    var sam = /SamsungBrowser/i.test(ua);
+    var standalone = !!((window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true);
+    return { ios: ios, and: and, kakao: kakao, inapp: inapp, sam: sam, standalone: standalone, mobile: ios || and };
+  }
+  function instIcon() { return BASE + "icon-" + (THEME === "F" ? "f" : "m") + "-192.png"; }
+  var IN_SV = {
+    share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M12 8v8M8 12h8"/></svg>',
+    dots: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>',
+    hdots: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>',
+    menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
+    home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/></svg>',
+    ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15 9-2 4-4 2 2-4z"/></svg>'
+  };
+  /* 작은 폰 화면 그림: where = "bot"(아래 막대) / "top"(위 막대) / "sheet"(메뉴 목록) / "dlg"(확인 창) / "home"(홈 화면) */
+  function instMock(kind, o) {
+    var h = '<div class="imk k-' + kind + '" aria-hidden="true"><div class="imk-scr">';
+    if (kind === "bot") h += '<div class="imk-page"><i></i><i></i><i class="s"></i></div><div class="imk-bar">' + o.items.map(function (x) { return '<span' + (x.on ? ' class="on"' : '') + '>' + x.ic + '</span>'; }).join("") + '</div>';
+    else if (kind === "top") h += '<div class="imk-bar t"><span class="url">gymtos-dodang.github.io</span>' + o.items.map(function (x) { return '<span' + (x.on ? ' class="on"' : '') + '>' + x.ic + '</span>'; }).join("") + '</div><div class="imk-page"><i></i><i></i><i class="s"></i></div>';
+    else if (kind === "sheet") h += '<div class="imk-page dim"><i></i><i></i></div><div class="imk-list' + (o.top ? ' t' : '') + '">' + o.rows.map(function (r) { return '<div' + (r.on ? ' class="on"' : '') + '><b>' + esc(r.t) + '</b>' + (r.ic || '') + '</div>'; }).join("") + '</div>';
+    else if (kind === "dlg") h += '<div class="imk-page dim"><i></i><i></i></div><div class="imk-dlg"><div class="dt">' + esc(o.title) + '</div><div class="dr"><img src="' + instIcon() + '" alt=""><span>PT노트</span></div><div class="db">' + (o.cancel ? '<em>' + esc(o.cancel) + '</em>' : '') + '<em class="on">' + esc(o.ok) + '</em></div></div>';
+    else if (kind === "home") h += '<div class="imk-home"><i></i><i></i><i></i><span class="on"><img src="' + instIcon() + '" alt=""><b>PT노트</b></span><i></i><i></i><i></i><i></i></div>';
+    return h + '</div></div>';
+  }
+  function instStep(n, title, desc, mock) {
+    return '<li class="ist"><div class="ist-t"><span class="ist-n">' + n + '</span><div><b>' + title + '</b><p>' + desc + '</p></div></div>' + mock + '</li>';
+  }
+  var INST_GUIDES = {
+    ios: function () {
+      return instStep(1, '아래 <u>공유 버튼</u> 누르기', '사파리 아래 막대의 네모에 화살표(' + '<i class="iic">' + IN_SV.share + '</i>) 버튼이에요. 안 보이면 <b>···</b> 를 먼저 누르면 나와요.',
+          instMock("bot", { items: [{ ic: '‹' }, { ic: '›' }, { ic: IN_SV.share, on: 1 }, { ic: '□' }, { ic: IN_SV.hdots }] })) +
+        instStep(2, '<u>홈 화면에 추가</u> 누르기', '메뉴를 위로 조금 올리면 있어요.',
+          instMock("sheet", { rows: [{ t: "복사" }, { t: "즐겨찾기에 추가" }, { t: "홈 화면에 추가", ic: '<i class="iic">' + IN_SV.plus + '</i>', on: 1 }, { t: "페이지에서 찾기" }] })) +
+        instStep(3, '오른쪽 위 <u>추가</u> 누르기', '"웹 앱으로 열기"가 보이면 켜 둔 그대로 두세요.',
+          instMock("dlg", { title: "홈 화면에 추가", cancel: "취소", ok: "추가" })) +
+        instStep(4, '홈 화면의 <u>PT노트</u> 아이콘으로 열기', '이제 주소창 없이 앱처럼 열려요. 출석 도장도 여기서 꾹!', instMock("home", {}));
+    },
+    chrome: function () {
+      return instStep(1, '오른쪽 위 <u>⋮</u> 누르기', '크롬 주소창 오른쪽 점 세 개 버튼이에요.',
+          instMock("top", { items: [{ ic: '⌂' }, { ic: IN_SV.dots, on: 1 }] })) +
+        instStep(2, '<u>홈 화면에 추가</u> (또는 앱 설치) 누르기', '메뉴를 조금 내리면 있어요.',
+          instMock("sheet", { top: 1, rows: [{ t: "새 탭" }, { t: "북마크" }, { t: "홈 화면에 추가", ic: '<i class="iic">' + IN_SV.home + '</i>', on: 1 }, { t: "설정" }] })) +
+        instStep(3, '<u>설치</u> (또는 추가) 누르기', '', instMock("dlg", { title: "앱 설치", cancel: "취소", ok: "설치" })) +
+        instStep(4, '홈 화면의 <u>PT노트</u> 아이콘으로 열기', '이제 주소창 없이 앱처럼 열려요. 출석 도장도 여기서 꾹!', instMock("home", {}));
+    },
+    samsung: function () {
+      return instStep(1, '오른쪽 아래 <u>≡ 메뉴</u> 누르기', '삼성 인터넷 아래 막대 맨 오른쪽이에요.',
+          instMock("bot", { items: [{ ic: '‹' }, { ic: '›' }, { ic: '⌂' }, { ic: '☆' }, { ic: IN_SV.menu, on: 1 }] })) +
+        instStep(2, '<u>현재 페이지 추가</u> 누르기', '(버전에 따라 "페이지 추가"로 보여요)',
+          instMock("sheet", { rows: [{ t: "북마크" }, { t: "현재 페이지 추가", ic: '<i class="iic">' + IN_SV.plus + '</i>', on: 1 }, { t: "방문 기록" }, { t: "설정" }] })) +
+        instStep(3, '<u>홈 화면</u> 고르고 <u>추가</u>', '', instMock("dlg", { title: "홈 화면에 추가", cancel: "취소", ok: "추가" })) +
+        instStep(4, '홈 화면의 <u>PT노트</u> 아이콘으로 열기', '이제 주소창 없이 앱처럼 열려요. 출석 도장도 여기서 꾹!', instMock("home", {}));
+    }
+  };
+  function instUrl() { return location.origin + location.pathname; }
+  function renderInstall() {
+    var E = instEnv(), pick = E.ios ? "ios" : (E.sam ? "samsung" : "chrome");
+    var h = '<div class="ins-hero"><img src="' + instIcon() + '" alt=""><div><small>PT노트 앱으로 쓰기</small><h1>홈 화면에 PT노트 만들기</h1><p>한 번만 해 두면 카톡에서 링크 찾을 필요 없이<br>아이콘 하나로 바로 열려요. 1분이면 돼요.</p></div></div>';
+    if (E.standalone) {
+      h += '<section><div class="ins-done"><b>✓ 이미 앱으로 쓰고 있어요</b><p>지금 홈 화면 PT노트 아이콘으로 열었어요. 이대로 쓰시면 돼요!</p></div></section>';
+      return h + remember();
+    }
+    if (E.inapp) {
+      var ext = E.kakao ? "kakaotalk://web/openExternal?url=" + encodeURIComponent(instUrl()) :
+        (E.and ? "intent://" + location.host + location.pathname + "#Intent;scheme=https;package=com.android.chrome;end" : "");
+      h += '<section class="ins-warn">' + head("", "먼저 " + (E.ios ? "사파리" : "크롬") + "로 열어 주세요", (E.kakao ? "카톡" : "앱") + " 안에서는 홈 화면에 추가가 안 돼요") +
+        (ext ? '<a class="btn fill ins-ext" href="' + esc(ext) + '">' + IN_SV.ext + (E.ios ? '사파리로 열기' : '크롬으로 열기') + '</a>' : '') +
+        '<p class="ins-alt">버튼이 안 되면: ' + (E.ios ? '오른쪽 아래 <b>···</b> 또는 공유 버튼 → <b>Safari로 열기</b>' : '오른쪽 위 <b>⋮</b> → <b>다른 브라우저로 열기</b>') + '</p>' +
+        '<p class="ins-alt">그래도 안 되면 주소를 복사해서 ' + (E.ios ? '사파리' : '크롬') + ' 주소창에 붙여 넣어요.</p>' +
+        '<button type="button" class="btn ins-copy" id="instCopy">주소 복사하기</button></section>';
+    }
+    h += '<section>' + head("", "따라 하기", "내 폰에 맞는 걸 골라요") +
+      '<div class="ins-seg" role="tablist">' + [["ios", "아이폰"], ["chrome", "갤럭시 · 크롬"], ["samsung", "삼성 인터넷"]].map(function (t) {
+        return '<button type="button" role="tab" data-g="' + t[0] + '" aria-selected="' + (t[0] === pick) + '">' + t[1] + '</button>';
+      }).join("") + '</div>' +
+      (E.and && !E.inapp ? '<button type="button" class="btn fill ins-go" id="instGo"' + (INST_EVT ? '' : ' hidden') + '>' + IN_SV.plus + '한 번에 앱 설치하기</button>' : '') +
+      '<ol class="ins-steps" id="instSteps">' + INST_GUIDES[pick]() + '</ol>' +
+      (E.ios ? '<p class="ins-alt">아이폰은 <b>사파리</b>에서 하는 게 제일 확실해요. 크롬에서도 공유 버튼 → 홈 화면에 추가가 돼요.</p>' : '') +
+      '</section>';
+    h += '<section>' + head("", "알아 두면 좋아요") + '<ul class="ins-tip">' +
+      '<li>아이콘으로 열어도 <b>출석·루틴·복습지</b>는 그대로예요.</li>' +
+      '<li>선생님이 루틴·복습지를 올리면 <b>열 때마다 자동으로 최신</b>이 돼요. 따로 업데이트할 필요 없어요.</li>' +
+      '<li>아이콘을 지워도 기록은 안 사라져요. 다시 추가하면 돼요.</li></ul>' +
+      '<button type="button" class="btn ins-copy" id="instCopy2">내 PT노트 주소 복사</button></section>';
+    return h + remember();
+  }
+  function setupInstall() {
+    var seg = view.querySelector(".ins-seg"), box = document.getElementById("instSteps");
+    if (seg && box) seg.addEventListener("click", function (e) {
+      var b = e.target.closest("button[data-g]"); if (!b) return;
+      Array.prototype.forEach.call(seg.children, function (x) { x.setAttribute("aria-selected", x === b ? "true" : "false"); });
+      box.innerHTML = INST_GUIDES[b.getAttribute("data-g")]();
+    });
+    var go = document.getElementById("instGo");
+    if (go) go.addEventListener("click", function () {
+      if (!INST_EVT) return;
+      INST_EVT.prompt();
+      (INST_EVT.userChoice || Promise.resolve({})).then(function (c) { if (c && c.outcome === "accepted") { go.hidden = true; attToast("PT노트 앱이 설치됐어요!"); } });
+      INST_EVT = null;
+    });
+    ["instCopy", "instCopy2"].forEach(function (id) {
+      var b = document.getElementById(id); if (!b) return;
+      b.addEventListener("click", function () {
+        var u = instUrl();
+        function ok() { attToast("주소를 복사했어요"); }
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(ok, function () { window.prompt("주소를 길게 눌러 복사하세요", u); });
+        else window.prompt("주소를 길게 눌러 복사하세요", u);
+      });
+    });
+  }
+  function instHomeCard() {   /* 홈: 아직 앱으로 안 쓰는 회원 폰에만 (닫으면 안 뜸) */
+    var E = instEnv();
+    if (E.standalone || !E.mobile || DEMO || COACH_MODE) return "";
+    try { if (localStorage.getItem(INST_X)) return ""; } catch (e) {}
+    return '<div class="ins-card"><a href="#app"><img src="' + instIcon() + '" alt=""><span><b>홈 화면에 PT노트 앱 만들기</b><em>아이콘 하나로 바로 열려요 · 1분</em></span><i aria-hidden="true">›</i></a>' +
+      '<button type="button" class="ins-x" aria-label="닫기" onclick="try{localStorage.setItem(\'' + INST_X + '\',\'1\')}catch(e){};this.parentNode.remove()">×</button></div>';
+  }
+  function instLink() {   /* 나 탭 */
+    if (instEnv().standalone || DEMO) return "";
+    return '<a class="rp-home ins-link" href="#app"><span class="rh-ic" aria-hidden="true">' + IN_SV.plus + '</span><span class="rh-t"><small>APP</small><b>PT노트를 앱처럼 쓰기</b><em>홈 화면에 아이콘 추가하는 법</em></span><span class="rh-go" aria-hidden="true">›</span></a>';
+  }
   function navName(h) {
     h = String(h || "").replace(/^#/, "") || "home";
     if (/^routine/.test(h)) return "루틴"; if (/^form-/.test(h)) return "자세 복습지"; if (h === "forms") return "복습지";
     if (h === "diet") return "식단"; if (/^goal/.test(h)) return "목표"; if (h === "body") return "몸변화"; if (h === "notice") return "공지";
-    if (/^report/.test(h)) return "리포트"; if (h === "growth") return "성장 기록"; if (h === "muscle") return "근육 지도"; return "홈";
+    if (/^report/.test(h)) return "리포트"; if (h === "growth") return "성장 기록"; if (h === "app") return "앱으로 쓰기"; if (h === "muscle") return "근육 지도"; return "홈";
   }
   document.addEventListener("touchstart", function () {}, { passive: true });   /* 아이폰에서 :active(살짝 눌림)가 먹게 */
   document.addEventListener("click", function (e) {
@@ -2778,6 +2914,7 @@
     else if (hsh === "goal-badges" || hsh === "badges") { html = renderGoal(); tab = "goal"; jumpTo = "badges"; }
     else if (hsh === "muscle") { html = renderRoutine(); tab = "routine"; jumpTo = "muscle"; }
     else if (hsh === "growth") { html = renderGrowth(); tab = "goal"; after = setupGrowth; }
+    else if (hsh === "app") { html = renderInstall(); tab = "home"; after = setupInstall; }
     else if (hsh === "report" || /^report-\d{4}-\d{2}$/.test(hsh)) { html = renderReport(hsh.slice(7)); tab = "routine"; after = setupReport; }
     else if ((hsh === "body" || hsh === "inbody") && IB_ON) { html = renderBody(); tab = "body"; }
     else { html = renderHome(); }

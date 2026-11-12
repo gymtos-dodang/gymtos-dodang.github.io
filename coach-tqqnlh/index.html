@@ -16,8 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
-<link rel="stylesheet" href="/assets/style.css?v=2611121325">
-<script src="/assets/site.js?v=2611121325"></script>
+<link rel="stylesheet" href="/assets/style.css?v=2611121548">
+<script src="/assets/site.js?v=2611121548"></script>
 <style>
 .wrap { padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
 .sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -267,6 +267,7 @@ section.folded .fsum:not(:empty) { display: inline; }
       <p style="margin:0 0 6px"><b>아이폰</b> 사파리에서 이 페이지 열기 → 아래 공유 버튼 → <b>홈 화면에 추가</b></p>
       <p style="margin:0">갤럭시 크롬에서 이 페이지 열기 → 오른쪽 위 ⋮ → <b>홈 화면에 추가 / 앱 설치</b></p>
       <p style="margin:8px 0 0;color:var(--faint);font-size:12px">이 주소는 선생님만 아시면 돼요. 회원님께는 각자 PT 노트 주소만 보내주세요.</p>
+      <p style="margin:8px 0 0;font-size:13px"><b>회원님 설치 안내</b> = 그 회원 PT 노트 주소 끝에 <b>#app</b> 을 붙여 보내면(예: …/m/주소/#app) 폰에 맞는 그림 안내가 바로 열려요. 아직 앱으로 안 쓰는 회원님 폰엔 홈에도 "홈 화면에 PT노트 앱 만들기" 카드가 떠요.</p>
     </div>
   </section>
 </main>
@@ -278,7 +279,7 @@ section.folded .fsum:not(:empty) { display: inline; }
   </div>
 </aside>
 <script src="members.js"></script>
-<script src="/assets/memo.js?v=2611121325"></script>
+<script src="/assets/memo.js?v=2611121548"></script>
 <script>
 (function () {
   "use strict";
@@ -338,7 +339,7 @@ section.folded .fsum:not(:empty) { display: inline; }
     for (var i = 0; i < R.days.length; i++) if (R.days[i].day === key) return !!R.days[i].rest;
     return false;
   }
-  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611121325) */
+  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611121548) */
   var MEMO = null;
   function memoRow(slug, name) {
     if (!window.PTMemo || !bnKey()) return "";
