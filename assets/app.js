@@ -1331,7 +1331,7 @@
     var now = new Date(), st = startDate(), prevYm = ymAdd(ymOf(now), -1);
     var canPrev = st && ymOf(st) <= prevYm;
     if (!canPrev) mmWhich = "cur";
-    return '<section id="muscle" data-num="' + num + '">' + head(num, "이번 달 근육 지도", "출석한 날 루틴 부위가 하나씩 칠해져요", '<a class="more" href="#report">' + (now.getMonth() + 1) + '월 리포트 →</a>') +
+    return '<section id="muscle" data-num="' + num + '">' + head(num, "이번 달 근육 지도", "출석한 날 루틴 부위가 하나씩 칠해져요", '<a class="more" href="#report">' + (now.getMonth() + 1) + '월 리포트</a>') +
       '<div class="panel mmap"><div class="mm-seg" role="group" aria-label="달 고르기">' +
       '<button type="button" data-m="cur" aria-pressed="' + (mmWhich === "cur") + '">이번 달 ' + (now.getMonth() + 1) + '월</button>' +
       '<button type="button" data-m="prev" aria-pressed="' + (mmWhich === "prev") + '"' + (canPrev ? '' : ' disabled') + '>지난달 ' + (+prevYm.slice(5)) + '월</button></div>' +

@@ -1427,4 +1427,5 @@ body { touch-action: manipulation; }
 .view, .view > * { min-width: 0; max-width: 100%; }
 section[data-fold] > .head { min-width: 0; }
 section[data-fold] > .head h2 { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+section[data-fold] > .head p { flex: 1 1 0; }   /* 좁으면 부제목부터 줄어들고 제목은 끝까지 지킴 */
 section[data-fold] > .head .more { flex: none; white-space: nowrap; }
