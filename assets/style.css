@@ -1409,3 +1409,14 @@ a, button, [role="button"], label { -webkit-tap-highlight-color: transparent; }
 body { touch-action: manipulation; }
 /* 칸 안에서 움직이는 빛·그라데이션이 칸 밖으로 새지 않게 (아이폰이 그걸 페이지 폭으로 잡지 않도록) */
 .thero, .stamp, .hw, .jpanel, .rp-frame, .ex, .ibstrip, .rp-home { contain: paint; }
+/* 위 막대가 화면보다 넓어지던 것 (2026-11-12 진짜 원인): 선생님 폰에서 로고 + "← 회원 목록" + 메모·종·이름 동그라미가 393px 폰에서 몇 px 넘쳤음
+   → 아이폰은 로고 그림을 줄이지 않아서 페이지 폭이 넓어지고 화면이 축소·잘림. 막대 안에서 줄어들게 + 넘치면 잘라냄 */
+.bar { overflow-x: clip; }
+.bar-in { min-width: 0; }
+.bar-in > a:first-child { min-width: 0; flex: 0 1 auto; }
+.bar-in > a:first-child img { width: 112px; max-width: 100%; }
+.bar-in:has(.coachback) { gap: 8px; }
+.bar-in:has(.coachback) .bar-r { gap: 6px; }
+.bar-in:has(.coachback) .bar-r > .bell, .bar-in:has(.coachback) .bar-r > .ava, .bar-in:has(.coachback) .bar-r > .memob { width: 36px; height: 36px; }
+.bar-in .coachback { flex: none; }
+@media (max-width: 400px) { .bar-in .coachback { padding: 5px 9px; font-size: 12px; } }

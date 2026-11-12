@@ -16,8 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
-<link rel="stylesheet" href="/assets/style.css?v=2611121153">
-<script src="/assets/site.js?v=2611121153"></script>
+<link rel="stylesheet" href="/assets/style.css?v=2611121159">
+<script src="/assets/site.js?v=2611121159"></script>
 <style>
 .wrap { padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
 .sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -278,7 +278,7 @@ section.folded .fsum:not(:empty) { display: inline; }
   </div>
 </aside>
 <script src="members.js"></script>
-<script src="/assets/memo.js?v=2611121153"></script>
+<script src="/assets/memo.js?v=2611121159"></script>
 <script>
 (function () {
   "use strict";
@@ -338,7 +338,7 @@ section.folded .fsum:not(:empty) { display: inline; }
     for (var i = 0; i < R.days.length; i++) if (R.days[i].day === key) return !!R.days[i].rest;
     return false;
   }
-  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611121153) */
+  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611121159) */
   var MEMO = null;
   function memoRow(slug, name) {
     if (!window.PTMemo || !bnKey()) return "";
