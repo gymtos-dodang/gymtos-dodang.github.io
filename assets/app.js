@@ -460,6 +460,28 @@
       '<ul class="jfocus">' + s.focus.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join("") + '</ul>' +
       (compact && state !== "cur" ? '' : '<p class="jmsg">' + esc(s.msg) + '</p>') + prog + '</div>';
   }
+  /* 목표 탭: 1·2·3단계 줄 — 지난 단계 ✓, 지금 단계 숨쉬는 점, 지나온 만큼 선이 채워짐. 누르면 아래 카드가 그 단계로 */
+  function stageStepper(now) {
+    var ci = JST.indexOf(now.stage), cs = now.stage;
+    var f = Math.max(0, Math.min(1, (ci + Math.max(0, Math.min(1, (now.m - cs.from) / (cs.to - cs.from)))) / (JST.length - 1)));
+    return '<p class="js-hint">단계를 눌러 목표를 확인해요</p><div class="jstep"><div class="js-track"><i style="width:' + (f * 100).toFixed(1) + '%"></i></div>' +
+      JST.map(function (st) {
+        var state = st.no < cs.no ? "done" : st === cs ? "cur" : "next";
+        return '<button type="button" class="js-n ' + state + (st === cs ? ' on' : '') + '" data-st="' + st.no + '" aria-pressed="' + (st === cs) + '">' +
+          '<i>' + (state === "done" ? '✓' : st.no) + '</i><b>' + esc(st.short) + '</b><small>' + (state === "cur" ? '지금 여기' : esc(st.range)) + '</small></button>';
+      }).join("") + '</div>';
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest(".js-n");
+    if (!b) return;
+    var now = journeyNow(), st = JST[+b.getAttribute("data-st") - 1], box = document.getElementById("jdet");
+    if (!now || !st || !box || b.classList.contains("on")) return;
+    [].forEach.call(document.querySelectorAll(".js-n"), function (x) { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b); });
+    var dir = +b.getAttribute("data-st") > +(box.getAttribute("data-st") || now.stage.no) ? "r" : "l";
+    box.setAttribute("data-st", st.no);
+    box.innerHTML = stageCard(st, now, false);
+    box.classList.remove("in-r", "in-l"); void box.offsetWidth; box.classList.add("in-" + dir);
+  });
   function bpStrip() {   /* 바프 회원: 그래프 위 금색 띠 (촬영일 있으면 D-day) */
     var d = bpDday();
     return '<div class="bp-strip"><span class="bp-tag">BODY PROFILE</span>' +
@@ -480,16 +502,16 @@
       '<h1>' + esc(M.goal || "나의 목표") + '</h1><div class="en">' + esc(M.name) + ' 회원님 · ' + (BP ? '기초 → 벌크 → 컷팅, 바프 촬영까지 함께 가요' : '기초 → 변화 → 자립, 3단계로 함께 가요') + '</div>' +
       '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 ' + esc(TRN) + ' 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + (BP ? '목표는 하나, 바프 촬영날! 그 의지라면 충분해요. 단계마다 함께 넘어가요!' : '혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!') + '</p></div></div>';
-    var n4 = "03", n5 = "04";   /* 몸 변화 기록은 2026-11-06 '몸변화' 탭(#body)으로, 근육 지도는 2026-11-08 루틴 탭으로 이동 */
+    var n4 = "03";   /* 몸 변화 기록은 2026-11-06 '몸변화' 탭(#body)으로, 근육 지도는 2026-11-08 루틴 탭으로 이동 */
     h += grLink();
     var attSec = '<section id="att">' + head("01", "출석률 · 출석 달력", "얼마나 꾸준히 나왔는지 봐요") + '<div class="panel attcard">' + attGauge() + attCalendar() + '</div></section>';
     if (!now) {
       return h + attSec + badgeSection("02") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
     }
     h += attSec + badgeSection("02");
-    h += '<section>' + head(n4, BP ? "바프까지 " + JTN + "개월" : "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel' + (BP ? ' bp">' + bpStrip() : '">') + journeyChart(now) + '</div></section>';
-    h += '<section>' + head(n5, "단계별 목표", BP ? "기초 → 벌크 → 컷팅" : "단계마다 하는 것이 달라요") + '<div class="jlist' + (BP ? ' bp' : '') + '">' +
-      JST.map(function (st) { return stageCard(st, now, false); }).join("") + '</div></section>';
+    /* 2026-11-13 "한눈에 보는 12개월 그래프 + 단계별 목표 합치기" — 그래프 아래 1·2·3단계 줄(눌러서 바꾸기) + 고른 단계 목표 카드 */
+    h += '<section id="goal-journey">' + head(n4, BP ? "바프까지 " + JTN + "개월 여정" : "나의 12개월 여정", "지금 어디쯤, 무엇을 할지 한눈에") + '<div class="panel jpanel jmerge' + (BP ? ' bp">' + bpStrip() : '">') + journeyChart(now) +
+      '<div class="jsel">' + stageStepper(now) + '<div class="jdet" id="jdet">' + stageCard(now.stage, now, false) + '</div></div></div></section>';
     return h + remember();
   }
 
