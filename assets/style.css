@@ -1516,3 +1516,35 @@ html.nosp body::before, html.nosp body::after { display: none !important; }
 .fcat button[aria-selected="true"] { background: var(--primary, #1A1A1E); color: #fff; box-shadow: 0 4px 12px rgba(20,20,30,.18); }
 .fcat button[aria-selected="true"] b { opacity: .8; }
 .flist > [hidden] { display: none !important; }
+
+/* ---- 처음 둘러보기(튜토리얼) (2026-11-13) — 화면을 어둡게 하고 설명할 칸만 동그랗게 비춤 ---- */
+.tour { position: fixed; inset: 0; z-index: 500; opacity: 0; transition: opacity .25s; }
+.tour.on { opacity: 1; }
+.tour-hole { position: fixed; box-shadow: 0 0 0 200vmax rgba(12, 12, 18, .66), 0 0 0 3px rgba(255, 255, 255, .9), 0 0 24px 6px rgba(255, 255, 255, .35); transition: left .38s cubic-bezier(.2, .8, .2, 1), top .38s cubic-bezier(.2, .8, .2, 1), width .38s cubic-bezier(.2, .8, .2, 1), height .38s cubic-bezier(.2, .8, .2, 1), border-radius .38s; pointer-events: auto; cursor: pointer; }
+.tour-card { position: fixed; left: 16px; right: 16px; max-width: 420px; margin: 0 auto; background: #fff; border-radius: 22px; padding: 18px 18px 14px; box-shadow: 0 18px 44px rgba(0, 0, 0, .3); transition: top .38s cubic-bezier(.2, .8, .2, 1); }
+.tour-card.in { animation: tourIn .32s cubic-bezier(.2, .8, .2, 1); }
+@keyframes tourIn { from { opacity: 0; transform: translateY(8px) scale(.98); } }
+.tour-card.mid { text-align: center; padding-top: 24px; }
+.tour-skip { position: absolute; top: 10px; right: 12px; font: inherit; font-size: 12.5px; font-weight: 700; color: #8A90A0; background: none; border: 0; padding: 6px; cursor: pointer; }
+.tour-dots { display: flex; gap: 5px; margin-bottom: 10px; }
+.tour-card.mid .tour-dots { justify-content: center; }
+.tour-dots i { width: 6px; height: 6px; border-radius: 99px; background: #E0E2E8; transition: width .25s, background .25s; }
+.tour-dots i.on { width: 18px; background: var(--seal, #E1141E); }
+.tour-t { display: block; font-size: 18px; font-weight: 900; letter-spacing: -.02em; color: #1A1A1E; padding-right: 60px; }
+.tour-card.mid .tour-t { font-size: 22px; padding: 0; }
+.tour-b { margin: 6px 0 14px; font-size: 14px; line-height: 1.6; color: #4A4F5C; white-space: pre-line; }
+.tour-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.tour-btns button, .tour-btns a { flex: 1; font: inherit; font-size: 15px; font-weight: 800; border: 0; border-radius: 14px; padding: 12px; cursor: pointer; text-align: center; text-decoration: none; }
+.tb-next { background: var(--primary, #1A1A1E); color: #fff; }
+.tb-next small { font-size: 11px; opacity: .65; margin-left: 4px; font-weight: 700; }
+.tb-prev { flex: 0 0 auto !important; background: #F2F2F4; color: #1A1A1E; padding: 12px 16px !important; }
+.tb-app { flex-basis: 100% !important; background: #F2F2F4; color: #1A1A1E; }
+@media (prefers-reduced-motion: reduce) { .tour, .tour-hole, .tour-card { transition: none; } .tour-card.in { animation: none; } }
+/* '나' 탭 설정 칸 */
+.opts { display: flex; flex-direction: column; background: #fff; border-radius: 22px; overflow: hidden; }
+.opt { display: flex; align-items: center; gap: 12px; padding: 14px 16px; text-decoration: none; color: inherit; }
+.opt + .opt { border-top: 1px solid #F0F0F3; }
+.opt .oi { width: 36px; height: 36px; border-radius: 11px; background: #F2F2F4; display: grid; place-items: center; font-size: 18px; flex: none; }
+.opt > span:nth-child(2) { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.opt b { font-size: 15px; } .opt em { font-style: normal; font-size: 12px; color: #8A90A0; }
+.opt i { font-style: normal; font-size: 20px; color: #B4B8C2; }

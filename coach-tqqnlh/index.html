@@ -17,8 +17,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <script>/* 페이지 넘어갈 때 부드럽게 (2026-11-12) */try{if(localStorage.getItem("ptcoach")||sessionStorage.getItem("ptcoach"))document.documentElement.classList.add("nosp")}catch(e){}addEventListener("pagereveal",function(e){if(!e.viewTransition)return;var d=null;try{d=sessionStorage.getItem("vtdir");sessionStorage.removeItem("vtdir")}catch(x){}var n=window.navigation&&navigation.activation;if(d==="back"||(d!=="fwd"&&n&&n.navigationType==="traverse"))document.documentElement.classList.add("vt-back");e.viewTransition.finished.then(function(){document.documentElement.classList.remove("vt-back")},function(){})});</script>
-<link rel="stylesheet" href="/assets/style.css?v=2611130205">
-<script src="/assets/site.js?v=2611130205"></script>
+<link rel="stylesheet" href="/assets/style.css?v=2611130220">
+<script src="/assets/site.js?v=2611130220"></script>
 <style>
 .wrap { padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
 .sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -465,7 +465,7 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   </div>
 </aside>
 <script src="members.js"></script>
-<script src="/assets/memo.js?v=2611130205"></script>
+<script src="/assets/memo.js?v=2611130220"></script>
 <script>
 (function () {
   "use strict";
@@ -525,7 +525,7 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     for (var i = 0; i < R.days.length; i++) if (R.days[i].day === key) return !!R.days[i].rest;
     return false;
   }
-  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611130205) */
+  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611130220) */
   var MEMO = null;
   function memoRow(slug, name) {
     if (!window.PTMemo || !bnKey()) return "";

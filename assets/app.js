@@ -483,13 +483,13 @@
     h += grLink() + instLink();
     var attSec = '<section id="att">' + head("01", "출석률 · 출석 달력", "얼마나 꾸준히 나왔는지 봐요") + '<div class="panel attcard">' + attGauge() + attCalendar() + '</div></section>';
     if (!now) {
-      return h + attSec + badgeSection("02") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
+      return h + attSec + badgeSection("02") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + optSection() + remember();
     }
     h += attSec + badgeSection("02");
     h += '<section>' + head(n4, BP ? "바프까지 " + JTN + "개월" : "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel' + (BP ? ' bp">' + bpStrip() : '">') + journeyChart(now) + '</div></section>';
     h += '<section>' + head(n5, "단계별 목표", BP ? "기초 → 벌크 → 컷팅" : "단계마다 하는 것이 달라요") + '<div class="jlist' + (BP ? ' bp' : '') + '">' +
       JST.map(function (st) { return stageCard(st, now, false); }).join("") + '</div></section>';
-    return h + remember();
+    return h + optSection() + remember();
   }
 
 
@@ -1207,7 +1207,7 @@
   function badgeCheck() {   /* 새로 받은 배지가 있으면 팝업 한 번 */
     bgReady = true;
     if (DEMO || COACH_MODE) return;
-    if (document.querySelector(".npop-wrap, .bgpop-wrap, .ibsheet")) { setTimeout(badgeCheck, 6500); return; }
+    if (TOUR_ON || TOUR_WANT || document.querySelector(".npop-wrap, .bgpop-wrap, .ibsheet")) { setTimeout(badgeCheck, 6500); return; }
     var L = badgeList(), seen = lsArr(BG_SEEN);
     var fresh = L.filter(function (b) { return b.on && seen.indexOf(b.id) < 0; });
     if (!fresh.length) return;
@@ -1732,6 +1732,7 @@
     if ((location.hash || "").replace(/^#/, "") === "notice") route(); else location.hash = "notice";
   }
   function showNoticePop() {
+    if (TOUR_ON || (TOUR_WANT && (!location.hash || location.hash === "#home"))) return;
     var popped = lsArr(NPOP_KEY);
     var list = nUnseen().filter(function (n) { return popped.indexOf(nKey(n)) < 0; });
     if (!list.length) return;
@@ -2899,6 +2900,99 @@
     bar.style.opacity = "1"; bar.style.transform = "translateX(" + Math.round(a.offsetLeft + a.offsetWidth / 2 - 11) + "px)";
   }
   window.addEventListener("resize", function () { tabInd(); });
+  /* ---------------- 처음 쓰는 회원 둘러보기(튜토리얼) (2026-11-13 장동욱 "처음 들어가면 튜토리얼, 다시 필요하면 옵션 칸에서")
+     처음 연 폰에서 홈 화면일 때 한 번 — 실제 화면의 그 자리를 동그랗게 비춰 주며 차례로 설명. 끝나면 기억(ptnote:<주소>:tour).
+     '나' 탭 맨 아래 "설정" 칸의 "앱 사용법 다시 보기"로 언제든 다시. 선생님 보기·안내서 데모·아이패드 칸 안에선 저절로 안 뜸. */
+  var TOUR_K = "ptnote:" + SLUG + ":tour", TOUR_ON = false, TOUR_WANT = false;
+  try { TOUR_WANT = !localStorage.getItem(TOUR_K) && !COACH_MODE && !DEMO && window.self === window.top; } catch (e) {}
+  if (/[?&]tour\b/.test(location.search)) TOUR_WANT = true;
+  function tourName() { var n = String(M.name || "").split("·")[0].trim(); return /·/.test(M.name || "") ? M.name.replace(/\s*·\s*/g, "·") : (n.length >= 3 ? n.slice(1) : n); }
+  function tourSteps() {
+    var E = typeof instEnv === "function" ? instEnv() : { standalone: true, mobile: false };
+    var S = [
+      { c: 1, t: tourName() + "님, 환영해요! 👋", b: (SITE.trainer || "장동욱") + " 선생님과 함께하는 나만의 PT노트예요.\n어디에 뭐가 있는지 30초만 둘러볼까요?", ok: "둘러보기" },
+      { s: "#attBtn", t: "운동 온 날엔 출석 도장 꾹", b: "헬스장에 온 날 여기를 꾹 누르면 출석이 찍혀요.\n출석이 쌓이면 배지와 월간 리포트가 생겨요." },
+      { s: ".thero", t: "오늘 할 운동", b: "요일마다 오늘 할 운동이 여기 떠요.\n누르면 세트·무게까지 자세히 볼 수 있어요." },
+      { s: '.tabs a[data-tab="routine"]', t: "루틴", b: "일주일 운동 순서와 무게가 다 들어 있어요.\n선생님이 고치면 바로 최신으로 바뀌어요." },
+      { s: '.tabs a[data-tab="forms"]', t: "자세 복습지", b: "수업 때 찍은 내 자세 영상이에요.\n혼자 운동할 때 다시 보면서 자세를 떠올려요." },
+      { s: '.tabs a[data-tab="diet"]', t: "식단", b: M.diet ? "선생님이 짜 준 식단이 여기 있어요." : "식단을 받으면 여기서 볼 수 있어요." },
+      { s: '.tabs a[data-tab="me"]', t: "나", b: "출석률 · 배지 · 몸 변화(인바디) · PT 여정을\n한눈에 볼 수 있어요." },
+      { s: ".bell", t: "선생님 공지", b: "선생님 소식이 오면 빨간 점이 떠요." },
+      { c: 1, t: "준비 끝! 💪", b: "새 루틴이나 복습지가 올라오면 아래 아이콘에 불이 켜져요.\n사용법은 '나' 탭 맨 아래 설정에서 언제든 다시 볼 수 있어요.", ok: "시작하기", app: E.mobile && !E.standalone }
+    ];
+    return S.filter(function (x) { if (!x.s) return true; var el = document.querySelector(x.s); return el && el.getBoundingClientRect().width > 0; });
+  }
+  function tourStart() {
+    if (TOUR_ON || !document.querySelector(".stamp, .thero")) return;
+    TOUR_ON = true; TOUR_WANT = false;
+    document.querySelectorAll(".npop-wrap").forEach(function (x) { x.remove(); });
+    var S = tourSteps(), i = 0;
+    var w = document.createElement("div"); w.className = "tour"; w.setAttribute("role", "dialog"); w.setAttribute("aria-modal", "true");
+    w.innerHTML = '<div class="tour-hole"></div><div class="tour-card"><button type="button" class="tour-skip">건너뛰기</button><div class="tour-dots"></div><b class="tour-t"></b><p class="tour-b"></p><div class="tour-btns"></div></div>';
+    document.body.appendChild(w);
+    var hole = w.querySelector(".tour-hole"), card = w.querySelector(".tour-card");
+    function end() {
+      try { localStorage.setItem(TOUR_K, "1"); } catch (e) {}
+      w.classList.remove("on"); setTimeout(function () { w.remove(); }, 260);
+      TOUR_ON = false; setTimeout(function () { if (!DEMO) showNoticePop(); }, 600);
+    }
+    function place() {
+      var x = S[i], vw = window.innerWidth, vh = window.innerHeight;
+      if (x.c) { hole.style.cssText = "left:" + vw / 2 + "px;top:" + vh / 2 + "px;width:0;height:0;border-radius:50%"; card.style.top = Math.max(80, vh / 2 - card.offsetHeight / 2) + "px"; card.classList.add("mid"); return; }
+      var el = document.querySelector(x.s); if (!el) return;
+      var r = el.getBoundingClientRect(), pad = el.closest(".tabs") ? 4 : 8, rad = getComputedStyle(el).borderRadius;
+      hole.style.cssText = "left:" + (r.left - pad) + "px;top:" + (r.top - pad) + "px;width:" + (r.width + pad * 2) + "px;height:" + (r.height + pad * 2) + "px;border-radius:" + (el.closest(".tabs") ? "18px" : (parseFloat(rad) ? (parseFloat(rad) + pad) + "px" : "18px"));
+      card.classList.remove("mid");
+      var ch = card.offsetHeight, below = r.bottom + pad + 14;
+      card.style.top = (below + ch < vh - 12 ? below : Math.max(12, r.top - pad - 14 - ch)) + "px";
+    }
+    function show() {
+      var x = S[i];
+      card.querySelector(".tour-dots").innerHTML = S.map(function (_, k) { return '<i' + (k === i ? ' class="on"' : '') + '></i>'; }).join("");
+      card.querySelector(".tour-t").textContent = x.t;
+      card.querySelector(".tour-b").textContent = x.b;
+      card.querySelector(".tour-skip").hidden = i === S.length - 1;
+      card.querySelector(".tour-btns").innerHTML = (x.app ? '<a class="tb-app" href="#app">📲 홈 화면에 앱으로 추가하기</a>' : '') +
+        (i > 0 && !x.c ? '<button type="button" class="tb-prev">이전</button>' : '') +
+        '<button type="button" class="tb-next">' + (x.ok || (i === S.length - 2 ? "마지막" : "다음") + ' <small>' + i + '/' + (S.length - 2) + '</small>') + '</button>';
+      card.classList.remove("in"); void card.offsetWidth; card.classList.add("in");
+      if (x.s) {
+        var el = document.querySelector(x.s);
+        if (el && !el.closest(".tabs, .bar")) {
+          var r = el.getBoundingClientRect();
+          if (r.top < 70 || r.bottom > window.innerHeight - 220) { window.scrollTo({ top: window.scrollY + r.top - 110, behavior: "smooth" }); setTimeout(place, 420); return; }
+        }
+      }
+      place();
+    }
+    w.addEventListener("click", function (e) {
+      if (e.target.closest(".tour-skip")) return end();
+      if (e.target.closest(".tb-app")) return end();
+      if (e.target.closest(".tb-prev")) { i = Math.max(0, i - 1); return show(); }
+      if (e.target.closest(".tb-next") || e.target === hole || e.target === w) { if (i >= S.length - 1) return end(); i++; show(); }
+    });
+    window.addEventListener("resize", function rs() { if (!w.isConnected) return window.removeEventListener("resize", rs); place(); });
+    requestAnimationFrame(function () { w.classList.add("on"); show(); });
+  }
+  function tourMaybe() {   /* route()가 홈을 그린 뒤 */
+    if (!TOUR_WANT || TOUR_ON) return;
+    var h = location.hash.replace("#", "");
+    if (h && h !== "home") return;
+    setTimeout(function () { if (TOUR_WANT && (!location.hash || location.hash === "#home")) tourStart(); }, document.body.classList.contains("ready") ? 450 : 1300);
+  }
+  function optSection() {   /* '나' 탭 맨 아래 설정 칸 */
+    var E = typeof instEnv === "function" ? instEnv() : { standalone: true };
+    return '<section class="optsec">' + head("", "설정", "") + '<div class="opts">' +
+      '<a href="#home" class="opt" data-tour="1"><span class="oi">🧭</span><span><b>앱 사용법 다시 보기</b><em>어디에 뭐가 있는지 30초 둘러보기</em></span><i>›</i></a>' +
+      (E.standalone ? '' : '<a href="#app" class="opt"><span class="oi">📲</span><span><b>홈 화면에 앱으로 추가하기</b><em>아이콘 하나로 바로 열기</em></span><i>›</i></a>') +
+      '</div></section>';
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("[data-tour]"); if (!a) return;
+    TOUR_WANT = true;
+    if (!location.hash || location.hash === "#home") { e.preventDefault(); window.scrollTo(0, 0); tourMaybe(); }
+  });
+
   function route() {
     var hsh = (location.hash || "").replace(/^#/, "");
     var navTop = NAVS[NAVS.length - 1];
@@ -3034,8 +3128,8 @@
     var vt = document.createElement("div"); vt.style.cssText = "text-align:center;font-size:10px;color:#B4B4BE;padding:4px 0 110px"; vt.textContent = "PT노트 버전 " + vm;
     document.body.appendChild(vt);
   }
-  window.addEventListener("hashchange", route);
-  route();
+  window.addEventListener("hashchange", function () { route(); tourMaybe(); });
+  route(); tourMaybe();
   cmemoFill();
   (function () {   /* 로딩 화면 걷기 — 앱 아이콘으로 열었을 때 0.6초는 보이게, 그 밖(아이패드 칸 안·안내서 데모)은 바로 */
     var t0 = (window.performance && performance.timing && performance.timing.navigationStart) || Date.now();
