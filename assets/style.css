@@ -1548,3 +1548,14 @@ html.nosp body::before, html.nosp body::after { display: none !important; }
 .opt > span:nth-child(2) { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .opt b { font-size: 15px; } .opt em { font-style: normal; font-size: 12px; color: #8A90A0; }
 .opt i { font-style: normal; font-size: 20px; color: #B4B8C2; }
+/* 위 막대 ⚙️ 설정 + 작은 메뉴 (2026-11-13) — 선생님 폰(← 회원 목록 있을 때)은 막대가 넘치지 않게 숨김 */
+.gear { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: none; border: 0; padding: 0; background: #fff; color: var(--ink); cursor: pointer; }
+.gear svg { width: 20px; height: 20px; }
+.bar-in:has(.coachback) .gear { display: none; }
+.gmenu { position: fixed; z-index: 450; min-width: 230px; background: #fff; border-radius: 18px; padding: 6px; box-shadow: 0 14px 36px rgba(20, 20, 30, .2), 0 0 0 1px rgba(20, 20, 30, .05); opacity: 0; transform: translateY(-6px) scale(.97); transform-origin: top right; transition: opacity .18s, transform .22s cubic-bezier(.2, .8, .2, 1); }
+.gmenu.on { opacity: 1; transform: none; }
+.gmenu a { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; text-decoration: none; color: #1A1A1E; }
+.gmenu a:active { background: #F2F2F4; }
+.gmenu a + a { border-top: 1px solid #F0F0F3; }
+.gmenu span { width: 32px; height: 32px; border-radius: 10px; background: #F2F2F4; display: grid; place-items: center; font-size: 16px; flex: none; }
+.gmenu b { font-size: 14.5px; }

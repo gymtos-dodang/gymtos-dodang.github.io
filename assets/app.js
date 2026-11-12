@@ -195,6 +195,7 @@
     var nm = String(M.name || "").split("·")[0].trim(), ini = /·/.test(M.name || "") ? "함께" : (nm.length >= 3 ? nm.slice(1) : nm);
     var r = document.createElement("div"); r.className = "bar-r";
     r.innerHTML = '<a class="bell" href="#notice" aria-label="선생님 공지"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 6.5 2.5 8.5 2.5 8.5h-17S6 15.5 6 9"/><path d="M10 21h4"/></svg></a>' +
+      '<button type="button" class="gear" id="gearBtn" aria-label="설정" aria-haspopup="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>' +
       '<a class="ava" href="#goal" aria-label="나의 목표 · 출석">' + esc(ini) + '</a>';
     bi.appendChild(r);
   })();
@@ -480,16 +481,16 @@
       '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 ' + esc(TRN) + ' 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + (BP ? '목표는 하나, 바프 촬영날! 그 의지라면 충분해요. 단계마다 함께 넘어가요!' : '혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!') + '</p></div></div>';
     var n4 = "03", n5 = "04";   /* 몸 변화 기록은 2026-11-06 '몸변화' 탭(#body)으로, 근육 지도는 2026-11-08 루틴 탭으로 이동 */
-    h += grLink() + instLink();
+    h += grLink();
     var attSec = '<section id="att">' + head("01", "출석률 · 출석 달력", "얼마나 꾸준히 나왔는지 봐요") + '<div class="panel attcard">' + attGauge() + attCalendar() + '</div></section>';
     if (!now) {
-      return h + attSec + badgeSection("02") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + optSection() + remember();
+      return h + attSec + badgeSection("02") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
     }
     h += attSec + badgeSection("02");
     h += '<section>' + head(n4, BP ? "바프까지 " + JTN + "개월" : "한눈에 보는 12개월", "지금 어디쯤인지 확인해요") + '<div class="panel jpanel' + (BP ? ' bp">' + bpStrip() : '">') + journeyChart(now) + '</div></section>';
     h += '<section>' + head(n5, "단계별 목표", BP ? "기초 → 벌크 → 컷팅" : "단계마다 하는 것이 달라요") + '<div class="jlist' + (BP ? ' bp' : '') + '">' +
       JST.map(function (st) { return stageCard(st, now, false); }).join("") + '</div></section>';
-    return h + optSection() + remember();
+    return h + remember();
   }
 
 
@@ -2918,7 +2919,7 @@
       { s: '.tabs a[data-tab="diet"]', t: "식단", b: M.diet ? "선생님이 짜 준 식단이 여기 있어요." : "식단을 받으면 여기서 볼 수 있어요." },
       { s: '.tabs a[data-tab="me"]', t: "나", b: "출석률 · 배지 · 몸 변화(인바디) · PT 여정을\n한눈에 볼 수 있어요." },
       { s: ".bell", t: "선생님 공지", b: "선생님 소식이 오면 빨간 점이 떠요." },
-      { c: 1, t: "준비 끝! 💪", b: "새 루틴이나 복습지가 올라오면 아래 아이콘에 불이 켜져요.\n사용법은 '나' 탭 맨 아래 설정에서 언제든 다시 볼 수 있어요.", ok: "시작하기", app: E.mobile && !E.standalone }
+      { c: 1, t: "준비 끝! 💪", b: "새 루틴이나 복습지가 올라오면 아래 아이콘에 불이 켜져요.\n사용법은 오른쪽 위 ⚙️ 설정에서 언제든 다시 볼 수 있어요.", ok: "시작하기", app: E.mobile && !E.standalone }
     ];
     return S.filter(function (x) { if (!x.s) return true; var el = document.querySelector(x.s); return el && el.getBoundingClientRect().width > 0; });
   }
@@ -2980,13 +2981,22 @@
     if (h && h !== "home") return;
     setTimeout(function () { if (TOUR_WANT && (!location.hash || location.hash === "#home")) tourStart(); }, document.body.classList.contains("ready") ? 450 : 1300);
   }
-  function optSection() {   /* '나' 탭 맨 아래 설정 칸 */
-    var E = typeof instEnv === "function" ? instEnv() : { standalone: true };
-    return '<section class="optsec">' + head("", "설정", "") + '<div class="opts">' +
-      '<a href="#home" class="opt" data-tour="1"><span class="oi">🧭</span><span><b>앱 사용법 다시 보기</b><em>어디에 뭐가 있는지 30초 둘러보기</em></span><i>›</i></a>' +
-      (E.standalone ? '' : '<a href="#app" class="opt"><span class="oi">📲</span><span><b>홈 화면에 앱으로 추가하기</b><em>아이콘 하나로 바로 열기</em></span><i>›</i></a>') +
-      '</div></section>';
+  /* 위 막대 ⚙️ 설정 (2026-11-13 "상단 지수 아이콘 옆에 설정 아이콘 — 앱 사용법·홈 화면 앱 추가, 기존 항목 없애고") */
+  function gearMenu() {
+    var old = document.getElementById("gearMenu"); if (old) { old.remove(); return; }
+    var E = typeof instEnv === "function" ? instEnv() : { standalone: true }, g = document.getElementById("gearBtn");
+    var m = document.createElement("div"); m.id = "gearMenu"; m.className = "gmenu"; m.setAttribute("role", "menu");
+    m.innerHTML = '<a href="#home" role="menuitem" data-tour="1"><span>🧭</span><b>앱 사용법 다시 보기</b></a>' +
+      (E.standalone ? '' : '<a href="#app" role="menuitem"><span>📲</span><b>홈 화면에 앱으로 추가하기</b></a>');
+    document.body.appendChild(m);
+    var r = g.getBoundingClientRect();
+    m.style.top = (r.bottom + 8) + "px"; m.style.right = Math.max(10, window.innerWidth - r.right - 40) + "px";
+    requestAnimationFrame(function () { m.classList.add("on"); });
+    setTimeout(function () {
+      document.addEventListener("click", function cl(e) { if (!e.target.closest("#gearMenu a")) { m.remove(); } else setTimeout(function () { m.remove(); }, 50); document.removeEventListener("click", cl, true); }, true);
+    }, 0);
   }
+  (function () { var g = document.getElementById("gearBtn"); if (g) g.addEventListener("click", function (e) { e.stopPropagation(); gearMenu(); }); })();
   document.addEventListener("click", function (e) {
     var a = e.target.closest("[data-tour]"); if (!a) return;
     TOUR_WANT = true;
