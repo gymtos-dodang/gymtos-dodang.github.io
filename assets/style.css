@@ -1429,3 +1429,6 @@ section[data-fold] > .head { min-width: 0; }
 section[data-fold] > .head h2 { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 section[data-fold] > .head p { flex: 1 1 0; }   /* 좁으면 부제목부터 줄어들고 제목은 끝까지 지킴 */
 section[data-fold] > .head .more { flex: none; white-space: nowrap; }
+
+/* 오늘 운동 카드 빛 덩어리: 흐림 필터(blur) 빼고 그라데이션만 — 아이폰에서 뒤로 올 때 다시 칠하느라 깜빡이던 것 줄임 (2026-11-12) */
+.thero::before, .thero::after { filter: none; }

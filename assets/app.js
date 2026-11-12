@@ -2089,7 +2089,8 @@
   var RT_STALE = null;  /* data.js 루틴이 새로 올라와서 꺼진 '폰에서 고친 루틴' */
   function rtKey() { try { return localStorage.getItem("ptkey") || ""; } catch (e) { return ""; } }
   function rtToday() { var d = new Date(); return d.getFullYear() + ". " + (d.getMonth() + 1) + ". " + d.getDate(); }
-  function rerender() { var y = window.scrollY; route(); window.scrollTo(0, y); }
+  function vSig() { try { return attLoad().join(",") + JSON.stringify(attTimes); } catch (e) { return ""; } }
+  function rerender() { VCACHE = {}; var y = window.scrollY; route(); window.scrollTo(0, y); }
   function rtServer(rec) {   /* 창고에서 받은 '폰에서 고친 루틴' (null = 없음) */
     var ok = rec && rec.routine && rec.base === RT_BASE ? rec : null;
     RT_STALE = rec && !ok ? rec : null;
@@ -2664,7 +2665,7 @@
   /* 뒤로 가기 (2026-11-12 장동욱 "태블릿·PC에서 종목 보다가 자세 복습지 누르면 뒤로가기가 없어서 다시 루틴 들어가야 함")
      본문 속 링크(루틴 → 복습지, 홈 → 루틴 요일, 리포트·배지 등)로 넘어가면 화면 위에 "‹ 뒤로 · 루틴" 버튼이 붙어 다님.
      누르면 직전 화면 + 보던 위치(스크롤)로 돌아감. 아래 탭·위 막대·나 탭 전환 칸을 누르면 새 출발이라 기록을 비움. */
-  var NAVS = [], NAV_BACK = null, ZOOM = null, SOFT = 0, LINKAT = 0, SCR = {};
+  var NAVS = [], NAV_BACK = null, ZOOM = null, SOFT = 0, LINKAT = 0, SCR = {}, VCACHE = {};
   /* 화면마다 보던 스크롤 위치 기억 — 뒤로 오면 그 자리 그대로.
      history.scrollRestoration = "manual"은 쓰지 않음: 아이폰에서 밀어서 뒤로 갈 때 이전 화면 그림 대신 백지가 보였음(2026-11-12) */
   window.addEventListener("scroll", function () { if (route.lastH && Date.now() - (route.at || 0) > 400) SCR[route.lastH] = window.scrollY; }, { passive: true });
@@ -2735,6 +2736,33 @@
     if (navTop && navTop.h === (location.hash || "#home")) NAV_BACK = NAVS.pop();
     /* 뒤로 가기(뒤로 버튼·아이폰 밀어서 뒤로·브라우저 뒤로)는 새로고침처럼 보이지 않게 차례 등장 없이 그대로 (2026-11-12 "눌렀을 때 어쩔 땐 새로고침") */
     var goingBack = !!NAV_BACK || (route.lastH !== undefined && Date.now() - LINKAT > 1000);
+    /* 뒤로 갈 땐 다시 그리지 않고 아까 그 화면(DOM)을 그대로 다시 붙임 (2026-11-12 "특정 아이콘만 들어갔다 돌아오면 깜빡임")
+       — 새로 그리면 아이폰이 그림·움직이는 아이콘을 처음부터 다시 칠하느라 한 순간 하얗게 비었음 */
+    var curH0 = location.hash || "#home", prevH = route.lastH;
+    if (prevH !== undefined && prevH !== curH0 && view.firstChild) {
+      var fr = document.createDocumentFragment(); while (view.firstChild) fr.appendChild(view.firstChild);
+      VCACHE[prevH] = { fr: fr, tab: view.getAttribute("data-tab"), day: view.getAttribute("data-day"), at: Date.now(), sig: vSig() };
+      Object.keys(VCACHE).forEach(function (k) { if (Date.now() - VCACHE[k].at > 180000) delete VCACHE[k]; });
+    }
+    var hit = goingBack && prevH !== undefined && prevH !== curH0 && VCACHE[curH0];
+    if (hit) {
+      delete VCACHE[curH0];
+      view.appendChild(hit.fr);
+      var ob = view.querySelector("#navBack"); if (ob) ob.remove();
+      view.setAttribute("data-tab", hit.tab || "home");
+      if (hit.day) view.setAttribute("data-day", hit.day); else view.removeAttribute("data-day");
+      route.lastH = curH0; route.at = Date.now();
+      view.classList.remove("enter"); view.classList.add("back");
+      var t0 = /^(goal|body|notice)$/.test(hit.tab) ? "me" : hit.tab;
+      Array.prototype.forEach.call(document.querySelectorAll(".tabs a"), function (a) {
+        if (a.getAttribute("data-tab") === t0) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      });
+      tabInd(); litApply(hit.tab); navBackDraw(view);
+      if (hit.sig !== vSig()) attRefresh();   /* 그사이 출석 기록이 바뀌었으면 그 부분만 새로 */
+      var by0 = NAV_BACK ? NAV_BACK.y : SCR[curH0]; NAV_BACK = null; ZOOM = null;
+      if (by0 != null) window.scrollTo(0, by0);
+      return;
+    }
     var html, tab = "home", after = null, scrollDay = false, jumpTo = null;
     if (!hsh || hsh === "home") { html = renderHome(); }
     else if (hsh === "forms") { html = renderForms(); tab = "forms"; }
