@@ -2705,8 +2705,8 @@
     /* B안 (2026-11-12 "아이콘이 퍼지며 화면 들어가기 — B안으로"): 누른 칸 자리에서 다음 화면이 커지며 열림 → 그 칸 위치를 기억 */
     var zEl = a.closest(".th-tile, .card-link, .hw, .ex, .thero, .stamp, .ibstrip, .rp-home") || ((a.offsetHeight < 56) && a.closest(".panel, section")) || a;
     var zr = zEl.getBoundingClientRect();
-    /* 커지며 열리기(B안)는 2026-11-12 아이폰에서 화면 잘림·어색한 전환 때문에 끔 → 앞으로 갈 땐 D안(차례 등장)만 */
-    void zr;
+    /* 커지며 열리기(B안) — 2026-11-12 다시 켬: transform 없이 clip-path만 써서 화면 폭에 영향 없음 */
+    if (zr.width > 8 && zr.height > 8) ZOOM = { l: zr.left, t: zr.top, w: zr.width, h: zr.height, at: Date.now() };
     if (NAVS.length > 20) NAVS.shift();
   }, true);
   function navBackDraw(view) {
