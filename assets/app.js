@@ -1798,7 +1798,7 @@
           var kg = s[1] == null ? '맨몸' : s[1] + 'kg';                              /* null = 맨몸 */
           return '<div class="set"><small>' + (j + 1) + '세트</small><b>' + reps + '</b><i>' + kg + '</i></div>';
         }).join("");
-        return '<div class="ex' + (main ? ' main' : '') + '"><div class="ex-top"><span class="ex-ic">' + img(iconOf(it)) + '<span class="ex-no">' + (i + 1) + '</span>' +
+        return '<div class="ex' + (main ? ' main' : '') + (it.tag === "워밍업" ? ' t-warm' : it.tag === "선행" ? ' t-pre' : '') + '"><div class="ex-top"><span class="ex-ic">' + img(iconOf(it)) + '<span class="ex-no">' + (i + 1) + '</span>' +
           (main ? '<span class="main-badge">메인</span>' : '') + '</span><div>' +
           '<h3>' + esc(it.name) + '</h3><div class="meta">' + esc(it.en) + ' ' + tagChip(it.tag) + '</div>' +
           '<div class="tip">' + esc(it.tip) + '</div></div></div><div class="sets">' + sets + '</div>' +
