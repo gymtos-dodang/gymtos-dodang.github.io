@@ -1364,3 +1364,6 @@ html[data-sex] body.ready::after { transform: scale(1.08); }
 .hi-go { font-style: normal; font-size: 22px; line-height: 1; color: #B4B4BE; }
 .hw b.hi-t { font-size: 16px; font-weight: 800; line-height: 1.3; letter-spacing: -.01em; margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: keep-all; }
 .hinfo .hw small { overflow: hidden; text-overflow: ellipsis; }
+
+/* 아이폰에서 누른 칸에 회색 상자가 1초쯤 남던 것 없앰 (2026-11-12) — 누른 느낌은 각 칸의 살짝 눌림(scale)으로 */
+a, button, [role="button"], label { -webkit-tap-highlight-color: transparent; }

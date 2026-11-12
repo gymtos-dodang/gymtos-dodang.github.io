@@ -2525,7 +2525,7 @@
   /* 뒤로 가기 (2026-11-12 장동욱 "태블릿·PC에서 종목 보다가 자세 복습지 누르면 뒤로가기가 없어서 다시 루틴 들어가야 함")
      본문 속 링크(루틴 → 복습지, 홈 → 루틴 요일, 리포트·배지 등)로 넘어가면 화면 위에 "‹ 뒤로 · 루틴" 버튼이 붙어 다님.
      누르면 직전 화면 + 보던 위치(스크롤)로 돌아감. 아래 탭·위 막대·나 탭 전환 칸을 누르면 새 출발이라 기록을 비움. */
-  var NAVS = [], NAV_BACK = null, ZOOM = null, SOFT = 0;
+  var NAVS = [], NAV_BACK = null, ZOOM = null, SOFT = 0, LINKAT = 0;
   function zoomRun(view) {   /* 화면(view) 중 지금 보이는 부분을 누른 칸 크기·자리에서 시작해 화면 가득 커지게 */
     var z = ZOOM; ZOOM = null;
     if (!z || Date.now() - z.at > 1500 || !view.animate) return false;
@@ -2548,8 +2548,10 @@
     if (h === "diet") return "식단"; if (/^goal/.test(h)) return "목표"; if (h === "body") return "몸변화"; if (h === "notice") return "공지";
     if (/^report/.test(h)) return "리포트"; if (h === "muscle") return "근육 지도"; return "홈";
   }
+  document.addEventListener("touchstart", function () {}, { passive: true });   /* 아이폰에서 :active(살짝 눌림)가 먹게 */
   document.addEventListener("click", function (e) {
     var a = e.target.closest && e.target.closest('a[href^="#"]'); if (!a) return;
+    LINKAT = Date.now();
     var to = a.getAttribute("href"), cur = location.hash || "#home";
     if (to === "#" || to === cur) return;
     if (a.closest(".tabs") || a.closest(".bar") || a.closest(".meseg")) { NAVS = []; return; }
@@ -2586,6 +2588,8 @@
     var hsh = (location.hash || "").replace(/^#/, "");
     var navTop = NAVS[NAVS.length - 1];
     if (navTop && navTop.h === (location.hash || "#home")) NAV_BACK = NAVS.pop();
+    /* 뒤로 가기(뒤로 버튼·아이폰 밀어서 뒤로·브라우저 뒤로)는 새로고침처럼 보이지 않게 차례 등장 없이 그대로 (2026-11-12 "눌렀을 때 어쩔 땐 새로고침") */
+    var goingBack = !!NAV_BACK || (route.lastH !== undefined && Date.now() - LINKAT > 1000);
     var html, tab = "home", after = null, scrollDay = false, jumpTo = null;
     if (!hsh || hsh === "home") { html = renderHome(); }
     else if (hsh === "forms") { html = renderForms(); tab = "forms"; }
@@ -2611,7 +2615,7 @@
     var curH = location.hash || "#home";
     var hashChanged = route.lastH !== undefined && route.lastH !== curH;
     var soft = SOFT && Date.now() - SOFT < 1500; SOFT = 0;
-    if (route.lastH !== undefined && route.lastH !== curH && !soft && !(ZOOM && Date.now() - ZOOM.at < 1500)) {
+    if (route.lastH !== undefined && route.lastH !== curH && !soft && !goingBack && !(ZOOM && Date.now() - ZOOM.at < 1500)) {
       view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");
       clearTimeout(route.enterT); route.enterT = setTimeout(function () { view.classList.remove("enter"); }, 900);
     }
