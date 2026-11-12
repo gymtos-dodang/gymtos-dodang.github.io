@@ -135,6 +135,14 @@
         return [L("eq", [off(P.haL, -nl[0] * 5.5, -nl[1] * 5.5), off(P.haL, nl[0] * 5.5, nl[1] * 5.5)], 4.4), L("eq", [off(P.haR, -nr[0] * 5.5, -nr[1] * 5.5), off(P.haR, nr[0] * 5.5, nr[1] * 5.5)], 4.4)];
       } };
   }
+  /* 케이블 체스트 프레스 (2026-11-13 김지수님 영상): 케이블 기둥을 등지고 한 발 앞으로 서서, 가슴 옆 손잡이를 가슴 높이로 앞으로 밀어 모음 */
+  EX.cable_chest_press = { t: .85,
+    p0: { head: [45, 14], sh: [42, 29], hip: [38, 56], kn: [47, 73], ft: [52, 90], toe: [60, 91], kn2: [33, 74], ft2: [25, 89], toe2: [32, 91], el: [28, 38], ha: [40, 32] },
+    p1: { el: [55, 33], ha: [69, 31] },
+    bones: [{ pts: ["hip", "kn2", "ft2", "toe2"], w: 9, o: 1 }, { pts: ["hip", "kn", "ft", "toe"], w: 9 }, { pts: ["sh", "hip"], w: 13 }, { pts: ["sh", "el", "ha"], w: 7.5 }],
+    hl: function (P) { return [seg(P.sh, P.hip, 0, .42, 13)]; },
+    back: function (P) { return [floor(8, 80), L("eq2", [[11, 6], [11, 93]], 3.5), L("eq2", [[8, 93], [18, 93]], 4), L("eq2", [[13, 31], P.ha], 2), D("eq2", [13, 31], 3.2)]; },
+    front: function (P) { return [grip(P.ha)]; } };
   EX.pec_deck = deckTop(false);
   EX.reverse_pec_deck = deckTop(true);
   EX.band_push_up = { t: .2,
