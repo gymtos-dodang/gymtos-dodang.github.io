@@ -597,11 +597,27 @@ section.folded .fsum:not(:empty) { display: inline; }
       return j;
     });
   }
+  /* 공개 회원 목록 (2026-11-12 장동욱 요청): 팀장님(박현규) PT 노트 페이지가 읽어서 폰으로 만든 회원도 같이 보여 줌.
+     coach:members 를 저장할 때마다(만들기·고치기·지우기) 같이 저장하고, 열 때 다르면 한 번 맞춤. */
+  var ROSTER_K = "pub:m:roster-list:members";
+  function nmRoster(list) { return list.map(function (d) { return { slug: d.slug, name: d.name, sex: d.sex, goal: d.goal, start: d.start }; }); }
   function nmLoad() {
     if (!bnKey()) { nmDrawList(); return Promise.resolve(NM); }
     return nmPost({ a: "kv_get", prefix: "coach:members" }).then(function (j) {
-      if (j && j.ok && j.kv && Array.isArray(j.kv["coach:members"])) NM = j.kv["coach:members"];
-      nmDrawList(); return NM;
+      var ok = j && j.ok && j.kv;
+      if (ok && Array.isArray(j.kv["coach:members"])) NM = j.kv["coach:members"];
+      nmDrawList();
+      if (ok) {
+        var want = nmRoster(NM);
+        nmPost({ a: "kv_get", prefix: ROSTER_K }).then(function (r) {
+          if (!r || !r.ok || !r.kv) return;
+          if (JSON.stringify(r.kv[ROSTER_K] || null) !== JSON.stringify(want)) {
+            var it = {}; it[ROSTER_K] = want;
+            return nmPost({ a: "kv_set", items: it });
+          }
+        }).catch(function () {});
+      }
+      return NM;
     }).catch(function () { return NM; });
   }
   function nmDrawList() {
@@ -672,7 +688,7 @@ section.folded .fsum:not(:empty) { display: inline; }
       M.journey = start ? Object.assign({}, M.journey || {}, { start: start }) : null;
       var list = NM.filter(function (x) { return x.slug !== slug; });
       list.push({ slug: slug, name: name, sex: sex, goal: goal, start: start, at: editing ? editing.at : ymd(t) });
-      var items = {}; items["pub:m:" + slug + ":member"] = M; items["coach:members"] = list;
+      var items = {}; items["pub:m:" + slug + ":member"] = M; items["coach:members"] = list; items[ROSTER_K] = nmRoster(list);
       return nmPost({ a: "kv_set", items: items }).then(function (j) {
         if (!j || !j.ok) { nmErr(j); return; }
         NM = list; nmDrawList(); nmHide();
@@ -699,7 +715,7 @@ section.folded .fsum:not(:empty) { display: inline; }
     }
     b.disabled = true;
     var list = NM.filter(function (x) { return x.slug !== d.slug; }), items = {};
-    items["pub:m:" + d.slug + ":member"] = null; items["coach:members"] = list;
+    items["pub:m:" + d.slug + ":member"] = null; items["coach:members"] = list; items[ROSTER_K] = nmRoster(list);
     nmPost({ a: "kv_set", items: items }).then(function (j) {
       b.disabled = false;
       if (!j || !j.ok) { nmErr(j); return; }
