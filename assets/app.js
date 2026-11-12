@@ -2705,7 +2705,8 @@
     /* B안 (2026-11-12 "아이콘이 퍼지며 화면 들어가기 — B안으로"): 누른 칸 자리에서 다음 화면이 커지며 열림 → 그 칸 위치를 기억 */
     var zEl = a.closest(".th-tile, .card-link, .hw, .ex, .thero, .stamp, .ibstrip, .rp-home") || ((a.offsetHeight < 56) && a.closest(".panel, section")) || a;
     var zr = zEl.getBoundingClientRect();
-    if (zr.width > 8 && zr.height > 8) ZOOM = { l: zr.left, t: zr.top, w: zr.width, h: zr.height, at: Date.now() };
+    /* 커지며 열리기(B안)는 2026-11-12 아이폰에서 화면 잘림·어색한 전환 때문에 끔 → 앞으로 갈 땐 D안(차례 등장)만 */
+    void zr;
     if (NAVS.length > 20) NAVS.shift();
   }, true);
   function navBackDraw(view) {
@@ -2808,6 +2809,14 @@
       if (dEl && dEl.animate) { try { if (!matchMedia("(prefers-reduced-motion: reduce)").matches) dEl.animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], { duration: 280, easing: "ease-out" }); } catch (e) {} }
     }
   }
+  function vpFix() {   /* 아이폰이 페이지를 축소·확대한 채로 남아 있으면(화면 잘림) 뷰포트를 한 번 다시 맞춤 */
+    var vv = window.visualViewport, mt = document.querySelector('meta[name="viewport"]');
+    if (!vv || !mt || Math.abs(vv.scale - 1) < 0.02) return;
+    var c = mt.getAttribute("content");
+    mt.setAttribute("content", "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover");
+    setTimeout(function () { mt.setAttribute("content", c); }, 300);
+  }
+  window.addEventListener("hashchange", function () { setTimeout(vpFix, 500); });
   window.addEventListener("hashchange", route);
   route();
   cmemoFill();

@@ -1407,3 +1407,5 @@ a, button, [role="button"], label { -webkit-tap-highlight-color: transparent; }
    커지며 열리는 효과 중 잠깐이라도 칸이 화면 밖으로 나가면 아이폰이 페이지 폭을 넓혀 버려서 → 가로로 넘치는 건 전부 잘라 냄 */
 .wrap { overflow-x: clip; }
 body { touch-action: manipulation; }
+/* 칸 안에서 움직이는 빛·그라데이션이 칸 밖으로 새지 않게 (아이폰이 그걸 페이지 폭으로 잡지 않도록) */
+.thero, .stamp, .hw, .jpanel, .rp-frame, .ex, .ibstrip, .rp-home { contain: paint; }
