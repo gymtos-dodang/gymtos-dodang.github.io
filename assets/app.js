@@ -595,6 +595,26 @@
       '</svg><span><small>이번 달 출석률</small><b>' + m.rate + '<i>%</i></b></span></a>' +
       '<a class="hw col" href="#goal-badges"><small>연속 출석</small><b>' + s + '<i>회</i></b><span class="wk" aria-label="이번 주 출석">' + wk + '</span></a></div>';
   }
+  function homeInfo() {   /* 홈 작은 위젯 2칸 (2026-11-12 "공지·최근 복습지도 출석률 칸처럼"): 선생님 공지 / 최근 자세 복습지 */
+    var n = (M.notices || [])[0], f = M.forms[0], nNew = n && nUnseen().length > 0;
+    var bell = '<span class="hi-ic bellc' + (nNew ? ' new' : '') + '" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 6.5 2.5 8.5 2.5 8.5h-17S6 15.5 6 9"/><path d="M10 21h4"/></svg></span>';
+    var h = '<div class="hwid hinfo">';
+    h += '<a class="hw col hi" href="#notice"' + (n ? ' data-nk="' + esc(nKey(n)) + '"' : '') + '><span class="hi-top">' + bell + (nNew ? '<i class="hi-new">NEW</i>' : '<i class="hi-go">›</i>') + '</span>' +
+      '<small>선생님 공지' + (n && n.date ? ' · ' + String(n.date).slice(5).split("-").map(Number).join("월 ") + '일' : '') + '</small>' +
+      '<b class="hi-t">' + (n ? esc(n.title) : '아직 공지가 없어요') + '</b></a>';
+    if (f) {
+      var key = iconOf({ name: f.exercise }), ic = key !== "dumbbell" && window.EXI && EXI.has(key) ? img(key, "hi-ex", true) : '<img class="hi-ph" src="' + esc(f.dir) + 'poster.jpg" alt="" loading="lazy">';
+      h += '<a class="hw col hi" href="#form-' + esc(f.id) + '"><span class="hi-top"><span class="hi-ic" aria-hidden="true">' + ic + '</span>' + (formNew(f) ? '<i class="hi-new">NEW</i>' : '<i class="hi-go">›</i>') + '</span>' +
+        '<small>최근 자세 복습지 · ' + M.forms.length + '개</small><b class="hi-t">' + esc(f.exercise) + '</b></a>';
+    } else {
+      h += '<a class="hw col hi" href="#forms"><span class="hi-top"><span class="hi-ic bellc" aria-hidden="true">' + img("dumbbell", "hi-ex", true) + '</span><i class="hi-go">›</i></span><small>최근 자세 복습지</small><b class="hi-t">수업에서 배운 자세가 여기에 쌓여요</b></a>';
+    }
+    return h + '</div>';
+  }
+  document.addEventListener("click", function (e) {   /* 홈 공지 칸 → 그 공지로 바로 (반짝 표시) */
+    var a = e.target.closest && e.target.closest("a.hi[data-nk]");
+    if (a) pendingNotice = a.getAttribute("data-nk");
+  }, true);
   function attRefresh() {   /* 출석이 바뀌면 화면의 출석 부분만 다시 그림 */
     var b = document.getElementById("attBtn");
     if (b) { b.outerHTML = attCheckStrip(); setupAttCheck(); }
@@ -1528,15 +1548,7 @@
         '<div><small style="font-size:12px;color:var(--faint);font-weight:700">다음 PT 수업</small><b>' + esc(M.next_class) + '</b></div></div>';
     }
 
-    if (M.notices && M.notices.length) {
-      var n = M.notices[0];
-      h += '<section>' + head("", "선생님 공지", "", '<a class="more" href="#notice">전체 →</a>') + noticeCard(n) + '</section>';
-    }
-
-    h += '<section>' + head("", "최근 자세 복습지", "", '<a class="more" href="#forms">전체 →</a>');
-    h += M.forms.length ? '<div class="flist">' + M.forms.slice(0, 2).map(formCard).join("") + '</div>'
-      : '<div class="panel empty"><h3>아직 복습지가 없어요</h3><p>수업에서 배운 자세가 여기에 쌓여요</p></div>';
-    h += '</section>';
+    h += homeInfo();
     return h + remember();
   }
 
