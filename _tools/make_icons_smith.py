@@ -1,6 +1,6 @@
 """스미스 머신 아이콘 등 추가분 (2026-11-05, 최용민·고은성 그룹 PT): 스미스 벤치·로우·숄더, 스미스 슈러그, 밴드 푸쉬업
 python3 make_icons_smith.py <폴더> "#1F3864" [이름,이름]  — make_icons.py와 같은 그림 규칙, 새 아이콘만 저장 (세 번째 칸에 이름을 주면 그것만)
-2026-11-11 어시스트 친업(assisted_chin_up) · 2026-11-13 케이블 체스트 프레스(cable_chest_press) · 뉴텍 엠토처 시티드 로우(mtorture_row) 추가 — 남 "#1A1A1E" / 여 "#D6204F"
+2026-11-11 어시스트 친업(assisted_chin_up) · 2026-11-13 케이블 체스트 프레스(cable_chest_press) · 뉴텍 엠토처 시티드 로우(mtorture_row) · 핵프레스(hack_press) 추가 — 남 "#1A1A1E" / 여 "#D6204F"
 """
 import sys, math
 import make_icons as mi
@@ -187,9 +187,30 @@ def mtorture_row(c):
     c.arrow((W[0] + 30, W[1] + 14), (W[0] + 14, W[1] + 14))
 
 
+def hack_press(c):
+    """2026-11-13 핵프레스: 원판식, 등받이 의자에 앉아 앞쪽 기울어진 발판을 밀면 의자가 레일 따라 뒤로 밀려남"""
+    p = side((32, 32), 118, 112, arm=(-62, -10), leg=(38, -40, 70))
+    K, A, T = p["leg"]
+    floor(c, 4, 6, 94)
+    c.stroke([(8, 13), (62, 13)], 3, GRAY)
+    hb, sb = fk(p["H"], 208, 6.2), fk(p["S"], 208, 6.2)
+    pill(c, hb, sb, 5.2)
+    pill(c, (p["H"][0] - 9, p["H"][1] - 6.5), (p["H"][0] + 9, p["H"][1] - 6.5), 5)
+    c.stroke([(p["H"][0], p["H"][1] - 7), (p["H"][0] + 2, 13)], 3, GRAY)
+    pc = (p["H"][0] - 11, p["H"][1] - 9)
+    c.circle(pc, 7.2, fill=GRAY)
+    c.circle(pc, 2.4, fill=WHITE)
+    mid = ((A[0] + T[0]) / 2, (A[1] + T[1]) / 2)
+    pl = fk(mid, -20, 4.4)
+    pill(c, fk(pl, 70, 13), fk(pl, -110, 9), 4.6)
+    c.stroke([fk(pl, -110, 7), (pl[0] + 2, 4)], 3, GRAY)
+    draw_side(c, p)
+    c.arrow(fk(p["H"], 200, 14), fk(fk(p["H"], 200, 14), 200, 14))
+
+
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
        "smith_shrug": smith_shrug, "band_push_up": band_push_up,
-       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row}
+       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press}
 
 
 if __name__ == "__main__":
