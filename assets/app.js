@@ -1871,7 +1871,7 @@
       '<div class="keypoint"><small>KEY POINT</small><p>' + esc(f.key_point) + '</p></div></div>';
 
     h += '<section>' + head("01", "오늘 내 자세", "영상으로 확인해요") +
-      '<div class="player"><video id="main" poster="' + esc(D) + 'poster.jpg" autoplay muted loop playsinline webkit-playsinline preload="auto" data-src="' + esc(D) + 'form.mp4" data-gif="' + esc(D) + 'form.webp"></video>' +
+      '<div class="player"><video id="main" poster="' + esc(D) + 'poster.jpg" autoplay muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback x-webkit-airplay="deny" preload="auto" data-src="' + esc(D) + 'form.mp4" data-gif="' + esc(D) + 'form.webp"></video>' +
       '<img id="gifFallback" alt="오늘 수업 영상 (반복 재생)" hidden>' +
       '<span class="chip">▶ 오늘 수업 영상</span><button class="tapper" id="tap" type="button" aria-label="영상 재생 / 멈춤"></button>' +
       '<div class="paused-badge" id="pbadge" hidden></div></div>' +
@@ -1908,6 +1908,15 @@
     return h + remember();
   }
 
+  /* 앱을 나가거나 화면을 끌 때도 영상 멈춤 (아이폰이 재생 중인 영상을 PiP로 빼지 않게) */
+  document.addEventListener("visibilitychange", function () {
+    Array.prototype.forEach.call(document.querySelectorAll("#view video"), function (v) {
+      try {
+        if (document.hidden) { v.setAttribute("data-bg", v.paused ? "" : "1"); v.pause(); }
+        else if (v.getAttribute("data-bg") === "1") { v.removeAttribute("data-bg"); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      } catch (e) {}
+    });
+  });
   function setupPlayer() {
     var v = document.getElementById("main");
     if (!v) return;
@@ -3035,6 +3044,9 @@
        — 새로 그리면 아이폰이 그림·움직이는 아이콘을 처음부터 다시 칠하느라 한 순간 하얗게 비었음 */
     var curH0 = location.hash || "#home", prevH = route.lastH;
     if (prevH !== undefined && prevH !== curH0 && view.firstChild) {
+      /* 2026-11-13 "복습지 종목 들어갔다 나오면 화면 짤림": 떼어 둔 화면의 영상이 계속 재생돼서 아이폰이 PiP(옆에 회색 손잡이)로 빼고 화면 배율이 꼬였음
+         → 떼어 둘 땐 영상을 멈추고, 다시 붙일 때 이어서 재생 */
+      Array.prototype.forEach.call(view.querySelectorAll("video"), function (v) { try { v.setAttribute("data-was", v.paused ? "" : "1"); v.pause(); } catch (e) {} });
       var fr = document.createDocumentFragment(); while (view.firstChild) fr.appendChild(view.firstChild);
       VCACHE[prevH] = { fr: fr, tab: view.getAttribute("data-tab"), day: view.getAttribute("data-day"), at: Date.now(), sig: vSig() };
       Object.keys(VCACHE).forEach(function (k) { if (Date.now() - VCACHE[k].at > 180000) delete VCACHE[k]; });
@@ -3043,6 +3055,7 @@
     if (hit) {
       delete VCACHE[curH0];
       view.appendChild(hit.fr);
+      Array.prototype.forEach.call(view.querySelectorAll('video[data-was="1"]'), function (v) { try { var p = v.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} });
       var ob = view.querySelector("#navBack"); if (ob) ob.remove();
       view.setAttribute("data-tab", hit.tab || "home");
       if (hit.day) view.setAttribute("data-day", hit.day); else view.removeAttribute("data-day");
