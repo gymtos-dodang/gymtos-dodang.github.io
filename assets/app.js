@@ -82,6 +82,37 @@
     return '<img class="' + (cls || "icn") + '" src="' + iconSrc(key) + '" alt="" loading="lazy">';
   }
   document.documentElement.setAttribute("data-sex", M.sex === "F" ? "F" : "M");
+  /* 2026-11-13 회원별 테마 스킨 (data.js skin: "bunny" — 김지수님 토롱이). 기능은 그대로, 글꼴·색·꾸밈 그림만 얹음 */
+  var SKIN = String(M.skin || "");
+  if (SKIN) {
+    document.documentElement.setAttribute("data-skin", SKIN);
+    if (SKIN === "bunny" && !document.getElementById("skinFont")) {
+      var sfl = document.createElement("link"); sfl.id = "skinFont"; sfl.rel = "stylesheet";
+      sfl.href = "https://fonts.googleapis.com/css2?family=Jua&display=swap"; document.head.appendChild(sfl);
+    }
+  }
+  function skinDeco() {   /* 토롱이 그림을 정해진 칸에 하나씩 (이미 있으면 그대로) — 누르기·글자에는 영향 없음(pointer-events none) */
+    if (SKIN !== "bunny") return;
+    var T = BASE + "theme/bunny/";
+    function put(sel, cls, file) {
+      Array.prototype.forEach.call(document.querySelectorAll(sel), function (el) {
+        var f = typeof file === "function" ? file(el) : file, old = el.querySelector(":scope > .bny");
+        if (old && old.getAttribute("data-f") === f) return;
+        if (old) old.remove();
+        var im = document.createElement("img"); im.className = "bny " + cls; im.src = T + f; im.alt = ""; im.setAttribute("aria-hidden", "true"); im.setAttribute("data-f", f);
+        el.appendChild(im);
+      });
+    }
+    put(".stamp", "bny-stamp", function (el) { return el.classList.contains("on") ? "cheer.svg" : "stamp.svg"; });
+    put(".thero", "bny-lift", "lift.svg");
+    put(".tabs", "bny-peek", "peek.svg");
+    put(".hero", "bny-hero", "base.svg");
+  }
+  if (SKIN) {
+    var skinT = 0;
+    new MutationObserver(function () { if (!skinT) skinT = requestAnimationFrame(function () { skinT = 0; skinDeco(); }); })
+      .observe(document.documentElement, { childList: true, subtree: true });
+  }
 
   var DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
   var DAY_KO = { mon: "월", tue: "화", wed: "수", thu: "목", fri: "금", sat: "토", sun: "일" };
