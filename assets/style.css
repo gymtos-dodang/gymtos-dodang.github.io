@@ -1672,3 +1672,48 @@ html[data-skin="sheep"] .stamp::after { background: #FFE3C7; }
    내용 길이만큼(약 343px)으로 줄어든 채 남았음(flex 늘이기가 안 먹음) → 폭을 직접 100%로 박아 둠 */
 .wrap { width: 100%; box-sizing: border-box; }
 .wrap > .view { width: 100%; align-self: stretch; box-sizing: border-box; }
+
+/* ---- 루틴 탭 한눈에 (2026-11-14 장동욱 "1·2 항목 합치기, 아이콘 포함 종목만 스크롤 안 하게") ----
+   일주일 줄은 그날 칸 맨 위(.wk-cmp), 순서는 한 줄(.flow1), 종목 카드는 아이콘 옆에 이름·팁 한 줄·세트 칸(.ex-list.cmp) */
+.week.wk-cmp { gap: 4px; margin-bottom: 10px; }
+.wk-cmp .day-tile { padding: 6px 2px 5px; min-height: 0; gap: 1px; border-radius: 12px; }
+.wk-cmp .day-tile b { font-size: 14px; }
+.wk-cmp .day-tile > span { font-size: 9.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.wk-cmp .wk-ic { width: 24px; height: 24px; margin: 1px 0; border-radius: 6px; }
+.flow1 { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: var(--sub); margin-bottom: 10px; white-space: nowrap; }
+.flow1 span { background: var(--paper); border-radius: 99px; padding: 4px 10px; box-shadow: 0 1px 2px rgba(20, 20, 30, .05); }
+.flow1 b { color: var(--seal, var(--primary)); font-weight: 900; margin-right: 2px; }
+.flow1 i { font-style: normal; color: var(--faint); }
+.ex-list.cmp { gap: 8px; }
+.ex-list.cmp .ex { position: relative; padding: 10px 12px; gap: 6px; border-radius: 16px; }
+.ex-list.cmp .ex-top { gap: 10px; align-items: center; }
+.ex-list.cmp .ex-top > div { min-width: 0; flex: 1; }
+.ex-list.cmp .ex-ic { width: 56px; height: 56px; border-radius: 12px; align-self: flex-start; }
+.ex-list.cmp .ex-ic .icn { border-radius: 12px; }
+.ex-list.cmp .ex-ic .ex-no { width: 22px; height: 22px; font-size: 11.5px; left: -5px; top: -5px; }
+.ex-list.cmp .main-badge { height: 17px; font-size: 9.5px; padding: 0 6px; bottom: -6px; }
+.ex-list.cmp .ex h3 { font-size: 15px; padding-right: 64px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ex-list.cmp .ex .meta { display: none; }
+.ex-list.cmp .ex .tip { font-size: 12px; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ex-list.cmp .sets { display: flex; gap: 4px; margin-top: 6px; }
+.ex-list.cmp .set { flex: 1 1 0; min-width: 0; padding: 3px 2px; border-radius: 8px; line-height: 1.2; white-space: nowrap; overflow: hidden; }
+.ex-list.cmp .set small { display: none; }
+.ex-list.cmp .set b { font-size: 14px; display: inline; }
+.ex-list.cmp .set b i { font-size: 10px; }
+.ex-list.cmp .set > i { font-size: 10.5px; margin-left: 3px; }
+.ex-list.cmp .sets:has(.set:nth-child(5)) .set > i { display: block; margin-left: 0; }   /* 5세트 이상은 칸이 좁아서 두 줄 */
+.ex-list.cmp .ex-ic { width: 52px; height: 52px; }
+.ex-list.cmp .ex { padding: 9px 12px; }
+.ex-list.cmp .formlink { position: absolute; top: 9px; right: 10px; font-size: 11.5px; padding: 3px 9px; border-radius: 99px; background: color-mix(in srgb, var(--key) 10%, #fff); }
+/* 한 화면에 들어가게 더 줄임: 이름 옆에 팁(한 줄), 그 아래 세트 칸 */
+.ex-list.cmp { gap: 6px; }
+.ex-list.cmp .ex-top > div { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 6px; }
+.ex-list.cmp .ex h3 { flex: 0 1 auto; max-width: 100%; padding-right: 0; }
+.ex-list.cmp .ex .tip { flex: 1 1 0; min-width: 40px; margin-top: 0; }
+.ex-list.cmp .ex:has(.formlink) .ex-top > div { padding-right: 62px; }
+.ex-list.cmp .sets { flex-basis: 100%; margin-top: 5px; }
+.ex-list.cmp .ex { padding: 8px 10px; }
+.ex-list.cmp .ex-ic { width: 48px; height: 48px; }
+.wk-cmp .day-tile { padding: 5px 2px 4px; }
+.flow1 { margin-bottom: 8px; font-size: 11.5px; }
+.flow1 span { padding: 3px 9px; }

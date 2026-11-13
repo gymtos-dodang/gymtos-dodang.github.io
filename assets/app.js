@@ -2004,7 +2004,11 @@
       R.plan.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join("") + '</ul></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + esc(R.key_point) + '</p></div></div>';
 
-    h += '<section>' + (ROT ? head("01", "순서 한눈에", "DAY 1부터 순서대로, 쉬고 오면 다음 DAY") : head("01", "일주일 한눈에", "요일을 누르면 그날 운동이 나와요")) + '<div class="week" role="tablist">';
+    /* 2026-11-14 장동욱 "1·2 항목 합치기, 종목은 스크롤 없이 한눈에": 일주일 줄을 그날 운동 칸 안 맨 위로, 종목 카드는 작게(.ex-list.cmp) */
+    var d = dayByKey(sel);
+    h += '<section id="day">' + head("01", dayName(sel) + " " + (d ? d.part : "휴식"), sel === tk ? (ROT ? "오늘 할 차례" : "오늘") : (d && !d.rest ? d.en : ""),
+      ED && d && !d.rest ? '<button type="button" class="rtb sm" data-rt="day">✎ 이날 정보</button>' : '');
+    h += '<div class="week wk-cmp" role="tablist">';
     if (ROT) {
       rotKeys().forEach(function (k) {
         var d = dayByKey(k);
@@ -2020,11 +2024,7 @@
         img(dayIcon(d), "wk-ic", true) + '<span>' +
         esc(d ? d.part : "휴식") + '</span></a>';
     });
-    h += '</div></section>';
-
-    var d = dayByKey(sel);
-    h += '<section id="day">' + head("02", dayName(sel) + " " + (d ? d.part : "휴식"), sel === tk ? (ROT ? "오늘 할 차례" : "오늘") : (d && !d.rest ? d.en : ""),
-      ED && d && !d.rest ? '<button type="button" class="rtb sm" data-rt="day">✎ 이날 정보</button>' : '');
+    h += '</div>';
     if (!d || d.rest) {
       h += '<div class="rest-card"><b>쉬는 날</b>푹 쉬고 잘 먹기! 근육은 쉬는 동안 자라요</div>';
       if (ED && !ROT) h += '<button type="button" class="rtadd" data-rt="work">+ 이날 운동 넣기</button>';
@@ -2036,10 +2036,8 @@
       h += '<p class="note" style="margin:0 0 12px">' + esc(d.note || "이번 주에 아쉬웠던 부위 하나를 골라 그 요일 루틴 그대로 해요") + '</p>' + pickList(d) +
         (d.cardio && R.cardio ? '<div class="ex-list" style="margin-top:12px"><div class="ex cardio"><div class="ex-top"><span class="ex-ic">' + img("treadmill") + '</span><div><h3>마무리 유산소 ' + R.cardio.minutes + '분</h3><div class="tip">' + esc(R.cardio.options) + '</div></div></div></div></div>' : '');
     } else {
-      h += '<div class="flow"><div>' + img("foam_roller", "fl-ic") + '<small>STEP 01</small><b>스트레칭</b><i>폼롤러 10분</i></div><span>›</span>' +
-        '<div>' + img("dumbbell", "fl-ic") + '<small>STEP 02</small><b>웨이트</b><i>' + d.items.length + '종목</i></div><span>›</span>' +
-        '<div>' + img("treadmill", "fl-ic") + '<small>STEP 03</small><b>유산소</b><i>' + (d.cardio && R.cardio ? R.cardio.minutes + '분' : '이날은 없음') + '</i></div></div>';
-      h += '<div class="ex-list">' + d.items.map(function (it, i) {
+      h += '<div class="flow1"><span><b>①</b> 스트레칭 10분</span><i>›</i><span><b>②</b> 웨이트 ' + d.items.length + '종목</span><i>›</i><span><b>③</b> 유산소 ' + (d.cardio && R.cardio ? R.cardio.minutes + '분' : '없음') + '</span></div>';
+      h += '<div class="ex-list cmp">' + d.items.map(function (it, i) {
         var main = it.tag === "메인";
         var sets = it.sets.map(function (s, j) {
           var reps = typeof s[0] === "string" ? esc(s[0]) : s[0] + '<i>회</i>';   /* "30초" 같은 글자도 됨 */
@@ -2049,8 +2047,8 @@
         return '<div class="ex' + (main ? ' main' : '') + (it.tag === "워밍업" ? ' t-warm' : it.tag === "선행" ? ' t-pre' : '') + '"><div class="ex-top"><span class="ex-ic">' + img(iconOf(it)) + '<span class="ex-no">' + (i + 1) + '</span>' +
           (main ? '<span class="main-badge">메인</span>' : '') + '</span><div>' +
           '<h3>' + esc(it.name) + '</h3><div class="meta">' + esc(it.en) + ' ' + tagChip(it.tag) + '</div>' +
-          '<div class="tip">' + esc(it.tip) + '</div></div></div><div class="sets">' + sets + '</div>' +
-          (itemForm(it) ? '<a class="formlink" href="#form-' + esc(itemForm(it).id) + '">▶ 자세 복습지 보기</a>' : '') + (ED ? rtItemCtl(i, d.items.length) : '') + '</div>';
+          '<div class="tip">' + esc(it.tip) + '</div><div class="sets">' + sets + '</div></div></div>' +
+          (itemForm(it) ? '<a class="formlink" href="#form-' + esc(itemForm(it).id) + '">▶ 복습지</a>' : '') + (ED ? rtItemCtl(i, d.items.length) : '') + '</div>';
       }).join("");
       if (ED) h += '<button type="button" class="rtadd" data-rt="add">+ 종목 추가</button>';
       if (d.cardio && R.cardio) {
@@ -2060,7 +2058,7 @@
       h += '</div>' + (R.note ? '<p class="note">' + esc(R.note) + '</p>' : '');
     }
     h += '</section>';
-    if (!ED) h += muscleSection("03");   /* 이번 달 근육 지도 (2026-11-08 "루틴 항목에 넣는 게 컨셉에 맞지") — 고치는 중엔 숨김 */
+    if (!ED) h += muscleSection("02");   /* 이번 달 근육 지도 (2026-11-08 "루틴 항목에 넣는 게 컨셉에 맞지") — 고치는 중엔 숨김 */
     return h + remember();
   }
 
