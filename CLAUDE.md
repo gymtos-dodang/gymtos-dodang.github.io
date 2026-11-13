@@ -38,7 +38,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 | 회원 | 주소 | 성별 |
 |---|---|---|
 | 최지훈 | m/jihun-g9kgdo/ | M |
-| 서경진 | m/kyeongjin-bkwzy9/ | F |
+| 서경진 | m/kyeongjin-bkwzy9/ | F (복습지 1개 — 11-13 핵프레스) |
 | 김지수 | m/jisu-480xne/ | F (복습지 8개 — 11-12 촬영: 펙덱 플라이·케이블 체스트 프레스·체스트 프레스 머신) |
 | 김태영 | m/taeyoung-k52qnx/ | M |
 | 임애란 | m/aeran-bsq16i/ | F (순환 루틴) |
@@ -147,6 +147,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
   - 해머스트렝스 로우로우(low_row) = 가슴 패드 + 위에서 내려온 지렛대(원판)를 낮은 곳에서 골반 쪽으로. 뉴텍 버티컬 풀다운(vertical_pulldown) = 옆모습, 머리 위 손잡이를 당기면 뒤쪽 원판이 올라감.
   - **"뉴텍 엠토처 시티드 로우"** (2026-11-13 정미경님 영상) = 엠토처(M TORTURE) 원판식 시티드 로우 — 가슴 패드 없이 앉아 발판에 발 대고 앞 손잡이를 옆구리로 당김. 아이콘 mtorture_row(옆모습, 패드 없는 의자 + 기울어진 발판 + 앞 바닥 축 지렛대 — exicons + PNG `_tools/make_icons_smith.py <폴더> <색> mtorture_row`), RT_CAT 등·RT_EN·ICON_BY_NAME에 추가.
   - **"케이블 체스트 프레스"** (2026-11-13 김지수님 영상) = 새 종목: 케이블을 등지고 서서 가슴 높이에서 앞으로 밀어 모음. 아이콘 cable_chest_press(옆모습, 뒤 케이블 기둥 + 한 발 앞으로 서서 가슴 높이로 밀기 — exicons + PNG `_tools/make_icons_smith.py <폴더> <색> cable_chest_press`), RT_CAT 가슴·RT_EN·ICON_BY_NAME에 추가.
+  - **"핵프레스"** (2026-11-13 서경진님 영상, 장동욱 명명) = 앉아서 등 패드에 기대고 발판을 미는 원판식 기구(의자가 원판과 같이 밀려남). 아이콘은 leg_press 그대로 씀, RT_CAT 하체·RT_EN "Hack Press"·MG_RULES(허벅지·엉덩이)에 추가. 루틴의 "레그프레스"와는 다른 이름이라 자동 연결 안 됨 — 같은 기구로 쓰면 복습지에 also.
   - "머신 인클라인 프레스" → **"인클라인 프레스 머신"**으로 이름 변경(회원 data.js), 아이콘 incline_machine_press는 등받이·상체 **45도**, 손잡이를 등받이와 직각으로 밀어 올림(팔이 몸통 앞을 지나서 자극 부위를 팔 아래에 그림 — bones 안 {hlHere:1}).
   - **"뉴텍 체스트 프레스 머신"** (2026-11-10 어순래님 영상) = 도당점 뉴텍은 **누워서 미는 라잉 방식** → 아이콘 lying_chest_press(벤치에 누움 + 머리 뒤 기둥에서 내려온 지렛대 손잡이를 가슴 위로). 그냥 "체스트 프레스(머신)"은 앉아서 미는 chest_press 그대로.
   - **"어시스트 친업"** (2026-11-11 최지훈님 영상) = 새 종목: 무릎 받침에 무릎 꿇고 머리 위 손잡이로 몸을 끌어올림 → 아이콘 assisted_chin_up(앞모습, exicons + PNG `_tools/make_icons_smith.py <폴더> <색> assisted_chin_up`), RT_CAT 등·RT_EN·MG_RULES(친업)에 추가.
