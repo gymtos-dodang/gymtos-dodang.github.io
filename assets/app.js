@@ -2044,7 +2044,7 @@
           var kg = s[1] == null ? '맨몸' : s[1] + 'kg';                              /* null = 맨몸 */
           return '<div class="set"><small>' + (j + 1) + '세트</small><b>' + reps + '</b><i>' + kg + '</i></div>';
         }).join("");
-        return '<div class="ex' + (main ? ' main' : '') + (it.tag === "워밍업" ? ' t-warm' : it.tag === "선행" ? ' t-pre' : '') + '"><div class="ex-top"><span class="ex-ic">' + img(iconOf(it)) + '<span class="ex-no">' + (i + 1) + '</span>' +
+        return '<div class="ex' + (main ? ' main' : '') + (it.tag === "워밍업" ? ' t-warm' : it.tag === "선행" ? ' t-pre' : '') + '"' + (ED ? '' : ' data-exi="' + i + '" role="button" tabindex="0" aria-label="' + esc(it.name) + ' 자세히 보기"') + '><div class="ex-top"><span class="ex-ic">' + img(iconOf(it)) + '<span class="ex-no">' + (i + 1) + '</span>' +
           (main ? '<span class="main-badge">메인</span>' : '') + '</span><div>' +
           '<h3>' + esc(it.name) + '</h3><div class="meta">' + esc(it.en) + ' ' + tagChip(it.tag) + '</div>' +
           '<div class="tip">' + esc(it.tip) + '</div><div class="sets">' + sets + '</div></div></div>' +
@@ -2061,6 +2061,61 @@
     if (!ED) h += muscleSection("02");   /* 이번 달 근육 지도 (2026-11-08 "루틴 항목에 넣는 게 컨셉에 맞지") — 고치는 중엔 숨김 */
     return h + remember();
   }
+
+  /* ---- 종목 자세히 보기 (2026-11-14 장동욱 "종목을 누르면 더 정확하게 + 루틴이랑 복습지를 한번에 합쳐서 부드럽게")
+     루틴 종목 카드를 누르면 아래에서 창이 올라옴: 큰 움직이는 아이콘·세트표·선생님 팁 + (연결된 복습지가 있으면) 영상·KEY POINT·O/X → "복습지 전체 보기" */
+  function exSheet(it, no) {
+    var f = itemForm(it), D = f ? f.dir : "";
+    var sets = it.sets.map(function (s, j) {
+      var reps = typeof s[0] === "string" ? esc(s[0]) : s[0] + '<small>회</small>';
+      return '<div class="xs-set"><span>' + (j + 1) + '세트</span><b>' + reps + '</b><em>' + (s[1] == null ? '맨몸' : s[1] + '<small>kg</small>') + '</em></div>';
+    }).join("");
+    var h = '<div class="xs-grab" aria-hidden="true"></div><button type="button" class="xs-x" data-xclose aria-label="닫기">×</button>' +
+      '<div class="xs-head"><span class="xs-ic' + (it.tag === "메인" ? ' main' : '') + '">' + img(iconOf(it)) + '</span><div>' +
+      '<small>' + no + '번째 종목' + (it.tag ? ' · ' + esc(it.tag) : '') + '</small><h2>' + esc(it.name) + '</h2><div class="xs-en">' + esc(it.en || "") + '</div></div></div>' +
+      '<div class="xs-sets' + (it.sets.length >= 5 ? ' many' : '') + '">' + sets + '</div>' +
+      (it.tip ? '<div class="xs-tip"><b>선생님 팁</b>' + esc(it.tip) + '</div>' : '');
+    if (f) {
+      h += '<div class="xs-form"><div class="xs-fh"><b>자세 복습지</b><span>' + esc(f.date) + ' 수업</span></div>' +
+        '<div class="xs-vid"><video poster="' + esc(D) + 'poster.jpg" src="' + esc(D) + 'form.mp4" autoplay muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback x-webkit-airplay="deny" preload="metadata"></video></div>' +
+        '<div class="xs-kp"><small>KEY POINT</small>' + esc(f.key_point) + '</div>' +
+        '<div class="xs-ox"><div class="o"><b>이렇게</b><ul>' + f.do.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") + '</ul></div>' +
+        '<div class="x"><b>이건 피하기</b><ul>' + f.dont.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") + '</ul></div></div>' +
+        '<a class="xs-go" href="#form-' + esc(f.id) + '" data-xgo>자극 부위 · 동작 3단계까지 전체 보기 →</a></div>';
+    }
+    var bg = document.createElement("div");
+    bg.className = "xsheet-bg";
+    bg.innerHTML = '<div class="xsheet" role="dialog" aria-modal="true" aria-label="' + esc(it.name) + '">' + h + '</div>';
+    document.body.appendChild(bg);
+    document.documentElement.classList.add("rts-open");
+    var sh = bg.firstChild;
+    requestAnimationFrame(function () { bg.classList.add("on"); });
+    var v = sh.querySelector("video"); if (v) { try { var p = v.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+    function close(nav) {
+      if (bg.classList.contains("off")) return;
+      if (v) try { v.pause(); } catch (e) {}
+      bg.classList.add("off"); bg.classList.remove("on");
+      setTimeout(function () { bg.remove(); if (!document.querySelector(".rtsheet-bg, .xsheet-bg")) document.documentElement.classList.remove("rts-open"); }, nav ? 0 : 280);
+    }
+    bg.addEventListener("click", function (e) {
+      if (e.target === bg || e.target.closest("[data-xclose]")) close();
+      else if (e.target.closest("[data-xgo]")) close(true);
+    });
+    /* 위쪽(손잡이·제목)을 끌어내리면 닫힘 */
+    var y0 = null, dy = 0;
+    sh.addEventListener("touchstart", function (e) { if (sh.scrollTop > 0) { y0 = null; return; } y0 = e.touches[0].clientY; dy = 0; }, { passive: true });
+    sh.addEventListener("touchmove", function (e) { if (y0 == null) return; dy = e.touches[0].clientY - y0; if (dy > 0) { sh.style.transition = "none"; sh.style.transform = "translateY(" + dy + "px)"; } }, { passive: true });
+    sh.addEventListener("touchend", function () { if (y0 == null) return; y0 = null; sh.style.transition = ""; sh.style.transform = ""; if (dy > 90) close(); });
+  }
+  document.addEventListener("click", function (e) {
+    var c = e.target.closest && e.target.closest(".ex-list.cmp .ex[data-exi]");
+    if (!c || e.target.closest("a, button")) return;
+    var d = dayByKey(view.getAttribute("data-day")), it = d && d.items && d.items[+c.getAttribute("data-exi")];
+    if (it) exSheet(it, +c.getAttribute("data-exi") + 1);
+  });
+  document.addEventListener("keydown", function (e) {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".ex-list.cmp .ex[data-exi]")) { e.preventDefault(); e.target.click(); }
+  });
 
   /* ---------------- 식단 */
   /* M.diet: null = 준비 중 / 문자열 = 그대로 / 객체 = 종이 다이어트 식단표(2026-10-21 표준 틀)와 같은 구성 (2026-11-05) */
