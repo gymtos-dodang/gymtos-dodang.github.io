@@ -221,7 +221,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 ## 회원별 테마 스킨 (2026-11-13 장동욱 "지수님만 귀여운 컨셉 — 기능은 해치지 않고 테마만 입힌다는 느낌")
 - data.js `skin: "bunny"` → html[data-skin="bunny"] (지금 김지수님만). 오리지널 마스코트 **토롱이**(한쪽 귀는 서고 한쪽은 접힌 토끼 + 빨간 헤어밴드 + 덤벨) — 치이카와 등 남의 캐릭터를 닮게 그리지 말 것(장동욱이 원했지만 거절함).
 - 바꾸는 것만: 제목 글꼴 주아(Jua, Google Fonts — app.js가 skinFont 링크 추가), 바탕 #FFF4F6, 칸 테두리 연분홍 2px, 출석 도장 칸 분홍 점선 + 마스킹테이프(›는 숨김), 토롱이 그림(assets/theme/bunny/*.svg — 출석 도장 칸 stamp/찍으면 cheer, 오늘 운동 카드 lift, 탭 맨 위 큰 카드(.hero) base, 아래 탭 위 빼꼼 peek). 칸 구조·버튼·움직임·주소는 그대로.
-- 코드 app.js SKIN·skinDeco(MutationObserver로 칸이 다시 그려져도 그림 다시 붙임, img.bny pointer-events none), style.css 맨 아래 "회원별 테마 스킨" 블록. 시안: Claude 디자인 캔버스 "지수님 토끼 테마 시안". 다른 회원에게 켜려면 data.js에 skin 한 줄.
+- 코드 app.js SKIN·skinDeco(MutationObserver로 칸이 다시 그려져도 그림 다시 붙임, img.bny pointer-events none), style.css 맨 아래 "회원별 테마 스킨" 블록. 시안: Claude 디자인 캔버스 "지수님 토끼 테마 시안". 다른 회원에게 켜려면 data.js에 skin 한 줄. (2026-11-13 "귀 짤림·출석 달력 간격": 토롱이 SVG viewBox를 위로 8 넓혀 귀가 안 잘리게, 연분홍 테두리는 바깥 칸에만(.panel 속 .panel 제외). 출석 달력 동그라미는 모든 회원 칸의 86%로 줄여 위아래·좌우 간격을 같게.)
 
 ## 앱으로 설치 안내 (2026-11-12 장동욱 "회원들이 아이폰/갤럭시 주소 어플화할 수 있게 튜토리얼")
 - 회원 노트 #app (회원에게 보낼 링크 = `https://gymtos-dodang.github.io/m/<주소>/#app`). 기기·브라우저를 알아서 골라(아이폰 / 갤럭시·크롬 / 삼성 인터넷 칩으로 바꾸기) 단계마다 작은 폰 그림 + 누를 곳에 빨간 동그라미 깜빡. 4단계 끝은 홈 화면에 성별 앱 아이콘.

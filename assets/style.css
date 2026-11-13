@@ -1638,7 +1638,8 @@ html[data-skin="bunny"] .view h1, html[data-skin="bunny"] .view h2, html[data-sk
 html[data-skin="bunny"] .st-txt b, html[data-skin="bunny"] .thero b, html[data-skin="bunny"] .thero h2, html[data-skin="bunny"] .thero h3,
 html[data-skin="bunny"] .hw b, html[data-skin="bunny"] .hero-l h1, html[data-skin="bunny"] .rh-t b {
   font-family: "Jua", "Pretendard", system-ui, sans-serif; font-weight: 400; letter-spacing: 0; }
-html[data-skin="bunny"] .view .panel, html[data-skin="bunny"] .view .card, html[data-skin="bunny"] .view .hw, html[data-skin="bunny"] .view .hinfo > *,
+/* 테두리는 바깥 칸에만 — 칸 안의 칸(출석 게이지·달력 같은 .panel 속 .panel)엔 안 씌움 (2026-11-13 "출석달력 간격 안 맞음") */
+html[data-skin="bunny"] .view .panel:not(.panel .panel), html[data-skin="bunny"] .view .hw, html[data-skin="bunny"] .view .hinfo > *,
 html[data-skin="bunny"] .view .ex, html[data-skin="bunny"] .view .card-link { border: 2px solid #FCE1E8; box-shadow: 0 8px 18px -14px rgba(184, 50, 90, .35); }
 /* 출석 도장: 분홍 점선 + 위 마스킹테이프, 오른쪽 › 대신 토롱이 */
 html[data-skin="bunny"] .stamp { border: 2px dashed #F3B5C4; position: relative; padding-right: 74px; }
@@ -1655,3 +1656,7 @@ html[data-skin="bunny"] .hero { position: relative; }
 @keyframes bnyHop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); } 60% { transform: translateY(0); } }
 @keyframes bnyBob { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-3px) rotate(3deg); } }
 @media (prefers-reduced-motion: reduce) { .bny-stamp, .bny-lift { animation: none; } }
+
+/* 출석 달력 동그라미: 칸을 꽉 채우던 것 → 칸의 86%로, 위아래·좌우 간격 똑같이 (2026-11-13 "높낮이 간격 전체적으로 안 맞음") */
+.cal-grid { gap: 2px; }
+.cal-grid .cd { width: 86%; justify-self: center; align-self: center; }
