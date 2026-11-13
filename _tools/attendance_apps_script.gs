@@ -180,6 +180,7 @@ function doGet(e) {
 
   if (p.a === 'inbody') return json_({ ok: true, inbody: ibList_(m) });
   if (p.a === 'bn') return json_({ ok: true, bnotices: bnList_() });
+  if (p.a === 'all') return json_({ ok: true, all: allFor_(String(p.ms || '')) });   // 2026-11-13 선생님 페이지: 회원 n명을 요청 1번으로
   if (p.a === 'inbody_img') {
     const r = ibRow_(ibSheet_(), m, String(p.id || ''));
     if (!r || !r.photo) return json_({ ok: false, error: 'photo' });
@@ -235,6 +236,27 @@ function doGet(e) {
   try { bnotices = bnList_(); } catch (err) {}
   try { kv = kvFor_(m); } catch (err) {}
   return json_({ ok: true, days: days, routine: routine, bnotices: bnotices, kv: kv });
+}
+
+/* 선생님 페이지용: 회원 여러 명의 출석·폰 루틴·저장소를 시트 한 번씩만 읽어서 */
+function allFor_(ms) {
+  const list = ms.split(',').map(function (x) { return x.trim(); }).filter(memberOk_).slice(0, 80);
+  const out = {}, want = {};
+  list.forEach(function (m) { want[m] = 1; out[m] = { days: {}, routine: null, kv: {} }; });
+  const a = sheet_().getDataRange().getValues();
+  for (let i = 1; i < a.length; i++) { const m = a[i][0]; if (want[m]) out[m].days[txt_(a[i][2], 'yyyy-MM-dd')] = txt_(a[i][3], 'HH:mm'); }
+  try {
+    const r = rtMain_().getDataRange().getValues();
+    for (let i = 1; i < r.length; i++) { const m = r[i][0]; if (want[m] && !out[m].routine) { try { out[m].routine = JSON.parse(String(r[i][3])); } catch (e) {} } }
+  } catch (e) {}
+  try {
+    const all = kvAll_();
+    Object.keys(all).forEach(function (k) {
+      const mm = /^(?:pub:m|mw):([^:]+):/.exec(k);
+      if (mm && want[mm[1]]) out[mm[1]].kv[k] = all[k];
+    });
+  } catch (e) {}
+  return out;
 }
 
 /* 결과지 사진 → 글자 (구글 드라이브 OCR: 사진을 구글 문서로 바꿔 글자만 읽고 바로 휴지통) */

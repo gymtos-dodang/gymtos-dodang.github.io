@@ -17,8 +17,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <script>/* 페이지 넘어갈 때 부드럽게 (2026-11-12) */try{if(localStorage.getItem("ptcoach")||sessionStorage.getItem("ptcoach"))document.documentElement.classList.add("nosp")}catch(e){}addEventListener("pagereveal",function(e){if(!e.viewTransition)return;var d=null;try{d=sessionStorage.getItem("vtdir");sessionStorage.removeItem("vtdir")}catch(x){}var n=window.navigation&&navigation.activation;if(d==="back"||(d!=="fwd"&&n&&n.navigationType==="traverse"))document.documentElement.classList.add("vt-back");e.viewTransition.finished.then(function(){document.documentElement.classList.remove("vt-back")},function(){})});</script>
-<link rel="stylesheet" href="/assets/style.css?v=2611131202">
-<script src="/assets/site.js?v=2611131202"></script>
+<link rel="stylesheet" href="/assets/style.css?v=2611131209">
+<script src="/assets/site.js?v=2611131209"></script>
 <style>
 .wrap { padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
 .sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -465,7 +465,7 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   </div>
 </aside>
 <script src="members.js"></script>
-<script src="/assets/memo.js?v=2611131202"></script>
+<script src="/assets/memo.js?v=2611131209"></script>
 <script>
 (function () {
   "use strict";
@@ -525,7 +525,7 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     for (var i = 0; i < R.days.length; i++) if (R.days[i].day === key) return !!R.days[i].rest;
     return false;
   }
-  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611131202) */
+  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611131209) */
   var MEMO = null;
   function memoRow(slug, name) {
     if (!window.PTMemo || !bnKey()) return "";
@@ -884,7 +884,7 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
           if (navigator.share) navigator.share({ title: name + " 회원님 PT 노트", text: txt, url: url }).catch(function () {});
           else if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { bnToast("주소를 복사했어요"); });
         });
-        render();
+        RENDERING = 0; render();
       });
     }).catch(function () { m.textContent = "저장하지 못했어요 — 인터넷 연결을 확인하고 다시 눌러 주세요"; })
       .then(function () { btn.disabled = false; btn.textContent = nmEditing ? "고친 내용 저장" : "PT 노트 만들기"; });
@@ -902,7 +902,7 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     nmPost({ a: "kv_set", items: items }).then(function (j) {
       b.disabled = false;
       if (!j || !j.ok) { nmErr(j); return; }
-      NM = list; nmDrawList(); nmHide(); bnToast(d.name + " 회원님 노트를 지웠어요"); render();
+      NM = list; nmDrawList(); nmHide(); bnToast(d.name + " 회원님 노트를 지웠어요"); RENDERING = 0; render();
     }).catch(function () { b.disabled = false; document.getElementById("nmMsg").textContent = "지우지 못했어요 — 다시 눌러 주세요"; });
   });
 
@@ -978,56 +978,106 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     document.getElementById("hello").innerHTML = esc(first) + " 쌤,<br>" + g;
   })();
 
-  function render() {
+  /* 2026-11-13 "회원들 불러오는 시간 최적화":
+     ① 지난번 화면(회원·출석)을 폰에 기억해 두었다가 열자마자 바로 그림(SNAP) → 새 기록은 뒤에서 받아 조용히 바꿈
+     ② 출석 기록 받기를 data.js·새 회원 목록 받기와 동시에 시작(예전엔 다 받은 뒤에 시작)
+     ③ 창고에 "한 번에 다 받기"(a=all)가 있으면 회원 n명을 요청 1번으로 — 없으면(옛 창고) 회원마다 따로 받기 */
+  var SNAP_K = "ptcoach:snap", RENDERING = 0, LAST_R = 0;
+  function slimM(M) {   /* 폰에 기억할 땐 화면에 쓰는 것만 */
+    return { name: M.name, sex: M.sex, goal: M.goal, since: M.since, journey: M.journey, routine: M.routine, forms: (M.forms || []).map(function () { return 0; }), _dyn: M._dyn, _rted: M._rted };
+  }
+  function snapSave(rows) {
+    try { localStorage.setItem(SNAP_K, JSON.stringify({ at: Date.now(), d: today, rows: rows.map(function (r) { return { slug: r.slug, M: slimM(r.M), days: r.days || {} }; }) })); } catch (e) {}
+  }
+  function snapLoad() { try { var o = JSON.parse(localStorage.getItem(SNAP_K) || "null"); return o && Array.isArray(o.rows) ? o : null; } catch (e) { return null; } }
+  function drawAll(rows, final) {   /* 타일·오늘 출석 카드·오늘 수업한 회원·출석왕 한꺼번에 */
     var box = document.getElementById("list");
+    ROWS = {}; rows.forEach(function (r) { ROWS[r.slug] = r; });
+    box.innerHTML = rows.map(function (r) { return tile(r.slug, r.M, r.days || null); }).join("");
+    document.getElementById("sAll").textContent = rows.length;
+    document.getElementById("sub").textContent = "담당 회원 " + rows.length + "명";
+    fsum("list", rows.length + "명");
+    var onN = 0, restN = 0, have = 0, mon = 0, ym = today.slice(0, 7);
+    rows.forEach(function (r) {
+      if (!r.days) return; have++;
+      if (r.days[today] != null) onN++; else if (isRestToday(r.M)) restN++;
+      Object.keys(r.days).forEach(function (k) { if (k.slice(0, 7) === ym) mon++; });
+    });
+    document.getElementById("sOn").textContent = onN;
+    document.getElementById("sWait").textContent = final || have === rows.length ? (rows.length - onN - restN) : "…";
+    document.getElementById("sRest").textContent = restN;
+    document.getElementById("sMon").textContent = mon;
+    ringSet(onN, rows.length);
+    renderToday(rows);
+    if (have) renderRank(rows);
+    paneMark();
+    applyFilter();
+  }
+  function applyAtt(r, j) {
+    if (r.M._dyn && j && j.ok && j.kv && j.kv["pub:m:" + r.slug + ":member"]) { var dm = j.kv["pub:m:" + r.slug + ":member"]; dm._dyn = 1; r.M = dm; }
+    if (j && j.ok && j.routine && j.routine.routine && j.routine.base === rtBase(r.M.routine)) { r.M.routine = j.routine.routine; r.M._rted = 1; }
+    if (j && j.ok && j.kv) r.kv = j.kv;
+    r.days = j && j.ok ? (j.days || {}) : (r.days || {});
+  }
+  function attOne(slug) { return fetch(API + "?m=" + encodeURIComponent(slug), { cache: "no-store" }).then(function (x) { return x.json(); }).catch(function () { return null; }); }
+  function attAll(slugs) {   /* 창고 a=all (한 번에) → 안 되면 null. 옛 창고면 6시간 동안은 바로 회원마다 받기 */
+    var NA = "ptcoach:noall", na = 0; try { na = +localStorage.getItem(NA) || 0; } catch (e) {}
+    if (Date.now() - na < 6 * 3600000) return Promise.resolve(null);
+    return fetch(API + "?m=coach&a=all&ms=" + encodeURIComponent(slugs.join(",")), { cache: "no-store" }).then(function (x) { return x.json(); })
+      .then(function (j) {
+        var ok = j && j.ok && j.all;
+        try { if (ok) localStorage.removeItem(NA); else if (j && j.ok) localStorage.setItem(NA, String(Date.now())); } catch (e) {}
+        return ok ? j.all : null;
+      }).catch(function () { return null; });
+  }
+  function render(force) {
+    if (RENDERING) return; RENDERING = 1; LAST_R = Date.now();
     if (window.PTMemo) window.PTMemo.load().then(function (o) { if (o) { MEMO = o; memoRefresh(); } });
+    /* ① 기억해 둔 화면 먼저 (오늘 날짜 기록이면 출석까지, 어제 것이면 회원 칸만) */
+    var snap = snapLoad();
+    if (snap && !document.getElementById("list").children.length) {
+      var srows = snap.rows.map(function (x) { return { slug: x.slug, M: x.M, days: snap.d === today ? x.days : null, _snap: 1 }; });
+      drawAll(srows, false);
+      if (isPad() && !paneSlug) { var last0 = ""; try { last0 = sessionStorage.getItem("ptpane") || ""; } catch (e) {} if (last0) paneOpen(last0); }
+    }
+    /* ② 출석: data.js 기다리지 않고 바로 시작 */
+    var known = LIST.slice(); if (snap) snap.rows.forEach(function (x) { if (known.indexOf(x.slug) < 0) known.push(x.slug); });
+    var attP = attAll(known), single = {};
+    function attFor(slug) {
+      return attP.then(function (all) {
+        if (all && all[slug]) return { ok: true, days: all[slug].days, routine: all[slug].routine, kv: all[slug].kv };
+        return single[slug] || (single[slug] = attOne(slug));
+      });
+    }
     Promise.all(LIST.map(function (slug) {
-      return loadMember(slug).then(function (M) { return { slug: slug, M: M }; }).catch(function () { return null; });
+      return loadMember(slug).then(function (M) { return { slug: slug, M: M }; }).catch(function () {
+        var o = snap && snap.rows.filter(function (x) { return x.slug === slug; })[0]; return o ? { slug: slug, M: o.M } : null;
+      });
     }).concat([nmLoad()])).then(function (rows) {
       var dyn = rows.pop() || [];
       rows = rows.filter(Boolean).concat(dyn.filter(function (d) { return LIST.indexOf(d.slug) < 0; }).map(function (d) {
         return { slug: d.slug, M: { name: d.name, sex: d.sex, goal: d.goal || "", journey: d.start ? { start: d.start } : null, routine: null, forms: [], _dyn: 1 } };
       }));
-      document.getElementById("sAll").textContent = rows.length;
-      document.getElementById("sub").textContent = "담당 회원 " + rows.length + "명";
-      ROWS = {}; rows.forEach(function (r) { ROWS[r.slug] = r; });
-      box.innerHTML = rows.map(function (r) { return tile(r.slug, r.M, null); }).join("");
-      fsum("list", rows.length + "명");
+      /* 기억해 둔 출석을 새 줄에 잠깐 옮겨 둠(받기 전까지 빈칸 안 되게) */
+      if (snap && snap.d === today) rows.forEach(function (r) { var o = snap.rows.filter(function (x) { return x.slug === r.slug; })[0]; if (o) r.days = o.days; });
+      drawAll(rows, false);
       if (isPad() && !paneSlug) { var last = ""; try { last = sessionStorage.getItem("ptpane") || ""; } catch (e) {} if (last) paneOpen(last); }
-      paneMark();
-      applyFilter();
-      var done = 0, onN = 0, restN = 0;
-      rows.forEach(function (r, i) {
-        fetch(API + "?m=" + encodeURIComponent(r.slug), { cache: "no-store" }).then(function (x) { return x.json(); })
-          .then(function (j) {
-            /* 선생님이 폰에서 고친 루틴(창고)이 있으면 그걸로 — 쉬는 날·버전도 그대로 맞춤 */
-            if (r.M._dyn && j && j.ok && j.kv && j.kv["pub:m:" + r.slug + ":member"]) { var dm = j.kv["pub:m:" + r.slug + ":member"]; dm._dyn = 1; r.M = dm; }
-            if (j && j.ok && j.routine && j.routine.routine && j.routine.base === rtBase(r.M.routine)) { r.M.routine = j.routine.routine; r.M._rted = 1; }
-            if (j && j.ok && j.kv) r.kv = j.kv;
-            return j && j.ok ? j.days : {};
-          }).catch(function () { return {}; })
-          .then(function (days) {
-            r.days = days;
-            var el = box.children[i]; if (el) el.outerHTML = tile(r.slug, r.M, days);
-            paneMark();
-            applyFilter();
-            if (days[today] != null) onN++; else if (isRestToday(r.M)) restN++;
-            done++;
-            document.getElementById("sOn").textContent = onN;
-            document.getElementById("sWait").textContent = done === rows.length ? (rows.length - onN - restN) : "…";
-            document.getElementById("sRest").textContent = restN;
-            ringSet(onN, rows.length);
-            renderToday(rows);
-            var mon = 0, ym = today.slice(0, 7); rows.forEach(function (x) { Object.keys(x.days || {}).forEach(function (k) { if (k.slice(0, 7) === ym) mon++; }); });
-            document.getElementById("sMon").textContent = mon;
-            if (done === rows.length) renderRank(rows);
-          });
+      var left = rows.length, t = 0;
+      function redraw() { clearTimeout(t); t = setTimeout(function () { drawAll(rows, left === 0); }, 60); }
+      rows.forEach(function (r) {
+        attFor(r.slug).then(function (j) {
+          applyAtt(r, j);
+          left--; redraw();
+          if (left === 0) { snapSave(rows); RENDERING = 0; }
+        });
       });
-    });
+      if (!rows.length) RENDERING = 0;
+    }).catch(function () { RENDERING = 0; });
   }
+  setTimeout(function () { RENDERING = 0; }, 30000);   /* 혹시 멈춰도 30초 뒤엔 다시 받을 수 있게 */
   render();
-  document.getElementById("refresh").addEventListener("click", render);
-  document.addEventListener("visibilitychange", function () { if (!document.hidden) render(); });
+  document.getElementById("refresh").addEventListener("click", function () { RENDERING = 0; render(true); });
+  document.addEventListener("visibilitychange", function () { if (!document.hidden && Date.now() - LAST_R > 45000) render(); });   /* 앱으로 돌아올 때 45초 안이면 다시 안 받음 */
 })();
 </script>
 </body>
