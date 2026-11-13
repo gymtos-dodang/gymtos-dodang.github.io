@@ -2752,6 +2752,9 @@
       { transform: "none", clipPath: clip0 + "0px)", opacity: 1 }
     ], { duration: 460, easing: "cubic-bezier(.2,.85,.25,1)" });
     an.onfinish = an.oncancel = function () { view.style.transformOrigin = ""; };
+    /* 2026-11-13 "복습지 종목 들어갔다 나오면 또 짤림": 아이폰에서 이 움직임이 끝나지 않고 중간(작게 줄어든 상태)에 멈춰
+       화면 본문만 왼쪽에 작게 남는 일이 있었음 → 0.6초 뒤엔 무조건 끝내기 */
+    setTimeout(function () { try { if (an.playState !== "finished") an.cancel(); } catch (e) {} view.style.transformOrigin = ""; }, 620);
     return true;
   }
   /* ---- 앱으로 설치 안내 (#app, 2026-11-12 장동욱 "회원들이 아이폰·갤럭시에서 주소를 어플화할 수 있게 튜토리얼") ----
@@ -3034,7 +3037,15 @@
     if (!location.hash || location.hash === "#home") { e.preventDefault(); window.scrollTo(0, 0); tourMaybe(); }
   });
 
+  function zoomReset() {   /* 화면이 바뀔 때 남아 있는 확대·축소 움직임은 모두 지움 */
+    var v = document.getElementById("view"); if (!v) return;
+    try { if (v.getAnimations) v.getAnimations().forEach(function (a) { a.cancel(); }); } catch (e) {}
+    v.style.transform = ""; v.style.transformOrigin = ""; v.style.clipPath = "";
+  }
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) zoomReset(); });
+  window.addEventListener("pageshow", zoomReset);
   function route() {
+    zoomReset();
     var hsh = (location.hash || "").replace(/^#/, "");
     var navTop = NAVS[NAVS.length - 1];
     if (navTop && navTop.h === (location.hash || "#home")) NAV_BACK = NAVS.pop();
