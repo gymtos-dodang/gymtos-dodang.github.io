@@ -333,6 +333,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - **복습지 영상 → 화면 짤림** (2026-11-13 "복습지 종목 들어갔다 나오면 또 짤린다", 캡처에 아이폰 PiP 회색 손잡이): 뒤로 갈 때 VCACHE에 떼어 둔 복습지 화면의 영상이 계속 재생 → 아이폰이 PiP로 빼면서 화면 배율이 꼬임. 떼어 둘 때 video 멈춤(data-was) → 다시 붙일 때 이어서 재생, 앱을 나갈 때(visibilitychange)도 멈춤, video에 disablepictureinpicture·disableremoteplayback. **새로 영상을 넣는 칸도 같은 규칙**.
 - **★누른 칸에서 커지는 효과가 중간에 멈춤** (2026-11-13 "또 그러네" — 캡처에서 위 막대·아래 탭은 정상인데 본문만 0.87배로 작게 왼쪽에 붙어 있음 = view의 zoomRun 애니메이션이 아이폰에서 안 끝나고 줄어든 상태로 남음): zoomRun 0.62초 뒤 무조건 cancel + route() 시작·앱으로 돌아올 때(visibilitychange)·pageshow에 zoomReset(view의 모든 애니메이션 cancel, transform·clip-path 지움). 본문만 작아지면 이걸 먼저 의심할 것.
 - **본문 자리 자동 고침 + 숫자 줄** (2026-11-13 12:34 캡처: 버전 2611131230인데도 본문만 오른쪽이 32px 비고 아래 탭이 사라짐 — 크롬에선 재현 안 됨): app.js viewHeal — 주소 바뀐 뒤·열 때·크기 바뀔 때·앱으로 돌아올 때 view가 화면 가운데 자리(왼쪽 여백 = 오른쪽 여백)에서 벗어나 있으면 애니메이션·transform 지우고 다시 그림. 선생님 폰 맨 아래 회색 글씨 둘째 줄 = "화면 innerWidth/clientWidth/screen · 배율 · 본문 왼~오른 · 아래탭 폭 · 고침 n(이유)" → 또 짤리면 이 줄 캡처로 원인 판단.
+- **★아이폰 '밀어서 뒤로' 끔** (2026-11-14 화면녹화 "아이폰 이 현상 해결" — 밀어서 뒤로 갈 때 아이폰이 페이지를 카드처럼 줄이고 모서리를 검게 그림(사파리 자체 애니메이션, 웹에서 못 끔) → 장동욱 "밀어서 뒤로 끄기" 선택): 노트 안 화면 이동은 전부 `location.replace`(app.js goHash·window.ptGo — 링크 클릭은 캡처 단계에서 preventDefault 후 goHash)라 방문 기록이 안 쌓임 → 노트 안에선 밀어서 뒤로 애니메이션이 안 나옴. 뒤로는 '‹ 뒤로' 알약(NAVS 맨 위로 goHash → route()가 NAV_BACK으로 보고 떼어 둔 화면·스크롤 그대로)·아래 탭. 밀면 노트 밖(선생님 회원 목록 등)으로 나감. **새 코드에서 `location.hash =` 쓰지 말고 goHash.**
 - 칸 안에서 움직이는 빛(.thero·.stamp 등)은 `contain: paint`로 칸 밖으로 안 새게. 페이지가 축소된 채 남으면 app.js vpFix가 뷰포트를 한 번 다시 맞춤(주소 바뀔 때).
 
 ## 커밋
