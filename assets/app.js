@@ -2943,7 +2943,8 @@
     var zEl = a.closest(".th-tile, .card-link, .hw, .ex, .thero, .stamp, .ibstrip, .rp-home") || ((a.offsetHeight < 56) && a.closest(".panel, section")) || a;
     var zr = zEl.getBoundingClientRect();
     /* 커지며 열리기(B안) — 2026-11-12 다시 켬: transform 없이 clip-path만 써서 화면 폭에 영향 없음 */
-    if (zr.width > 8 && zr.height > 8) ZOOM = { l: zr.left, t: zr.top, w: zr.width, h: zr.height, at: Date.now() };
+    /* 2026-11-14 끔: 아이폰에서 다음 화면이 작게·왼쪽으로 쏠린 채 시작해 커지는 게 "화면 쏠림"으로 보임 → 다른 화면처럼 차례로 올라오기(D안)만 */
+    void zr;
     if (NAVS.length > 20) NAVS.shift();
   }, true);
   function navBackDraw(view) {
