@@ -236,6 +236,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 한계: 카톡 미리보기 그림(og.jpg) 없음, PT 안내서 '관리 현황' 숫자·'다른 회원 루틴 가져오기' 목록엔 안 들어감, 자세 복습지·식단은 Claude가 올려야 함(영상 파일이 필요해서).
 - **정식 노트로 옮기기**(그 회원 복습지·식단을 Claude에게 부탁받으면): 같은 주소로 `m/<그 주소>/` 폴더(index.html·manifest·data.js·og.jpg)를 만들면 폴더가 먼저 열려서 자동으로 정식 노트가 됨 — 주소가 같아서 출석·폰 루틴 그대로. data.js는 창고의 pub:m:<주소>:member 내용으로 시작(내장 브라우저로 github.io 탭에서 fetch(ATT_API+"?m=<주소>")의 kv), members.js에 주소 추가, 회원 목록 표에 추가. 창고의 coach:members에서는 빼도 되고 놔둬도 됨(members.js에 있으면 선생님 목록에서 겹치지 않게 걸러짐).
 - **공개 회원 목록** (2026-11-12 장동욱 요청 — 팀장님(박현규) PT 노트 페이지가 읽어서 폰으로 만든 회원도 같이 보여 줌): coach:members를 저장할 때마다(만들기·고치기·지우기) 창고 `pub:m:roster-list:members` = [{slug,name,sex,goal,start}]도 같이 저장, 선생님 페이지를 열 때 coach:members와 다르면 한 번 맞춤(nmRoster·ROSTER_K). pub: 라서 창고 주소를 아는 누구나 읽을 수 있음(이름·노트 주소 포함).
+- 열쇠 없는 폰에서도 보이게 (2026-11-13 "앱에서 추가한 염승완은 창고랑 연동이 안 되냐"): 아이폰 홈 화면 앱은 사파리와 저장 공간이 따로라 열쇠(ptkey)가 없을 수 있음 → 열쇠가 없거나 coach:members를 못 읽으면 공개 목록(GET ?m=roster-list → kv pub:m:roster-list:members, nmPublic)으로 폰에서 만든 회원 타일·출석을 그대로 보여 줌. 고치기·지우기·메모·전체 공지는 열쇠 필요.
 - 코드: 404.html(받아서 띄우기) · coach-tqqnlh/index.html nmLoad·nmShow·nmPost·nmDrawList(새 회원 칸), render()에서 members.js + coach:members 합침, 카드 M._dyn.
 - 선생님 보기 출석 도장은 class "ro"(예전 "view" — 본문 .view 칸 모양이 씌워져 세로로 깨지던 것 고침).
 

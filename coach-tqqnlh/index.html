@@ -786,11 +786,18 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
      coach:members 를 저장할 때마다(만들기·고치기·지우기) 같이 저장하고, 열 때 다르면 한 번 맞춤. */
   var ROSTER_K = "pub:m:roster-list:members";
   function nmRoster(list) { return list.map(function (d) { return { slug: d.slug, name: d.name, sex: d.sex, goal: d.goal, start: d.start }; }); }
+  /* 2026-11-13 "앱에서 추가한 염승완은 창고랑 연동이 안 되냐" — 열쇠 없는 폰(홈 화면 앱은 사파리와 저장 공간이 따로라 열쇠가 없을 수 있음)에서도
+     공개 목록(pub:m:roster-list:members)으로 폰에서 만든 회원을 보여 줌. 고치기·지우기는 열쇠가 있어야 함 */
+  function nmPublic() {
+    return fetch(API + "?m=roster-list", { cache: "no-store" }).then(function (r) { return r.json(); })
+      .then(function (j) { var l = j && j.ok && j.kv && j.kv[ROSTER_K]; return Array.isArray(l) ? l : []; }).catch(function () { return []; });
+  }
   function nmLoad() {
-    if (!bnKey()) { nmDrawList(); return Promise.resolve(NM); }
+    if (!bnKey()) return nmPublic().then(function (l) { if (!NM.length) NM = l; nmDrawList(); return l; });
     return nmPost({ a: "kv_get", prefix: "coach:members" }).then(function (j) {
       var ok = j && j.ok && j.kv;
-      if (ok && Array.isArray(j.kv["coach:members"])) NM = j.kv["coach:members"];
+      if (!ok) return nmPublic().then(function (l) { if (!NM.length) NM = l; nmDrawList(); return l; });
+      if (Array.isArray(j.kv["coach:members"])) NM = j.kv["coach:members"];
       nmDrawList();
       if (ok) {
         var want = nmRoster(NM);
@@ -803,7 +810,7 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
         }).catch(function () {});
       }
       return NM;
-    }).catch(function () { return NM; });
+    }).catch(function () { return nmPublic(); });
   }
   function nmDrawList() {
     var box = document.getElementById("nmList");
