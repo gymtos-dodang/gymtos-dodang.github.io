@@ -1783,7 +1783,7 @@
   function nMarkSeen() { lsAdd(NSEEN_KEY, (M.notices || []).map(nKey)); lsAdd(NPOP_KEY, (M.notices || []).map(nKey)); nDot(); }
   function openNotice(key) {
     pendingNotice = key;
-    if ((location.hash || "").replace(/^#/, "") === "notice") route(); else goHash("#notice");
+    if ((location.hash || "").replace(/^#/, "") === "notice") route(); else location.hash = "notice";
   }
   function showNoticePop() {
     if (TOUR_ON || (TOUR_WANT && (!location.hash || location.hash === "#home"))) return;
@@ -2688,7 +2688,7 @@
       if (act === "start" || act === "create") {
         if (act === "create") M.routine = rtNewRoutine();
         RT_EDIT = { saved: act === "create" ? null : clone(M.routine), dirty: act === "create" ? 1 : 0 };
-        if (act === "create") { goHash("#routine-mon"); }
+        if (act === "create") { location.hash = "#routine-mon"; }
         rerender(); return;
       }
       if (act === "cancel") {
@@ -2701,7 +2701,7 @@
       }
       if (act === "save") { rtSaveSheet(); return; }
       if (act === "copy") { rtCopySheet(); return; }
-      if (act === "createcopy") { RT_EDIT = { saved: null, dirty: 0 }; M.routine = rtNewRoutine(); goHash(ROT ? "#routine" : "#routine-mon"); rerender(); rtCopySheet(); return; }
+      if (act === "createcopy") { RT_EDIT = { saved: null, dirty: 0 }; M.routine = rtNewRoutine(); location.hash = ROT ? "#routine" : "#routine-mon"; rerender(); rtCopySheet(); return; }
       if (act === "reset") { rtResetSheet(); return; }
       if (act === "info") { rtInfoSheet(); return; }
       if (!d) return;
@@ -2930,20 +2930,14 @@
     if (/^report/.test(h)) return "리포트"; if (h === "growth") return "성장 기록"; if (h === "app") return "앱으로 쓰기"; if (h === "muscle") return "근육 지도"; return "홈";
   }
   document.addEventListener("touchstart", function () {}, { passive: true });   /* 아이폰에서 :active(살짝 눌림)가 먹게 */
-  /* 2026-11-14 "아이폰 밀어서 뒤로 갈 때 화면이 카드처럼 검게 줄어드는 현상" → 노트 안 화면 이동은 방문 기록을 안 남김(location.replace).
-     그래서 아이폰 '밀어서 뒤로' 애니메이션이 노트 안에선 안 나오고, 뒤로는 '‹ 뒤로' 버튼·아래 탭으로. (밀면 노트 밖 — 선생님 회원 목록 등으로 나감) */
-  function goHash(h) { h = String(h || ""); if (h.charAt(0) !== "#") h = "#" + h; if ((location.hash || "#home") === h && location.hash) return; try { location.replace(h); } catch (e) { location.hash = h; } }
-  window.ptGo = goHash;
   document.addEventListener("click", function (e) {
     var a = e.target.closest && e.target.closest('a[href^="#"]'); if (!a) return;
-    if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) return;
     LINKAT = Date.now();
     var to = a.getAttribute("href"), cur = location.hash || "#home";
     if (to === "#" || to === cur) return;
-    e.preventDefault();
-    if (a.closest(".tabs") || a.closest(".bar") || a.closest(".meseg")) { NAVS = []; goHash(to); return; }
+    if (a.closest(".tabs") || a.closest(".bar") || a.closest(".meseg")) { NAVS = []; return; }
     /* 루틴 안에서 요일 바꾸기(일주일 한눈에 칸·로테이션 고르기)는 뒤로 버튼·커지는 효과 없이 그날 칸만 은은하게 (2026-11-12 "요일별 눌러서 들어가는 칸은 별로 — 은은하게") */
-    if (/^#routine/.test(cur) && /^#routine/.test(to)) { SOFT = Date.now(); goHash(to); return; }
+    if (/^#routine/.test(cur) && /^#routine/.test(to)) { SOFT = Date.now(); return; }
     NAVS.push({ h: cur, y: window.scrollY });
     /* B안 (2026-11-12 "아이콘이 퍼지며 화면 들어가기 — B안으로"): 누른 칸 자리에서 다음 화면이 커지며 열림 → 그 칸 위치를 기억 */
     var zEl = a.closest(".th-tile, .card-link, .hw, .ex, .thero, .stamp, .ibstrip, .rp-home") || ((a.offsetHeight < 56) && a.closest(".panel, section")) || a;
@@ -2951,7 +2945,6 @@
     /* 커지며 열리기(B안) — 2026-11-12 다시 켬: transform 없이 clip-path만 써서 화면 폭에 영향 없음 */
     if (zr.width > 8 && zr.height > 8) ZOOM = { l: zr.left, t: zr.top, w: zr.width, h: zr.height, at: Date.now() };
     if (NAVS.length > 20) NAVS.shift();
-    goHash(to);
   }, true);
   function navBackDraw(view) {
     if (!NAVS.length) return;
@@ -2960,8 +2953,9 @@
     var nb = document.getElementById("navBack");
     if (bar) nb.style.top = (Math.round(bar.getBoundingClientRect().height) + 8) + "px";
     nb.addEventListener("click", function () {
-      var want = NAVS[NAVS.length - 1].h;
-      LINKAT = 0; goHash(want);   /* 기록 없이 바로 그 화면으로 — route()가 NAVS 맨 위와 같으면 '뒤로'로 처리(스크롤·떼어 둔 화면 그대로) */
+      var want = NAVS[NAVS.length - 1].h, was = location.hash;
+      history.back();
+      setTimeout(function () { if (location.hash === was) location.hash = want; }, 350);
     });
   }
   function tabInd() {   /* 아래 탭 밑 빨간 막대 — 고른 탭으로 미끄러져 감 (D안) */
