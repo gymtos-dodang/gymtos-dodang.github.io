@@ -3181,9 +3181,33 @@
   [1500, 4000, 8000].forEach(function (t) { setTimeout(ovDiag, t); });
   if (COACH_MODE && !DEMO) {
     var vm = (SCRIPT && SCRIPT.src.match(/[?&]v=(\w+)/) || [])[1] || "?";
-    var vt = document.createElement("div"); vt.style.cssText = "text-align:center;font-size:10px;color:#B4B4BE;padding:4px 0 110px"; vt.textContent = "PT노트 버전 " + vm;
+    var vt = document.createElement("div"); vt.style.cssText = "text-align:center;font-size:10px;color:#B4B4BE;padding:4px 0 110px;white-space:pre-line"; vt.textContent = "PT노트 버전 " + vm;
     document.body.appendChild(vt);
   }
+  /* 2026-11-13 "또 짤림": 본문(view)이 화면 가운데 자리에서 벗어나 있으면(오른쪽만 비거나 넘침) 남은 움직임을 지우고 다시 그리게 함.
+     선생님 폰엔 맨 아래 회색 글씨로 화면 숫자를 같이 보여 줌 → 또 생기면 그 줄을 캡처해서 원인 확인 */
+  var HEAL = 0;
+  function viewHeal(why) {
+    var v = document.getElementById("view"); if (!v) return;
+    var w = document.documentElement.clientWidth, r = v.getBoundingClientRect(), vv = window.visualViewport;
+    var off = r.left < -1 || r.right > w + 1 || Math.abs((w - r.right) - r.left) > 8;
+    if (off) {
+      HEAL++;
+      try { if (v.getAnimations) v.getAnimations().forEach(function (a) { a.cancel(); }); } catch (e) {}
+      v.style.transform = ""; v.style.transformOrigin = ""; v.style.clipPath = "";
+      v.style.display = "none"; void v.offsetWidth; v.style.display = "";
+    }
+    if (COACH_MODE && !DEMO && vt) {
+      var r2 = v.getBoundingClientRect(), tb = document.querySelector(".tabs");
+      vt.textContent = "PT노트 버전 " + vm + "\n화면 " + window.innerWidth + "/" + w + "/" + screen.width + (vv ? " · 배율 " + vv.scale.toFixed(2) + " " + Math.round(vv.width) : "") +
+        " · 본문 " + Math.round(r2.left) + "~" + Math.round(r2.right) + " · 아래탭 " + (tb ? Math.round(tb.getBoundingClientRect().width) : "-") + " · 고침 " + HEAL + (off ? " (" + why + ": " + Math.round(r.left) + "~" + Math.round(r.right) + ")" : "");
+    }
+  }
+  window.addEventListener("hashchange", function () { setTimeout(function () { viewHeal("주소"); }, 700); });
+  window.addEventListener("pageshow", function () { setTimeout(function () { viewHeal("열기"); }, 300); });
+  window.addEventListener("resize", function () { viewHeal("크기"); });
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) setTimeout(function () { viewHeal("돌아옴"); }, 300); });
+  [800, 2500].forEach(function (t) { setTimeout(function () { viewHeal("처음"); }, t); });
   window.addEventListener("hashchange", function () { route(); tourMaybe(); });
   route(); tourMaybe();
   cmemoFill();
