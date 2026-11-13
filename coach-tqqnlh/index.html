@@ -495,8 +495,8 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   var now = new Date(), today = ymd(now);
   document.getElementById("today").textContent = (now.getMonth() + 1) + "월 " + now.getDate() + "일 " + DK[now.getDay()] + "요일";
-  document.getElementById("sAll").textContent = LIST.length;
-  document.getElementById("sub").textContent = "담당 회원 " + LIST.length + "명";
+  document.getElementById("sAll").textContent = "–";
+  document.getElementById("sub").textContent = "담당 회원";
 
   function loadMember(slug) {
     return fetch("/m/" + slug + "/data.js", { cache: "no-store" }).then(function (r) { return r.text(); }).then(function (t) {
@@ -994,20 +994,23 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     var box = document.getElementById("list");
     ROWS = {}; rows.forEach(function (r) { ROWS[r.slug] = r; });
     box.innerHTML = rows.map(function (r) { return tile(r.slug, r.M, r.days || null); }).join("");
-    document.getElementById("sAll").textContent = rows.length;
-    document.getElementById("sub").textContent = "담당 회원 " + rows.length + "명";
-    fsum("list", rows.length + "명");
+    /* 2026-11-13 "나 회원 15명인데" — 그룹 PT(이름에 ·)는 한 노트라도 사람 수로 셈 */
+    function ppl(r) { return String(r.M && r.M.name || "").split("·").filter(function (x) { return x.trim(); }).length || 1; }
+    var total = 0; rows.forEach(function (r) { total += ppl(r); });
+    document.getElementById("sAll").textContent = total;
+    document.getElementById("sub").textContent = "담당 회원 " + total + "명";
+    fsum("list", total + "명");
     var onN = 0, restN = 0, have = 0, mon = 0, ym = today.slice(0, 7);
     rows.forEach(function (r) {
       if (!r.days) return; have++;
-      if (r.days[today] != null) onN++; else if (isRestToday(r.M)) restN++;
-      Object.keys(r.days).forEach(function (k) { if (k.slice(0, 7) === ym) mon++; });
+      if (r.days[today] != null) onN += ppl(r); else if (isRestToday(r.M)) restN += ppl(r);
+      Object.keys(r.days).forEach(function (k) { if (k.slice(0, 7) === ym) mon += ppl(r); });
     });
     document.getElementById("sOn").textContent = onN;
-    document.getElementById("sWait").textContent = final || have === rows.length ? (rows.length - onN - restN) : "…";
+    document.getElementById("sWait").textContent = final || have === rows.length ? (total - onN - restN) : "…";
     document.getElementById("sRest").textContent = restN;
     document.getElementById("sMon").textContent = mon;
-    ringSet(onN, rows.length);
+    ringSet(onN, total);
     renderToday(rows);
     if (have) renderRank(rows);
     paneMark();
