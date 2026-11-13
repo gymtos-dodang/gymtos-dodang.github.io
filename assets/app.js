@@ -3227,7 +3227,7 @@
       HEAL++;
       try { if (v.getAnimations) v.getAnimations().forEach(function (a) { a.cancel(); }); } catch (e) {}
       v.style.transform = ""; v.style.transformOrigin = ""; v.style.clipPath = "";
-      v.style.display = "none"; void v.offsetWidth; v.style.display = "";
+      void v.offsetWidth;   /* (2026-11-14) display none 껐다 켜기는 뺌 — 아이폰에서 본문 폭이 줄어든 채 남는 원인 후보 */
     }
     if (COACH_MODE && !DEMO && vt) {
       var r2 = v.getBoundingClientRect(), tb = document.querySelector(".tabs");

@@ -1667,3 +1667,8 @@ html[data-skin="sheep"] .view .panel:not(.panel .panel), html[data-skin="sheep"]
 html[data-skin="sheep"] .view .ex, html[data-skin="sheep"] .view .card-link { border-color: #F3E3D3; }
 html[data-skin="sheep"] .stamp { border-color: #E9CDB8; }
 html[data-skin="sheep"] .stamp::after { background: #FFE3C7; }
+
+/* 2026-11-14 "복습지 칸 누르고 돌아오면 칸들이 갑자기 작아진다": 아이폰에서 본문(.view)이 화면 폭만큼 늘어나지 않고
+   내용 길이만큼(약 343px)으로 줄어든 채 남았음(flex 늘이기가 안 먹음) → 폭을 직접 100%로 박아 둠 */
+.wrap { width: 100%; box-sizing: border-box; }
+.wrap > .view { width: 100%; align-self: stretch; box-sizing: border-box; }
