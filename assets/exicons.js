@@ -331,17 +331,19 @@
     hl: function (P) { return [seg(P.hip, P.kn, .1, .92, 9)]; },
     back: function (P) { return [floor(6, 94), L("eq2", [[30, 93], [93, 47]], 3), L("eq2", [[12.5, 57.5], [33, 88]], 5.5), L("eq2", [[33, 89], [47, 86]], 5)]; },
     front: function (P) { return [L("eq", [off(P.pl, -5.9, -8.1), off(P.pl, 5.9, 8.1)], 4.6)]; } };
-  /* 핵프레스 (2026-11-13 서경진님): 원판식, 등받이 의자에 앉아 앞쪽 기울어진 발판을 밀면 의자가 레일 따라 뒤로 밀려남 */
+  /* 핵프레스 (2026-11-13 매장 사진: 엠토처 HackPress 원판식) — 비스듬한 레일 위 캐리지(엉덩이 패드+등판+어깨 패드)에 기대 앉아,
+     앞쪽 바닥 발판을 밀면 캐리지가 레일 따라 뒤·위로 올라감 */
   EX.hack_press = { t: .85,
-    p0: { head: [21, 29], sh: [26, 42], hip: [37, 66], kn: [52, 44], ft: [68, 58], toe: [71, 51], el: [31, 57], ha: [39, 61] },
-    p1: { head: [10, 33], sh: [15, 46], hip: [25, 70], kn: [47, 58], el: [20, 61], ha: [28, 65] },
-    bones: [{ pts: ["sh", "el", "ha"], w: 7.5 }, { pts: ["sh", "hip"], w: 13 }, { pts: ["hip", "kn", "ft", "toe"], w: 9 }],
+    p0: { head: [35, 37], sh: [40, 50], hip: [56, 72], kn: [78, 63], ft: [72, 86], toe: [79, 84] },
+    p1: { head: [20, 16], sh: [25, 29], hip: [41, 51], kn: [60, 65] },
+    fx: function (P) { P.el = off(P.sh, 9, 11); P.ha = off(P.hip, 7, -3); },
+    bones: SIDE,
     hl: function (P) { return [seg(P.hip, P.kn, .1, .92, 9)]; },
-    back: function (P) { var c = off(P.hip, -10, 9);
-      return [floor(5, 95), L("eq2", [[6, 86], [66, 86]], 3), L("eq2", [[73, 62], [73, 93]], 3.2), L("eq2", [[64, 93], [82, 93]], 3.5),
-        L("eq2", [off(P.sh, -6.5, -2), off(P.hip, -6.5, 2.5)], 5.5), L("eq2", [off(P.hip, -9, 6.5), off(P.hip, 9, 6.5)], 5), L("eq2", [off(P.hip, 0, 7), off(P.hip, 2, 18)], 3),
-        R("eq", c, 7, 3.2), D("eq2", c, 2.4)]; },
-    front: function (P) { return [L("eq", [[66, 70], [78, 45]], 4.6)]; } };
+    back: function (P) { var pc = off(P.hip, -15, -2);
+      return [floor(6, 94), L("eq2", [[58, 93], [10, 27]], 3.2), L("eq2", [[22, 93], [22, 44]], 3),
+        L("eq2", [off(P.sh, -5.5, 4), off(P.hip, -5.5, 4)], 5.5), L("eq2", [off(P.hip, -3, 6), off(P.hip, 7, 11)], 5),
+        R("eq", pc, 6.8, 3.2), D("eq2", pc, 2.4)]; },
+    front: function (P) { return [L("eq", [[64, 91], [84, 86]], 4.6), L("eq", [off(P.sh, -2, -5), off(P.sh, 6, 0)], 4.8)]; } };
   EX.hack_squat = { t: .15,
     p0: { head: [26, 28], sh: [30, 42], hip: [39, 68], kn: [59, 67], ft: [66, 86], toe: [74, 83] }, p1: { head: [34, 10], sh: [38, 24], hip: [47, 50], kn: [56, 68] },
     fx: function (P) { P.el = off(P.sh, 9, 7); P.ha = off(P.sh, 7, -3); }, bones: SIDE,

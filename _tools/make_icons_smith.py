@@ -188,24 +188,24 @@ def mtorture_row(c):
 
 
 def hack_press(c):
-    """2026-11-13 핵프레스: 원판식, 등받이 의자에 앉아 앞쪽 기울어진 발판을 밀면 의자가 레일 따라 뒤로 밀려남"""
-    p = side((32, 32), 118, 112, arm=(-62, -10), leg=(38, -40, 70))
+    """2026-11-13 핵프레스 (매장 엠토처 HackPress 원판식): 비스듬한 레일 위 캐리지(엉덩이 패드+등판+어깨 패드)에 기대 앉아,
+    앞쪽 바닥 발판을 밀면 캐리지가 레일 따라 뒤·위로 올라감. 아이콘은 깊게 앉은 시작 자세 + 올라가는 방향 화살표"""
+    p = side((56, 30), 126, 120, arm=(-80, -35), leg=(25, -100, 5))
     K, A, T = p["leg"]
     floor(c, 4, 6, 94)
-    c.stroke([(8, 13), (62, 13)], 3, GRAY)
-    hb, sb = fk(p["H"], 208, 6.2), fk(p["S"], 208, 6.2)
+    c.stroke([(60, 4), (12, 70)], 3.2, GRAY)
+    c.stroke([(22, 4), (22, 50)], 3, GRAY)
+    hb, sb = fk(p["H"], 216, 6), fk(p["S"], 216, 6)
     pill(c, hb, sb, 5.2)
-    pill(c, (p["H"][0] - 9, p["H"][1] - 6.5), (p["H"][0] + 9, p["H"][1] - 6.5), 5)
-    c.stroke([(p["H"][0], p["H"][1] - 7), (p["H"][0] + 2, 13)], 3, GRAY)
-    pc = (p["H"][0] - 11, p["H"][1] - 9)
+    pill(c, fk(p["H"], 236, 6.5), fk(fk(p["H"], 236, 6.5), -54, 11), 5)
+    pc = fk(p["H"], 186, 15)
     c.circle(pc, 7.2, fill=GRAY)
     c.circle(pc, 2.4, fill=WHITE)
-    mid = ((A[0] + T[0]) / 2, (A[1] + T[1]) / 2)
-    pl = fk(mid, -20, 4.4)
-    pill(c, fk(pl, 70, 13), fk(pl, -110, 9), 4.6)
-    c.stroke([fk(pl, -110, 7), (pl[0] + 2, 4)], 3, GRAY)
+    pill(c, fk(p["S"], 126, 3), fk(fk(p["S"], 126, 3), 36, 8), 4.4)
+    fp = (A[0] + 2, A[1] - 5.5)
+    pill(c, (fp[0] - 10, fp[1] - 1.5), (fp[0] + 10, fp[1] + 1.5), 4.4)
     draw_side(c, p)
-    c.arrow(fk(p["H"], 200, 14), fk(fk(p["H"], 200, 14), 200, 14))
+    c.arrow((82, 58), fk((82, 58), 126, 18))
 
 
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
