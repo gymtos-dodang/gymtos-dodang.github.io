@@ -1775,3 +1775,8 @@ html[data-skin="sheep"] .stamp::after { background: #FFE3C7; }
 .xs-ox li + li { margin-top: 3px; }
 .xs-go { display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 24px; background: var(--ink, #1A1A1E); color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; }
 @media (prefers-reduced-motion: reduce) { .xsheet, .xsheet-bg { transition: none; } }
+/* (2026-11-14) 아이패드에서 영상 자세가 잘리던 것: 잘라 채우기(cover) → 영상 전체가 보이게(contain), 높이는 화면 62%까지 */
+.xs-vid { aspect-ratio: auto; max-height: none; align-items: center; }
+.xs-vid video { width: auto; max-width: 100%; height: auto; max-height: 62vh; max-height: 62dvh; object-fit: contain; }
+/* 무게 글자 = 자세히 보기 창과 같은 빨간색으로 통일 */
+.ex-list.cmp .set > i { color: var(--seal, var(--primary)); font-weight: 800; }
