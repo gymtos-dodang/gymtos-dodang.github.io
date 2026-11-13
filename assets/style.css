@@ -1726,3 +1726,7 @@ html[data-skin="sheep"] .stamp::after { background: #FFE3C7; }
 .ex-list.cmp .sets:has(.set:nth-child(5)) .set { height: 44px; flex-direction: column; gap: 3px; }
 .ex-list.cmp .sets:has(.set:nth-child(5)) .set b { font-size: 15.5px; }
 .ex-list.cmp .sets:has(.set:nth-child(5)) .set > i { font-size: 11px; }
+/* 횟수·무게 글자 밑줄(기준선) 맞춤 — 한 줄 칸은 가운데 정렬 글줄로 */
+.ex-list.cmp .sets:not(:has(.set:nth-child(5))) .set { display: block; text-align: center; line-height: 38px; }
+.ex-list.cmp .sets:not(:has(.set:nth-child(5))) .set b, .ex-list.cmp .sets:not(:has(.set:nth-child(5))) .set > i { display: inline; line-height: inherit; vertical-align: baseline; }
+.ex-list.cmp .sets:not(:has(.set:nth-child(5))) .set > i { margin-left: 4px; }
