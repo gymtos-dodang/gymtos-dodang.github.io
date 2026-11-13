@@ -1717,3 +1717,12 @@ html[data-skin="sheep"] .stamp::after { background: #FFE3C7; }
 .wk-cmp .day-tile { padding: 5px 2px 4px; }
 .flow1 { margin-bottom: 8px; font-size: 11.5px; }
 .flow1 span { padding: 3px 9px; }
+/* 세트 칸 크게·높이 맞춤 (2026-11-14 "횟수랑 무게 칸 높낮이 간격 맞추고 조금 더 크게") */
+.ex-list.cmp .sets { gap: 5px; margin-top: 7px; }
+.ex-list.cmp .set { height: 38px; padding: 0 3px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 4px; line-height: 1; box-sizing: border-box; }
+.ex-list.cmp .set b { font-size: 17px; line-height: 1; }
+.ex-list.cmp .set b i { font-size: 11px; }
+.ex-list.cmp .set > i { font-size: 12.5px; margin-left: 0; line-height: 1; }
+.ex-list.cmp .sets:has(.set:nth-child(5)) .set { height: 44px; flex-direction: column; gap: 3px; }
+.ex-list.cmp .sets:has(.set:nth-child(5)) .set b { font-size: 15.5px; }
+.ex-list.cmp .sets:has(.set:nth-child(5)) .set > i { font-size: 11px; }
