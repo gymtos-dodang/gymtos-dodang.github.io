@@ -86,14 +86,14 @@
   var SKIN = String(M.skin || "");
   if (SKIN) {
     document.documentElement.setAttribute("data-skin", SKIN);
-    if (SKIN === "bunny" && !document.getElementById("skinFont")) {
+    if (!document.getElementById("skinFont")) {
       var sfl = document.createElement("link"); sfl.id = "skinFont"; sfl.rel = "stylesheet";
       sfl.href = "https://fonts.googleapis.com/css2?family=Jua&display=swap"; document.head.appendChild(sfl);
     }
   }
   function skinDeco() {   /* 토롱이 그림을 정해진 칸에 하나씩 (이미 있으면 그대로) — 누르기·글자에는 영향 없음(pointer-events none) */
-    if (SKIN !== "bunny") return;
-    var T = BASE + "theme/bunny/";
+    if (!SKIN) return;
+    var T = BASE + "theme/" + SKIN + "/";
     function put(sel, cls, file) {
       Array.prototype.forEach.call(document.querySelectorAll(sel), function (el) {
         var f = typeof file === "function" ? file(el) : file, old = el.querySelector(":scope > .bny");
