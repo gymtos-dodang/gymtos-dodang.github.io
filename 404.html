@@ -49,7 +49,8 @@
   var API = (window.SITE || {}).att_api || "";
   if (!API) { msg("PT 노트 창고 주소가 아직 없어요", "assets/site.js?v=2611141044 의 att_api 를 채워 주세요."); return; }
   var cached = null, booted = false;
-  try { cached = JSON.parse(localStorage.getItem(LS) || "null"); } catch (e) { cached = null; }
+  var cachedStr = null;
+  try { cachedStr = localStorage.getItem(LS); cached = JSON.parse(cachedStr || "null"); } catch (e) { cached = null; }
   function load(src, cb) { var s = document.createElement("script"); s.src = src; s.onload = cb; s.onerror = cb; document.body.appendChild(s); }
   function boot(M) {
     if (booted) return; booted = true;
@@ -62,8 +63,17 @@
     document.querySelector(".bar-in span").textContent = M.name + " 회원님 PT 노트";
     document.getElementById("tabs").hidden = false;
     document.getElementById("view").innerHTML = "";
-    window.MEMBER = M;
-    load("/assets/exicons.js?v=2611141044", function () { load("/assets/app.js?v=2611141044"); });
+    load("/m/dyn/forms.js?t=" + Math.floor(Date.now() / 6e5), function () {
+      /* 2026-11-14 폰에서 만든 회원도 Claude가 올린 복습지·공지를 이름으로 붙임 (m/dyn/forms.js) */
+      var d = (window.DYN || {})[M.name];
+      if (d) {
+        var ids = (d.forms || []).map(function (x) { return x.id; });
+        M.forms = (d.forms || []).concat((M.forms || []).filter(function (x) { return ids.indexOf(x.id) < 0; }));
+        M.notices = (d.notices || []).concat(M.notices || []);
+      }
+      window.MEMBER = M;
+      load("/assets/exicons.js?v=2611141044", function () { load("/assets/app.js?v=2611141044"); });
+    });
   }
   if (cached && cached.name) boot(cached);
   fetch(API + "?m=" + slug, { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (j) {
@@ -73,7 +83,7 @@
       return;
     }
     var str = JSON.stringify(M);
-    if (cached && JSON.stringify(cached) === str) return;
+    if (cachedStr && cachedStr === str) return; /* 복습지를 붙인 뒤 cached가 바뀌므로 처음 읽은 글자로 비교 */
     try { localStorage.setItem(LS, str); } catch (e) {}
     if (booted) location.reload(); else boot(M);
   }).catch(function () { if (!booted) msg("인터넷 연결을 확인해 주세요", "연결된 뒤 다시 열면 PT 노트가 보여요."); });
