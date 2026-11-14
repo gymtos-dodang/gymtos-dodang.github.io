@@ -223,6 +223,14 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 회원 index.html에 홈 화면 앱 메타(apple-mobile-web-app-capable 등, 이름 "PT노트") — 새 회원 껍데기도 jihun 복사라 자동.
 - 코드: app.js attSeal·attCheckStrip·homeWidgets·todayHero·meSeg / style.css 맨 아래 "앱 화면" 블록.
 
+## 운동 탭 · 기록 탭 (2026-11-14 장동욱 "루틴이랑 복습지 합치고 전환칸만, 종목 끝나면 체크 → 기록 탭, 첫날 vs 오늘·근육 지도·인바디도 기록 탭으로")
+- 아래 탭 = 홈 · **운동** · 식단 · **기록** · 나. 운동 = #routine·#forms(맨 위 전환 칸 .wkseg "루틴 | 자세 복습지", 새 복습지면 NEW). 루틴 플랜카드(.hero)는 그대로. app.js TABS·tabOf(forms→운동, body·log→기록, goal·notice→나)·wkSeg.
+- 루틴 종목 카드 오른쪽 가운데 ✓ 동그라미(.exchk) — 누르면 그날 기록에 저장(다시 누르면 취소), 카드는 은은한 민트 그라데이션(.ex.done, doneFlow 12초) + 초록 체크, 토스트 "✓ 종목 kg · 기록에 저장했어요". 무게는 루틴에 적힌 가장 무거운 세트 그대로(장동욱 "무게는 고칠 수 있게 하지 말고"). 4세트 이상 종목은 세트 칸 두 줄.
+- 저장: 창고 저장소 `mw:<회원주소>:log` = {d:{"YYYY-MM-DD":[[종목,kg,세트수]…]}, f:{종목: 처음 ✓한 kg}, at} — 회원 폰이 직접 씀(창고 재배포 X), 4천 자 넘으면 오래된 날부터 지움, 폰에 ptnote:<주소>:log(못 올라간 건 pend → 다음 동기화 때 다시). app.js lgToggle·lgSave·lgPush·lgServer(출석 GET kv).
+- 기록 탭 #log (renderLog): 플랜카드 MY LOG(이번 주 n일 · 요일 7칸 ✓ · 이번 달 n종목, KEY POINT = 가장 많이 오른 종목) → 01 오늘 한 운동(+ 지난 기록 5일) → 02 첫날 vs 오늘(MY GROWTH 띠 → #growth 카드 + 처음→지금 무게 줄) → 03 이번 달 근육 지도(#muscle, 루틴 탭에서 옮김) → 04 몸 변화 · 인바디(ibPanel, "흐름 보기" → #body).
+- 처음 무게(grBase) = 기록 f(처음 ✓한 무게, 가장 약함) < data.js start_weights < 선생님이 넣은 pub:m:<주소>:growth. 근육 지도(muscleCounts) = 그날 ✓한 종목이 있으면 그 종목들, 없으면 출석한 날 루틴 전체.
+- 나 탭 전환 칸은 목표·출석 / 공지 (몸변화 뺌), 나 탭의 MY GROWTH 띠도 뺌(기록 탭으로). #body·#growth의 뒤로 = "← 기록". 시안: 디자인 캔버스 "아래 탭 개편 시안" v2.
+
 ## 회원별 테마 스킨 (2026-11-13 장동욱 "지수님만 귀여운 컨셉 — 기능은 해치지 않고 테마만 입힌다는 느낌")
 - data.js `skin: "bunny"`(김지수님 토롱이) / `skin: "sheep"`(2026-11-14 서경진님 — 양 **몽글이**: 복슬 양털 머리·몸 + 옆으로 쳐진 귀 + 빨간 헤어밴드, 바탕·테두리는 크림빛 #FFF8F1·#F3E3D3) → html[data-skin]. 그림은 assets/theme/<skin>/ (base·stamp·cheer·lift·peek.svg 같은 이름), 몽글이는 `python3 _tools/make_sheep_skin.py assets/theme/sheep`로 다시 그림. 새 스킨 = 폴더 + 같은 5장 + style.css에 색만 덮어쓰기. 오리지널 마스코트 **토롱이**(한쪽 귀는 서고 한쪽은 접힌 토끼 + 빨간 헤어밴드 + 덤벨) — 치이카와 등 남의 캐릭터를 닮게 그리지 말 것(장동욱이 원했지만 거절함).
 - 바꾸는 것만: 제목 글꼴 주아(Jua, Google Fonts — app.js가 skinFont 링크 추가), 바탕 #FFF4F6, 칸 테두리 연분홍 2px, 출석 도장 칸 분홍 점선 + 마스킹테이프(›는 숨김), 토롱이 그림(assets/theme/bunny/*.svg — 출석 도장 칸 stamp/찍으면 cheer, 오늘 운동 카드 lift, 탭 맨 위 큰 카드(.hero) base, 아래 탭 위 빼꼼 peek). 칸 구조·버튼·움직임·주소는 그대로.

@@ -161,11 +161,13 @@
   /* 2026-11-11 앱 화면(시안 A "라이트 네이티브"): 아래 탭 5개 — 목표·몸변화·공지는 '나' 탭(위 칸 전환)과 오른쪽 위 종으로 */
   var TABS = [
     ["home", "홈", '<path d="M3.5 10.5 12 4l8.5 6.5V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z" stroke-linejoin="round"/>'],
-    ["routine", "루틴", '<path d="M6.5 8v8M17.5 8v8M3.5 10v4M20.5 10v4M6.5 12h11" stroke-linecap="round"/>'],
-    ["forms", "복습지", '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z" fill="currentColor"/>'],
+    ["routine", "운동", '<path d="M6.5 8v8M17.5 8v8M3.5 10v4M20.5 10v4M6.5 12h11" stroke-linecap="round"/>'],
     ["diet", "식단", '<circle cx="13" cy="13" r="6.5"/><path d="M4 4v6M6.5 4v6M4 7h2.5M5.2 10v10" stroke-linecap="round"/>'],
+    ["log", "기록", '<rect x="5" y="4" width="14" height="17" rx="2.5"/><path d="M9 3.5h6v3H9z" stroke-linejoin="round"/><path d="m9 13 2 2 4-4.5" stroke-linecap="round" stroke-linejoin="round"/>'],
     ["me", "나", '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6" stroke-linecap="round"/>', "goal"]
   ];
+  /* 2026-11-14 장동욱 "루틴이랑 복습지 합치고, 기록 탭" — 운동(루틴 | 자세 복습지 전환칸) · 기록(오늘 한 운동·첫날 vs 오늘·근육 지도·인바디) */
+  function tabOf(t) { return t === "forms" ? "routine" : /^(body|log)$/.test(t) ? "log" : /^(goal|notice)$/.test(t) ? "me" : t; }
   /* 2026-11-06 몸변화 탭 (인바디) — 그룹 PT 페이지(이름에 ·)·inbody:false 회원은 탭 없음 */
   if (/·/.test(M.name || "") || M.inbody === false) TABS = TABS.filter(function (t) { return t[0] !== "body"; });
   var COACH_MODE = false;
@@ -230,10 +232,14 @@
       '<a class="ava" href="#goal" aria-label="나의 목표 · 출석">' + esc(ini) + '</a>';
     bi.appendChild(r);
   })();
+  function wkSeg(cur) {   /* 2026-11-14 '운동' 탭 위 전환 칸: 루틴 / 자세 복습지 */
+    var nNew = (M.forms || []).filter(function (f) { return formNew(f); }).length;
+    return '<nav class="meseg wkseg" aria-label="운동">' +
+      '<a href="#routine"' + (cur === "routine" ? ' aria-current="page"' : '') + '>루틴</a>' +
+      '<a href="#forms"' + (cur === "forms" ? ' aria-current="page"' : '') + '>자세 복습지' + (nNew ? ' <i class="wk-new">NEW</i>' : (M.forms || []).length ? ' <small>' + M.forms.length + '</small>' : '') + '</a></nav>';
+  }
   function meSeg(cur) {   /* '나' 탭 위 전환 칸: 목표·출석 / 몸변화 / 공지 */
-    var L = [["goal", "목표 · 출석"]];
-    if (IB_ON) L.push(["body", "몸변화"]);
-    L.push(["notice", "공지"]);
+    var L = [["goal", "목표 · 출석"], ["notice", "공지"]];   /* 몸변화는 2026-11-14 기록 탭으로 */
     return '<nav class="meseg" aria-label="나의 기록">' + L.map(function (x) {
       return '<a href="#' + x[0] + '"' + (x[0] === cur ? ' aria-current="page"' : '') + '>' + x[1] + '</a>';
     }).join("") + '</nav>';
@@ -534,7 +540,6 @@
       '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 ' + esc(TRN) + ' 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + (BP ? '목표는 하나, 바프 촬영날! 그 의지라면 충분해요. 단계마다 함께 넘어가요!' : '혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!') + '</p></div></div>';
     var n4 = "03";   /* 몸 변화 기록은 2026-11-06 '몸변화' 탭(#body)으로, 근육 지도는 2026-11-08 루틴 탭으로 이동 */
-    h += grLink();
     var attSec = '<section id="att">' + head("01", "출석률 · 출석 달력", "얼마나 꾸준히 나왔는지 봐요") + '<div class="panel attcard">' + attGauge() + attCalendar() + '</div></section>';
     if (!now) {
       return h + attSec + badgeSection("02") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
@@ -689,7 +694,7 @@
   function attCall(q) {
     return fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + (q || ""), { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw new Error("save"); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) grServer(j.kv); return j; });
+      .then(function (j) { if (!j || !j.ok) throw new Error("save"); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); lgServer(j.kv); } return j; });
   }
   function attSync() {
     if (!ATT_API) return;
@@ -1075,7 +1080,7 @@
     return '<div class="ibtrend panel"><p class="ibt-when">' + a[0].d.replace(/-/g, ". ") + ' → ' + a[a.length - 1].d.replace(/-/g, ". ") + ' · 기록 ' + a.length + '개</p>' + rows + '</div>';
   }
   function renderBody() {
-    var h = meSeg("body") + '<div class="hero"><div class="hero-main"><div class="hero-l"><div class="eyebrow">MY BODY <b>· 몸 변화 기록</b></div>' +
+    var h = '<a class="back" href="#log">← 기록</a><div class="hero"><div class="hero-main"><div class="hero-l"><div class="eyebrow">MY BODY <b>· 몸 변화 기록</b></div>' +
       '<h1>몸 변화 기록</h1><div class="en">' + esc(M.name) + ' 회원님 · 인바디로 지난달과 비교해요</div>' +
       '<div class="who"><strong>한 달에 한 번</strong><span>담당 ' + esc(TRN) + ' 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>숫자는 한 달에 한 번! 같은 시간 · 같은 조건으로 재요</p></div></div>';
@@ -1335,12 +1340,15 @@
     return dayByKey(DAY_KEYS[new Date(+p[0], +p[1] - 1, +p[2]).getDay()]);
   }
   function muscleCounts(ym) {
-    var a = attLoad().slice().sort(), cnt = {}, days = 0;
+    var a = attLoad().slice().sort(), cnt = {}, days = 0, L = (LG && LG.d) || {};
     MG.forEach(function (g) { cnt[g[0]] = 0; });
-    a.forEach(function (k) {
+    var ks = a.slice(); Object.keys(L).forEach(function (k) { if (ks.indexOf(k) < 0) ks.push(k); });
+    ks.forEach(function (k) {
       if (k.slice(0, 7) !== ym) return;
       days++;
-      dayGroups(dayOfDate(k, a)).forEach(function (g) { cnt[g]++; });
+      /* 2026-11-14: 그날 ✓한 종목이 있으면 그 종목들로, 없으면 그날 루틴 전체로 */
+      var g0 = L[k] && L[k].length ? dayGroups({ items: L[k].map(function (x) { return { name: x[0] }; }) }) : dayGroups(dayOfDate(k, a));
+      g0.forEach(function (g) { cnt[g]++; });
     });
     return { cnt: cnt, days: days };
   }
@@ -1386,7 +1394,7 @@
     var now = new Date(), st = startDate(), prevYm = ymAdd(ymOf(now), -1);
     var canPrev = st && ymOf(st) <= prevYm;
     if (!canPrev) mmWhich = "cur";
-    return '<section id="muscle" data-num="' + num + '">' + head(num, "이번 달 근육 지도", "출석한 날 루틴 부위가 하나씩 칠해져요", '<a class="more" href="#report">' + (now.getMonth() + 1) + '월 리포트</a>') +
+    return '<section id="muscle" data-num="' + num + '">' + head(num, "이번 달 근육 지도", "✓한 종목 · 출석한 날 부위가 칠해져요", '<a class="more" href="#report">' + (now.getMonth() + 1) + '월 리포트</a>') +
       '<div class="panel mmap"><div class="mm-seg" role="group" aria-label="달 고르기">' +
       '<button type="button" data-m="cur" aria-pressed="' + (mmWhich === "cur") + '">이번 달 ' + (now.getMonth() + 1) + '월</button>' +
       '<button type="button" data-m="prev" aria-pressed="' + (mmWhich === "prev") + '"' + (canPrev ? '' : ' disabled') + '>지난달 ' + (+prevYm.slice(5)) + '월</button></div>' +
@@ -1535,6 +1543,97 @@
      지금 무게 = 지금 루틴(폰에서 고친 것 포함) 종목별 가장 무거운 세트. 인바디 = 첫 기록 vs 최근 기록. */
   var GR_LS = "ptnote:" + SLUG + ":growth", GR = null;
   try { GR = JSON.parse(localStorage.getItem(GR_LS) || "null"); } catch (e) {}
+  /* ---- 운동 기록 (2026-11-14 장동욱 "운동 탭에서 한 종목 끝날 때마다 체크 → 기록 탭에 저장, 첫날 vs 오늘도 기록에 연동")
+     창고 저장소 mw:<주소>:log = { d: {"YYYY-MM-DD": [[종목, 가장 무거운 kg, 세트 수], …]}, f: {종목: 처음 ✓한 kg}, at }
+     회원 폰도 쓸 수 있는 칸(mw:)이라 창고 재배포 필요 없음. 4천 자 넘으면 오래된 날부터 지움. 무게는 루틴에 적힌 무게 그대로(고치기 X) */
+  var LG_LS = "ptnote:" + SLUG + ":log", LG = null, LG_PEND = false, LG_T = 0;
+  try { LG = JSON.parse(localStorage.getItem(LG_LS) || "null"); LG_PEND = !!(LG && LG.pend); } catch (e) {}
+  function lgObj() { if (!LG || typeof LG !== "object") LG = { d: {}, f: {}, at: 0 }; LG.d = LG.d || {}; LG.f = LG.f || {}; return LG; }
+  function lgDone(name) { var t = LG && LG.d && LG.d[ymd(new Date())]; return !!t && t.some(function (x) { return x[0] === name; }); }
+  function lgPush() {
+    clearTimeout(LG_T);
+    LG_T = setTimeout(function () {
+      if (!ATT_API) return;
+      var v = {}; for (var k in LG) if (k !== "pend") v[k] = LG[k];
+      rtPost({ a: "kv_set", k: "mw:" + SLUG + ":log", v: v }).then(function (j) {
+        if (j && j.ok) { LG_PEND = false; delete LG.pend; try { localStorage.setItem(LG_LS, JSON.stringify(LG)); } catch (e) {} }
+      }).catch(function () {});
+    }, 900);
+  }
+  function lgSave() {
+    var o = lgObj(); o.at = Date.now(); o.pend = 1; LG_PEND = true;
+    var ds = Object.keys(o.d).sort();
+    while (ds.length > 1 && JSON.stringify({ d: o.d, f: o.f, at: o.at }).length > 3800) delete o.d[ds.shift()];
+    try { localStorage.setItem(LG_LS, JSON.stringify(o)); } catch (e) {}
+    lgPush();
+  }
+  function lgToggle(it) {
+    var o = lgObj(), k = ymd(new Date()), t = o.d[k] = o.d[k] || [];
+    var i = -1; t.forEach(function (x, j) { if (x[0] === it.name) i = j; });
+    var kg = 0; (it.sets || []).forEach(function (s) { if (s[1] != null && +s[1] > kg) kg = +s[1]; });
+    if (i >= 0) { t.splice(i, 1); if (!t.length) delete o.d[k]; }
+    else { t.push([it.name, kg || null, (it.sets || []).length]); if (kg > 0 && !(o.f[it.name] > 0)) o.f[it.name] = kg; }
+    lgSave();
+    return i < 0;
+  }
+  function lgServer(kv) {
+    var v = kv && kv["mw:" + SLUG + ":log"] || null;
+    if (LG_PEND && LG && (!v || (LG.at || 0) >= (v.at || 0))) { lgPush(); return; }   /* 폰에서 체크한 게 아직 안 올라갔으면 다시 보냄 */
+    if (!v || (LG && JSON.stringify(v) === JSON.stringify({ d: LG.d, f: LG.f, at: LG.at }))) return;
+    if (LG && (LG.at || 0) > (v.at || 0)) { lgPush(); return; }
+    LG = v; LG_PEND = false;
+    try { localStorage.setItem(LG_LS, JSON.stringify(v)); } catch (e) {}
+    if (/^#(log|routine|muscle)/.test(location.hash)) rerender();
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest(".exchk[data-chk]");
+    if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    var d = dayByKey(view.getAttribute("data-day")), it = d && d.items && d.items[+b.getAttribute("data-chk")];
+    if (!it) return;
+    var on = lgToggle(it), card = b.closest(".ex");
+    if (card) card.classList.toggle("done", on);
+    b.setAttribute("aria-pressed", String(on));
+    if (on) { b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); try { navigator.vibrate && navigator.vibrate(18); } catch (x) {} }
+    var kg = 0; (it.sets || []).forEach(function (s) { if (s[1] != null && +s[1] > kg) kg = +s[1]; });
+    attToast(on ? "✓ " + it.name + (kg ? " " + kg + "kg" : "") + " · 기록에 저장했어요" : it.name + " 체크를 풀었어요");
+  }, true);
+  function lgMd(k) { var p = k.split("-"), dt = new Date(+p[0], +p[1] - 1, +p[2]); return (+p[1]) + ". " + (+p[2]) + " (" + "일월화수목금토"[dt.getDay()] + ")"; }
+  function renderLog() {
+    var L = (LG && LG.d) || {}, now = new Date(), today = ymd(now), T = L[today] || [], att = attLoad();
+    var mon = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (now.getDay() + 6) % 7), wn = 0, wk = "";
+    for (var i = 0; i < 7; i++) {
+      var dt = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + i), k = ymd(dt), on = !!(L[k] && L[k].length) || att.indexOf(k) >= 0;
+      if (on) wn++;
+      wk += '<span class="' + (on ? 'on' : '') + (k === today ? ' now' : '') + '"><i>' + (on ? '✓' : '') + '</i><small>' + "월화수목금토일"[i] + '</small></span>';
+    }
+    var ym = today.slice(0, 7), mo = 0; Object.keys(L).forEach(function (k) { if (k.slice(0, 7) === ym) mo += L[k].length; });
+    var G = grData(), kp = G.lifts.length ? esc(G.lifts[0].name) + " 처음 " + grKg(G.lifts[0].a) + " → 지금 " + grKg(G.lifts[0].b) + "kg! 꾸준함이 무게가 됐어요" : "한 종목 끝날 때마다 ✓ 꾹 — 그게 다 기록이 돼요";
+    var h = '<div class="hero"><div class="hero-main"><div class="hero-l"><div class="eyebrow">MY LOG <b>· 운동 기록</b></div>' +
+      '<h1>이번 주 ' + wn + '일 운동했어요</h1><div class="en">' + esc(M.name) + ' 회원님 · 운동 탭에서 ✓한 종목이 여기 쌓여요</div>' +
+      '<div class="who"><strong>이번 달 ' + mo + '종목 완료</strong><span>담당 ' + esc(TRN) + ' 트레이너</span></div>' +
+      '<div class="lgweek">' + wk + '</div></div></div>' +
+      '<div class="keypoint"><small>KEY POINT</small><p>' + kp + '</p></div></div>';
+    var rows = T.map(function (x) {
+      return '<li><span class="lg-ck" aria-hidden="true">✓</span><b>' + esc(x[0]) + '</b><small>' + (x[2] || "") + '세트</small><em>' + (x[1] ? x[1] + 'kg' : '맨몸') + '</em></li>';
+    }).join("");
+    var past = Object.keys(L).filter(function (k) { return k < today && L[k].length; }).sort().reverse().slice(0, 5).map(function (k) {
+      var a = L[k], top = a.slice().sort(function (x, y) { return (y[1] || 0) - (x[1] || 0); })[0];
+      return '<li><span>' + lgMd(k) + '</span><b>' + a.length + '종목</b><em>' + esc(top[0]) + (top[1] ? ' ' + top[1] + 'kg' : '') + '</em></li>';
+    }).join("");
+    h += '<section id="lgtoday">' + head("01", "오늘 한 운동", T.length ? T.length + "종목 완료" : "운동 탭에서 ✓하면 여기 쌓여요") +
+      '<div class="panel lglist">' + (T.length ? '<ul class="lg-today">' + rows + '</ul>' :
+        '<div class="lg-empty"><p>아직 오늘 ✓한 종목이 없어요</p><a class="btn fill" href="#routine-' + todayKey() + '">오늘 운동하러 가기 →</a></div>') +
+      (past ? '<div class="lg-past"><h4>지난 기록</h4><ul>' + past + '</ul></div>' : '') + '</div></section>';
+    var gl = G.lifts.length ? G.lifts : G.top;
+    h += '<section id="lggrow">' + head("02", "첫날 vs 오늘", "✓한 무게로 자동으로 채워져요") + grLink() +
+      (gl.length ? '<div class="panel lg-grow"><h4>' + (G.lifts.length ? '처음 무게 → 지금 무게' : '지금 나의 무게 · ✓할수록 처음 무게가 쌓여요') + '</h4>' + gl.map(function (l) {
+        return '<div class="lg-g"><b>' + esc(l.name) + '</b>' + (l.a != null ? '<span><i>' + grKg(l.a) + '</i> → <em>' + grKg(l.b) + 'kg</em></span><u>+' + grKg(l.up) + '</u>' : '<span><em>' + grKg(l.b) + 'kg</em></span>') + '</div>';
+      }).join("") + '</div>' : '') + '</section>';
+    h += muscleSection("03");
+    if (IB_ON) h += '<section id="inbody">' + head("04", "몸 변화 · 인바디", "지난달과 비교해요", '<a class="more" href="#body">흐름 보기</a>') + ibPanel() + '</section>';
+    return h + remember();
+  }
   function grServer(kv) {
     var v = kv && kv["pub:m:" + SLUG + ":growth"] || null;
     if (JSON.stringify(v) === JSON.stringify(GR)) return;
@@ -1551,7 +1650,7 @@
     });
     return o;
   }
-  function grBase() { var o = {}, k, a = M.start_weights || {}, b = (GR && GR.w) || {}; for (k in a) o[k] = +a[k]; for (k in b) if (b[k] != null && b[k] !== "") o[k] = +b[k]; return o; }
+  function grBase() { var o = {}, k, a = M.start_weights || {}, b = (GR && GR.w) || {}, f = (LG && LG.f) || {}; for (k in f) if (+f[k] > 0) o[k] = +f[k]; for (k in a) o[k] = +a[k]; for (k in b) if (b[k] != null && b[k] !== "") o[k] = +b[k]; return o; }
   function grData() {
     var now = new Date(), st = M.journey && M.journey.start ? jDate(M.journey.start) : null, a = attLoad().slice().sort();
     if (!st && a.length) { var p = a[0].split("-"); st = new Date(+p[0], +p[1] - 1, +p[2]); }
@@ -1611,7 +1710,7 @@
   }
   function renderGrowth() {
     var G = grData(), coach = COACH_MODE && !DEMO;
-    return '<div class="rp-nav"><a href="#goal" class="rp-back">← 목표</a><b class="gr-navt">성장 기록</b></div>' +
+    return '<div class="rp-nav"><a href="#log" class="rp-back">← 기록</a><b class="gr-navt">성장 기록</b></div>' +
       '<div class="rp-frame" id="rpFrame">' + grCard(G) + '</div>' +
       '<button type="button" class="btn fill rp-save" id="rpSave"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg>이미지로 저장 · 공유</button>' +
       (coach ? '<button type="button" class="btn gr-edit" id="grEdit">✎ 처음 무게 · 선생님 한마디 넣기</button>' +
@@ -1838,10 +1937,11 @@
     if (DEMO) return;
     var sg = litSigs();
     if (sg[curTab] && sg[curTab].length) lsAdd(LIT_KEY, sg[curTab]);
-    var seen = lsArr(LIT_KEY);
-    Object.keys(sg).forEach(function (t) {
+    var seen = lsArr(LIT_KEY), on = {};
+    Object.keys(sg).forEach(function (t) { var e = tabOf(t); on[e] = on[e] || sg[t].some(function (k) { return seen.indexOf(k) < 0; }); });
+    Object.keys(on).forEach(function (t) {
       var a = document.querySelector('.tabs a[data-tab="' + t + '"]');
-      if (a) a.classList.toggle("lit", sg[t].some(function (k) { return seen.indexOf(k) < 0; }));
+      if (a) a.classList.toggle("lit", on[t]);
     });
   }
 
@@ -1857,7 +1957,7 @@
       '<div><span class="tagc">' + esc(f.part) + '</span>' + (formNew(f) ? '<span class="fnew">NEW</span>' : '') + '<h3>' + esc(f.exercise) + '</h3><p>' + esc(f.exercise_en) + ' · ' + esc(f.date) + '</p></div></a>';
   }
   function renderForms() {
-    var h = '<section>' + head("", "자세 복습지", "수업에서 배운 자세를 영상으로 다시 봐요");
+    var h = wkSeg("forms") + '<section>' + head("", "자세 복습지", "수업에서 배운 자세를 영상으로 다시 봐요");
     if (M.forms.length) {
       var cnt = {}; M.forms.forEach(function (f) { formCats(f).forEach(function (c) { cnt[c] = (cnt[c] || 0) + 1; }); });
       var cats = FCATS.map(function (c) { return c[0]; }).concat(["기타"]).filter(function (c) { return cnt[c]; });
@@ -1891,7 +1991,7 @@
   /* ---------------- 복습지 상세 */
   function renderForm(f) {
     var D = f.dir;
-    var h = '<a class="back" href="#forms">← 복습지 목록</a>';
+    var h = '<a class="back" href="#forms">← 자세 복습지</a>';
     h += '<div class="hero"><div class="hero-main split"><div class="hero-l">' +
       '<div class="eyebrow">MY FORM NOTE <b>· 자세 복습지</b></div><h1>' + esc(f.exercise) + '</h1>' +
       '<div class="en">' + esc(f.exercise_en) + '</div>' +
@@ -1997,7 +2097,7 @@
     var tk = todayKey(), ED = !!RT_EDIT;
     sel = sel || tk;
     view.setAttribute("data-day", sel);
-    var h = rtTopBar() + '<div class="hero"><div class="hero-main split"><div class="hero-l">' +
+    var h = wkSeg("routine") + rtTopBar() + '<div class="hero"><div class="hero-main split"><div class="hero-l">' +
       '<div class="eyebrow">' + (ROT ? 'ROTATION ROUTINE <b>· 순환 루틴 ' : 'WEEKLY ROUTINE <b>· 주간 루틴 ') + esc(R.version) + '</b></div><h1>' + esc(R.title) + '</h1>' +
       '<div class="who"><strong>' + esc(M.name) + ' 회원님</strong><span>' + esc(R.updated) + ' 업데이트</span></div></div>' +
       '<div class="hero-r"><div class="eyebrow">이번 주 계획</div><ul class="dots small">' +
@@ -2044,11 +2144,13 @@
           var kg = s[1] == null ? '맨몸' : s[1] + 'kg';                              /* null = 맨몸 */
           return '<div class="set"><small>' + (j + 1) + '세트</small><b>' + reps + '</b><i>' + kg + '</i></div>';
         }).join("");
-        return '<div class="ex' + (main ? ' main' : '') + (it.tag === "워밍업" ? ' t-warm' : it.tag === "선행" ? ' t-pre' : '') + '"' + (ED ? '' : ' data-exi="' + i + '" role="button" tabindex="0" aria-label="' + esc(it.name) + ' 자세히 보기"') + '><div class="ex-top"><span class="ex-ic">' + img(iconOf(it)) + '<span class="ex-no">' + (i + 1) + '</span>' +
+        var dn = !ED && lgDone(it.name);
+        return '<div class="ex' + (main ? ' main' : '') + (it.tag === "워밍업" ? ' t-warm' : it.tag === "선행" ? ' t-pre' : '') + (dn ? ' done' : '') + '"' + (ED ? '' : ' data-exi="' + i + '" role="button" tabindex="0" aria-label="' + esc(it.name) + ' 자세히 보기"') + '><div class="ex-top"><span class="ex-ic">' + img(iconOf(it)) + '<span class="ex-no">' + (i + 1) + '</span>' +
           (main ? '<span class="main-badge">메인</span>' : '') + '</span><div>' +
           '<h3>' + esc(it.name) + '</h3><div class="meta">' + esc(it.en) + ' ' + tagChip(it.tag) + '</div>' +
           '<div class="tip">' + esc(it.tip) + '</div><div class="sets">' + sets + '</div></div></div>' +
-          (itemForm(it) ? '<a class="formlink" href="#form-' + esc(itemForm(it).id) + '">▶ 복습지</a>' : '') + (ED ? rtItemCtl(i, d.items.length) : '') + '</div>';
+          (itemForm(it) ? '<a class="formlink" href="#form-' + esc(itemForm(it).id) + '">▶ 복습지</a>' : '') +
+          (ED ? rtItemCtl(i, d.items.length) : '<button type="button" class="exchk" data-chk="' + i + '" aria-pressed="' + dn + '" aria-label="' + esc(it.name) + ' 끝, 기록에 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg></button>') + '</div>';
       }).join("");
       if (ED) h += '<button type="button" class="rtadd" data-rt="add">+ 종목 추가</button>';
       if (d.cardio && R.cardio) {
@@ -2058,7 +2160,7 @@
       h += '</div>' + (R.note ? '<p class="note">' + esc(R.note) + '</p>' : '');
     }
     h += '</section>';
-    if (!ED) h += muscleSection("02");   /* 이번 달 근육 지도 (2026-11-08 "루틴 항목에 넣는 게 컨셉에 맞지") — 고치는 중엔 숨김 */
+    /* 근육 지도는 2026-11-14 기록 탭으로 옮김 */
     return h + remember();
   }
 
@@ -3033,10 +3135,10 @@
       { c: 1, t: tourName() + "님, 환영해요! 👋", b: (SITE.trainer || "장동욱") + " 선생님과 함께하는 나만의 PT노트예요.\n어디에 뭐가 있는지 30초만 둘러볼까요?", ok: "둘러보기" },
       { s: "#attBtn", t: "운동 온 날엔 출석 도장 꾹", b: "헬스장에 온 날 여기를 꾹 누르면 출석이 찍혀요.\n출석이 쌓이면 배지와 월간 리포트가 생겨요." },
       { s: ".thero", t: "오늘 할 운동", b: "요일마다 오늘 할 운동이 여기 떠요.\n누르면 세트·무게까지 자세히 볼 수 있어요." },
-      { s: '.tabs a[data-tab="routine"]', t: "루틴", b: "일주일 운동 순서와 무게가 다 들어 있어요.\n선생님이 고치면 바로 최신으로 바뀌어요." },
-      { s: '.tabs a[data-tab="forms"]', t: "자세 복습지", b: "수업 때 찍은 내 자세 영상이에요.\n혼자 운동할 때 다시 보면서 자세를 떠올려요." },
+      { s: '.tabs a[data-tab="routine"]', t: "운동", b: "루틴과 자세 복습지가 한 곳에 있어요.\n한 종목이 끝나면 ✓를 눌러 기록해요." },
       { s: '.tabs a[data-tab="diet"]', t: "식단", b: M.diet ? "선생님이 짜 준 식단이 여기 있어요." : "식단을 받으면 여기서 볼 수 있어요." },
-      { s: '.tabs a[data-tab="me"]', t: "나", b: "출석률 · 배지 · 몸 변화(인바디) · PT 여정을\n한눈에 볼 수 있어요." },
+      { s: '.tabs a[data-tab="log"]', t: "기록", b: "✓한 운동 · 첫날 vs 오늘 · 근육 지도 · 인바디가\n여기 쌓여요." },
+      { s: '.tabs a[data-tab="me"]', t: "나", b: "출석률 · 배지 · PT 여정을\n한눈에 볼 수 있어요." },
       { s: ".bell", t: "선생님 공지", b: "선생님 소식이 오면 빨간 점이 떠요." },
       { c: 1, t: "준비 끝! 💪", b: "새 루틴이나 복습지가 올라오면 아래 아이콘에 불이 켜져요.\n사용법은 오른쪽 위 ⚙️ 설정에서 언제든 다시 볼 수 있어요.", ok: "시작하기", app: E.mobile && !E.standalone }
     ];
@@ -3157,7 +3259,7 @@
       if (hit.day) view.setAttribute("data-day", hit.day); else view.removeAttribute("data-day");
       route.lastH = curH0; route.at = Date.now();
       view.classList.remove("enter"); view.classList.add("back");
-      var t0 = /^(goal|body|notice)$/.test(hit.tab) ? "me" : hit.tab;
+      var t0 = tabOf(hit.tab);
       Array.prototype.forEach.call(document.querySelectorAll(".tabs a"), function (a) {
         if (a.getAttribute("data-tab") === t0) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
       });
@@ -3180,10 +3282,11 @@
     else if (hsh === "notice") { html = renderNotice(); tab = "notice"; }
     else if (hsh === "goal" || hsh === "journey") { html = renderGoal(); tab = "goal"; }
     else if (hsh === "goal-badges" || hsh === "badges") { html = renderGoal(); tab = "goal"; jumpTo = "badges"; }
-    else if (hsh === "muscle") { html = renderRoutine(); tab = "routine"; jumpTo = "muscle"; }
-    else if (hsh === "growth") { html = renderGrowth(); tab = "goal"; after = setupGrowth; }
+    else if (hsh === "log") { html = renderLog(); tab = "log"; }
+    else if (hsh === "muscle") { html = renderLog(); tab = "log"; jumpTo = "muscle"; }
+    else if (hsh === "growth") { html = renderGrowth(); tab = "log"; after = setupGrowth; }
     else if (hsh === "app") { html = renderInstall(); tab = "home"; after = setupInstall; }
-    else if (hsh === "report" || /^report-\d{4}-\d{2}$/.test(hsh)) { html = renderReport(hsh.slice(7)); tab = "routine"; after = setupReport; }
+    else if (hsh === "report" || /^report-\d{4}-\d{2}$/.test(hsh)) { html = renderReport(hsh.slice(7)); tab = "log"; after = setupReport; }
     else if ((hsh === "body" || hsh === "inbody") && IB_ON) { html = renderBody(); tab = "body"; }
     else { html = renderHome(); }
     var wasRoutine = view.getAttribute("data-tab") === "routine";
@@ -3201,7 +3304,7 @@
     route.lastH = curH; route.at = Date.now();
     view.classList.toggle("back", !!(goingBack && hashChanged));
     Array.prototype.forEach.call(document.querySelectorAll(".tabs a"), function (a) {
-      if (a.getAttribute("data-tab") === (/^(goal|body|notice)$/.test(tab) ? "me" : tab)) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      if (a.getAttribute("data-tab") === tabOf(tab)) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
     tabInd();
     alignText(document);

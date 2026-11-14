@@ -1727,9 +1727,9 @@ html[data-skin="sheep"] .stamp::after { background: #FFE3C7; }
 .ex-list.cmp .sets:has(.set:nth-child(5)) .set b { font-size: 15.5px; }
 .ex-list.cmp .sets:has(.set:nth-child(5)) .set > i { font-size: 11px; }
 /* 횟수·무게 글자 밑줄(기준선) 맞춤 — 한 줄 칸은 가운데 정렬 글줄로 */
-.ex-list.cmp .sets:not(:has(.set:nth-child(5))) .set { display: block; text-align: center; line-height: 38px; }
-.ex-list.cmp .sets:not(:has(.set:nth-child(5))) .set b, .ex-list.cmp .sets:not(:has(.set:nth-child(5))) .set > i { display: inline; line-height: inherit; vertical-align: baseline; }
-.ex-list.cmp .sets:not(:has(.set:nth-child(5))) .set > i { margin-left: 4px; }
+.ex-list.cmp .sets:not(:has(.set:nth-child(4))) .set { display: block; text-align: center; line-height: 38px; }
+.ex-list.cmp .sets:not(:has(.set:nth-child(4))) .set b, .ex-list.cmp .sets:not(:has(.set:nth-child(4))) .set > i { display: inline; line-height: inherit; vertical-align: baseline; }
+.ex-list.cmp .sets:not(:has(.set:nth-child(4))) .set > i { margin-left: 4px; }
 
 /* ---- 종목 자세히 보기 창 (2026-11-14 "종목 누르면 더 정확하게 + 루틴·복습지 한번에, 부드럽게") ---- */
 .ex-list.cmp .ex[data-exi] { cursor: pointer; }
@@ -1780,3 +1780,65 @@ html[data-skin="sheep"] .stamp::after { background: #FFE3C7; }
 .xs-vid video { width: auto; max-width: 100%; height: auto; max-height: 62vh; max-height: 62dvh; object-fit: contain; }
 /* 무게 글자 = 자세히 보기 창과 같은 빨간색으로 통일 */
 .ex-list.cmp .set > i { color: var(--seal, var(--primary)); font-weight: 800; }
+
+/* ---- 운동 탭 · 기록 탭 (2026-11-14 장동욱 "루틴이랑 복습지 합치고 전환칸, 종목 끝나면 체크 → 기록 탭") ---- */
+.wkseg a small { font-size: 11.5px; font-weight: 700; color: var(--faint); margin-left: 2px; }
+.wkseg .wk-new { font-style: normal; font-size: 10px; font-weight: 900; color: #fff; background: var(--seal, var(--primary)); border-radius: 99px; padding: 1px 6px; margin-left: 3px; vertical-align: 1px; }
+/* 종목 완료 체크 — 카드 오른쪽 가운데 동그라미 */
+.ex-list.cmp .exchk { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 18px; padding: 0; cursor: pointer;
+  border: 2px dashed #C9C9D0; background: #fff; display: flex; align-items: center; justify-content: center; z-index: 2; transition: background .2s, border-color .2s, box-shadow .2s; }
+.ex-list.cmp .exchk svg { width: 18px; height: 18px; fill: none; stroke: #D0D0D6; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.ex-list.cmp .exchk[aria-pressed="true"] { border: 0; background: #1E9E55; box-shadow: 0 4px 12px -4px rgba(30, 158, 85, .65); }
+.ex-list.cmp .exchk[aria-pressed="true"] svg { stroke: #fff; }
+.ex-list.cmp .exchk.pop { animation: chkPop .32s ease both; }
+@keyframes chkPop { 0% { transform: translateY(-50%) scale(.6); } 60% { transform: translateY(-50%) scale(1.18); } 100% { transform: translateY(-50%) scale(1); } }
+.ex-list.cmp .ex[data-exi] .sets { margin-right: 44px; }
+.ex-list.cmp .ex[data-exi] .tip { margin-right: 42px; }
+.ex-list.cmp .ex[data-exi]:has(.formlink) .tip { margin-right: 108px; }
+.ex-list.cmp .ex[data-exi]:has(.formlink) .ex-top > div { padding-right: 0; }
+.ex-list.cmp .ex[data-exi] .formlink { right: 52px; }
+.ex-list.cmp .sets:has(.set:nth-child(4)) .set { display: flex; height: 42px; flex-direction: column; gap: 3px; line-height: 1; }
+.ex-list.cmp .sets:has(.set:nth-child(4)) .set b { font-size: 15.5px; }
+.ex-list.cmp .sets:has(.set:nth-child(4)) .set > i { display: block; margin-left: 0; font-size: 11px; }
+/* 끝낸 종목: 은은한 민트 그라데이션이 천천히 흐름 */
+.ex-list.cmp .ex.done { background: linear-gradient(110deg, #F1FBF5, #DDF4E6 30%, #F4FCF7 55%, #DDF4E6 80%, #F1FBF5) !important; background-size: 200% 100% !important;
+  animation: doneFlow 12s linear infinite; box-shadow: 0 0 0 1.5px #9BDDB6, 0 6px 16px -10px rgba(30, 158, 85, .5) !important; }
+.ex-list.cmp .ex.done h3 { color: #1E6E42; }
+.ex-list.cmp .ex.done .ex-no { background: #1E9E55; }
+.ex-list.cmp .ex.done .set { background: rgba(255, 255, 255, .75); }
+@keyframes doneFlow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+@media (prefers-reduced-motion: reduce) { .ex-list.cmp .ex.done { animation: none; } }
+/* 기록 탭 */
+.lgweek { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-top: 12px; padding: 10px 6px; border-radius: 14px; background: rgba(255, 255, 255, .08); text-align: center; }
+.lgweek span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.lgweek i { width: 30px; height: 30px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 13px; font-weight: 900; background: rgba(255, 255, 255, .1); color: #fff; }
+.lgweek span.on i { background: var(--seal, #E1141E); }
+:root[data-sex="F"] .lgweek span.on i { background: #fff; color: var(--seal); }
+.lgweek span.now i { box-shadow: 0 0 0 3px rgba(255, 255, 255, .35); }
+.lgweek small { font-size: 10.5px; opacity: .7; }
+.lglist { padding: 4px 14px; }
+.lg-today, .lg-past ul { list-style: none; margin: 0; padding: 0; }
+.lg-today li { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 11px 0; }
+.lg-today li + li { border-top: 1px solid #F0F0F2; }
+.lg-ck { width: 26px; height: 26px; border-radius: 13px; background: #1E9E55; color: #fff; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.lg-today b { font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lg-today small { font-size: 12px; color: var(--faint); }
+.lg-today em, .lg-past em { font-style: normal; font-weight: 800; color: var(--seal, var(--primary)); }
+.lg-today em { font-size: 15px; min-width: 44px; text-align: right; }
+.lg-empty { text-align: center; padding: 18px 0 14px; }
+.lg-empty p { margin: 0 0 10px; color: var(--sub); font-size: 14px; }
+.lg-past { border-top: 1px dashed #E2E2E6; margin-top: 4px; padding: 10px 0 8px; }
+.lg-past h4 { margin: 0 0 4px; font-size: 12px; color: var(--faint); }
+.lg-past li { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 10px; align-items: baseline; padding: 6px 0; font-size: 13px; }
+.lg-past li span { color: var(--sub); }
+.lg-past li em { font-size: 12.5px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#lggrow .gr-link { margin-bottom: 10px; }
+.lg-grow { padding: 4px 14px; }
+.lg-g { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 11px 0; }
+.lg-g + .lg-g { border-top: 1px solid #F0F0F2; }
+.lg-g b { font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lg-g span { font-size: 13.5px; white-space: nowrap; }
+.lg-g span i { font-style: normal; color: #A0A0AA; }
+.lg-g span em { font-style: normal; font-weight: 800; color: var(--seal, var(--primary)); }
+.lg-g u { text-decoration: none; font-size: 12px; font-weight: 900; color: #fff; background: #1E9E55; border-radius: 99px; padding: 3px 9px; }
+.lg-grow h4 { margin: 10px 0 2px; font-size: 12px; color: var(--faint); }
