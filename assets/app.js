@@ -260,7 +260,24 @@
     return "d" + (done % n + 1);
   }
   function todayKey() { return ROT ? turnKey() : DAY_KEYS[new Date().getDay()]; }
+  /* 이번 주 요일 옮기기 (2026-11-14 장동욱 "그날 못 나오면 상단 루틴 꾹 눌러서 옮기기 — A안, 쉬는 날 갑자기 나와도 넣을 수 있게")
+     창고 저장소 mw:<주소>:mv = { w: 이번 주 월요일, m: { 요일: 가져온 요일 | "-"(이번 주 쉼) }, at } — 다음 주 월요일이면 저절로 원래대로 */
+  var MV_LS = null, MV = null;
+  function mvGet() { if (MV_LS === null) { MV_LS = "ptnote:" + SLUG + ":mv"; try { MV = JSON.parse(localStorage.getItem(MV_LS) || "null"); } catch (e) {} } return MV; }
+  function wkMon(d) { d = d || new Date(); return ymd(new Date(d.getFullYear(), d.getMonth(), d.getDate() - (d.getDay() + 6) % 7)); }
+  function mvMap() { mvGet(); return (!ROT && MV && MV.w === wkMon() && MV.m) || {}; }
   function dayByKey(k) {
+    var raw = dayByKeyRaw(k);
+    if (ROT || RT_EDIT || isRotKey(k)) return raw;
+    var src = mvMap()[k];
+    if (!src) return raw;
+    if (src === "-") return { day: DAY_KO[k], part: "이번 주 쉼", en: "", rest: true, mvSkip: 1 };
+    var sd = dayByKeyRaw(src); if (!sd) return raw;
+    var o = {}; for (var x in sd) o[x] = sd[x];
+    o.day = DAY_KO[k]; o.mvFrom = src; return o;
+  }
+  function dayAt(dt) { var k = DAY_KEYS[dt.getDay()]; return wkMon(dt) === wkMon() ? dayByKey(k) : dayByKeyRaw(k); }
+  function dayByKeyRaw(k) {
     if (isRotKey(k)) return rotDays()[+k.slice(1) - 1];
     var days = (M.routine && M.routine.days) || [];
     for (var i = 0; i < days.length; i++) if (KO_KEY[days[i].day] === k) return days[i];
@@ -574,7 +591,7 @@
   function attHas(a, key) { return a.indexOf(key) >= 0; }
   function isWorkoutDay(d) {   /* 루틴에서 운동하는 요일인지 (순환 루틴은 어느 날이든 운동할 수 있음) */
     if (ROT) return true;
-    var day = dayByKey(DAY_KEYS[d.getDay()]);
+    var day = dayAt(d);
     return !!(day && !day.rest);
   }
   var ATT_SINCE = new Date(2026, 10, 4);   /* 출석 체크를 시작한 날 (이 전 날짜는 결석으로 세지 않음) */
@@ -694,7 +711,7 @@
   function attCall(q) {
     return fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + (q || ""), { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw new Error("save"); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); lgServer(j.kv); } return j; });
+      .then(function (j) { if (!j || !j.ok) throw new Error("save"); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); lgServer(j.kv); mvServer(j.kv); } return j; });
   }
   function attSync() {
     if (!ATT_API) return;
@@ -1337,7 +1354,7 @@
       return rotDays()[before % n];
     }
     var p = k.split("-");
-    return dayByKey(DAY_KEYS[new Date(+p[0], +p[1] - 1, +p[2]).getDay()]);
+    return dayAt(new Date(+p[0], +p[1] - 1, +p[2]));
   }
   function muscleCounts(ym) {
     var a = attLoad().slice().sort(), cnt = {}, days = 0, L = (LG && LG.d) || {};
@@ -2107,6 +2124,89 @@
   }
 
   /* ---------------- 루틴 */
+  /* ---- 요일 옮기기 창 (A안) */
+  var KEYS7 = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+  function mvIdx(k) { return KEYS7.indexOf(k); }
+  function mvDate(k) { var t = new Date(), off = mvIdx(k) - (t.getDay() + 6) % 7; return ymd(new Date(t.getFullYear(), t.getMonth(), t.getDate() + off)); }
+  function mvDid(k) { var dk = mvDate(k); return attLoad().indexOf(dk) >= 0 || !!(LG && LG.d && LG.d[dk] && LG.d[dk].length); }
+  function mvMissed(k) {   /* 이번 주 지난 날 · 운동하는 날인데 출석도 ✓도 없고 아직 안 옮긴 날 */
+    if (ROT || mvIdx(k) < 0 || mvIdx(k) >= mvIdx(todayKey())) return false;
+    var d = dayByKey(k); return !!(d && !d.rest && !d.pick && !d.cardio_only && !mvMap()[k] && !mvDid(k));
+  }
+  function mvSave(m) {
+    mvGet(); var clean = {}; for (var k in m) if (m[k]) clean[k] = m[k];
+    MV = { w: wkMon(), m: clean, at: Date.now() };
+    try { localStorage.setItem(MV_LS, JSON.stringify(MV)); } catch (e) {}
+    if (ATT_API) rtPost({ a: "kv_set", k: "mw:" + SLUG + ":mv", v: MV }).catch(function () {});
+    rerender();
+  }
+  function mvServer(kv) {
+    mvGet(); var v = kv && kv["mw:" + SLUG + ":mv"] || null;
+    if (!v || (MV && (MV.at || 0) >= (v.at || 0))) return;
+    MV = v; try { localStorage.setItem(MV_LS, JSON.stringify(v)); } catch (e) {}
+    if (/^#(routine|home)?$|^#routine/.test(location.hash || "#home")) rerender();
+  }
+  function mvName(k) { var d = dayByKeyRaw(k); return DAY_KO[k] + "요일 " + (d && !d.rest ? d.part : "휴식"); }
+  function mvSheet(k) {
+    if (ROT || RT_EDIT || DEMO || mvIdx(k) < 0) return;
+    var T = todayKey(), it = mvIdx(T), ik = mvIdx(k), m = {}, cur = mvMap(), x;
+    for (x in cur) m[x] = cur[x];
+    var td = dayByKey(T), tRest = !td || td.rest, opts = [], title, sub;
+    var tom = it < 6 ? KEYS7[it + 1] : null, tomD = tom && dayByKey(tom);
+    if (k === T && tRest) {   /* 쉬는 날 나옴 → 이번 주 운동 중 고르기 (못 한 날 먼저) */
+      title = "오늘 어떤 운동 할까요?"; sub = "쉬는 날이어도 나왔다면 이번 주 운동 하나를 골라요";
+      var list = KEYS7.filter(function (q) { var dd = dayByKeyRaw(q); return q !== T && dd && !dd.rest && !dd.pick && !dd.cardio_only; });
+      list.sort(function (a, b) { return (mvMissed(b) ? 1 : 0) - (mvMissed(a) ? 1 : 0); });
+      list.forEach(function (q) {
+        var past = mvIdx(q) < it, done = past && mvDid(q), miss = mvMissed(q);
+        opts.push({ t: mvName(q), s: miss ? "못 한 날 · 오늘로 옮겨요" : past ? (done ? "이미 한 운동 · 한 번 더" : "지난 날 운동") : "앞당기기 · " + DAY_KO[q] + "요일은 쉬어요", hot: miss,
+          go: function () { m[T] = q; if (!(past && done)) m[q] = "-"; return DAY_KO[q] + "요일 운동을 오늘로 가져왔어요"; } });
+      });
+    } else if (ik < it && !cur[k]) {
+      var kd = dayByKey(k);
+      if (!kd || kd.rest || kd.pick || kd.cardio_only) { attToast("쉬는 날은 옮길 운동이 없어요"); return; }
+      title = "이 운동, 언제 할까요?"; sub = mvName(k) + " · " + (kd.items || []).length + "종목 — 이번 주 안에서 옮겨요";
+      if (tRest) opts.push({ t: "오늘(" + DAY_KO[T] + ") 하기", s: "오늘은 쉬는 날이라 그대로 들어가요", hot: 1, go: function () { m[T] = k; m[k] = "-"; return "오늘 " + kd.part + " 운동으로 바꿨어요"; } });
+      else {
+        if (tom && (!tomD || tomD.rest) && !cur[tom]) opts.push({ t: "오늘(" + DAY_KO[T] + ") 하기", s: "오늘 " + td.part + "는 내일(" + DAY_KO[tom] + ")로 한 칸 밀려요", hot: 1,
+          go: function () { m[tom] = cur[T] || T; m[T] = k; m[k] = "-"; return "오늘 " + kd.part + ", 내일 " + td.part + "로 옮겼어요"; } });
+        opts.push({ t: "오늘 " + td.part + " 대신 하기", s: "오늘 " + td.part + "는 이번 주 쉬어요", hot: !opts.length,
+          go: function () { m[T] = k; m[k] = "-"; return "오늘은 " + kd.part + " 운동이에요"; } });
+      }
+      opts.push({ t: "이번 주는 건너뛰기", s: "다음 주 " + DAY_KO[k] + "요일에 다시 해요", go: function () { m[k] = "-"; return DAY_KO[k] + "요일은 이번 주 건너뛰었어요"; } });
+    } else if (Object.keys(cur).length) {
+      title = "옮긴 운동 되돌리기"; sub = "이번 주에 옮긴 요일을 원래 루틴으로 돌려요";
+    } else if (ik > it) { attToast("앞으로 올 날은 그날 그대로 해요"); return; }
+    else return;
+    if (Object.keys(cur).length) opts.push({ t: "이번 주 옮긴 것 모두 되돌리기", s: "월요일이면 어차피 원래대로 돌아와요", go: function () { m = {}; return "원래 루틴으로 되돌렸어요"; } });
+    var body = '<p class="rts-note">' + esc(sub) + '</p><div class="mv-opts">' + opts.map(function (o, i) {
+      return '<button type="button" class="mv-opt' + (o.hot ? ' hot' : '') + '" data-i="' + i + '"><b>' + esc(o.t) + '</b><small>' + esc(o.s) + '</small></button>';
+    }).join("") + '</div><p class="rts-note">옮긴 건 이번 주에만 · 다음 주 월요일이면 원래 루틴으로 돌아와요</p>';
+    var sh = rtSheet(title, body, function () {}, false);
+    sh.addEventListener("click", function (e) {
+      var b = e.target.closest(".mv-opt"); if (!b) return;
+      var msg = opts[+b.getAttribute("data-i")].go();
+      sh.close(); mvSave(m); attToast(msg);
+    });
+  }
+  (function () {   /* 요일 칸 꾹 누르기 (0.55초) */
+    var tm = 0, fired = 0, x0 = 0, y0 = 0, tile = null;
+    function stop() { clearTimeout(tm); if (tile) tile.classList.remove("holding"); tile = null; }
+    document.addEventListener("pointerdown", function (e) {
+      var t = e.target.closest && e.target.closest(".wk-cmp a.day-tile");
+      if (!t || ROT || RT_EDIT || DEMO) return;
+      var k = (t.getAttribute("href") || "").replace("#routine-", "");
+      x0 = e.clientX; y0 = e.clientY; tile = t; t.classList.add("holding");
+      tm = setTimeout(function () { stop(); fired = Date.now(); try { navigator.vibrate && navigator.vibrate(15); } catch (x) {} mvSheet(k); }, 550);
+    });
+    document.addEventListener("pointermove", function (e) { if (tile && (Math.abs(e.clientX - x0) > 10 || Math.abs(e.clientY - y0) > 10)) stop(); });
+    ["pointerup", "pointercancel"].forEach(function (ev) { document.addEventListener(ev, stop); });
+    document.addEventListener("click", function (e) {
+      if (Date.now() - fired < 900 && e.target.closest && e.target.closest(".wk-cmp a.day-tile")) { e.preventDefault(); e.stopPropagation(); }
+      var g = e.target.closest && e.target.closest(".mv-go"); if (g) mvSheet(g.getAttribute("data-mvk"));
+    }, true);
+    document.addEventListener("contextmenu", function (e) { if (e.target.closest && e.target.closest(".wk-cmp a.day-tile")) e.preventDefault(); });
+  })();
   function renderRoutine(sel) {
     var R = M.routine;
     if (!R) return (CAN_EDIT ? '<div class="rtbar"><div><b>선생님만 보여요</b><span>여기서 바로 루틴을 만들 수 있어요</span></div><div class="rtbar-b"><button type="button" class="rtb" data-rt="createcopy">다른 회원 루틴 복사</button><button type="button" class="rtb fill" data-rt="create">✎ 새 루틴 만들기</button></div></div>' : '') +
@@ -2135,15 +2235,21 @@
       if (rotKeys().length < 7) h += '<div class="day-tile rest"><b class="rot"><small>OFF</small>휴</b>' + img("rest", "wk-ic") + '<span>근무표 따라</span></div>';
     } else
     ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].forEach(function (k) {
-      var d = dayByKey(k);
-      var cls = "day-tile" + (!d || d.rest ? " rest" : "") + (k === tk ? " today" : "");
+      var d = dayByKey(k), mvs = mvMap()[k];
+      var cls = "day-tile" + (!d || d.rest ? " rest" : "") + (k === tk ? " today" : "") + (!ED && mvMissed(k) ? " missed" : "");
       h += '<a class="' + cls + '" href="#routine-' + k + '" role="tab" aria-current="' + (k === sel) + '"><b>' + DAY_KO[k] + '</b>' +
         img(dayIcon(d), "wk-ic", true) + '<span>' +
-        esc(d ? d.part : "휴식") + '</span></a>';
+        esc(d ? d.part : "휴식") + '</span>' + (ED || !mvs ? '' : '<em class="mv-tag' + (mvs === "-" ? ' off' : '') + '">' + (mvs === "-" ? '옮김' : DAY_KO[mvs] + '에서') + '</em>') + '</a>';
     });
     h += '</div>';
+    if (!ROT && !ED && !DEMO) {
+      var td0 = dayByKey(tk), anyMiss = ["mon", "tue", "wed", "thu", "fri", "sat"].some(mvMissed), anyMv = Object.keys(mvMap()).length;
+      if (anyMiss || anyMv || !td0 || td0.rest) h += '<p class="mv-hint">' + (anyMiss ? '못 나온 날 칸을 <b>꾹</b> 누르면 이번 주 안에서 옮길 수 있어요' :
+        (!td0 || td0.rest) ? '쉬는 날인데 나왔다면 <b>오늘 칸을 꾹</b> 눌러 운동을 골라요' : '이번 주에 옮긴 운동이 있어요 · 칸을 꾹 누르면 되돌릴 수 있어요') + '</p>';
+    }
     if (!d || d.rest) {
-      h += '<div class="rest-card"><b>쉬는 날</b>푹 쉬고 잘 먹기! 근육은 쉬는 동안 자라요</div>';
+      h += '<div class="rest-card"><b>' + (d && d.mvSkip ? '이번 주는 옮겼어요' : '쉬는 날') + '</b>' + (d && d.mvSkip ? '다른 날로 옮긴 운동이에요' : '푹 쉬고 잘 먹기! 근육은 쉬는 동안 자라요') +
+        (!ED && !ROT && !DEMO && sel === tk ? '<button type="button" class="btn fill mv-go" data-mvk="' + tk + '">오늘 나왔어요 · 운동 고르기</button>' : '') + '</div>';
       if (ED && !ROT) h += '<button type="button" class="rtadd" data-rt="work">+ 이날 운동 넣기</button>';
     } else if (d.cardio_only) {
       h += '<div class="ex-list"><div class="ex cardio"><div class="ex-top"><span class="ex-ic">' + img("treadmill") + '</span><div><h3>유산소만 ' + d.cardio_only + '분</h3>' +
