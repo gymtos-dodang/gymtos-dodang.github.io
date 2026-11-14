@@ -1792,11 +1792,12 @@ html[data-skin="sheep"] .stamp::after { background: #FFE3C7; }
 .ex-list.cmp .exchk[aria-pressed="true"] svg { stroke: #fff; }
 .ex-list.cmp .exchk.pop { animation: chkPop .32s ease both; }
 @keyframes chkPop { 0% { transform: translateY(-50%) scale(.6); } 60% { transform: translateY(-50%) scale(1.18); } 100% { transform: translateY(-50%) scale(1); } }
-.ex-list.cmp .ex[data-exi] .sets { margin-right: 44px; }
-.ex-list.cmp .ex[data-exi] .tip { margin-right: 42px; }
-.ex-list.cmp .ex[data-exi]:has(.formlink) .tip { margin-right: 108px; }
+.ex-list.cmp.ck .ex[data-exi] .sets { margin-right: 44px; }
+.ex-list.cmp.ck .ex[data-exi] .tip { margin-right: 42px; }
+.ex-list.cmp .ex[data-exi]:has(.formlink) .tip { margin-right: 66px; }
+.ex-list.cmp.ck .ex[data-exi]:has(.formlink) .tip { margin-right: 108px; }
 .ex-list.cmp .ex[data-exi]:has(.formlink) .ex-top > div { padding-right: 0; }
-.ex-list.cmp .ex[data-exi] .formlink { right: 52px; }
+.ex-list.cmp.ck .ex[data-exi] .formlink { right: 52px; }
 .ex-list.cmp .sets:has(.set:nth-child(4)) .set { display: flex; height: 42px; flex-direction: column; gap: 3px; line-height: 1; }
 .ex-list.cmp .sets:has(.set:nth-child(4)) .set b { font-size: 15.5px; }
 .ex-list.cmp .sets:has(.set:nth-child(4)) .set > i { display: block; margin-left: 0; font-size: 11px; }

@@ -1549,7 +1549,21 @@
   var LG_LS = "ptnote:" + SLUG + ":log", LG = null, LG_PEND = false, LG_T = 0;
   try { LG = JSON.parse(localStorage.getItem(LG_LS) || "null"); LG_PEND = !!(LG && LG.pend); } catch (e) {}
   function lgObj() { if (!LG || typeof LG !== "object") LG = { d: {}, f: {}, at: 0 }; LG.d = LG.d || {}; LG.f = LG.f || {}; return LG; }
-  function lgDone(name) { var t = LG && LG.d && LG.d[ymd(new Date())]; return !!t && t.some(function (x) { return x[0] === name; }); }
+  /* 체크 칸 날짜 (2026-11-14 "오늘 하는 날만 체크 칸, 선생님은 전날·오늘 상관없이"):
+     회원 = 오늘 요일(순환은 오늘 차례 DAY, 로테이션 날은 고를 수 있는 요일)만 → 오늘 날짜 / 선생님 = 이번 주 그 요일 날짜(앞으로 올 요일은 X, 순환은 오늘 날짜)
+     요일 카드의 ✓는 '이번 주 그 날짜' 기록이라 새 주(월요일)가 되면 저절로 비어 있음. 기록은 기록 탭에 그대로 남음 */
+  function chkDate(sel) {
+    if (DEMO) return null;
+    var now = new Date(), today = ymd(now), tk = todayKey(), coach = COACH_MODE;
+    if (ROT) return coach || sel === tk ? today : null;
+    var td = dayByKey(tk);
+    if (sel === tk || (td && td.pick && td.pick.indexOf(sel) >= 0)) return today;
+    if (!coach) return null;
+    var off = ((DAY_KEYS.indexOf(sel) + 6) % 7) - ((now.getDay() + 6) % 7);
+    if (off > 0) return null;
+    return ymd(new Date(now.getFullYear(), now.getMonth(), now.getDate() + off));
+  }
+  function lgDone(name, k) { var t = LG && LG.d && LG.d[k || ymd(new Date())]; return !!t && t.some(function (x) { return x[0] === name; }); }
   function lgPush() {
     clearTimeout(LG_T);
     LG_T = setTimeout(function () {
@@ -1567,8 +1581,9 @@
     try { localStorage.setItem(LG_LS, JSON.stringify(o)); } catch (e) {}
     lgPush();
   }
-  function lgToggle(it) {
-    var o = lgObj(), k = ymd(new Date()), t = o.d[k] = o.d[k] || [];
+  function lgToggle(it, k) {
+    k = k || ymd(new Date());
+    var o = lgObj(), t = o.d[k] = o.d[k] || [];
     var i = -1; t.forEach(function (x, j) { if (x[0] === it.name) i = j; });
     var kg = 0; (it.sets || []).forEach(function (s) { if (s[1] != null && +s[1] > kg) kg = +s[1]; });
     if (i >= 0) { t.splice(i, 1); if (!t.length) delete o.d[k]; }
@@ -1591,12 +1606,14 @@
     e.preventDefault(); e.stopPropagation();
     var d = dayByKey(view.getAttribute("data-day")), it = d && d.items && d.items[+b.getAttribute("data-chk")];
     if (!it) return;
-    var on = lgToggle(it), card = b.closest(".ex");
+    var dk = b.getAttribute("data-date") || ymd(new Date());
+    var on = lgToggle(it, dk), card = b.closest(".ex");
     if (card) card.classList.toggle("done", on);
     b.setAttribute("aria-pressed", String(on));
     if (on) { b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); try { navigator.vibrate && navigator.vibrate(18); } catch (x) {} }
     var kg = 0; (it.sets || []).forEach(function (s) { if (s[1] != null && +s[1] > kg) kg = +s[1]; });
-    attToast(on ? "✓ " + it.name + (kg ? " " + kg + "kg" : "") + " · 기록에 저장했어요" : it.name + " 체크를 풀었어요");
+    var dl = dk === ymd(new Date()) ? "" : lgMd(dk) + " ";
+    attToast(on ? "✓ " + dl + it.name + (kg ? " " + kg + "kg" : "") + " · 기록에 저장했어요" : dl + it.name + " 체크를 풀었어요");
   }, true);
   function lgMd(k) { var p = k.split("-"), dt = new Date(+p[0], +p[1] - 1, +p[2]); return (+p[1]) + ". " + (+p[2]) + " (" + "일월화수목금토"[dt.getDay()] + ")"; }
   function renderLog() {
@@ -2137,20 +2154,21 @@
         (d.cardio && R.cardio ? '<div class="ex-list" style="margin-top:12px"><div class="ex cardio"><div class="ex-top"><span class="ex-ic">' + img("treadmill") + '</span><div><h3>마무리 유산소 ' + R.cardio.minutes + '분</h3><div class="tip">' + esc(R.cardio.options) + '</div></div></div></div></div>' : '');
     } else {
       h += '<div class="flow1"><span><b>①</b> 스트레칭 10분</span><i>›</i><span><b>②</b> 웨이트 ' + d.items.length + '종목</span><i>›</i><span><b>③</b> 유산소 ' + (d.cardio && R.cardio ? R.cardio.minutes + '분' : '없음') + '</span></div>';
-      h += '<div class="ex-list cmp">' + d.items.map(function (it, i) {
+      var ckD = ED ? null : chkDate(sel);
+      h += '<div class="ex-list cmp' + (ckD ? ' ck' : '') + '">' + d.items.map(function (it, i) {
         var main = it.tag === "메인";
         var sets = it.sets.map(function (s, j) {
           var reps = typeof s[0] === "string" ? esc(s[0]) : s[0] + '<i>회</i>';   /* "30초" 같은 글자도 됨 */
           var kg = s[1] == null ? '맨몸' : s[1] + 'kg';                              /* null = 맨몸 */
           return '<div class="set"><small>' + (j + 1) + '세트</small><b>' + reps + '</b><i>' + kg + '</i></div>';
         }).join("");
-        var dn = !ED && lgDone(it.name);
+        var dn = !!ckD && lgDone(it.name, ckD);
         return '<div class="ex' + (main ? ' main' : '') + (it.tag === "워밍업" ? ' t-warm' : it.tag === "선행" ? ' t-pre' : '') + (dn ? ' done' : '') + '"' + (ED ? '' : ' data-exi="' + i + '" role="button" tabindex="0" aria-label="' + esc(it.name) + ' 자세히 보기"') + '><div class="ex-top"><span class="ex-ic">' + img(iconOf(it)) + '<span class="ex-no">' + (i + 1) + '</span>' +
           (main ? '<span class="main-badge">메인</span>' : '') + '</span><div>' +
           '<h3>' + esc(it.name) + '</h3><div class="meta">' + esc(it.en) + ' ' + tagChip(it.tag) + '</div>' +
           '<div class="tip">' + esc(it.tip) + '</div><div class="sets">' + sets + '</div></div></div>' +
           (itemForm(it) ? '<a class="formlink" href="#form-' + esc(itemForm(it).id) + '">▶ 복습지</a>' : '') +
-          (ED ? rtItemCtl(i, d.items.length) : '<button type="button" class="exchk" data-chk="' + i + '" aria-pressed="' + dn + '" aria-label="' + esc(it.name) + ' 끝, 기록에 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg></button>') + '</div>';
+          (ED ? rtItemCtl(i, d.items.length) : !ckD ? '' : '<button type="button" class="exchk" data-chk="' + i + '" data-date="' + ckD + '" aria-pressed="' + dn + '" aria-label="' + esc(it.name) + ' 끝, 기록에 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg></button>') + '</div>';
       }).join("");
       if (ED) h += '<button type="button" class="rtadd" data-rt="add">+ 종목 추가</button>';
       if (d.cardio && R.cardio) {
