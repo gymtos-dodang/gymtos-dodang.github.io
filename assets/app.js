@@ -556,12 +556,12 @@
       '<h1>' + esc(M.goal || "나의 목표") + '</h1><div class="en">' + esc(M.name) + ' 회원님 · ' + (BP ? '기초 → 벌크 → 컷팅, 바프 촬영까지 함께 가요' : '기초 → 변화 → 자립, 3단계로 함께 가요') + '</div>' +
       '<div class="who"><strong>' + (now ? (now.month ? now.month + '개월차' : '곧 시작해요') + ' · ' + now.stage.no + '단계 ' + esc(now.stage.short) : '') + '</strong><span>담당 ' + esc(TRN) + ' 트레이너</span></div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + (BP ? '목표는 하나, 바프 촬영날! 그 의지라면 충분해요. 단계마다 함께 넘어가요!' : '혼자 가는 길이 아니에요. 단계마다 함께 넘어가요!') + '</p></div></div>';
-    var n4 = "03";   /* 몸 변화 기록은 2026-11-06 '몸변화' 탭(#body)으로, 근육 지도는 2026-11-08 루틴 탭으로 이동 */
+    var n4 = "04";   /* 몸 변화 기록은 2026-11-06 '몸변화' 탭(#body)으로, 근육 지도는 2026-11-08 루틴 탭으로 이동 */
     var attSec = '<section id="att">' + head("01", "출석률 · 출석 달력", "얼마나 꾸준히 나왔는지 봐요") + '<div class="panel attcard">' + attGauge() + attCalendar() + '</div></section>';
     if (!now) {
-      return h + attSec + badgeSection("02") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
+      return h + attSec + rankSection("02") + badgeSection("03") + '<div class="panel empty"><h3>PT 여정 준비 중이에요</h3><p>선생님이 시작일을 넣으면 12개월 여정이 나와요</p></div>' + remember();
     }
-    h += attSec + badgeSection("02");
+    h += attSec + rankSection("02") + badgeSection("03");
     /* 2026-11-13 "한눈에 보는 12개월 그래프 + 단계별 목표 합치기" — 그래프 아래 1·2·3단계 줄(눌러서 바꾸기) + 고른 단계 목표 카드 */
     h += '<section id="goal-journey">' + head(n4, BP ? "바프까지 " + JTN + "개월 여정" : "나의 12개월 여정", "지금 어디쯤, 무엇을 할지 한눈에") + '<div class="panel jpanel jmerge' + (BP ? ' bp">' + bpStrip() : '">') + journeyChart(now) +
       '<div class="jsel">' + stageStepper(now) + '<div class="jdet" id="jdet">' + stageCard(now.stage, now, false) + '</div></div></div></section>';
@@ -701,6 +701,7 @@
     var c = document.querySelector(".cal"); if (c) { c.outerHTML = attCalendar(); setupCal(); }
     var bs = document.getElementById("badges"); if (bs) { bs.outerHTML = badgeSection(bs.getAttribute("data-num")); setupBadges(); setupFold(view.getAttribute("data-tab") || "goal"); }
     var mb = document.querySelector(".mm-body"); if (mb) mb.innerHTML = muscleBody();
+    rkRefresh();
     alignText(document);
   }
   function attApply(days) {   /* 창고에서 받은 기록으로 바꿔 끼움 */
@@ -711,7 +712,7 @@
   function attCall(q) {
     return fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + (q || ""), { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw new Error("save"); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); lgServer(j.kv); mvServer(j.kv); } return j; });
+      .then(function (j) { if (!j || !j.ok) throw new Error("save"); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); lgServer(j.kv); mvServer(j.kv); rkServer(j.kv); } return j; });
   }
   function attSync() {
     if (!ATT_API) return;
@@ -1629,9 +1630,55 @@
     b.setAttribute("aria-pressed", String(on));
     if (on) { b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); try { navigator.vibrate && navigator.vibrate(18); } catch (x) {} }
     var kg = 0; (it.sets || []).forEach(function (s) { if (s[1] != null && +s[1] > kg) kg = +s[1]; });
-    var dl = dk === ymd(new Date()) ? "" : lgMd(dk) + " ";
-    attToast(on ? "✓ " + dl + it.name + (kg ? " " + kg + "kg" : "") + " · 기록에 저장했어요" : dl + it.name + " 체크를 풀었어요");
+    var dl = dk === ymd(new Date()) ? "" : lgMd(dk) + " ", auto = on && attAuto(dk);
+    attToast(on ? "✓ " + dl + it.name + (kg ? " " + kg + "kg" : "") + (auto ? " · 출석 도장도 같이 찍었어요" : " · 기록에 저장했어요") : dl + it.name + " 체크를 풀었어요");
   }, true);
+  /* 종목 ✓하면 자동 출석 (2026-11-14 장동욱 "개인운동 나와도 출석을 안 하네") — 그날 출석이 없으면 같이 찍음. ✓를 풀어도 출석은 그대로 */
+  function attAuto(dk) {
+    if (DEMO) return false;
+    var a = attLoad().slice(); if (attHas(a, dk)) return false;
+    var now = new Date(), tm = dk === ymd(now) ? pad2(now.getHours()) + ":" + pad2(now.getMinutes()) : "운동기록";
+    a.push(dk); attTimes[dk] = tm; attSave(a);
+    try { localStorage.setItem(ATT_KEY_T(), JSON.stringify(attTimes)); } catch (e) {}
+    if (!ATT_API) return true;
+    var go = function () { return attCall("&a=check&d=" + dk + "&t=" + encodeURIComponent(tm) + "&n=" + encodeURIComponent(M._real || M.name)); };
+    go().catch(function () { return new Promise(function (ok) { setTimeout(ok, 2500); }).then(go); })
+      .then(function () { attRefresh(); badgeCheck(); rkRefresh(); })
+      .catch(function () { attToast("출석은 인터넷이 연결되면 다시 찍어 주세요"); });
+    return true;
+  }
+  /* ---- 이번 달 출석 순위 (2026-11-14 "회원끼리 출석 순위") — 선생님 페이지가 열릴 때 창고 pub:all:rank = {ym, at, list:[{s:주소, n:가린 이름, c:횟수}]} 저장
+     회원 노트는 그걸 받아서 내 횟수만 지금 폰 기록으로 바꿔 순위를 다시 셈. 이름은 가운데 글자 O */
+  var RK_LS = "ptnote:rank", RK = null;
+  try { RK = JSON.parse(localStorage.getItem(RK_LS) || "null"); } catch (e) {}
+  function rkServer(kv) {
+    var v = kv && kv["pub:all:rank"] || null;
+    if (!v || JSON.stringify(v) === JSON.stringify(RK)) return;
+    RK = v; try { localStorage.setItem(RK_LS, JSON.stringify(v)); } catch (e) {}
+    rkRefresh();
+  }
+  function rkRefresh() { var r = document.getElementById("rank"); if (r) { r.outerHTML = rankSection(r.getAttribute("data-num")); setupFold(view.getAttribute("data-tab") || "goal"); } }
+  function rkMask(n) {
+    return String(n || "").split("·").map(function (p) { p = p.trim(); return p.length <= 1 ? p : p.length === 2 ? p.charAt(0) + "O" : p.charAt(0) + new Array(p.length - 1).join("O") + p.charAt(p.length - 1); }).join(" · ");
+  }
+  function rankSection(num) {
+    var now = new Date(), ym = ymd(now).slice(0, 7), mine = attLoad().filter(function (k) { return k.slice(0, 7) === ym; }).length;
+    var L = (RK && RK.ym === ym && Array.isArray(RK.list) ? RK.list : []).filter(function (x) { return x.s !== SLUG; }).map(function (x) { return { n: x.n, c: +x.c || 0 }; });
+    L.push({ n: rkMask(M._real || M.name), c: mine, me: 1 });
+    L = L.filter(function (x) { return x.c > 0 || x.me; }).sort(function (a, b) { return b.c - a.c || (b.me ? 1 : 0) - (a.me ? 1 : 0); });
+    var rank = 0, prev = -1, my = 0, max = Math.max(1, L[0].c);
+    L.forEach(function (x, i) { if (x.c !== prev) { rank = i + 1; prev = x.c; } x.r = rank; if (x.me) my = rank; });
+    var show = L.filter(function (x, i) { return i < 5 || x.me; });
+    var sub = mine ? (my === 1 ? "이번 달 1등이에요! 👑" : "지금 " + my + "등" + (function () { var up = L.filter(function (x) { return x.c > mine; }), t = up[up.length - 1]; return t ? " · " + (t.c - mine) + "번 더 오면 " + t.r + "등" : ""; })()) : "출석 도장을 찍으면 순위에 올라가요";
+    var h = '<section id="rank" data-num="' + num + '">' + head(num, (now.getMonth() + 1) + "월 출석 순위", sub) + '<div class="panel rklist">';
+    h += show.map(function (x) {
+      return '<div class="rk' + (x.me ? ' me' : '') + (x.r <= 3 && x.c ? ' r' + x.r : '') + '"><span class="no">' + (x.r <= 3 && x.c ? ["", "🥇", "🥈", "🥉"][x.r] : x.r) + '</span>' +
+        '<span class="nm"><b>' + esc(x.n) + (x.me ? ' <i>나</i>' : '') + '</b><span class="bar"><i style="width:' + Math.round(x.c / max * 100) + '%"></i></span></span><span class="cnt">' + x.c + '회</span></div>';
+    }).join("");
+    if (L.length < 2) h += '<p class="rk-note">다른 회원님 순위는 곧 보여요</p>';
+    else h += '<p class="rk-note">PT 노트 출석 도장 · 운동 ✓ 기준 · 이름은 가려서 보여요</p>';
+    return h + '</div></section>';
+  }
   function lgMd(k) { var p = k.split("-"), dt = new Date(+p[0], +p[1] - 1, +p[2]); return (+p[1]) + ". " + (+p[2]) + " (" + "일월화수목금토"[dt.getDay()] + ")"; }
   function renderLog() {
     var L = (LG && LG.d) || {}, now = new Date(), today = ymd(now), T = L[today] || [], att = attLoad();

@@ -1860,3 +1860,20 @@ html[data-skin="sheep"] .stamp::after { background: #FFE3C7; }
 .mv-opt small { font-size: 12px; color: var(--sub); }
 .mv-opt.hot { background: var(--hero, #1A1A1E); color: #fff; box-shadow: none; }
 .mv-opt.hot small { color: rgba(255, 255, 255, .75); }
+
+/* ---- 이번 달 출석 순위 — 회원 노트 나 탭 (2026-11-14) */
+.rklist { display: flex; flex-direction: column; gap: 6px; }
+.rklist .rk { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 14px; background: var(--hw-track, #F2F2F4); min-width: 0; }
+.rklist .rk .no { width: 26px; flex: none; text-align: center; font-weight: 900; font-size: 15px; color: #8A8A94; }
+.rklist .rk.r1 .no, .rklist .rk.r2 .no, .rklist .rk.r3 .no { font-size: 19px; }
+.rklist .rk .nm { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.rklist .rk .nm b { font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rklist .rk .nm b i { font-style: normal; font-size: 10.5px; font-weight: 900; color: #fff; background: var(--seal, var(--primary)); border-radius: 6px; padding: 1px 6px; margin-left: 4px; vertical-align: 1px; }
+.rklist .rk .bar { height: 6px; border-radius: 3px; background: rgba(0,0,0,.07); overflow: hidden; }
+.rklist .rk .bar i { display: block; height: 100%; border-radius: 3px; background: #B9B9C2; }
+.rklist .rk.r1 .bar i, .rklist .rk.r2 .bar i, .rklist .rk.r3 .bar i { background: linear-gradient(90deg, #E8B64C, #F4D27A); }
+.rklist .rk .cnt { flex: none; font-weight: 900; font-size: 15px; }
+.rklist .rk.me { background: linear-gradient(120deg, rgba(225,20,30,.10), rgba(225,20,30,.03)); box-shadow: inset 0 0 0 1.5px var(--seal, var(--primary)); }
+.rklist .rk.me .bar i { background: var(--seal, var(--primary)); }
+.rklist .rk.me .cnt { color: var(--seal, var(--primary)); }
+.rklist .rk-note { margin: 4px 2px 0; font-size: 11.5px; color: #8A8A94; }
