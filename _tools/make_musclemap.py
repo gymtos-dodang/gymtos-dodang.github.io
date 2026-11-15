@@ -14,7 +14,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.dirname(__file__))
-import anatomy_v4 as A
+import importlib
+A = importlib.import_module(os.environ.get("ANATOMY", "anatomy_v4"))
 
 PINK, PINK_E = "#DB4C8C", "#B8306F"
 A.EDGE[PINK] = PINK_E

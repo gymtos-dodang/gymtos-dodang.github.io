@@ -33,7 +33,7 @@ assets/exicons.js       움직이는 운동 아이콘(SVG) · assets/icons/M|F/ 
 m/<이름-랜덤6자>/        회원 노트: index.html(껍데기)·manifest.webmanifest·data.js(내용은 이 파일만)·og.jpg·media/form-<id>/
 m/dyn/forms.js          폰에서 만든 회원의 복습지·공지(이름으로 붙임)
 coach-tqqnlh/           선생님 페이지(index.html)·members.js(회원 주소 목록)·guide.html(PT 안내서 폰)·intro.html(아이패드)
-_tools/                 anatomy_v4.py(해부도 — 2026-11-16 v4, 예전 v3 파일은 남겨 둠) · anatomy_hl.json(복습지별 강조 부위 기록) · rebrand_jk.py(og.jpg·로고·아이콘) · bump_ver.py(?v= 올리기) · make_icons*.py · make_food.py·make_diet_web.py · make_member_icon.py · make_musclemap.py · make_sheep_skin.py · build_kit.py(다른 선생님용 키트 — _docs/HISTORY.md를 읽어 설명서를 만듦) · attendance_apps_script.gs(창고 코드) · exicons_sheet.html
+_tools/                 anatomy_v4.py(해부도 — 2026-11-16 v4, 예전 v3 파일은 남겨 둠) · anatomy_hl.json(복습지별 강조 부위 기록) · regen_anatomy.py(모형을 바꾼 뒤 복습지 그림·근육 지도를 한 번에 다시 그림) · rebrand_jk.py(og.jpg·로고·아이콘) · bump_ver.py(?v= 올리기) · make_icons*.py · make_food.py·make_diet_web.py · make_member_icon.py · make_musclemap.py · make_sheep_skin.py · build_kit.py(다른 선생님용 키트 — _docs/HISTORY.md를 읽어 설명서를 만듦) · attendance_apps_script.gs(창고 코드) · exicons_sheet.html
 _docs/HISTORY.md        자세한 기록(위 안내)
 _docs/RULES-*.md        작업별 자세한 규칙(위 표)
 ```
