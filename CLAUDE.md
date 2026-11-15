@@ -223,6 +223,12 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 회원 index.html에 홈 화면 앱 메타(apple-mobile-web-app-capable 등, 이름 "PT노트") — 새 회원 껍데기도 jihun 복사라 자동.
 - 코드: app.js attSeal·attCheckStrip·homeWidgets·todayHero·meSeg / style.css 맨 아래 "앱 화면" 블록.
 
+## 유리(블러) 효과 (2026-11-15 장동욱 "블러효과 넣을 수 있음? → ㄱㄱ" — 시안 캔버스 "블러 효과 시안" v2)
+- 회원 노트: 위 막대(.bar, --barbg 알파 .6)·아래 탭(.tabs)·뒤로 버튼(.navback)·설정 메뉴(.gmenu) = 반투명 유리(backdrop-filter blur 22~24px + saturate 180%) — 스크롤하면 뒤 카드가 흐릿하게 비침. 창(종목 자세히 .xsheet · 옮기기/루틴 고치기 .rtsheet · 인바디 .ibs-card · 배지 팝업 · 메모 .ptm)이 뜨면 뒤를 어둡게 덮는 대신 흐리게(blur 12px + 옅은 어둠 .22), 창 자체도 유리(--glass .8 + blur 30px). 스킨(bunny·sheep)·여 회원은 바탕색에 맞춘 --barbg·--glass.
+- 선생님 페이지: 위 막대는 같은 style.css라 그대로 유리, 검색 줄(.sbar)도 유리, 회원 정보 창(.msh)·공지/새 회원 창(.csh) 뒤 흐림 + 창 유리.
+- 코드: style.css 맨 아래 "유리(블러) 효과" 블록, coach index.html 같은 이름 블록, memo.js .ptm-bg·.ptm. '투명도 줄이기' 설정이면 불투명으로.
+- **하지 말 것**: 오늘 운동 카드(.thero) 안쪽 블러(아이폰 깜빡임 이력), 본문(view)에 transform·filter로 "뒤로 물러나는" 효과(화면 쏠림 이력). 블러는 backdrop-filter로만.
+
 ## 운동 탭 · 기록 탭 (2026-11-14 장동욱 "루틴이랑 복습지 합치고 전환칸만, 종목 끝나면 체크 → 기록 탭, 첫날 vs 오늘·근육 지도·인바디도 기록 탭으로")
 - 아래 탭 = 홈 · **운동** · 식단 · **기록** · 나. 운동 = #routine·#forms(맨 위 전환 칸 .wkseg "루틴 | 자세 복습지", 새 복습지면 NEW). 루틴 플랜카드(.hero)는 그대로. app.js TABS·tabOf(forms→운동, body·log→기록, goal·notice→나)·wkSeg.
 - ✓ 칸이 나오는 날 (2026-11-14 "오늘 하는 날만, 선생님은 전날·오늘 상관없이"): 회원 = 오늘 요일만(순환은 오늘 차례 DAY, 로테이션 날은 고를 수 있는 요일) → 오늘 날짜로 저장 / 선생님 보기 = 이번 주 지난 요일·오늘 아무 날이나 → 그 날짜로 저장(앞으로 올 요일은 X, 순환은 오늘 날짜). 요일 카드의 ✓는 이번 주 그 날짜 기록이라 새 주(월요일)면 저절로 비고, 기록 탭엔 남음. app.js chkDate, .ex-list.cmp.ck.

@@ -1877,3 +1877,29 @@ html[data-skin="sheep"] .stamp::after { background: #FFE3C7; }
 .rklist .rk.me .bar i { background: var(--seal, var(--primary)); }
 .rklist .rk.me .cnt { color: var(--seal, var(--primary)); }
 .rklist .rk-note { margin: 4px 2px 0; font-size: 11.5px; color: #8A8A94; }
+
+/* ---- 유리(블러) 효과 (2026-11-15 장동욱 "블러효과 ㄱㄱ" — 시안 캔버스 "블러 효과 시안" v2)
+   위 막대·아래 탭·뒤로 버튼 = 반투명 유리(뒤 카드가 흐릿하게 비침) / 창(종목 자세히·옮기기·루틴 고치기·인바디·배지·메모)이 뜨면 뒤 화면이 흐려지고 창도 유리.
+   오늘 운동 카드 안쪽은 블러 안 넣음(아이폰 깜빡임 이력). 본문(view)에는 transform·filter 걸지 말 것(화면 쏠림 이력) — 블러는 전부 backdrop-filter로만. */
+:root { --barbg: rgba(242, 242, 244, .6); --glass: rgba(248, 248, 250, .8); }
+:root[data-sex="F"] { --barbg: rgba(251, 243, 245, .6); --glass: rgba(253, 247, 249, .8); }
+html[data-skin="bunny"] { --barbg: rgba(255, 244, 246, .6); --glass: rgba(255, 248, 250, .8); }
+html[data-skin="sheep"] { --barbg: rgba(255, 248, 241, .6); --glass: rgba(255, 251, 246, .8); }
+.bar { -webkit-backdrop-filter: blur(22px) saturate(180%); backdrop-filter: blur(22px) saturate(180%); box-shadow: 0 1px 0 rgba(0, 0, 0, .05); }
+.tabs { background: rgba(255, 255, 255, .62); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: 0 12px 32px -10px rgba(26, 26, 30, .28), inset 0 0 0 1px rgba(255, 255, 255, .7); }
+.navback { background: rgba(255, 255, 255, .62); -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%); }
+.gmenu { background: rgba(255, 255, 255, .78); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); }
+/* 창 뒤: 어둡게 덮는 대신 흐리게 */
+.xsheet-bg { transition: background .28s ease, -webkit-backdrop-filter .28s ease, backdrop-filter .28s ease; }
+.xsheet-bg.on { background: rgba(20, 20, 26, .22); -webkit-backdrop-filter: blur(12px) saturate(150%); backdrop-filter: blur(12px) saturate(150%); }
+.xsheet-bg.off { background: rgba(20, 20, 26, 0); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.rtsheet-bg, .ibs-back { background: rgba(20, 20, 26, .22); -webkit-backdrop-filter: blur(12px) saturate(150%); backdrop-filter: blur(12px) saturate(150%); }
+.bgpop-wrap { background: rgba(12, 14, 24, .4); -webkit-backdrop-filter: blur(14px) saturate(150%); backdrop-filter: blur(14px) saturate(150%); }
+/* 창 자체: 유리 */
+.xsheet, .rtsheet, .ibs-card { background: var(--glass); -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: 0 -14px 44px -12px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .9); }
+@media (prefers-reduced-transparency: reduce) {
+  :root, :root[data-sex="F"], html[data-skin] { --barbg: var(--page); --glass: var(--page); }
+  .tabs, .navback, .gmenu { background: #fff; }
+}
