@@ -3055,6 +3055,22 @@
      여정 그래프(.jpanel)가 든 칸은 빼고, 주소로 바로 찾아온 칸(#muscle·#goal-badges·요일)은 접혀 있어도 그 순간엔 펼침 */
   var FOLD_LS = "ptnote:" + SLUG + ":fold";
   function foldGet() { try { return JSON.parse(localStorage.getItem(FOLD_LS) || "{}") || {}; } catch (e) { return {}; } }
+  function foldAnim(sec, body, f) {   /* 2026-11-16 장동욱 "토글 열고 닫을 때 애니메이션" — 칸 높이가 스르륵 접히고 펼쳐짐(.fbody 높이·투명도만, .view엔 효과 없음) */
+    if (body._fa) { try { body._fa.cancel(); } catch (e) {} body._fa = null; }
+    body.style.overflow = ""; body.style.display = "";
+    var was = sec.classList.contains("folded");
+    var rm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (rm || !body.animate || was === f) { sec.classList.toggle("folded", f); return; }
+    var h;
+    if (f) { h = body.offsetHeight; sec.classList.add("folded"); body.style.display = "flex"; }
+    else { sec.classList.remove("folded"); h = body.offsetHeight; }
+    if (!h) { body.style.display = ""; return; }
+    body.style.overflow = "hidden";
+    var a = body.animate(f ? [{ height: h + "px", opacity: 1 }, { height: "0px", opacity: 0 }] : [{ height: "0px", opacity: 0 }, { height: h + "px", opacity: 1 }],
+      { duration: Math.max(220, Math.min(380, 180 + h * 0.25)), easing: "cubic-bezier(.3,.7,.2,1)" });
+    body._fa = a;
+    a.onfinish = function () { if (body._fa === a) { body._fa = null; body.style.overflow = ""; body.style.display = ""; } };
+  }
   function setupFold(tab, openId) {
     var F = foldGet();
     Array.prototype.forEach.call(view.querySelectorAll("section"), function (sec) {
@@ -3072,7 +3088,7 @@
       btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
       head.appendChild(btn);
       function set(f, save) {
-        sec.classList.toggle("folded", f);
+        if (save) foldAnim(sec, body, f); else sec.classList.toggle("folded", f);
         btn.setAttribute("aria-expanded", String(!f));
         btn.setAttribute("aria-label", (h2 ? h2.textContent : "칸") + (f ? " 펼치기" : " 접기"));
         if (save) { var G = foldGet(); if (f) G[k] = 1; else delete G[k]; try { localStorage.setItem(FOLD_LS, JSON.stringify(G)); } catch (e) {} }

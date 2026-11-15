@@ -69,7 +69,7 @@ _docs/RULES-*.md        작업별 자세한 규칙(위 표)
 - 나 탭(renderGoal): 출석률·달력 → 출석 순위 → 배지 12개(badgeList·badgeCheck) → 12개월 여정(journeyChart·STAGES / 바프 모드 STAGES_BP·journeyChartBP·fit).
 - 선생님 폰에서(COACH_MODE): 루틴 고치기(rt… 함수들, 창고 routine_save) · 다른 회원 루틴 가져오기 · 처음 무게 넣기(grSheet) · 회원 메모(memo.js, coach:memo:<주소>) · 출석 도장은 보기만.
 - 알림: 새 공지 팝업(showNoticePop) · 전체 공지(bnotices) · 배지 팝업 · 아래 탭 점등(litApply) · 복습지 NEW.
-- 화면 효과: 로딩 화면 · 화면 넘어갈 때 차례 등장(D안) · 뒤로 갈 땐 아까 화면 그대로(VCACHE) · 뒤로 버튼(navBackDraw) · 칸 접기(setupFold) · 플랜카드 통일(.hero·.rp-home) · 유리(블러) 효과 · 회원별 테마 스킨(skinDeco).
+- 화면 효과: 로딩 화면 · 화면 넘어갈 때 차례 등장(D안) · 뒤로 갈 땐 아까 화면 그대로(VCACHE) · 뒤로 버튼(navBackDraw) · 칸 접기(setupFold — 누르면 높이가 스르륵 접힘·펼쳐짐 foldAnim, 2026-11-16 · 선생님 페이지도 같음) · 플랜카드 통일(.hero·.rp-home) · 유리(블러) 효과 · 회원별 테마 스킨(skinDeco).
 - 안내: 처음 둘러보기(tourSteps — 새 탭·칸이 생기면 한 줄 추가) · ⚙️ 설정 메뉴(gearMenu) · 앱으로 설치 안내(#app, renderInstall).
 - 선생님 페이지(coach-tqqnlh/index.html, 회원에게 주소 보내지 말 것): 오늘 출석 카드 · 오늘 수업한 회원 · 회원 아이콘 목록(한 번 누르면 노트, 꾹 누르면 정보 창) · 출석왕(renderRank) · 전체 공지·새 회원 추가(창 .csh, nm… 함수들) · 아이패드 두 칸(body.pad) · 빨리 불러오기(snap·a=all). 회원 수는 사람 수(그룹 PT는 2명).
 - PT 안내서(guide.html 폰 · intro.html 아이패드): 8장, 두 쪽 문구를 같게, 쪽마다 스크롤 없이 한 화면(390×844·375×667 확인), 숫자는 회원 data.js에서 자동, 회원 이름 가운데 O. 손님에게 보이는 곳에 '세일즈' 쓰지 말 것.
