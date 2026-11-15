@@ -230,7 +230,7 @@ README = """# PT 노트 뼈대 키트
 
 
 def kit_claude_md():
-    s = rd(os.path.join(SRC, "CLAUDE.md"))
+    s = rd(os.path.join(SRC, "_docs", "HISTORY.md"))   # 2026-11-15: CLAUDE.md는 짧은 규칙집, 자세한 설명은 _docs/HISTORY.md
     # 회원 목록 표 → 샘플만
     s = re.sub(r"## 회원 목록\n\|[^\n]*\n\|[^\n]*\n(\|[^\n]*\n)+",
                "## 회원 목록\n| 회원 | 주소 | 성별 |\n|---|---|---|\n| 홍길동 (샘플, 가상) | m/%s/ | M |\n" % SAMPLE, s)
