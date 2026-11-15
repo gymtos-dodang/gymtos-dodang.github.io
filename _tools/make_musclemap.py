@@ -1,6 +1,6 @@
 """PT 노트 '이번 달 근육 지도' 그림 (2026-11-08)
 
-인체모형 v3(anatomy_v3.py)로 바탕 그림 1장 + 부위별 덧칠 그림 8장을 만든다.
+인체모형 v4(anatomy_v4.py)로 바탕 그림 1장 + 부위별 덧칠 그림 8장을 만든다.
 덧칠 그림은 투명 PNG(그 부위만 진핑크 #DB4C8C)라서, 화면에서 겹쳐 놓고
 투명도(1~2회 .4 / 3~4회 .72 / 5회 이상 1)로 진하기를 바꾼다.
 
@@ -14,7 +14,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.dirname(__file__))
-import anatomy_v3 as A
+import anatomy_v4 as A
 
 PINK, PINK_E = "#DB4C8C", "#B8306F"
 A.EDGE[PINK] = PINK_E

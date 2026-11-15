@@ -1,0 +1,1268 @@
+{
+"m/aeran-bsq16i/media/form-cable-pushdown/anatomy.png": {
+"sex": "F",
+"front": {},
+"back": {
+"triceps_long": "P",
+"triceps_med": "P",
+"triceps_lat": "P",
+"forearm_ext": "S"
+}
+},
+"m/aeran-bsq16i/media/form-chest-press-machine/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/aeran-bsq16i/media/form-incline-press-machine/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/aeran-bsq16i/media/form-lat-pulldown/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/aeran-bsq16i/media/form-newtech-seated-row/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "P",
+"trap_low": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "P"
+}
+},
+"m/aeran-bsq16i/media/form-pec-deck-fly/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"biceps_short": "S"
+},
+"back": {}
+},
+"m/aeran-bsq16i/media/form-seated-face-pull/anatomy.png": {
+"sex": "F",
+"front": {},
+"back": {
+"trap_mid": "P",
+"trap_low": "S",
+"infraspinatus": "S",
+"delt_post": "P",
+"rhomboid": "P",
+"teres_minor": "S"
+}
+},
+"m/chanyoung-dvrara/media/form-db-shoulder-press/anatomy.png": {
+"sex": "M",
+"front": {
+"trap_up": "S",
+"pec_clav": "S",
+"delt_ant": "P",
+"delt_lat": "P",
+"triceps_long": "S"
+},
+"back": {
+"trap_up": "S",
+"delt_post": "S",
+"delt_lat": "P",
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/chanyoung-dvrara/media/form-hammer-low-row/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/chanyoung-dvrara/media/form-lat-pulldown/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/chanyoung-dvrara/media/form-seated-face-pull/anatomy.png": {
+"sex": "M",
+"front": {},
+"back": {
+"trap_mid": "P",
+"trap_low": "S",
+"infraspinatus": "S",
+"teres_minor": "S",
+"delt_post": "P",
+"rhomboid": "P"
+}
+},
+"m/chanyoung-dvrara/media/form-seated-lateral-raise/anatomy.png": {
+"sex": "M",
+"front": {
+"trap_up": "S",
+"delt_ant": "S",
+"delt_lat": "P"
+},
+"back": {
+"trap_up": "S",
+"delt_lat": "P",
+"supraspinatus": "S"
+}
+},
+"m/dyn/seungwan/media/form-cable-pushdown/anatomy.png": {
+"sex": "M",
+"front": {
+"triceps_long": "P"
+},
+"back": {
+"triceps_long": "P",
+"triceps_med": "P",
+"triceps_lat": "P",
+"forearm_ext": "S"
+}
+},
+"m/dyn/seungwan/media/form-goblet-squat/anatomy.png": {
+"sex": "M",
+"front": {
+"abs": "S",
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P",
+"add_long": "S",
+"add_mag": "S"
+},
+"back": {
+"erector": "S",
+"glute_max": "P",
+"ham_bf": "S",
+"ham_st": "S",
+"erector_thoracic": "S",
+"add_mag": "S"
+}
+},
+"m/dyn/seungwan/media/form-incline-db-curl/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "P",
+"biceps_long": "P",
+"brachialis": "S",
+"forearm_flex": "S"
+},
+"back": {}
+},
+"m/dyn/seungwan/media/form-incline-press-machine/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_lat": "S"
+}
+},
+"m/dyn/seungwan/media/form-pec-deck-fly/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"biceps_short": "S"
+},
+"back": {}
+},
+"m/dyn/seungwan/media/form-spider-curl/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "P",
+"biceps_long": "P",
+"brachialis": "S",
+"forearm_flex": "S"
+},
+"back": {}
+},
+"m/hyeyoung-d74063/media/form-chest-press-machine/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/hyeyoung-d74063/media/form-pec-deck-fly/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"biceps_short": "S"
+},
+"back": {}
+},
+"m/hyeyoung-d74063/media/form-smith-incline-press/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/inseok-02j3ia/media/form-lat-pulldown/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/inseok-02j3ia/media/form-nutek-seated-row/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/jihun-g9kgdo/media/form-assisted-chin-up/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/jihun-g9kgdo/media/form-cable-pushdown/anatomy.png": {
+"sex": "M",
+"front": {
+"triceps_long": "P"
+},
+"back": {
+"triceps_long": "P",
+"triceps_med": "P",
+"triceps_lat": "P",
+"forearm_ext": "S"
+}
+},
+"m/jihun-g9kgdo/media/form-db-curl/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "P",
+"biceps_long": "P",
+"brachialis": "S",
+"forearm_flex": "S"
+},
+"back": {}
+},
+"m/jihun-g9kgdo/media/form-db-lateral-raise/anatomy.png": {
+"sex": "M",
+"front": {
+"trap_up": "S",
+"delt_ant": "S",
+"delt_lat": "P"
+},
+"back": {
+"trap_up": "S",
+"delt_lat": "P",
+"supraspinatus": "S"
+}
+},
+"m/jihun-g9kgdo/media/form-db-shoulder-press/anatomy.png": {
+"sex": "M",
+"front": {
+"trap_up": "S",
+"pec_clav": "S",
+"delt_ant": "P",
+"delt_lat": "P",
+"triceps_long": "S"
+},
+"back": {
+"trap_up": "S",
+"delt_post": "S",
+"delt_lat": "P",
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jihun-g9kgdo/media/form-flat-db-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jihun-g9kgdo/media/form-hammer-curl/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"brachialis": "P",
+"brachioradialis": "P"
+},
+"back": {
+"brachioradialis": "P"
+}
+},
+"m/jihun-g9kgdo/media/form-hammer-low-row/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/jihun-g9kgdo/media/form-incline-bench-curl/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "P",
+"biceps_long": "P",
+"brachialis": "S",
+"forearm_flex": "S"
+},
+"back": {}
+},
+"m/jihun-g9kgdo/media/form-incline-db-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jihun-g9kgdo/media/form-lat-pulldown/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/jihun-g9kgdo/media/form-lateral-raise-machine/anatomy.png": {
+"sex": "M",
+"front": {
+"trap_up": "S",
+"delt_ant": "S",
+"delt_lat": "P"
+},
+"back": {
+"trap_up": "S",
+"delt_lat": "P",
+"supraspinatus": "S"
+}
+},
+"m/jihun-g9kgdo/media/form-reverse-pec-deck/anatomy.png": {
+"sex": "M",
+"front": {},
+"back": {
+"trap_mid": "S",
+"delt_post": "P",
+"rhomboid": "S"
+}
+},
+"m/jihun-g9kgdo/media/form-seated-face-pull/anatomy.png": {
+"sex": "M",
+"front": {
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "P",
+"trap_low": "S",
+"infraspinatus": "S",
+"teres_minor": "S",
+"delt_post": "P",
+"rhomboid": "P"
+}
+},
+"m/jihun-g9kgdo/media/form-smith-incline-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jihwan-t7m4qe/media/form-cable-pullover/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_stern": "S",
+"triceps_long": "S",
+"serratus": "S"
+},
+"back": {
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"triceps_long": "S"
+}
+},
+"m/jihwan-t7m4qe/media/form-db-shoulder-press/anatomy.png": {
+"sex": "M",
+"front": {
+"trap_up": "S",
+"delt_ant": "P",
+"delt_lat": "P",
+"triceps_long": "S"
+},
+"back": {
+"trap_up": "S",
+"delt_post": "S",
+"delt_lat": "P",
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jihwan-t7m4qe/media/form-flat-db-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jihwan-t7m4qe/media/form-incline-db-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jihwan-t7m4qe/media/form-inner-thigh/anatomy.png": {
+"sex": "M",
+"front": {
+"pectineus": "P",
+"add_long": "P",
+"add_mag": "P",
+"gracilis": "S"
+},
+"back": {
+"gracilis": "P",
+"add_mag": "P"
+}
+},
+"m/jihwan-t7m4qe/media/form-lateral-raise-machine/anatomy.png": {
+"sex": "M",
+"front": {
+"trap_up": "S",
+"delt_ant": "S",
+"delt_lat": "P"
+},
+"back": {
+"trap_up": "S",
+"delt_post": "S",
+"delt_lat": "P"
+}
+},
+"m/jihwan-t7m4qe/media/form-leg-press/anatomy.png": {
+"sex": "M",
+"front": {
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P",
+"pectineus": "S",
+"add_long": "S",
+"add_mag": "S",
+"gracilis": "S"
+},
+"back": {
+"glute_max": "S",
+"ham_bf": "S",
+"ham_st": "S"
+}
+},
+"m/jihwan-t7m4qe/media/form-low-row/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/jihwan-t7m4qe/media/form-outer-thigh/anatomy.png": {
+"sex": "M",
+"front": {
+"tfl": "S"
+},
+"back": {
+"glute_med": "P",
+"glute_max": "S"
+}
+},
+"m/jihwan-t7m4qe/media/form-pec-deck/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"biceps_short": "S"
+},
+"back": {}
+},
+"m/jihwan-t7m4qe/media/form-reverse-pec-deck/anatomy.png": {
+"sex": "M",
+"front": {},
+"back": {
+"trap_mid": "S",
+"infraspinatus": "S",
+"teres_minor": "S",
+"delt_post": "P",
+"rhomboid": "S"
+}
+},
+"m/jihwan-t7m4qe/media/form-smith-incline-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jihwan-t7m4qe/media/form-underhand-seated-row/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"rhomboid": "S"
+}
+},
+"m/jihwan-t7m4qe/media/form-viking-press/anatomy.png": {
+"sex": "M",
+"front": {
+"trap_up": "S",
+"delt_ant": "P",
+"delt_lat": "P",
+"triceps_long": "S",
+"serratus": "S"
+},
+"back": {
+"trap_up": "S",
+"delt_lat": "P",
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jinyoung-n73rzx/media/form-db-curl/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "P",
+"biceps_long": "P",
+"forearm_flex": "S",
+"brachioradialis": "S",
+"brachialis": "S"
+},
+"back": {
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S"
+}
+},
+"m/jinyoung-n73rzx/media/form-incline-press-machine/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jinyoung-n73rzx/media/form-newtech-chest-press/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jisu-480xne/media/form-cable-chest-press/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jisu-480xne/media/form-cable-pushdown/anatomy.png": {
+"sex": "F",
+"front": {
+"triceps_long": "P",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"triceps_long": "P",
+"triceps_med": "P",
+"triceps_lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S"
+}
+},
+"m/jisu-480xne/media/form-chest-press-machine/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jisu-480xne/media/form-db-lateral-raise/anatomy.png": {
+"sex": "F",
+"front": {
+"trap_up": "S",
+"delt_ant": "S",
+"delt_lat": "P"
+},
+"back": {
+"trap_up": "S",
+"delt_post": "S",
+"delt_lat": "P",
+"supraspinatus": "S"
+}
+},
+"m/jisu-480xne/media/form-db-shoulder-press/anatomy.png": {
+"sex": "F",
+"front": {
+"trap_up": "S",
+"pec_clav": "S",
+"delt_ant": "P",
+"delt_lat": "P",
+"triceps_long": "S"
+},
+"back": {
+"trap_up": "S",
+"delt_lat": "P",
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jisu-480xne/media/form-pec-deck-fly/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"biceps_short": "S"
+},
+"back": {}
+},
+"m/jisu-480xne/media/form-reverse-pec-deck/anatomy.png": {
+"sex": "F",
+"front": {},
+"back": {
+"trap_mid": "S",
+"infraspinatus": "S",
+"delt_post": "P",
+"rhomboid": "S",
+"teres_minor": "S"
+}
+},
+"m/jisu-480xne/media/form-shoulder-press-machine/anatomy.png": {
+"sex": "F",
+"front": {
+"trap_up": "S",
+"pec_clav": "S",
+"delt_ant": "P",
+"delt_lat": "P",
+"triceps_long": "S"
+},
+"back": {
+"trap_up": "S",
+"delt_lat": "P",
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/kyeongjin-bkwzy9/media/form-hack-press/anatomy.png": {
+"sex": "F",
+"front": {
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P",
+"pectineus": "S",
+"add_long": "S",
+"add_mag": "S",
+"gracilis": "S"
+},
+"back": {
+"glute_med": "S",
+"glute_max": "S",
+"ham_bf": "S",
+"ham_st": "S"
+}
+},
+"m/kyeongjin-bkwzy9/media/form-hip-thrust/anatomy.png": {
+"sex": "F",
+"front": {
+"rectus_fem": "S",
+"vastus_lat": "S",
+"vastus_med": "S"
+},
+"back": {
+"glute_med": "S",
+"glute_max": "P",
+"ham_bf": "S",
+"ham_st": "S"
+}
+},
+"m/mikyung-7rq2vd/media/form-chest-press/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/mikyung-7rq2vd/media/form-goblet-squat/anatomy.png": {
+"sex": "F",
+"front": {
+"abs": "S",
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P",
+"add_long": "S",
+"add_mag": "S"
+},
+"back": {
+"erector": "S",
+"glute_max": "P",
+"ham_bf": "S",
+"ham_st": "S",
+"erector_thoracic": "S",
+"add_mag": "S"
+}
+},
+"m/mikyung-7rq2vd/media/form-goodmorning-outer-thigh/anatomy.png": {
+"sex": "F",
+"front": {
+"tfl": "S"
+},
+"back": {
+"erector": "S",
+"glute_med": "P",
+"glute_max": "P",
+"erector_thoracic": "S"
+}
+},
+"m/mikyung-7rq2vd/media/form-hip-thrust/anatomy.png": {
+"sex": "F",
+"front": {
+"rectus_fem": "S",
+"vastus_lat": "S",
+"vastus_med": "S"
+},
+"back": {
+"glute_med": "S",
+"glute_max": "P",
+"ham_bf": "S",
+"ham_st": "S"
+}
+},
+"m/mikyung-7rq2vd/media/form-inner-thigh/anatomy.png": {
+"sex": "F",
+"front": {
+"pectineus": "S",
+"add_long": "P",
+"add_mag": "P",
+"gracilis": "P"
+},
+"back": {
+"add_mag": "P",
+"gracilis": "S"
+}
+},
+"m/mikyung-7rq2vd/media/form-lat-pulldown/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/mikyung-7rq2vd/media/form-mtorture-seated-row/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "P",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "P"
+}
+},
+"m/mikyung-7rq2vd/media/form-pec-deck-fly/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"biceps_short": "S",
+"biceps_long": "S"
+},
+"back": {}
+},
+"m/mikyung-7rq2vd/media/form-seated-face-pull/anatomy.png": {
+"sex": "F",
+"front": {},
+"back": {
+"trap_mid": "P",
+"trap_low": "S",
+"infraspinatus": "S",
+"delt_post": "P",
+"rhomboid": "P",
+"teres_minor": "S"
+}
+},
+"m/mikyung-7rq2vd/media/form-seated-lateral-raise/anatomy.png": {
+"sex": "F",
+"front": {
+"trap_up": "S",
+"delt_ant": "S",
+"delt_lat": "P"
+},
+"back": {
+"trap_up": "S",
+"delt_post": "S",
+"delt_lat": "P",
+"supraspinatus": "S"
+}
+},
+"m/mikyung-7rq2vd/media/form-seated-row/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "P",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "P"
+}
+},
+"m/mikyung-7rq2vd/media/form-vertical-pulldown/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/sunrae-c7yvid/media/form-cable-pushdown/anatomy.png": {
+"sex": "F",
+"front": {
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"triceps_long": "P",
+"triceps_med": "P",
+"triceps_lat": "P"
+}
+},
+"m/sunrae-c7yvid/media/form-chest-press-machine/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/sunrae-c7yvid/media/form-db-shoulder-press/anatomy.png": {
+"sex": "F",
+"front": {
+"trap_up": "S",
+"pec_clav": "S",
+"delt_ant": "P",
+"delt_lat": "P",
+"triceps_long": "S"
+},
+"back": {
+"trap_up": "S",
+"delt_lat": "P",
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/sunrae-c7yvid/media/form-lateral-raise-machine/anatomy.png": {
+"sex": "F",
+"front": {
+"trap_up": "S",
+"delt_ant": "S",
+"delt_lat": "P"
+},
+"back": {
+"trap_up": "S",
+"delt_post": "S",
+"delt_lat": "P",
+"supraspinatus": "S"
+}
+},
+"m/sunrae-c7yvid/media/form-pec-deck-fly/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"biceps_short": "S"
+},
+"back": {}
+},
+"m/taeyoung-k52qnx/media/form-front-row/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/taeyoung-k52qnx/media/form-one-arm-row/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"erector": "S",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"erector_thoracic": "S",
+"rhomboid": "S"
+}
+},
+"m/yongmin-eunseong-1mwau5/media/form-iso-row/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/yongmin-eunseong-1mwau5/media/form-one-arm-iso-row/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/yongmin-eunseong-1mwau5/media/form-smith-incline-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+}
+}

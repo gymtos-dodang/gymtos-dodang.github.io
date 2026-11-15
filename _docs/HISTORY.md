@@ -33,7 +33,7 @@ _tools/make_icons_smith.py 추가 아이콘만 그림: smith_bench_press·smith_
 _tools/make_food.py   종이 식단표 음식 그림 코드 (메모리 diet-log-code-2와 같음)
 _tools/make_diet_web.py PT 노트 식단 탭 그림 → assets/food/<음식>.png + assets/food/M|F/ic_<끼니>.png
 _tools/make_logo.py   로고 생성
-_tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 강조, 뒤 강조, sex="M"/"F")
+_tools/anatomy_v4.py  인체모형 v4 (자극 부위 그림, 2026-11-16 — v3 파일은 남겨 둠). build(경로, 앞 강조, 뒤 강조, sex="M"/"F")
 ```
 
 ## 회원 목록
@@ -123,7 +123,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
   - LED 효과(2026-11-08 "단계가 올라갈수록 LED, 움직이는 그라데이션"): 받은 배지만. Lv.1 없음 → Lv.2 금빛이 은은하게 숨쉬듯(.bdg-glow) → Lv.3 더 밝게 + 동그라미 위로 빛줄기가 지나감(.bdg-fx) → Lv.4 바깥 테두리가 금·분홍 그라데이션으로 돌고(.bdg-ring) 금빛↔분홍 빛 + 별 두 개 반짝(.bdg-spark). 움직임 줄이기 설정이면 멈춘 빛만. 리포트 이미지 저장 때는 .bdg-fx·.bdg-ring 빼고 찍음.
   - 새 배지 팝업: 출석 창고에서 기록을 받은 뒤·출석 누른 뒤·인바디 올린 뒤 확인, 배지마다 한 번(localStorage ptnote:<주소>:badges). 여러 개면 등급 높은 것 하나 + "외 n개". 선생님 보기·PT 안내서 보기에서는 안 뜸. 새 공지 팝업이 떠 있으면 기다렸다가.
 - **근육 지도** (루틴 탭 맨 아래 03, #muscle — 2026-11-08 "루틴 항목에 넣는 게 컨셉에 맞지"로 목표 탭에서 옮김): 출석한 날의 루틴(주간 = 그 요일, 순환 = 그 전까지 출석 수로 DAY 순서, 로테이션·쉬는 날·유산소만 날은 셈 안 함) 종목 이름 → 부위 8개(가슴·등·어깨·팔·복근·허벅지·엉덩이·종아리) — 규칙은 MG_RULES(종목명), 못 찾으면 MG_PART(부위명). 1~2회 / 3~4회 / 5회 이상 진하게. 이번 달·지난달 바꾸기, TOP3, "아직 하얀 곳"(루틴엔 있는데 이번 달 안 한 부위).
-  - 그림: assets/muscle/M|F/base.png + 부위별 투명 그림 8장 (`python3 _tools/make_musclemap.py`, 인체모형 v3). 새 부위를 넣으면 GROUPS·MG 둘 다.
+  - 그림: assets/muscle/M|F/base.png + 부위별 투명 그림 8장 (`python3 _tools/make_musclemap.py`, 인체모형 v4). 새 부위를 넣으면 GROUPS·MG 둘 다.
 - **월간 리포트** (#report = 이번 달 진행 중, #report-YYYY-MM — 근육 지도 오른쪽 위 "OO월 리포트 →", 아래 탭은 루틴): 1080×1350 카드(남녀 같은 네이비) — 출석·출석률·최고 연속·새 배지 / 근육 지도 / 인바디(그 달 마지막 기록 vs 그 전 기록, 그룹 PT는 제일 많이 한 부위) / 이번 달 받은 배지 / 한마디. "이미지로 저장 · 공유" = html2canvas(cdnjs 1.4.1) → 공유 시트, 안 되면(카톡 안) 그림을 띄워 길게 눌러 저장.
   - 선생님 한마디: data.js에 `reports: { "2026-11": "이번 달 등 운동이 제일 성실했어요.\n다음 달엔 종아리까지!" }` → "장동욱 트레이너의 한마디". 없으면 자동 한 줄 요약.
   - 매달 1~7일 홈 맨 위 "OO월 리포트가 도착했어요" 카드(지난달 출석이 있을 때만).
@@ -336,7 +336,7 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 - 카톡 대비 움직이는 그림: `-vf "scale=324:-2,fps=10" -c:v libwebp_anim -loop 0 -quality 40 form.webp`
 - 아이폰 영상이 HDR(HLG, 10bit)이면 먼저 SDR로 바꾸기: `-vf "zscale=t=linear:npl=203,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p"` (안 하면 색이 허옇게 뜸)
 - poster.jpg (첫 장면 720px), step1.jpg (시작 자세 정지 화면), step2/3.webp (내리기·올리기 구간 1.8초, 288px, fps 12, quality 50)
-- anatomy.png: 인체모형 v3 (`_tools/anatomy_v3.py`, 메모리 anatomy-v3-code 1·2와 같은 코드), 주동근 PRIMARY / 보조근 SECOND
+- anatomy.png: 인체모형 v4 (`_tools/anatomy_v4.py`, 2026-11-16부터 — 부위 이름은 v3와 같음. 새 복습지를 만들면 강조 부위를 `_tools/anatomy_hl.json`에도 한 줄 추가), 주동근 PRIMARY / 보조근 SECOND
   - 로우·풀다운 계열: 앞 {biceps, forearm: SECOND} / 뒤 {lat: PRIMARY, teres_major·rhomboid·trap_mid·delt_post·forearm: SECOND}
 - 복습지 구성은 종이 복습지(2026-10 리메이크)와 같음: 히어로+KEY POINT → 01 영상 → 02 잘한 점 3개 → 03 자극 부위 → 04 동작 3단계 → 05 O·X. 트레이너 코멘트·숫자 타일·느낌 체크는 넣지 않음.
 
@@ -370,3 +370,5 @@ _tools/anatomy_v3.py  인체모형 v3 (자극 부위 그림). build(경로, 앞 
 
 ## 커밋
 작성자: gymtos-dodang <gymtos-dodang@users.noreply.github.com>
+
+- **인체모형 v4 전체 적용** (2026-11-16 "V4로 가자 PT노트에 다 적용시켜줘"): 팔오금 V·이두 힘줄·상완요골근 방추형, 전경골근 방추형+힘줄, 종아리 안쪽 볼록, 갈비 아래선, 여성 팔 가늘게·허리 완만. 복습지 anatomy.png 87장을 기존 그림에서 강조 부위를 읽어(v3로 똑같이 재현되는지 확인) v4로 다시 그림 → 강조 기록은 `_tools/anatomy_hl.json`(P 주동근/S 보조근, 별칭 풀린 부위 이름). 근육 지도(assets/muscle)도 v4. 다음에 모형을 바꾸면 이 json으로 한 번에 다시 그리면 됨.
