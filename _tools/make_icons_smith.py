@@ -208,9 +208,22 @@ def hack_press(c):
     c.arrow((82, 58), fk((82, 58), 126, 18))
 
 
+def spider_curl(c):
+    """2026-11-16 스파이더 컬: 인클라인 벤치에 가슴을 대고 엎드려, 벤치 끝으로 늘어뜨린 팔을 감아 올림"""
+    p = side((38, 40), 42, 40, arm=(-90, 30), leg=(-112, -104, 0))
+    E, W = p["arm"]
+    floor(c, 6, 8, 92)
+    pill(c, fk(p["H"], -48, 6.5), fk(fk(p["S"], -48, 6.5), 222, 6), 5.2)
+    c.stroke([fk(p["H"], -48, 9), (46, 6)], 3, GRAY)
+    c.stroke([(34, 6), (60, 6)], 3.4, GRAY)
+    draw_side(c, p)
+    dumbbell(c, W, 30, 12)
+    c.arc_arrow(E, 19, -100, -8)
+
+
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
        "smith_shrug": smith_shrug, "band_push_up": band_push_up,
-       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press}
+       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press, "spider_curl": spider_curl}
 
 
 if __name__ == "__main__":

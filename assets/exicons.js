@@ -291,6 +291,13 @@
     hl: function (P) { return [seg(P.sh, P.el, .25, 1, 7.5)]; },
     back: function () { return inclineEq(); },
     front: function (P) { return db(P.ha, perp(P.el, P.ha), 7.5); } };
+  /* 스파이더 컬 (2026-11-16 염승완님): 인클라인 벤치에 가슴을 대고 엎드려, 벤치 끝으로 늘어뜨린 팔을 감아 올림 */
+  EX.spider_curl = { t: .75,
+    p0: { head: [66, 30], sh: [56, 40], hip: [36, 58], kn: [28, 74], ft: [22, 90], toe: [29, 91], el: [57, 57], ha: [57, 73] },
+    p1: { ha: [70, 47.5] }, arcs: { ha: "el" }, bones: SIDE,
+    hl: function (P) { return [seg(P.sh, P.el, .25, 1, 7.5)]; },
+    back: function () { return [floor(10, 90), L("eq2", [[39, 67], [54, 53]], 5.5), L("eq2", [[46, 62], [44, 92]], 3), L("eq2", [[32, 92], [58, 92]], 3.5)]; },
+    front: function (P) { return db(P.ha, perp(P.el, P.ha), 7.5); } };
   EX.cable_pushdown = { t: .85, p0: ext(stand(38), { el: [41, 45], ha: [54, 37] }), p1: { ha: [46, 60] }, arcs: { ha: "el" }, bones: SIDE,
     hl: function (P) { return [seg(P.sh, P.el, .2, 1, 7.5)]; },
     back: function (P) { return [floor(18, 86), L("eq2", [[78, 6], [78, 93]], 3.5), L("eq2", [[62, 8], [78, 8]], 3), L("eq2", [[62, 8], P.ha], 2), D("eq2", [62, 8], 3.2)]; },
