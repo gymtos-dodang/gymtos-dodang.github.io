@@ -1921,3 +1921,14 @@ html[data-skin="sheep"] { --barbg: rgba(255, 248, 241, .6); --glass: rgba(255, 2
 @keyframes petBlink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
 @media (prefers-reduced-motion: reduce) { .petwalk .p-tail, .petwalk .p-eyes { animation: none; } }
 @media print { .petwalk { display: none; } }
+
+/* 2026-11-16 돌아다니는 토끼 (pet:"bunny" — 김지수님 토롱이, 깡충깡충 뛰어다님. 정면 그림이라 좌우로 안 뒤집음) */
+.petwalk { height: 64px; }
+.petwalk .pet.hop { width: 44px; height: 47px; }
+.petwalk .pet.hop img { display: block; width: 44px; height: 47px; transform-origin: 50% 100%; filter: drop-shadow(0 1px 2px rgba(120, 30, 60, .2)); }
+.petwalk .pet.hop.walk img { animation: petHop .38s cubic-bezier(.3, 0, .7, 1) infinite; }
+.petwalk .pet.hop.sit img { animation: petBreath 2.4s ease-in-out infinite alternate; }
+@keyframes petHop { 0%, 100% { transform: translateY(0) scale(1.06, .92); } 50% { transform: translateY(-12px) scale(.96, 1.05); } }
+@keyframes petBreath { from { transform: scale(1, 1); } to { transform: scale(1.03, .97); } }
+html[data-pet="bunny"] .bny-peek { display: none; }
+@media (prefers-reduced-motion: reduce) { .petwalk .pet.hop img { animation: none; } }

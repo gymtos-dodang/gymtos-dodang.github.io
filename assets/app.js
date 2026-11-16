@@ -94,9 +94,11 @@
   /* 2026-11-16 돌아다니는 고양이 (data.js pet: "cat" — 우유정님 "귀여운 고양이 돌아다니게"). 아래 탭 바로 위를 걸어다니다 앉아서 쉼.
      오리지널 그림(크림색 고양이 + 분홍 리본), 화면 위에 따로 떠 있는 칸(.petwalk)이라 본문(.view)엔 효과 없음 · pointer-events none · 폭 안 넓어짐(overflow hidden) */
   (function () {
-    if (M.pet !== "cat" || document.querySelector(".petwalk")) return;
+    var PET = M.pet; if ((PET !== "cat" && PET !== "bunny") || document.querySelector(".petwalk")) return;
+    document.documentElement.setAttribute("data-pet", PET);   /* bunny = 김지수님 토롱이가 깡충깡충(2026-11-16) — 테마 그림 base.svg 그대로, 탭 위 빼꼼 그림은 숨김 */
     var wrap = document.createElement("div"); wrap.className = "petwalk"; wrap.setAttribute("aria-hidden", "true");
-    wrap.innerHTML = '<div class="pet sit"><svg viewBox="0 0 64 48" width="52" height="39">'
+    if (PET === "bunny") wrap.innerHTML = '<div class="pet hop sit"><img src="' + BASE + 'theme/bunny/base.svg" alt="" width="44" height="47"></div>';
+    else wrap.innerHTML = '<div class="pet sit"><svg viewBox="0 0 64 48" width="52" height="39">'
       + '<g class="p-walk"><path class="p-tail" d="M12 30 C4 28 3 18 8 14" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/>'
       + '<g class="p-legs"><g class="lg a"><path d="M16 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="19.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M22 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="25.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M36 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="39.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg a"><path d="M42 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="45.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g></g>'
       + '<ellipse cx="30" cy="30" rx="18" ry="9.5" fill="#FFF3E2"/><path d="M20 22.5c5-2.5 13-2.5 18 0" fill="none" stroke="#F3D9B8" stroke-width="3" stroke-linecap="round"/></g>'
@@ -109,9 +111,9 @@
       + '<path d="M40.500 26.200l-4-2.200v4.400zM42.500 26.200l4-2.200v4.400z" fill="#D6204F"/><circle cx="41.500" cy="26.200" r="1.500" fill="#B8173F"/></g>'
       + '</svg></div>';
     document.body.appendChild(wrap);
-    var pet = wrap.firstChild, x = 16, dir = 1, tm = 0, W = 52;
+    var pet = wrap.firstChild, x = 16, dir = 1, tm = 0, W = PET === "bunny" ? 44 : 52, FLIP = PET !== "bunny";
     var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    function place(ms) { pet.style.transitionDuration = ms + "ms"; pet.style.transform = "translateX(" + x + "px) scaleX(" + dir + ")"; }
+    function place(ms) { pet.style.transitionDuration = ms + "ms"; pet.style.transform = "translateX(" + x + "px) scaleX(" + (FLIP ? dir : 1) + ")"; }
     place(0);
     function next() {
       if (still || document.hidden) { tm = setTimeout(next, 4000); return; }
