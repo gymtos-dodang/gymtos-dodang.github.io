@@ -251,6 +251,9 @@ _tools/anatomy_v4.py  인체모형 v4 (자극 부위 그림, 2026-11-16 — v3 �
 - 옮긴 칸엔 "금에서"/"옮김" 꼬리표, 요일 줄 아래 안내 한 줄(.mv-hint). 앞으로 올 날 꾹은 "그날 그대로 해요". 순환 루틴·고치는 중·안내서 데모는 X. 선생님 보기도 똑같이 됨.
 - 저장: 창고 저장소 mw:<주소>:mv = {w: 이번 주 월요일, m:{요일: 가져온 요일 | "-"}, at} (회원 폰이 씀, 재배포 X) + 폰 ptnote:<주소>:mv. w가 이번 주가 아니면 무시 → 월요일이면 원래 루틴. dayByKey가 옮긴 걸 반영(원본은 dayByKeyRaw), 날짜로 찾는 출석률·근육 지도는 dayAt(이번 주만 반영). 홈 오늘 운동·✓ 칸·기록도 옮긴 루틴 그대로. app.js mvMap·mvSheet·mvSave·mvServer·mvMissed, style.css "요일 옮기기" 블록. 시안 캔버스 "루틴 요일 옮기기 시안".
 
+## 돌아다니는 고양이 (2026-11-16 장동욱 "우유정 회원 사이트 귀여운 고양이 돌아다니게")
+- data.js `pet: "cat"` → app.js가 body에 `.petwalk`(position fixed, 아래 탭 바로 위, z-index 19, pointer-events none, overflow hidden)를 붙이고 그 안에서 고양이(인라인 SVG, 오리지널 — 크림색 + 분홍 리본)가 임의 자리까지 걸어감(다리·꼬리 움직임) → 앉아서 3.5~9.5초 쉼 → 반복. 방향은 scaleX로 뒤집음. 화면이 숨겨져 있거나 동작 줄이기 설정이면 안 걸음. 본문(.view)엔 효과 없음, 폭 안 넓어짐(390 확인). 다른 회원에게 켜려면 data.js에 pet 한 줄. CSS는 style.css 맨 아래 "돌아다니는 고양이" 블록(탭 높이가 바뀌면 bottom 73px 조정).
+
 ## 회원별 테마 스킨 (2026-11-13 장동욱 "지수님만 귀여운 컨셉 — 기능은 해치지 않고 테마만 입힌다는 느낌")
 - data.js `skin: "bunny"`(김지수님 토롱이) / `skin: "sheep"`(2026-11-14 서경진님 — 양 **몽글이**: 복슬 양털 머리·몸 + 옆으로 쳐진 귀 + 빨간 헤어밴드, 바탕·테두리는 크림빛 #FFF8F1·#F3E3D3) → html[data-skin]. 그림은 assets/theme/<skin>/ (base·stamp·cheer·lift·peek.svg 같은 이름), 몽글이는 `python3 _tools/make_sheep_skin.py assets/theme/sheep`로 다시 그림. 새 스킨 = 폴더 + 같은 5장 + style.css에 색만 덮어쓰기. 오리지널 마스코트 **토롱이**(한쪽 귀는 서고 한쪽은 접힌 토끼 + 빨간 헤어밴드 + 덤벨) — 치이카와 등 남의 캐릭터를 닮게 그리지 말 것(장동욱이 원했지만 거절함).
 - 바꾸는 것만: 제목 글꼴 주아(Jua, Google Fonts — app.js가 skinFont 링크 추가), 바탕 #FFF4F6, 칸 테두리 연분홍 2px, 출석 도장 칸 분홍 점선 + 마스킹테이프(›는 숨김), 토롱이 그림(assets/theme/bunny/*.svg — 출석 도장 칸 stamp/찍으면 cheer, 오늘 운동 카드 lift, 탭 맨 위 큰 카드(.hero) base, 아래 탭 위 빼꼼 peek). 칸 구조·버튼·움직임·주소는 그대로.

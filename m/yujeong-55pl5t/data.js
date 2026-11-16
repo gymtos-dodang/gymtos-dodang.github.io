@@ -2,6 +2,7 @@
 window.MEMBER = {
   name: "우유정",
   sex: "F",                       // M = 네이비, F = 핑크
+  pet: "cat",                    // 화면 아래를 돌아다니는 고양이 (2026-11-16)
   since: "2026. 11",
   goal: "바디프로필 촬영 (2027년 4월 말)",
   journey: { start: "2026-11-09", mode: "bodyprofile", shoot: "2027-04-30", fit: true },   // 이번 달 시작(PT 노트 연 날) · 바프 4월 말 → 촬영일까지 길이에 맞춘 바프 그래프(fit)

@@ -91,6 +91,41 @@
       sfl.href = "https://fonts.googleapis.com/css2?family=Jua&display=swap"; document.head.appendChild(sfl);
     }
   }
+  /* 2026-11-16 돌아다니는 고양이 (data.js pet: "cat" — 우유정님 "귀여운 고양이 돌아다니게"). 아래 탭 바로 위를 걸어다니다 앉아서 쉼.
+     오리지널 그림(크림색 고양이 + 분홍 리본), 화면 위에 따로 떠 있는 칸(.petwalk)이라 본문(.view)엔 효과 없음 · pointer-events none · 폭 안 넓어짐(overflow hidden) */
+  (function () {
+    if (M.pet !== "cat" || document.querySelector(".petwalk")) return;
+    var wrap = document.createElement("div"); wrap.className = "petwalk"; wrap.setAttribute("aria-hidden", "true");
+    wrap.innerHTML = '<div class="pet sit"><svg viewBox="0 0 64 48" width="52" height="39">'
+      + '<g class="p-walk"><path class="p-tail" d="M12 30 C4 28 3 18 8 14" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/>'
+      + '<g class="p-legs"><rect class="lg a" x="17" y="33" width="5" height="11" rx="2.5" fill="#EBCBA4"/><rect class="lg b" x="24" y="33" width="5" height="11" rx="2.5" fill="#FFF3E2"/><rect class="lg b" x="36" y="33" width="5" height="11" rx="2.5" fill="#EBCBA4"/><rect class="lg a" x="43" y="33" width="5" height="11" rx="2.5" fill="#FFF3E2"/></g>'
+      + '<ellipse cx="30" cy="30" rx="18" ry="9.5" fill="#FFF3E2"/><path d="M20 22.5c5-2.5 13-2.5 18 0" fill="none" stroke="#F3D9B8" stroke-width="3" stroke-linecap="round"/></g>'
+      + '<g class="p-sit"><path class="p-tail" d="M16 42 C6 42 4 34 9 30" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/><path d="M16 44c0-14 6-21 15-21s15 7 15 21z" fill="#FFF3E2"/><ellipse cx="36" cy="43.5" rx="4" ry="2.5" fill="#fff"/><ellipse cx="45" cy="43.5" rx="4" ry="2.5" fill="#fff"/></g>'
+      + '<g class="p-head"><path d="M35 11l2-9 7 5z" fill="#FFF3E2"/><path d="M50 7l7-5 1 9z" fill="#FFF3E2"/><path d="M37.5 8.5l1-4 3.2 2.3z" fill="#F7B6C6"/><path d="M52.5 6.8l3.2-2.3.5 4z" fill="#F7B6C6"/>'
+      + '<ellipse cx="46.5" cy="17" rx="12.5" ry="10.5" fill="#FFF3E2"/><path d="M40 7.5c2 2 4 2.5 6.500 2.500" fill="none" stroke="#F3D9B8" stroke-width="2.4" stroke-linecap="round"/>'
+      + '<g class="p-eyes"><ellipse cx="42" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/><ellipse cx="51.500" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/></g>'
+      + '<ellipse cx="38.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/><ellipse cx="54.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/>'
+      + '<path d="M46 19.300l.9 1 .9-1z" fill="#E98AA2"/><path d="M44.800 21.600q1.050 1.100 2.100 0q1.050 1.100 2.100 0" fill="none" stroke="#3A2E2E" stroke-width=".9" stroke-linecap="round"/>'
+      + '<path d="M40.500 26.200l-4-2.200v4.400zM42.500 26.200l4-2.200v4.400z" fill="#D6204F"/><circle cx="41.500" cy="26.200" r="1.500" fill="#B8173F"/></g>'
+      + '</svg></div>';
+    document.body.appendChild(wrap);
+    var pet = wrap.firstChild, x = 16, dir = 1, tm = 0, W = 52;
+    var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function place(ms) { pet.style.transitionDuration = ms + "ms"; pet.style.transform = "translateX(" + x + "px) scaleX(" + dir + ")"; }
+    place(0);
+    function next() {
+      if (still || document.hidden) { tm = setTimeout(next, 4000); return; }
+      var max = Math.max(20, wrap.clientWidth - W - 8), to = 8 + Math.random() * (max - 8);
+      if (Math.abs(to - x) < 60) to = x < max / 2 ? max - Math.random() * 30 : 8 + Math.random() * 30;
+      dir = to > x ? 1 : -1; place(0);
+      var ms = Math.abs(to - x) * 26; x = to;
+      pet.classList.remove("sit"); pet.classList.add("walk");
+      requestAnimationFrame(function () { requestAnimationFrame(function () { place(ms); }); });
+      tm = setTimeout(function () { pet.classList.remove("walk"); pet.classList.add("sit"); tm = setTimeout(next, 3500 + Math.random() * 6000); }, ms + 80);
+    }
+    tm = setTimeout(next, 2500);
+    window.addEventListener("resize", function () { var max = Math.max(20, wrap.clientWidth - W - 8); if (x > max) { x = max; place(0); } });
+  })();
   function skinDeco() {   /* 토롱이 그림을 정해진 칸에 하나씩 (이미 있으면 그대로) — 누르기·글자에는 영향 없음(pointer-events none) */
     if (!SKIN) return;
     var T = BASE + "theme/" + SKIN + "/";
