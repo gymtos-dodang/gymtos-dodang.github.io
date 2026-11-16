@@ -288,9 +288,31 @@ def wide_pulldown(c):
     c.arrow((90, 70), (90, 57))
 
 
+def front_row(c):
+    """2026-11-16 프론트 로우 머신 (매장 Torque 원판식): 앉아서 가슴 패드에 기대고, 앞쪽 위 축에서 내려온 지렛대 손잡이를 가슴 쪽으로 당김"""
+    p = side((34, 33), 92, 92, arm=(-160, 0), leg=(2, -88, 0))
+    E, W = p["arm"]
+    floor(c, 4, 6, 94)
+    c.stroke([(34, 28), (34, 4)], 3, GRAY)
+    pill(c, (24, 28.5), (44, 28.5), 5.2)
+    c.stroke([(54, 4), (54, 96)], 3, GRAY)
+    c.stroke([(88, 4), (88, 96)], 3, GRAY)
+    c.stroke([(54, 95), (88, 95)], 3, GRAY)
+    pv = (62, 94)
+    c.stroke([pv, W], 3, GRAY)
+    pc = (pv[0] + (W[0] - pv[0]) * 0.3, pv[1] + (W[1] - pv[1]) * 0.3)
+    c.circle(pc, 6.2, fill=GRAY)
+    c.circle(pc, 2.2, fill=WHITE)
+    draw_side(c, p)
+    pill(c, (W[0] + 6, 44), (W[0] + 6, 66), 5)
+    c.circle((52, 39), 4.4, fill=GRAY)
+    pill(c, (W[0], W[1] - 4.5), (W[0], W[1] + 4.5), 3.4)
+    c.arrow((W[0] + 26, W[1] + 10), (W[0] + 10, W[1] + 10))
+
+
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
        "smith_shrug": smith_shrug, "band_push_up": band_push_up,
-       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press, "spider_curl": spider_curl, "close_grip_pulldown": close_grip_pulldown, "standing_face_pull": standing_face_pull, "tbar_row": tbar_row, "wide_pulldown": wide_pulldown}
+       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press, "spider_curl": spider_curl, "close_grip_pulldown": close_grip_pulldown, "standing_face_pull": standing_face_pull, "tbar_row": tbar_row, "wide_pulldown": wide_pulldown, "front_row": front_row}
 
 
 if __name__ == "__main__":
