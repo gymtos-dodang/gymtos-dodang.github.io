@@ -1946,3 +1946,13 @@ html[data-pet="bunny"] .bny-peek { display: none; }
 /* 2026-11-16 요일 꾹 누르기가 아이콘 그림에 막히지 않게 (아이폰 길게 누르기 그림 메뉴·끌기 방지) */
 .wk-cmp a.day-tile img, .wk-cmp a.day-tile svg { pointer-events: none; -webkit-user-drag: none; -webkit-touch-callout: none; }
 .wk-cmp a.day-tile { touch-action: manipulation; }
+
+/* 2026-11-16 요일 옮기기 — 원하는 요일 고르기 칸 (app.js mvSheet .mv-days) */
+.mv-days { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 2px 0 12px; }
+.mv-day { border: 0; border-radius: 14px; padding: 10px 6px 9px; background: #fff; font: inherit; color: var(--ink); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 0 0 1.5px var(--line, #E6E6EA); min-width: 0; }
+.mv-day b { font-size: 16px; font-weight: 900; }
+.mv-day span { font-size: 12px; font-weight: 700; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mv-day small { font-size: 10.5px; color: var(--sub); }
+.mv-day.free { box-shadow: 0 0 0 2px var(--seal, var(--primary)); }
+.mv-day.free small { color: var(--seal, var(--primary)); font-weight: 800; }
+.mv-day:active { background: color-mix(in srgb, var(--seal, #E1141E) 10%, #fff); }

@@ -64,7 +64,7 @@ _docs/RULES-*.md        작업별 자세한 규칙(위 표)
 - 아래 탭 = 홈 · 운동(#routine·#forms 전환 칸 wkSeg) · 식단 · 기록(#log) · 나(#goal·#notice). app.js TABS·tabOf·route.
 - 홈: 출석 도장(attCheckStrip·setupAttCheck) → 오늘 운동 카드(todayHero) → 위젯(homeWidgets·homeInfo) → PT 여정 → 인바디 띠.
 - 출석: 창고에 저장(attCall), 출석률·달력·게이지(attStats·attCalendar·attGauge). 종목 ✓하면 자동 출석(attAuto). 나 탭 02 출석 순위(rankSection, 선생님 페이지 rankPub가 pub:all:rank 저장, 이름 가운데 O).
-- 운동 탭: 한눈에 루틴(#day, .ex-list.cmp) · 종목 ✓(.exchk → lgToggle, 회원은 오늘만·선생님은 이번 주 지난 날도 chkDate) · 종목 자세히 창(exSheet) · 요일 꾹 눌러 옮기기(mvSheet·mvMap, 이번 주만 — 오늘·앞날은 하루 미루기 mvPush·다음 날과 바꾸기·건너뛰기, 지난 못 한 날은 오늘로) · 복습지 부위 칩(formCats).
+- 운동 탭: 한눈에 루틴(#day, .ex-list.cmp) · 종목 ✓(.exchk → lgToggle, 회원은 오늘만·선생님은 이번 주 지난 날도 chkDate) · 종목 자세히 창(exSheet) · 요일 꾹 눌러 옮기기(mvSheet·mvMap, 이번 주만 — 꾹 → 원하는 요일 칸 고르기 .mv-days: 쉬는 날이면 그리로, 운동 날이면 서로 바꿈 · 쉬는 날 꾹은 운동 가져오기 · 매주 월요일 초기화) · 복습지 부위 칩(formCats).
 - 기록 탭(renderLog): 오늘 한 운동 · 첫날 vs 오늘(grData·#growth 카드) · 근육 지도(muscleSection·MG_RULES) · 인바디(ibPanel·ibParse·#body) · 월간 리포트(#report).
 - 나 탭(renderGoal): 출석률·달력 → 출석 순위 → 배지 12개(badgeList·badgeCheck) → 12개월 여정(journeyChart·STAGES / 바프 모드 STAGES_BP·journeyChartBP·fit).
 - 선생님 폰에서(COACH_MODE): 루틴 고치기(rt… 함수들, 창고 routine_save) · 다른 회원 루틴 가져오기 · 처음 무게 넣기(grSheet) · 회원 메모(memo.js, coach:memo:<주소>) · 출석 도장은 보기만.
