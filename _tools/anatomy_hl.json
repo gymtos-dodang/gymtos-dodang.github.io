@@ -1436,5 +1436,99 @@
 "erector_thoracic": "S",
 "add_mag": "S"
 }
+},
+"m/chanyoung-dvrara/media/form-bench-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_stern": "P",
+"pec_clav": "S",
+"delt_ant": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_lat": "S",
+"triceps_med": "S"
+}
+},
+"m/dyn/parkmin/media/form-front-row/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/chanyoung-dvrara/media/form-pec-deck-fly/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"biceps_short": "S"
+},
+"back": {}
+},
+"m/chanyoung-dvrara/media/form-incline-db-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/dyn/parkmin/media/form-mtorture-seated-row/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "P",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "P"
+}
+},
+"m/dyn/parkmin/media/form-hammer-low-row/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
 }
 }
