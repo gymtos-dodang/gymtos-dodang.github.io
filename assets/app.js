@@ -97,7 +97,7 @@
     var PET = M.pet; if ((PET !== "cat" && PET !== "bunny") || document.querySelector(".petwalk")) return;
     document.documentElement.setAttribute("data-pet", PET);   /* bunny = 김지수님 토롱이가 깡충깡충(2026-11-16) — 테마 그림 base.svg 그대로, 탭 위 빼꼼 그림은 숨김 */
     var wrap = document.createElement("div"); wrap.className = "petwalk"; wrap.setAttribute("aria-hidden", "true");
-    if (PET === "bunny") wrap.innerHTML = '<div class="pet hop sit"><svg class="b-all" viewBox="0 -6 64 68" width="48" height="51"><g class="b-body"><circle cx="11" cy="44" r="5.2" fill="#fff" stroke="#B8325A" stroke-width="1.5"/><ellipse class="b-foot" cx="20" cy="56" rx="9" ry="3.8" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/><ellipse cx="25" cy="45" rx="14.5" ry="11.5" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/><ellipse class="b-paw" cx="38" cy="56" rx="4.6" ry="3.4" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/></g><g class="b-ears"><g transform="translate(11.2 1.2) scale(.48)"><ellipse cx="45" cy="17" rx="9" ry="20" transform="rotate(-12 45 17)" fill="#FFE8EE" stroke="#B8325A" stroke-width="3"/><ellipse cx="45" cy="19" rx="4" ry="13" transform="rotate(-12 45 19)" fill="#F7A9BC"/><path d="M68 36 C66 20 72 5 81 6 C90 7 106 16 104 27 C102 34 92 31 84 27 C81 31 79 35 77 37 Z" fill="#FFE8EE" stroke="#B8325A" stroke-width="3" stroke-linejoin="round"/><path d="M74 30 C73 20 77 12 82 12 C88 13 97 19 97 24 C93 25 87 22 82 20 C79 23 77 27 76 31 Z" fill="#F7A9BC"/></g></g><g class="b-head"><g transform="translate(11.2 1.2) scale(.48)"><ellipse cx="60" cy="60" rx="34" ry="30" fill="#FFE8EE" stroke="#B8325A" stroke-width="3"/><path d="M27 50 Q60 34 93 50 L92 58 Q60 43 28 58 Z" fill="#D6204F" stroke="#B8325A" stroke-width="2" stroke-linejoin="round"/><ellipse cx="47" cy="65" rx="5.4" ry="7" fill="#4A2030"/><circle cx="49" cy="62" r="2.1" fill="#fff"/><circle cx="45.4" cy="67.6" r="1" fill="#fff"/><ellipse cx="73" cy="65" rx="5.4" ry="7" fill="#4A2030"/><circle cx="75" cy="62" r="2.1" fill="#fff"/><circle cx="71.4" cy="67.6" r="1" fill="#fff"/><ellipse cx="37" cy="76" rx="6.5" ry="4" fill="#FF8FA8" opacity=".8"/><ellipse cx="83" cy="76" rx="6.5" ry="4" fill="#FF8FA8" opacity=".8"/><path d="M56 73 Q58 76 60 73 Q62 76 64 73" fill="none" stroke="#B8325A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g></g></svg></div>';   /* 2026-11-16 "처음 측면 토롱이가 좋았는데" — 옆모습 토끼(솜꼬리·발 있음)로 다시 */
+    if (PET === "bunny") wrap.innerHTML = '<div class="pet hop sit"><svg class="b-all" viewBox="0 -6 64 68" width="48" height="51"><g class="b-body"><circle cx="11" cy="44" r="5.2" fill="#fff" stroke="#B8325A" stroke-width="1.5"/><ellipse class="b-foot" cx="20" cy="56" rx="9" ry="3.8" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/><ellipse cx="25" cy="45" rx="14.5" ry="11.5" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/><ellipse class="b-paw" cx="38" cy="56" rx="4.6" ry="3.4" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/></g><g class="b-ears"><g transform="translate(11.2 1.2) scale(.48)"><ellipse cx="45" cy="17" rx="9" ry="20" transform="rotate(-12 45 17)" fill="#FFE8EE" stroke="#B8325A" stroke-width="3"/><ellipse cx="45" cy="19" rx="4" ry="13" transform="rotate(-12 45 19)" fill="#F7A9BC"/><path d="M68 36 C66 20 72 5 81 6 C90 7 106 16 104 27 C102 34 92 31 84 27 C81 31 79 35 77 37 Z" fill="#FFE8EE" stroke="#B8325A" stroke-width="3" stroke-linejoin="round"/><path d="M74 30 C73 20 77 12 82 12 C88 13 97 19 97 24 C93 25 87 22 82 20 C79 23 77 27 76 31 Z" fill="#F7A9BC"/></g></g><g class="b-head"><g transform="translate(11.2 1.2) scale(.48)"><ellipse cx="60" cy="60" rx="34" ry="30" fill="#FFE8EE" stroke="#B8325A" stroke-width="3"/><path d="M27 50 Q60 34 93 50 L92 58 Q60 43 28 58 Z" fill="#D6204F" stroke="#B8325A" stroke-width="2" stroke-linejoin="round"/><g class="b-eyes"><ellipse cx="47" cy="65" rx="5.4" ry="7" fill="#4A2030"/><circle cx="49" cy="62" r="2.1" fill="#fff"/><circle cx="45.4" cy="67.6" r="1" fill="#fff"/><ellipse cx="73" cy="65" rx="5.4" ry="7" fill="#4A2030"/><circle cx="75" cy="62" r="2.1" fill="#fff"/><circle cx="71.4" cy="67.6" r="1" fill="#fff"/></g><g class="b-happy"><path d="M41 67q6-8 12 0M67 67q6-8 12 0" fill="none" stroke="#4A2030" stroke-width="3.4" stroke-linecap="round"/></g><ellipse cx="37" cy="76" rx="6.5" ry="4" fill="#FF8FA8" opacity=".8"/><ellipse cx="83" cy="76" rx="6.5" ry="4" fill="#FF8FA8" opacity=".8"/><path d="M56 73 Q58 76 60 73 Q62 76 64 73" fill="none" stroke="#B8325A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g></g></svg></div>';   /* 2026-11-16 "처음 측면 토롱이가 좋았는데" — 옆모습 토끼(솜꼬리·발 있음)로 다시 */
     else wrap.innerHTML = '<div class="pet sit"><svg viewBox="0 0 64 48" width="52" height="39">'
       + '<g class="p-walk"><path class="p-tail" d="M12 30 C4 28 3 18 8 14" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/>'
       + '<g class="p-legs"><g class="lg a"><path d="M16 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="19.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M22 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="25.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M36 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="39.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg a"><path d="M42 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="45.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g></g>'
@@ -105,7 +105,7 @@
       + '<g class="p-sit"><path class="p-tail" d="M16 42 C6 42 4 34 9 30" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/><path d="M16 44c0-14 6-21 15-21s15 7 15 21z" fill="#FFF3E2"/><ellipse cx="36" cy="43.5" rx="4" ry="2.5" fill="#fff"/><ellipse cx="45" cy="43.5" rx="4" ry="2.5" fill="#fff"/></g>'
       + '<g class="p-head"><path d="M35 11l2-9 7 5z" fill="#FFF3E2"/><path d="M50 7l7-5 1 9z" fill="#FFF3E2"/><path d="M37.5 8.5l1-4 3.2 2.3z" fill="#F7B6C6"/><path d="M52.5 6.8l3.2-2.3.5 4z" fill="#F7B6C6"/>'
       + '<ellipse cx="46.5" cy="17" rx="12.5" ry="10.5" fill="#FFF3E2"/><path d="M40 7.5c2 2 4 2.5 6.500 2.500" fill="none" stroke="#F3D9B8" stroke-width="2.4" stroke-linecap="round"/>'
-      + '<g class="p-eyes"><ellipse cx="42" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/><ellipse cx="51.500" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/></g>'
+      + '<g class="p-eyes"><ellipse cx="42" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/><ellipse cx="51.500" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/></g><g class="p-happy"><path d="M40 17.4q2-2.6 4 0M49.5 17.4q2-2.6 4 0" fill="none" stroke="#3A2E2E" stroke-width="1.3" stroke-linecap="round"/></g>'
       + '<ellipse cx="38.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/><ellipse cx="54.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/>'
       + '<path d="M46 19.300l.9 1 .9-1z" fill="#E98AA2"/><path d="M44.800 21.600q1.050 1.100 2.100 0q1.050 1.100 2.100 0" fill="none" stroke="#3A2E2E" stroke-width=".9" stroke-linecap="round"/>'
       + '<path d="M40.500 26.200l-4-2.200v4.400zM42.500 26.200l4-2.200v4.400z" fill="#D6204F"/><circle cx="41.500" cy="26.200" r="1.500" fill="#B8173F"/></g>'
@@ -135,6 +135,47 @@
       requestAnimationFrame(function () { requestAnimationFrame(function () { place(ms); }); });
       tm = setTimeout(function () { pet.classList.remove("walk"); pet.classList.add("sit"); tm = setTimeout(next, 3500 + Math.random() * 6000); }, ms + 80);
     }
+    /* 2026-11-17 장동욱 "만지면 좋아하거나 밥을 먹는다던지" — 동물을 누르면 멈춰서 반응: 쓰담쓰담(하트·웃는 눈) → 밥 먹기(당근·생선 냠냠) → 한마디(말풍선) 순서로 돌아가며.
+       반응 그림(.petfx)은 화면 위 따로 떠 있는 칸이라 본문엔 영향 없음, 동물 몸만 눌림(.pet pointer-events auto) */
+    var tapN = 0, busy = 0;
+    var FOOD = PET === "bunny"
+      ? '<svg viewBox="0 0 40 40" width="26" height="26"><path d="M14 13c-3-6-1-10 2-11 1 3 0 6-1 8M17 12c0-6 4-9 7-8-1 3-3 6-5 8M18 13c3-4 8-5 10-3-2 2-6 4-9 4" fill="#5DBB63" stroke="#3E8E45" stroke-width="1.2" stroke-linejoin="round"/><path d="M13 14c4-4 10-3 11 2L12 37c-2 2-5 0-4-3z" fill="#FF8A3D" stroke="#D9601E" stroke-width="1.6" stroke-linejoin="round"/><path d="M13 21l4 1M11 27l4 1M10 32l3 .8" stroke="#D9601E" stroke-width="1.4" stroke-linecap="round"/></svg>'
+      : '<svg viewBox="0 0 44 30" width="30" height="20"><path d="M6 15c6-10 22-12 30 0-8 12-24 10-30 0z" fill="#8EC5E8" stroke="#4E8DB8" stroke-width="1.6"/><path d="M36 15l7-7v14z" fill="#8EC5E8" stroke="#4E8DB8" stroke-width="1.6" stroke-linejoin="round"/><circle cx="13" cy="13" r="1.8" fill="#24324A"/><path d="M20 9c2 4 2 8 0 12M25 9c2 4 2 8 0 12" fill="none" stroke="#4E8DB8" stroke-width="1.2" stroke-linecap="round"/></svg>';
+    var LINES = PET === "bunny" ? ["오늘도 운동 가자!", "깡충! 같이 뛰자!", "물 많이 마셔요!", "스트레칭 잊지 마요!", "최고예요! ♡", "근육아 자라라~"]
+      : ["냥~ 오늘도 화이팅!", "쓰담쓰담 좋아냥", "물 마셨냥?", "운동 끝나면 꿀잠냥", "멋지다냥 ♡", "스트레칭도 하자냥"];
+    function fx(cls, html, dx, dy, ms) {
+      var r = pet.getBoundingClientRect(), e = document.createElement("div");
+      e.className = "petfx " + cls; e.innerHTML = html;
+      e.style.left = (r.left + r.width / 2 + (dx || 0)) + "px"; e.style.top = (r.top + (dy || 0)) + "px";
+      document.body.appendChild(e); setTimeout(function () { e.remove(); }, ms || 1600); return e;
+    }
+    function bubble(t, ms) { fx("pbub", esc(t), 0, -12, ms || 1900); }
+    function hearts(n) { for (var i = 0; i < n; i++) (function (i) { setTimeout(function () { fx("pheart", "♥", [-W / 2 - 4, W / 2 + 4, -W / 2 + 6][i % 3], 18 + (i % 3) * 4, 1300); }, i * 140); })(i); }
+    function freeze() {
+      clearTimeout(tm);
+      try { var mt = new DOMMatrix(getComputedStyle(pet).transform); x = mt.m41; } catch (e) {}
+      pet.classList.remove("walk", "jump"); pet.classList.add("sit"); place(0);
+    }
+    function react() {
+      if (busy) { hearts(1); return; }
+      busy = 1; freeze();
+      var kind = tapN++ % 3, end = 1800;
+      if (kind === 0) {   /* 쓰담쓰담 → 웃는 눈 + 하트 */
+        pet.classList.add("happy", "pat"); hearts(3); bubble(PET === "bunny" ? "헤헤 좋아요!" : "골골골~ 좋아냥");
+      } else if (kind === 1) {   /* 밥 먹기 → 앞에 음식, 세 입에 냠냠 */
+        end = 2600; pet.classList.add("eat");
+        var f = fx("pfood", FOOD, (FLIP ? dir : 1) * 24, 20, 2400);
+        bubble(PET === "bunny" ? "당근 냠냠!" : "생선 냠냠!", 2300);
+        setTimeout(function () { f.classList.add("bite1"); }, 700); setTimeout(function () { f.classList.add("bite2"); }, 1300); setTimeout(function () { f.classList.add("gone"); }, 1900);
+        setTimeout(function () { pet.classList.add("happy"); hearts(2); }, 2000);
+      } else {   /* 한마디 → 폴짝 */
+        pet.classList.add("hi"); bubble(LINES[Math.floor(Math.random() * LINES.length)], 2100);
+      }
+      try { navigator.vibrate && navigator.vibrate(12); } catch (e) {}
+      setTimeout(function () { pet.classList.remove("happy", "pat", "eat", "hi"); busy = 0; tm = setTimeout(next, 1500 + Math.random() * 2500); }, end);
+    }
+    pet.addEventListener("click", function (e) { e.preventDefault(); e.stopPropagation(); react(); });
+    wrap.removeAttribute("aria-hidden"); pet.setAttribute("role", "button"); pet.setAttribute("aria-label", PET === "bunny" ? "토롱이 쓰다듬기" : "고양이 쓰다듬기");
     tm = setTimeout(next, 2500);
     window.addEventListener("resize", function () { var max = Math.max(20, wrap.clientWidth - W - 8); if (x > max) { x = max; place(0); } });
   })();

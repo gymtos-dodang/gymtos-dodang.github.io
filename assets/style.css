@@ -1956,3 +1956,26 @@ html[data-pet="bunny"] .bny-peek { display: none; }
 .mv-day.free { box-shadow: 0 0 0 2px var(--seal, var(--primary)); }
 .mv-day.free small { color: var(--seal, var(--primary)); font-weight: 800; }
 .mv-day:active { background: color-mix(in srgb, var(--seal, #E1141E) 10%, #fff); }
+
+/* 2026-11-17 동물 만지기 반응 (app.js react — 쓰담쓰담·밥 먹기·한마디). 동물 몸만 눌림, 반응 그림 .petfx는 따로 떠 있음 */
+.petwalk .pet { pointer-events: auto; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+.p-happy, .b-happy { display: none; }
+.pet.happy .p-eyes, .pet.happy .b-eyes { display: none; }
+.pet.happy .p-happy, .pet.happy .b-happy { display: inline; }
+.petwalk .pet.pat svg, .petwalk .pet.hop.pat .b-all { animation: petPat .5s ease-in-out 3; }
+.petwalk .pet.eat svg, .petwalk .pet.hop.eat .b-all { animation: petMunch .3s ease-in-out 6; }
+.petwalk .pet.hi svg, .petwalk .pet.hop.hi .b-all { animation: petHi .55s cubic-bezier(.3, 0, .4, 1) 2; }
+@keyframes petPat { 0%, 100% { transform: rotate(0) scale(1, 1); } 30% { transform: rotate(-7deg) scale(1.04, .96); } 70% { transform: rotate(7deg) scale(1.04, .96); } }
+@keyframes petMunch { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.06, .9); } }
+@keyframes petHi { 0%, 100% { transform: translateY(0) scale(1, 1); } 15% { transform: translateY(0) scale(1.1, .88); } 50% { transform: translateY(-16px) scale(.95, 1.06); } 85% { transform: translateY(0) scale(1.1, .9); } }
+.petfx { position: fixed; z-index: 21; pointer-events: none; transform: translate(-50%, -100%); }
+.petfx.pbub { background: #fff; color: #2A2A30; font-size: 12.5px; font-weight: 800; padding: 6px 10px; border-radius: 13px; white-space: nowrap; box-shadow: 0 3px 12px rgba(40, 20, 30, .18); animation: pbub 1.9s ease both; }
+.petfx.pbub::after { content: ""; position: absolute; left: 50%; bottom: -5px; margin-left: -5px; border: 5px solid transparent; border-bottom: 0; border-top-color: #fff; }
+.petfx.pheart { color: #FF5C8A; font-size: 17px; animation: pheart 1.3s ease-out both; text-shadow: 0 1px 2px rgba(120, 20, 60, .25); }
+.petfx.pfood { transform: translate(-50%, 0); animation: pfoodIn .35s cubic-bezier(.3, 1.6, .5, 1) both; }
+.petfx.pfood svg { display: block; transition: clip-path .2s; clip-path: inset(0 0 0 0); }
+.petfx.pfood.bite1 svg { clip-path: inset(0 0 35% 0); } .petfx.pfood.bite2 svg { clip-path: inset(0 0 65% 0); } .petfx.pfood.gone { opacity: 0; transition: opacity .2s; }
+@keyframes pbub { 0% { opacity: 0; transform: translate(-50%, -80%) scale(.7); } 12%, 85% { opacity: 1; transform: translate(-50%, -100%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -112%); } }
+@keyframes pheart { 0% { opacity: 0; transform: translate(-50%, -60%) scale(.5); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -190%) scale(1.15); } }
+@keyframes pfoodIn { from { opacity: 0; transform: translate(-50%, 8px) scale(.4); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .petfx, .petwalk .pet svg, .petwalk .pet .b-all { animation: none !important; } }
