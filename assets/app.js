@@ -1493,9 +1493,9 @@
     var s = '<svg class="bp-svg" viewBox="0 0 120 140" aria-hidden="true"><defs>' + bpDefs(u) + '</defs>' +
       '<g fill="' + G + '">' + lau + '</g>' + bpShield(u, on, 1.3) +
       '<g clip-path="url(#' + u + 'c)">' + (on ? '<g transform="rotate(24 60 70)"><rect class="bp-sh" x="-20" y="-20" width="16" height="190" fill="#fff" opacity=".35"/></g>' : '') + '</g>' +
-      '<text x="60" y="38" text-anchor="middle" font-family="Oswald, sans-serif" font-size="7" font-weight="700" textLength="56" lengthAdjust="spacingAndGlyphs" fill="' + G + '">BODY PROFILE</text>' +
+      '<text x="60" y="38" text-anchor="middle" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif" font-size="8.5" font-weight="900" textLength="46" lengthAdjust="spacingAndGlyphs" fill="' + G + '">바디프로필</text>' +
       '<g fill="' + G + '">' + BP_CROWN + '</g>' +
-      '<text x="60" y="84" text-anchor="middle" font-family="Oswald, sans-serif" font-size="12.5" font-weight="700" textLength="60" lengthAdjust="spacingAndGlyphs" fill="' + G + '">COMPLETE</text>' +
+      '<text x="60" y="84" text-anchor="middle" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif" font-size="15" font-weight="900" textLength="40" lengthAdjust="spacingAndGlyphs" fill="' + G + '">완 주</text>' +
       '<path d="M8 104 L22 100 L22 124 L8 128 L14 116 Z" fill="' + (on ? "#8C5B00" : "#B9B3B3") + '"/><path d="M112 104 L98 100 L98 124 L112 128 L106 116 Z" fill="' + (on ? "#8C5B00" : "#B9B3B3") + '"/>' +
       '<path d="M18 99 Q60 92 102 99 L102 121 Q60 114 18 121 Z" fill="' + G + '" stroke="' + (on ? "#6B4500" : "#B0AAAA") + '" stroke-width=".8"/>' +
       '<text x="60" y="113.5" text-anchor="middle" font-family="Oswald, sans-serif" font-size="11" font-weight="700" textLength="64" lengthAdjust="spacingAndGlyphs" fill="' + (on ? "#2A1A00" : "#8E8888") + '">' + esc(ds) + '</text>';
@@ -1517,9 +1517,9 @@
     if (!on && b.shot && /^\d{4}-\d{2}-\d{2}$/.test(b.shot)) dd = Math.ceil((jDate(b.shot) - new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())) / 86400000);
     var p = b.on ? b.on.split("-") : null;
     return '<div class="bpcard' + (on ? ' on' : '') + '"><span class="bp-bloom" aria-hidden="true"></span>' +
-      '<div class="bp-em">' + bpEmblem(b) + '</div><div class="bp-t"><small>SPECIAL BADGE</small><b>바프 완료</b>' +
+      '<div class="bp-em">' + bpEmblem(b) + '</div><div class="bp-t"><small>특별 배지</small><b>바프 완료</b>' +
       (on ? '<p>' + (+p[0]) + '. ' + (+p[1]) + '. ' + (+p[2]) + ' 촬영 완주<br>끝까지 해낸 사람만 받는 배지</p>'
-        : '<p>바디프로필 촬영을 마치면<br>선생님이 달아 드려요</p>' + (dd != null && dd >= 0 ? '<em>촬영까지 D-' + dd + '</em>' : '<em>LOCKED</em>')) + '</div></div>';
+        : '<p>바디프로필 촬영을 마치면<br>선생님이 달아 드려요</p>' + (dd != null && dd >= 0 ? '<em>촬영까지 D-' + dd + '</em>' : '<em>아직 잠겨 있어요</em>')) + '</div></div>';
   }
 
   /* ---- 나 탭 배지 칸 */
@@ -1607,9 +1607,9 @@
     box.innerHTML = '<div class="bxp-rays" aria-hidden="true"></div><div class="bxp-flash" aria-hidden="true"></div><div class="bgpop-conf" aria-hidden="true">' + conf + '</div>' +
       '<div class="bxp-card" role="dialog" aria-modal="true" aria-labelledby="bxpT">' +
       '<div class="bxp-medal">' + (sp ? bpEmblem(b) : bgIcon(b)) + '</div>' +
-      '<small class="bxp-k">' + (sp ? 'SPECIAL BADGE UNLOCKED' : 'NEW BADGE · ' + BG_TE[t]) + '</small>' +
+      '<small class="bxp-k">' + (sp ? '특별 배지 획득!' : '새 배지 획득!') + '</small>' +
       '<h3 id="bxpT">' + esc(b.label) + '</h3>' +
-      (sp ? '<span class="bxp-tier">BODY PROFILE · ' + (+p[0]) + '. ' + (+p[1]) + '. ' + (+p[2]) + '</span>' : '<span class="bxp-tier">' + BG_TN[t] + ' 등급</span>') +
+      (sp ? '<span class="bxp-tier">바디프로필 촬영 · ' + (+p[0]) + '. ' + (+p[1]) + '. ' + (+p[2]) + '</span>' : '<span class="bxp-tier">' + BG_TN[t] + ' 등급</span>') +
       '<p>' + esc(b.desc) + (extra > 0 ? '<br><em>외 ' + extra + '개도 함께 받았어요</em>' : '') + '</p>' +
       (sp ? '' : '<div class="bxp-bar"><div><span>모은 배지</span><b><span class="bxp-n">' + prev + '</span> / ' + L.length + '</b></div><i><em style="width:' + (prev / L.length * 100).toFixed(1) + '%" data-to="' + (got / L.length * 100).toFixed(1) + '"></em></i>' +
         (hint ? '<small>' + hint + '</small>' : '') + '</div>') +

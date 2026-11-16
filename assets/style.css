@@ -2142,3 +2142,9 @@ html[data-pet="bunny"] .bny-peek { display: none; }
   .bdx-glow, .bdx-ring, .bdx-sh, .bdx-burst, .bp-bloom, .bp-sh, .bxp-rays, .bxp-medal, .bxp-flash { animation: none !important; }
   .bdx-glow { box-shadow: 0 0 12px 3px rgba(var(--bgc), .5); } .bxp-rays { opacity: .6; } .bxp-card { transition: none; }
 }
+
+/* 2026-11-17 "한글로 바꿔": 배지 영어 글자 → 한글, 자간 줄임 */
+.bp-t small { font-family: var(--font); font-weight: 800; letter-spacing: .12em; font-size: 12px; }
+.bp-t em { font-family: var(--font); font-weight: 800; letter-spacing: 0; font-size: 12px; }
+.bxp-k { font-family: var(--font); font-weight: 900; letter-spacing: .08em; font-size: 13px; }
+.bxp.t7 .bxp-tier { font-family: var(--font); letter-spacing: 0; font-weight: 800; }
