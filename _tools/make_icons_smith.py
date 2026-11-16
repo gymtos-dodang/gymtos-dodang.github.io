@@ -268,9 +268,23 @@ def tbar_row(c):
     c.arrow((W[0] + 22, W[1] + 4), (W[0] + 22, W[1] + 20))
 
 
+def wide_pulldown(c):
+    """2026-11-16 와이드 풀다운: 원판식 풀다운 기구의 양쪽 손잡이를 넓게 잡고 끌어내림 (앞모습, 손잡이 좌우 따로)"""
+    head, Ls, Rs, Lh, Rh = (50, 61), (40.5, 49), (59.5, 49), (44, 28), (56, 28)
+    for sx in (1, -1):
+        c.stroke([(50 + sx * 28, 92), (50 + sx * 22, 84)], 3, GRAY)
+        c.stroke([(50 + sx * 38, 80), (50 + sx * 25, 86)], 3.4, GRAY)
+    arms = [((31, 66), (20, 83)), ((69, 66), (80, 83))]
+    legs = [((37.5, 21.5), (37.5, 7), (32.5, 6.4)), ((62.5, 21.5), (62.5, 7), (67.5, 6.4))]
+    draw_front(c, head, Ls, Rs, Lh, Rh, arms, legs)
+    pill(c, (30.5, 24.5), (69.5, 24.5), 5.4)
+    c.arrow((9, 71), (9, 58))
+    c.arrow((91, 71), (91, 58))
+
+
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
        "smith_shrug": smith_shrug, "band_push_up": band_push_up,
-       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press, "spider_curl": spider_curl, "close_grip_pulldown": close_grip_pulldown, "standing_face_pull": standing_face_pull, "tbar_row": tbar_row}
+       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press, "spider_curl": spider_curl, "close_grip_pulldown": close_grip_pulldown, "standing_face_pull": standing_face_pull, "tbar_row": tbar_row, "wide_pulldown": wide_pulldown}
 
 
 if __name__ == "__main__":
