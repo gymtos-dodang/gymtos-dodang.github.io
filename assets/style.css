@@ -1942,3 +1942,7 @@ html[data-skin="sheep"] { --barbg: rgba(255, 248, 241, .6); --glass: rgba(255, 2
 @keyframes petBreath { from { transform: scale(1, 1); } to { transform: scale(1.03, .97); } }
 html[data-pet="bunny"] .bny-peek { display: none; }
 @media (prefers-reduced-motion: reduce) { .petwalk .pet.hop svg, .petwalk .pet.hop .b-ears, .petwalk .pet.hop .b-head { animation: none; } }
+
+/* 2026-11-16 요일 꾹 누르기가 아이콘 그림에 막히지 않게 (아이폰 길게 누르기 그림 메뉴·끌기 방지) */
+.wk-cmp a.day-tile img, .wk-cmp a.day-tile svg { pointer-events: none; -webkit-user-drag: none; -webkit-touch-callout: none; }
+.wk-cmp a.day-tile { touch-action: manipulation; }
