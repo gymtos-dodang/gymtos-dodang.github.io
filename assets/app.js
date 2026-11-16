@@ -1462,14 +1462,16 @@
     function dayOn(n) { if (!st0 || days < n) return null; var d = new Date(st0); d.setDate(d.getDate() + n - 1); return ymd(d); }
     add("grow", "day30", "함께 30일", "heart", 30, dayOn(30), Math.max(0, days), 30, "PT 시작하고 30일이 되면 받아요", "첫 한 달 완주! 제일 어려운 구간을 넘었어요.", { unit: "일" });
     add("grow", "day100", "함께 100일", "heart", 100, dayOn(100), Math.max(0, days), 100, "PT 시작하고 100일이 되면 받아요", "선생님과 함께한 지 100일! 여기까지 온 것만으로 대단해요.", { unit: "일" });
-    add("grow", "day200", "함께 200일", "heart", 200, dayOn(200), Math.max(0, days), 200, "PT 시작하고 200일이 되면 받아요", "200일째 함께하고 있어요. 운동이 일상이 됐어요.", { unit: "일" });
+    var bpB = bpBadge();
+    if (!bpB) add("grow", "day200", "함께 200일", "heart", 200, dayOn(200), Math.max(0, days), 200, "PT 시작하고 200일이 되면 받아요", "200일째 함께하고 있어요. 운동이 일상이 됐어요.", { unit: "일" });
     add("grow", "day365", "함께 1년", "heart", 365, dayOn(365), Math.max(0, days), 365, "PT 시작하고 1년이 되면 받아요", "1년 완주. 처음의 나와는 완전히 다른 사람이에요!", { unit: "일" });
 
+    if (bpB) L.push(bpB);   /* 바프 회원은 '함께 200일' 자리에 전설 배지 '바프 완료' (성장 칸 맨 끝) */
     /* 받은 날 정리: 기록된 날짜가 있으면 그게 우선(먼저 받은 날), 날짜를 모르면("?") 오늘 · 한 번 받은 건 계속 받은 상태 */
     var ch = S.ch;
     L.forEach(function (b) {
       var stl = BG_ST[b.id] || ["D", "star", "shine"];
-      b.col = BG_PAL[stl[0]]; b.ic = stl[1]; b.fx = stl[2]; b.sh = stl[3] || "circle"; b.lv = stl[4] || 1;
+      if (!b.sp) b.col = BG_PAL[stl[0]]; if (!b.sp) { b.ic = stl[1]; b.fx = stl[2]; b.sh = stl[3] || "circle"; b.lv = stl[4] || 1; }
       if (b.big) { b.sm = b.big; b.big = null; }
       var saved = o.on[b.id];
       if (b.on === "?") b.on = saved || today;
@@ -1524,6 +1526,8 @@
           '<animateTransform attributeName="gradientTransform" type="rotate" from="0 42 30" to="360 42 30" dur="' + (lv === 4 ? 7 : 10) + 's" repeatCount="indefinite"/></linearGradient>' : '') +
         '<radialGradient id="' + u + 'v" cx=".5" cy=".4" r=".62"><stop offset=".5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".42"/></radialGradient>' +
         '<linearGradient id="' + u + 'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+        '<linearGradient id="' + u + 'i" gradientUnits="userSpaceOnUse" x1="0" y1="2" x2="0" y2="22">' + (sp ? '<stop offset="0" stop-color="#5A3A00"/><stop offset="1" stop-color="#1E1200"/>' :
+          '<stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#fff"/><stop offset="1" stop-color="' + (lv >= 3 ? "#FFD966" : bgMix(c[0], "#ffffff", .55)) + '"/>') + '</linearGradient>' +
         '<clipPath id="' + u + 'c">' + bgSh(sh, R3, CY, "#000") + '</clipPath></defs>';
       if (has("rays")) s += '<polygon class="bdx-rays" points="' + bgPts(14, 38, 0, CY, 30.5) + '" fill="' + (sp ? "#F3C94F" : c[0]) + '" opacity=".85"/>';
       if (sp) s += '<g fill="url(#' + u + 'r)" transform="translate(0 -2)">' + BG_LAU + '</g>';
@@ -1540,11 +1544,14 @@
     } else {
       s += '<g transform="translate(0 3.2)">' + bgSh(sh, R, CY, "#D2CCCC") + '</g>' + bgSh(sh, R, CY, "#E3DEDE") + bgSh(sh, R2, CY, "#EFEBEB") + bgSh(sh, R3, CY, "#F7F5F5");
     }
-    var sc = sh === "circle" || sh === "scallop" ? 1.14 : 1.02, cy = CY + (b.sm != null ? -2 : 0) + (sh === "shield" ? -1.5 : sh === "pent" ? 1 : 0), ik = has("flame") ? " bdx-flame" : has("float") ? " bdx-float" : has("beat") ? " bdx-beat" : "";
+    var sc = sh === "circle" || sh === "scallop" ? 1.22 : 1.1, cy = CY + (b.sm != null ? -2 : 0) + (sh === "shield" ? -1.5 : sh === "pent" ? 1 : 0), ik = has("flame") ? " bdx-flame" : has("float") ? " bdx-float" : has("beat") ? " bdx-beat" : "";
     var tr = 'transform="translate(' + (42 - 12 * sc).toFixed(2) + ' ' + (cy - 12 * sc).toFixed(2) + ') scale(' + sc + ')"', IC = BG_IC[b.ic] || BG_IC.star;
-    s += '<g ' + tr + '><g class="bdx-i' + ik + '" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
-      (on ? '<g transform="translate(0 1.3)" fill="none" stroke="' + (sp ? "#fff" : "#000") + '" opacity="' + (sp ? .55 : .3) + '">' + IC + '</g>' : '') +
-      '<g fill="' + (on ? "rgba(255,255,255,.24)" : "none") + '" stroke="' + (on ? (sp ? "#3A2400" : "#fff") : "#BDB7B7") + '">' + IC + '</g></g></g>';
+    s += '<g ' + tr + '><g class="bdx-i' + ik + '" stroke-linecap="round" stroke-linejoin="round">' + (on ?
+      '<g fill="none" stroke="' + (sp ? "#FFF6C8" : bgMix(c[1], "#000000", .45)) + '" stroke-width="4.4" opacity="' + (sp ? .7 : .55) + '">' + IC + '</g>' +
+      '<g transform="translate(0 1.5)" fill="none" stroke="' + (sp ? "#fff" : "#000") + '" stroke-width="2.5" opacity=".4">' + IC + '</g>' +
+      '<g fill="' + (sp ? "rgba(255,246,200,.55)" : "rgba(255,255,255,.42)") + '" stroke="url(#' + u + 'i)" stroke-width="2.5">' + IC + '</g>' +
+      (sp ? '' : '<g transform="translate(-.35 -.45)" fill="none" stroke="#fff" stroke-width=".7" opacity=".85">' + IC + '</g>')
+      : '<g fill="none" stroke="#BDB7B7" stroke-width="2">' + IC + '</g>') + '</g></g>';
     if (has("shine")) s += '<g clip-path="url(#' + u + 'c)"><g transform="rotate(22 42 32)"><rect class="bdx-sh" x="-16" y="-20" width="11" height="110" fill="#fff" opacity=".55"/></g></g>';
     if (has("twinkle")) s += '<g transform="translate(63 -1) scale(.95)"><path class="bdg-spark" d="' + BG_SPK + '" fill="#FFE48A"/></g><g transform="translate(6 40) scale(.6)"><path class="bdg-spark s2" d="' + BG_SPK + '" fill="#fff"/></g>' +
       '<g transform="translate(14 2) scale(.45)"><path class="bdg-spark s3" d="' + BG_SPK + '" fill="#FFE48A"/></g>';
@@ -1558,7 +1565,8 @@
     var J = M.journey || {};
     if (!(BP || J.bpDone)) return null;
     var ok = function (x) { return typeof x === "string" && /^\d{4}-\d{2}-\d{2}$/.test(x); }, dn = J.bpDone, ds = ok(dn) ? dn : ok(J.shoot) ? J.shoot : null;
-    return { id: "bpdone", sp: true, label: "바프 완료", ic: "camera", sh: "shield", lv: 4, col: ["#F6CF58", "#B97F06"], fx: "rays spin twinkle shine", sm: dn ? "완주" : null,
+    var dd = !dn && ds ? Math.ceil((jDate(ds) - new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())) / 86400000) : -1;
+    return { id: "bpdone", sp: true, cat: "grow", hint: dd >= 0 ? "D-" + dd : "촬영 완주", label: "바프 완료", ic: "camera", sh: "shield", lv: 4, col: ["#F6CF58", "#B97F06"], fx: "rays spin twinkle shine", sm: dn ? "완주" : null,
       on: dn ? (ds || ymd(new Date())) : null, shot: ds, how: "바디프로필 촬영을 마치면 선생님이 달아 드려요", desc: "바디프로필 촬영 완주. 끝까지 해낸 사람만 받는 전설 배지예요." };
   }
   function bpStrip() {
@@ -1599,7 +1607,7 @@
       }).join("") + '</div>';
     });
     return '<section id="badges" data-num="' + num + '">' + head(num, "나의 배지", "꾸준함이 쌓이는 곳", '<span class="more bg-cnt"><b>' + got + '</b> / ' + L.length + '</span>') +
-      '<div class="panel bgx"><i class="bgx-bar" aria-label="모은 배지 ' + got + '개 / ' + L.length + '개"><em style="width:' + (got / L.length * 100).toFixed(1) + '%"></em></i>' + top + bpStrip() +
+      '<div class="panel bgx"><i class="bgx-bar" aria-label="모은 배지 ' + got + '개 / ' + L.length + '개"><em style="width:' + (got / L.length * 100).toFixed(1) + '%"></em></i>' + top +
       '<div class="bgx-tabs" role="tablist">' + tabs + '</div>' + grids + '</div></section>';
   }
   function setupBadges() {
@@ -1608,10 +1616,7 @@
       el.addEventListener("click", function () {
         var b = badgeList()[+el.getAttribute("data-i")];
         if (!b) return;
-        var p = b.on ? b.on.split("-") : null;
-        var sv = el.querySelector(".bdg-s");
-        if (sv && b.on) { sv.classList.remove("flip"); void sv.getBoundingClientRect(); sv.classList.add("flip"); }
-        attToast(b.label + " — " + (p ? (+p[1]) + "월 " + (+p[2]) + "일에 받았어요" : b.how));
+        bgDetail(b);
       });
     });
     var spb = sec.querySelector(".bgx-sp");
@@ -1628,6 +1633,35 @@
       });
     });
   }
+  function bgDetail(b) {   /* 배지를 누르면 크게 보여 주는 창: 받은 날 · 설명 · 받는 방법 · (아직이면) 진행 막대 */
+    var old = document.querySelector(".bgpop-wrap.dt"); if (old && old.parentNode) old.parentNode.removeChild(old);
+    var p = b.on ? b.on.split("-") : null, box = document.createElement("div"), pg = "";
+    if (!b.on && b.goal > 1) { var hv = Math.min(b.have || 0, b.goal), u2 = b.unit || "";
+      pg = '<div class="bxp-bar"><div><span>지금까지</span><b>' + (b.pre || "") + hv + u2 + ' / ' + (b.pre || "") + b.goal + u2 + '</b></div><i><em style="width:' + (hv / b.goal * 100).toFixed(1) + '%"></em></i></div>'; }
+    box.className = "bgpop-wrap bxp dt" + (b.sp && b.on ? " sp" : "") + (b.on ? "" : " off");
+    if (b.on && b.col && !b.sp && b.col !== BG_PAL.D) box.style.setProperty("--bgc", bgRgb(b.col[0]));
+    box.innerHTML = (b.on ? '<div class="bxp-rays" aria-hidden="true"></div>' : '') +
+      '<div class="bxp-card" role="dialog" aria-modal="true" aria-labelledby="bxdT"><div class="bxp-medal">' + bgIcon(b) + '</div>' +
+      '<small class="bxp-k">' + (b.sp ? '전설 배지' : (BG_CAT.filter(function (c) { return c[0] === b.cat; })[0] || ["", "배지"])[1] + ' 배지') + '</small><h3 id="bxdT">' + esc(b.label) + '</h3>' +
+      '<span class="bxd-when' + (b.on ? ' on' : '') + '">' + (p ? (+p[0]) + '년 ' + (+p[1]) + '월 ' + (+p[2]) + '일에 받았어요' : '아직 못 받았어요') + '</span>' +
+      (b.on ? '<p>' + esc(b.desc) + '</p>' : '') +
+      '<div class="bxd-how"><small>받는 방법</small><b>' + esc(b.how) + '</b></div>' + pg +
+      '<button type="button" class="bxp-go">확인</button></div>';
+    document.body.appendChild(box);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { box.classList.add("in"); }); });
+    function close() { box.classList.remove("in"); setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 260); }
+    box.querySelector(".bxp-go").addEventListener("click", close);
+    box.addEventListener("click", function (e) { if (e.target === box || e.target.classList.contains("bxp-rays")) close(); });
+  }
+  function bgBest() {   /* 대표 배지: 받은 것 중 제일 높은 것(전설 → 단계 높은 순 → 최근) — 홈 맨 위 작은 칩 */
+    var L; try { L = badgeList().filter(function (b) { return b.on; }); } catch (e) { return null; }
+    L.sort(function (x, y) { return (y.sp ? 1 : 0) - (x.sp ? 1 : 0) || (y.lv || 0) - (x.lv || 0) || (y.on > x.on ? 1 : y.on < x.on ? -1 : 0) || (y.goal || 0) - (x.goal || 0); });
+    return L[0] || null;
+  }
+  function bgHomeChip() {
+    var b = bgBest(); if (!b) return "";
+    return '<a class="hbdg' + (b.sp ? ' sp' : '') + '" href="#goal-badges" aria-label="대표 배지 ' + esc(b.label) + '"><span class="hbdg-ic">' + bgIcon(b) + '</span><span class="hbdg-t"><small>대표 배지</small><b>' + esc(b.label) + '</b></span></a>';
+  }
   var bgReady = false;
   function badgeCheck() {   /* 새로 받은 배지가 있으면 팝업 한 번 */
     bgReady = true;
@@ -1635,11 +1669,9 @@
     if (TOUR_ON || TOUR_WANT || document.querySelector(".npop-wrap, .bgpop-wrap, .ibsheet")) { setTimeout(badgeCheck, 6500); return; }
     var L = badgeList(), seen = lsArr(BG_SEEN);
     var fresh = L.filter(function (b) { return b.on && seen.indexOf(b.id) < 0; });
-    var spB = bpBadge();
-    if (spB && spB.on && seen.indexOf("bpdone") < 0) { lsAdd(BG_SEEN, ["bpdone"]); showBadgePop(spB, 0, L); return; }
     if (!fresh.length) return;
     lsAdd(BG_SEEN, fresh.map(function (b) { return b.id; }));
-    fresh.sort(function (x, y) { return (y.on > x.on ? 1 : y.on < x.on ? -1 : 0) || (y.goal || 0) - (x.goal || 0); });
+    fresh.sort(function (x, y) { return (y.sp ? 1 : 0) - (x.sp ? 1 : 0) || (y.lv || 0) - (x.lv || 0) || (y.on > x.on ? 1 : y.on < x.on ? -1 : 0) || (y.goal || 0) - (x.goal || 0); });
     showBadgePop(fresh[0], fresh.length - 1, L);
   }
   function showBadgePop(b, extra, L) {
@@ -2262,7 +2294,7 @@
   }
   function renderHome() {
     var k = todayKey(), d = dayByKey(k), now = new Date();
-    var h = '<div class="hlead"><p>' + esc(M.name) + ' 회원님 · ' + (now.getMonth() + 1) + '월 ' + now.getDate() + '일 ' + DAY_KO[DAY_KEYS[now.getDay()]] + '요일</p><h1>오늘</h1></div>';
+    var h = '<div class="hlead hl-bdg">' + bgHomeChip() + '<p>' + esc(M.name) + ' 회원님 · ' + (now.getMonth() + 1) + '월 ' + now.getDate() + '일 ' + DAY_KO[DAY_KEYS[now.getDay()]] + '요일</p><h1>오늘</h1></div>';
     h += attCheckStrip();
     h += todayHero(k, d);
     h += homeWidgets();
