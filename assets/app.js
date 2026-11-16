@@ -1286,16 +1286,16 @@
   var BG_PAL = { R: ["#FF7A80", "#B00E17"], O: ["#FFB259", "#DD4A12"], Y: ["#FFD96E", "#D07F00"], G: ["#73E6A5", "#0C8A54"], T: ["#66E2D8", "#0A7785"], B: ["#74BCFF", "#1B48CC"],
     I: ["#9AA1FF", "#3729B4"], P: ["#C894FF", "#6520BF"], K: ["#FF97C7", "#C91867"], N: ["#5567D8", "#11164A"], S: ["#FFCB6E", "#EC4777"], D: ["#5C5C68", "#0C0C0F"] };
   var BG_ST = {   /* 배지 id: [색, 그림, 효과(shine 빛 지나감·pulse 빛 숨쉬기·spin 빛 링·rays 햇살·twinkle 별·flame 일렁·float 둥실·beat 두근)] */
-    att1: ["R", "check", "shine"], att10: ["O", "flag", "pulse"], att30: ["K", "stamp", "shine"], att50: ["P", "medal", "pulse shine"], att100: ["Y", "trophy", "rays shine"], att200: ["D", "crown", "spin twinkle"],
-    stk3: ["O", "flame", "flame"], stk7: ["R", "flame2", "flame pulse"], stk14: ["Y", "bolt", "beat pulse"], stk30: ["I", "rocket", "float spin"],
-    dawn: ["S", "sun", "rays"], night: ["N", "moon", "twinkle float"], wkend: ["T", "calw", "shine"], mon20: ["G", "calc", "pulse"], perf: ["P", "star", "spin twinkle"],
-    log1: ["B", "pen", "shine"], logd10: ["T", "clip", "pulse"], logd30: ["I", "book", "shine"], logd50: ["P", "bookmark", "pulse shine"], logd100: ["D", "shield", "spin twinkle"],
-    chk100: ["G", "ccheck", "shine"], chk300: ["T", "dcheck", "pulse"], chk500: ["B", "list", "shine pulse"], chk1000: ["R", "target", "spin"],
-    day5: ["O", "layers", "float"], day7: ["G", "mount", "shine"], var15: ["K", "grid", "pulse"], var30: ["N", "compass", "twinkle shine"], body6: ["G", "body", "beat"], body8: ["Y", "ring8", "rays twinkle"],
-    lift1: ["T", "kettle", "shine"], lift3: ["B", "bell", "beat"], lift5: ["I", "barbell", "pulse shine"], lift10: ["D", "plate", "spin"],
-    pct30: ["G", "trend", "shine"], pct50: ["Y", "chev2", "float pulse"], lvup: ["P", "up", "float"], lvup4: ["K", "stairs", "shine pulse"],
-    form3: ["B", "book", "shine"], form5: ["B", "cap", "shine"], form10: ["P", "award", "twinkle pulse"], ib1: ["T", "scale", "pulse"],
-    day30: ["G", "sprout", "float"], day100: ["K", "heart", "beat pulse"], day200: ["T", "tree", "shine"], day365: ["D", "gem", "spin twinkle rays"]
+    att1: ["R", "check", "shine", "circle"], att10: ["O", "flag", "pulse", "hex"], att30: ["K", "stamp", "shine", "scallop"], att50: ["P", "medal", "pulse shine", "oct"], att100: ["Y", "trophy", "rays shine", "shield"], att200: ["D", "crown", "spin twinkle", "star"],
+    stk3: ["O", "flame", "flame", "diamond"], stk7: ["R", "flame2", "flame pulse", "scallop"], stk14: ["Y", "bolt", "beat pulse", "star"], stk30: ["I", "rocket", "float spin", "shield"],
+    dawn: ["S", "sun", "rays", "oct"], night: ["N", "moon", "twinkle float", "circle"], wkend: ["T", "calw", "shine", "diamond"], mon20: ["G", "calc", "pulse", "hex"], perf: ["P", "star", "spin twinkle", "star"],
+    log1: ["B", "pen", "shine", "circle"], logd10: ["T", "clip", "pulse", "diamond"], logd30: ["I", "book", "shine", "hex"], logd50: ["P", "bookmark", "pulse shine", "oct"], logd100: ["D", "shield", "spin twinkle", "shield"],
+    chk100: ["G", "ccheck", "shine", "scallop"], chk300: ["T", "dcheck", "pulse", "circle"], chk500: ["B", "list", "shine pulse", "pent"], chk1000: ["R", "target", "spin", "star"],
+    day5: ["O", "layers", "float", "hex"], day7: ["G", "mount", "shine", "pent"], var15: ["K", "grid", "pulse", "diamond"], var30: ["N", "compass", "twinkle shine", "oct"], body6: ["G", "body", "beat", "shield"], body8: ["Y", "ring8", "rays twinkle", "scallop"],
+    lift1: ["T", "kettle", "shine", "circle"], lift3: ["B", "bell", "beat", "pent"], lift5: ["I", "barbell", "pulse shine", "hex"], lift10: ["D", "plate", "spin", "oct"],
+    pct30: ["G", "trend", "shine", "diamond"], pct50: ["Y", "chev2", "float pulse", "star"], lvup: ["P", "up", "float", "shield"], lvup4: ["K", "stairs", "shine pulse", "scallop"],
+    form3: ["B", "book", "shine", "circle"], form5: ["B", "cap", "shine", "pent"], form10: ["P", "award", "twinkle pulse", "oct"], ib1: ["T", "scale", "pulse", "hex"],
+    day30: ["G", "sprout", "float", "circle"], day100: ["K", "heart", "beat pulse", "scallop"], day200: ["T", "tree", "shine", "pent"], day365: ["D", "gem", "spin twinkle rays", "star"]
   };
   var BG_SPK = 'M7 0 L8.4 5.6 L14 7 L8.4 8.4 L7 14 L5.6 8.4 L0 7 L5.6 5.6 Z';
   function bgRgb(h) { return parseInt(h.slice(1, 3), 16) + "," + parseInt(h.slice(3, 5), 16) + "," + parseInt(h.slice(5, 7), 16); }
@@ -1463,7 +1463,7 @@
     var ch = S.ch;
     L.forEach(function (b) {
       var stl = BG_ST[b.id] || ["D", "star", "shine"];
-      b.col = BG_PAL[stl[0]]; b.ic = stl[1]; b.fx = stl[2];
+      b.col = BG_PAL[stl[0]]; b.ic = stl[1]; b.fx = stl[2]; b.sh = stl[3] || "circle";
       if (b.big) { b.sm = b.big; b.big = null; }
       var saved = o.on[b.id];
       if (b.on === "?") b.on = saved || today;
@@ -1479,29 +1479,57 @@
 
   /* ---- 메달 그림: 금테 + 검정 에나멜 + 금색 그림 (전부 같은 디자인) */
   var bgUid = 0;
-  function bgIcon(b) {   /* 84×72 — 금테 + 배지마다 다른 색 그라데이션 + 다른 그림 + 다른 효과 */
-    var on = !!b.on, u = "bx" + (++bgUid), c = b.col || BG_PAL.D, fx = on ? " " + (b.fx || "") + " " : " ";
+  /* 2026-11-17 4차 "3D 효과, 배지 모양도 다르게": 모양 8가지(원·육각·팔각·오각·마름모·방패·별·꽃 도장) + 두께(옆면)·빗면·광택 + 좌우로 살짝 도는 3D */
+  function bgPts(n, r, rot, cy, r2) {
+    var p = [], m = r2 ? n * 2 : n;
+    for (var i = 0; i < m; i++) { var rr = r2 && i % 2 ? r2 : r, q = (rot + i * 360 / m) * Math.PI / 180; p.push((42 + rr * Math.cos(q)).toFixed(1) + "," + (cy + rr * Math.sin(q)).toFixed(1)); }
+    return p.join(" ");
+  }
+  function bgSh(sh, r, cy, paint, extra) {   /* 모양 하나 그리기 (r = 원 기준 반지름) */
+    var at = ' fill="' + paint + '"' + (extra || ""), rj = ' stroke="' + paint + '" stroke-width="2.4" stroke-linejoin="round"';
+    if (paint === "none") rj = "";
+    if (sh === "hex") return '<polygon points="' + bgPts(6, r * 1.02, -90, cy) + '"' + at + rj + '/>';
+    if (sh === "oct") return '<polygon points="' + bgPts(8, r * 1.01, 22.5, cy) + '"' + at + rj + '/>';
+    if (sh === "pent") return '<polygon points="' + bgPts(5, r * 1.04, -90, cy + r * 0.05) + '"' + at + rj + '/>';
+    if (sh === "diamond") return '<polygon points="' + bgPts(4, r * 1.1, -90, cy) + '"' + at + rj + '/>';
+    if (sh === "star") return '<polygon points="' + bgPts(8, r * 1.07, -90, cy, r * 0.87) + '"' + at + rj + '/>';
+    if (sh === "scallop") { var p = []; for (var i = 0; i < 72; i++) { var q = i * Math.PI / 36, rr = r * (1.0 + 0.06 * Math.cos(10 * q)); p.push((42 + rr * Math.cos(q)).toFixed(1) + "," + (cy + rr * Math.sin(q)).toFixed(1)); }
+      return '<polygon points="' + p.join(" ") + '"' + at + '/>'; }
+    if (sh === "shield") { var x = function (k) { return (42 + k * r).toFixed(1); }, y = function (k) { return (cy + k * r).toFixed(1); };
+      return '<path d="M' + x(0) + ' ' + y(-1.02) + 'L' + x(.92) + ' ' + y(-.74) + 'V' + y(.08) + 'C' + x(.92) + ' ' + y(.6) + ' ' + x(.45) + ' ' + y(.88) + ' ' + x(0) + ' ' + y(1.06) +
+        'C' + x(-.45) + ' ' + y(.88) + ' ' + x(-.92) + ' ' + y(.6) + ' ' + x(-.92) + ' ' + y(.08) + 'V' + y(-.74) + 'Z"' + at + rj + '/>'; }
+    return '<circle cx="42" cy="' + cy + '" r="' + r + '"' + at + '/>';
+  }
+  function bgIcon(b) {   /* 84×72 — 금테 + 배지마다 다른 모양·색 그라데이션·그림·효과, 두께가 있는 3D */
+    var on = !!b.on, u = "bx" + (++bgUid), c = b.col || BG_PAL.D, sh = b.sh || "circle", fx = on ? " " + (b.fx || "") + " " : " ", CY = 30;
     function has(k) { return fx.indexOf(" " + k + " ") >= 0; }
+    var R = sh === "circle" || sh === "scallop" ? 29 : 27.6, R2 = R * 0.9, R3 = R * 0.8;
     var s = '<svg class="bdg-s" viewBox="0 0 84 72" width="84" height="72" aria-hidden="true">';
     if (on) {
-      s += '<defs><linearGradient id="' + u + 'r" x1=".15" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="#FFF4C2"/><stop offset=".45" stop-color="#E4B544"/><stop offset="1" stop-color="#8A5A00"/></linearGradient>' +
-        '<linearGradient id="' + u + 'h" x1=".15" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="#8A5A00"/><stop offset=".55" stop-color="#D9A93A"/><stop offset="1" stop-color="#FFF1B8"/></linearGradient>' +
+      s += '<defs><linearGradient id="' + u + 'r" x1=".15" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="#FFF8D2"/><stop offset=".4" stop-color="#EDBE48"/><stop offset="1" stop-color="#8A5A00"/></linearGradient>' +
+        '<linearGradient id="' + u + 'h" x1=".15" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="#7A4E00"/><stop offset=".55" stop-color="#D9A93A"/><stop offset="1" stop-color="#FFF4C4"/></linearGradient>' +
+        '<linearGradient id="' + u + 'e" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8A5A00"/><stop offset=".5" stop-color="#4E3200"/><stop offset="1" stop-color="#7A4E00"/></linearGradient>' +
         '<linearGradient id="' + u + 'f" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="' + c[0] + '"/><stop offset="1" stop-color="' + c[1] + '"/></linearGradient>' +
-        '<radialGradient id="' + u + 'v" cx=".5" cy=".42" r=".6"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".38"/></radialGradient>' +
-        '<clipPath id="' + u + 'c"><circle cx="42" cy="32" r="24.6"/></clipPath></defs>';
-      if (has("rays")) { var p = []; for (var i = 0; i < 28; i++) { var r = i % 2 ? 30.5 : 37.5, q = i * Math.PI / 14; p.push((42 + r * Math.cos(q)).toFixed(1) + "," + (32 + r * Math.sin(q)).toFixed(1)); }
-        s += '<polygon class="bdx-rays" points="' + p.join(" ") + '" fill="' + c[0] + '" opacity=".85"/>'; }
-      s += '<circle cx="42" cy="32" r="30" fill="url(#' + u + 'r)"/><circle cx="42" cy="32" r="27.3" fill="url(#' + u + 'h)"/>' +
-        '<circle cx="42" cy="32" r="24.6" fill="url(#' + u + 'f)"/><circle cx="42" cy="32" r="24.6" fill="url(#' + u + 'v)"/>' +
-        '<g clip-path="url(#' + u + 'c)"><ellipse cx="33" cy="13" rx="25" ry="13" fill="#fff" opacity=".26"/>' +
-        '<ellipse cx="50" cy="55" rx="20" ry="8" fill="' + c[0] + '" opacity=".35"/></g>' +
-        '<circle cx="42" cy="32" r="22" fill="none" stroke="#fff" stroke-width=".8" stroke-dasharray=".1 2.4" stroke-linecap="round" opacity=".45"/>';
+        '<radialGradient id="' + u + 'v" cx=".5" cy=".4" r=".62"><stop offset=".5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".42"/></radialGradient>' +
+        '<linearGradient id="' + u + 'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+        '<clipPath id="' + u + 'c">' + bgSh(sh, R3, CY, "#000") + '</clipPath></defs>';
+      if (has("rays")) s += '<polygon class="bdx-rays" points="' + bgPts(14, 38, 0, CY, 30.5) + '" fill="' + c[0] + '" opacity=".85"/>';
+      s += '<ellipse cx="42" cy="66.5" rx="19" ry="2.8" fill="#000" opacity=".16"/>' +
+        '<g transform="translate(0 4.2)">' + bgSh(sh, R, CY, "url(#" + u + "e)") + '</g><g transform="translate(0 2.1)">' + bgSh(sh, R, CY, "url(#" + u + "e)") + '</g>' +
+        bgSh(sh, R, CY, "url(#" + u + "r)") + bgSh(sh, R2, CY, "url(#" + u + "h)") +
+        '<g transform="translate(0 1.1)">' + bgSh(sh, R3, CY, c[1]) + '</g>' + bgSh(sh, R3, CY, "url(#" + u + "f)") + bgSh(sh, R3, CY, "url(#" + u + "v)") +
+        '<g clip-path="url(#' + u + 'c)"><ellipse cx="34" cy="' + (CY - 20) + '" rx="27" ry="15" fill="url(#' + u + 'g)"/>' +
+        '<ellipse cx="50" cy="' + (CY + 24) + '" rx="20" ry="8" fill="' + c[0] + '" opacity=".4"/></g>' +
+        bgSh(sh, R3 * 0.88, CY, "none", ' stroke="#fff" stroke-width=".8" stroke-linejoin="round" opacity=".38"') +
+        '<g transform="rotate(-38 ' + (42 - R * 0.62).toFixed(1) + ' ' + (CY - R * 0.72).toFixed(1) + ')"><ellipse cx="' + (42 - R * 0.62).toFixed(1) + '" cy="' + (CY - R * 0.72).toFixed(1) + '" rx="5.5" ry="1.5" fill="#fff" opacity=".8"/></g>';
     } else {
-      s += '<circle cx="42" cy="32" r="30" fill="#E3DEDE"/><circle cx="42" cy="32" r="27.3" fill="#EFEBEB"/><circle cx="42" cy="32" r="24.6" fill="#F7F5F5"/>';
+      s += '<g transform="translate(0 3.2)">' + bgSh(sh, R, CY, "#D2CCCC") + '</g>' + bgSh(sh, R, CY, "#E3DEDE") + bgSh(sh, R2, CY, "#EFEBEB") + bgSh(sh, R3, CY, "#F7F5F5");
     }
-    var sc = 1.16, cy = b.sm != null ? 29.5 : 32, ik = has("flame") ? " bdx-flame" : has("float") ? " bdx-float" : has("beat") ? " bdx-beat" : "";
-    s += '<g transform="translate(' + (42 - 12 * sc).toFixed(2) + ' ' + (cy - 12 * sc).toFixed(2) + ') scale(' + sc + ')"><g class="bdx-i' + ik + '" fill="' + (on ? "rgba(255,255,255,.22)" : "none") + '" stroke="' + (on ? "#fff" : "#BDB7B7") +
-      '" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' + (BG_IC[b.ic] || BG_IC.star) + '</g></g>';
+    var sc = sh === "circle" || sh === "scallop" ? 1.14 : 1.02, cy = CY + (b.sm != null ? -2 : 0) + (sh === "shield" ? -1.5 : sh === "pent" ? 1 : 0), ik = has("flame") ? " bdx-flame" : has("float") ? " bdx-float" : has("beat") ? " bdx-beat" : "";
+    var tr = 'transform="translate(' + (42 - 12 * sc).toFixed(2) + ' ' + (cy - 12 * sc).toFixed(2) + ') scale(' + sc + ')"', IC = BG_IC[b.ic] || BG_IC.star;
+    s += '<g ' + tr + '><g class="bdx-i' + ik + '" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
+      (on ? '<g transform="translate(0 1.3)" fill="none" stroke="#000" opacity=".3">' + IC + '</g>' : '') +
+      '<g fill="' + (on ? "rgba(255,255,255,.24)" : "none") + '" stroke="' + (on ? "#fff" : "#BDB7B7") + '">' + IC + '</g></g></g>';
     if (has("shine")) s += '<g clip-path="url(#' + u + 'c)"><g transform="rotate(22 42 32)"><rect class="bdx-sh" x="-16" y="-20" width="11" height="110" fill="#fff" opacity=".55"/></g></g>';
     if (has("twinkle")) s += '<g transform="translate(63 -1) scale(.95)"><path class="bdg-spark" d="' + BG_SPK + '" fill="#FFE48A"/></g><g transform="translate(6 40) scale(.6)"><path class="bdg-spark s2" d="' + BG_SPK + '" fill="#fff"/></g>' +
       '<g transform="translate(14 2) scale(.45)"><path class="bdg-spark s3" d="' + BG_SPK + '" fill="#FFE48A"/></g>';
@@ -1550,6 +1578,8 @@
         var b = badgeList()[+el.getAttribute("data-i")];
         if (!b) return;
         var p = b.on ? b.on.split("-") : null;
+        var sv = el.querySelector(".bdg-s");
+        if (sv && b.on) { sv.classList.remove("flip"); void sv.getBoundingClientRect(); sv.classList.add("flip"); }
         attToast(b.label + " — " + (p ? (+p[1]) + "월 " + (+p[2]) + "일에 받았어요" : b.how));
       });
     });
