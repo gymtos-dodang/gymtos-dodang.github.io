@@ -1915,7 +1915,7 @@ html[data-skin="sheep"] { --barbg: rgba(255, 248, 241, .6); --glass: rgba(255, 2
 .petwalk .p-tail { transform-box: fill-box; transform-origin: 100% 100%; animation: petTail 1.6s ease-in-out infinite alternate; }
 .petwalk .pet.sit .p-head { transform: translate(-9px, 9px); }
 .petwalk .p-eyes { transform-box: fill-box; transform-origin: 50% 50%; animation: petBlink 4.2s infinite; }
-@keyframes petLeg { from { transform: rotate(-24deg); } to { transform: rotate(24deg); } }
+@keyframes petLeg { from { transform: rotate(-17deg); } to { transform: rotate(17deg); } }
 @keyframes petBob { from { translate: 0 0; } to { translate: 0 -1.2px; } }
 @keyframes petTail { from { transform: rotate(-9deg); } to { transform: rotate(12deg); } }
 @keyframes petBlink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
