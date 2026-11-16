@@ -147,7 +147,7 @@
   /* 리버스 펙덱 (2026-11-16 장동욱 "회원님들이 헷갈린대" → "정면이라 구분이 안 되잖아"): **옆에서 본 모습** —
      가슴을 패드에 대고 기구를 마주 보고 앉아, 앞으로 뻗은 팔을 어깨 높이에서 뒤로 벌림(옆에서 보면 팔이 몸 쪽으로 짧아졌다가 등 뒤로 나옴). 어깨 뒤·등 위쪽 분홍.
      펙덱(등받이에 기대 앞으로 모음)과 방향이 반대인 게 보이도록. 펙덱은 그대로 위에서 본 모습(deckTop(false)) */
-  EX.reverse_pec_deck = { t: .85, p0: ext(sit(31, 65), { el: [44, 38.5], ha: [58, 39] }), p1: { el: [22, 37.5], ha: [12, 39] }, bones: SIDE,
+  EX.reverse_pec_deck = { t: .85, hold: .5, p0: ext(sit(31, 65), { el: [44, 38.5], ha: [58, 39] }), p1: { el: [22, 37.5], ha: [12, 39] }, bones: SIDE,
     hl: function (P) { return [seg(P.sh, P.hip, 0, .3, 13), { dot: off(P.sh, -1.5, 0), r: 6.2 }]; },
     back: function (P) {
       return seatEq(31, 65, false).concat([L("eq2", [[50, 5], [50, 93]], 5), L("eq2", [[42, 93.5], [60, 93.5]], 4), L("eq2", [[39.5, 36], [39.5, 59]], 6), L("eq2", [[40, 47], [50, 47]], 3),
@@ -468,7 +468,9 @@
     var sex = opt.sex === "F" ? "F" : "M", still = !!opt.still, ck = key + sex + (still ? "s" : "a");
     if (!cache[ck]) {
       var S = STY[sex], base = shapes(ex, S, still ? ex.t : 0), frames = still ? null : FR.map(function (f) { return shapes(ex, S, f.t); });
-      var dur = ex.slow ? "3.6s" : "2.8s";
+      var base0 = ex.slow ? 3.6 : 2.8, hold = ex.hold || 0, dur = f1(base0 + hold) + "s";
+      /* ex.hold(초): 시작 자세에서 그만큼 더 멈춰 있다가 움직임 (2026-11-16 리버스 펙덱 "시작 준비 자세를 0.5초 느리게") */
+      var kt = !hold ? KT : FR.map(function (f, n) { return n ? Math.round((hold + f.kt * base0) / (base0 + hold) * 1000) / 1000 : 0; }).join(";");
       var h = '<rect x=".75" y=".75" width="98.5" height="98.5" rx="23" fill="' + S.tile + '"/>';
       base.forEach(function (o, n) {
         var attrs = "", anim = "", k;
@@ -476,7 +478,7 @@
           attrs += " " + k + '="' + o.dyn[k] + '"';
           if (still) continue;
           var vals = frames.map(function (fr) { return fr[n].dyn[k]; }), same = vals.every(function (v) { return v === vals[0]; });
-          if (!same) anim += '<animate attributeName="' + k + '" dur="' + dur + '" repeatCount="indefinite" keyTimes="' + KT + '" values="' + vals.join(";") + '"/>';
+          if (!same) anim += '<animate attributeName="' + k + '" dur="' + dur + '" repeatCount="indefinite" keyTimes="' + kt + '" values="' + vals.join(";") + '"/>';
         }
         h += "<" + o.tag + " " + o.fix + attrs + (anim ? ">" + anim + "</" + o.tag + ">" : "/>");
       });
