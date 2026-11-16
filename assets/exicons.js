@@ -144,7 +144,16 @@
     back: function (P) { return [floor(8, 80), L("eq2", [[11, 6], [11, 93]], 3.5), L("eq2", [[8, 93], [18, 93]], 4), L("eq2", [[13, 31], P.ha], 2), D("eq2", [13, 31], 3.2)]; },
     front: function (P) { return [grip(P.ha)]; } };
   EX.pec_deck = deckTop(false);
-  EX.reverse_pec_deck = deckTop(true);
+  /* 리버스 펙덱 (2026-11-16 장동욱 "회원님들이 헷갈린대, 더 알아볼 수 있게"): 위에서 본 그림 대신 **뒤에서 본 모습** —
+     기구를 마주 보고 앉아(가슴 패드는 몸 앞) 앞에 모았던 손잡이를 어깨 높이에서 양옆으로 활짝 벌림. 등이 보이니까 어깨 뒤·등 위쪽을 분홍으로. 펙덱은 그대로 위에서 본 모습(deckTop(false)) */
+  EX.reverse_pec_deck = { t: .85,
+    p0: mir(ext(FSIT, { elL: [40, 49], haL: [45.5, 43] })), p1: mir({ elL: [26, 42], haL: [10, 40] }), bones: FRONT,
+    hl: function (P) { return [{ line: [[43, 46.5], [57, 46.5]], w: 6.5 }, { dot: P.shL, r: 5.6 }, { dot: P.shR, r: 5.6 }]; },
+    back: function (P) {
+      return [floor(20, 80), L("eq2", [[50, 5], [50, 93]], 6), L("eq2", [[38, 93.5], [62, 93.5]], 4), { k: "eq2", rect: [35.5, 40, 29, 30], r: 5 }, L("eq2", [[34, 79.5], [66, 79.5]], 5),
+        L("eq2", [[50, 9], [P.haL[0], 9], off(P.haL, 0, -7)], 3), L("eq2", [[50, 9], [P.haR[0], 9], off(P.haR, 0, -7)], 3), D("eq2", [50, 9], 3.4)];
+    },
+    front: function (P) { return [grip(P.haL, 7), grip(P.haR, 7)]; } };
   EX.band_push_up = { t: .2,
     p0: { head: [19, 69], sh: [30, 72], hip: [58, 76], ft: [86, 84], toe: [88, 91], el: [41, 66], ha: [30, 87] },
     p1: { head: [19, 53], sh: [30, 58], hip: [58, 68], el: [31, 73] },
