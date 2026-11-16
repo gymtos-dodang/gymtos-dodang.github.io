@@ -1264,5 +1264,32 @@
 "triceps_med": "S",
 "triceps_lat": "S"
 }
+},
+"m/inseok-02j3ia/media/form-smith-incline-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/inseok-02j3ia/media/form-nutek-chest-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
 }
 }
