@@ -2128,3 +2128,10 @@ html[data-pet="bunny"] .bny-peek { display: none; }
 .hbdg-t small { font-size: 9.5px; font-weight: 800; color: #B08A2E; letter-spacing: .04em; }
 .hbdg-t b { font-size: 12.5px; font-weight: 900; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hbdg.sp { background: linear-gradient(120deg, #2B2210, #0E0E10 60%); } .hbdg.sp .hbdg-t b { color: #F4D783; } .hbdg.sp .hbdg-t small { color: #C9A44A; }
+/* 2026-11-17: 홈 대표 배지 = 글자 없이 3개 (첫 번째 크게, 둘·셋째는 조금 작게) */
+.hbdg3 { position: absolute; right: 0; bottom: 2px; display: flex; align-items: flex-end; gap: 2px; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.hbdg3 .hb { position: relative; width: 50px; height: 44px; flex: none; }
+.hbdg3 .hb .bdg { position: absolute; left: 0; top: 0; transform: scale(.6); transform-origin: 0 0; }
+.hbdg3 .hb.s { width: 38px; height: 34px; }
+.hbdg3 .hb.s .bdg { transform: scale(.452); }
+.hbdg3 .bdg-m, .hbdg3 .bdx-glow, .hbdg3 .bdx-ring { display: none; }

@@ -1653,14 +1653,15 @@
     box.querySelector(".bxp-go").addEventListener("click", close);
     box.addEventListener("click", function (e) { if (e.target === box || e.target.classList.contains("bxp-rays")) close(); });
   }
-  function bgBest() {   /* 대표 배지: 받은 것 중 제일 높은 것(전설 → 단계 높은 순 → 최근) — 홈 맨 위 작은 칩 */
-    var L; try { L = badgeList().filter(function (b) { return b.on; }); } catch (e) { return null; }
+  function bgBest(n) {   /* 대표 배지: 받은 것 중 높은 순(전설 → 단계 높은 순 → 최근)으로 n개 — 홈 맨 위 */
+    var L; try { L = badgeList().filter(function (b) { return b.on; }); } catch (e) { return []; }
     L.sort(function (x, y) { return (y.sp ? 1 : 0) - (x.sp ? 1 : 0) || (y.lv || 0) - (x.lv || 0) || (y.on > x.on ? 1 : y.on < x.on ? -1 : 0) || (y.goal || 0) - (x.goal || 0); });
-    return L[0] || null;
+    return L.slice(0, n || 1);
   }
-  function bgHomeChip() {
-    var b = bgBest(); if (!b) return "";
-    return '<a class="hbdg' + (b.sp ? ' sp' : '') + '" href="#goal-badges" aria-label="대표 배지 ' + esc(b.label) + '"><span class="hbdg-ic">' + bgIcon(b) + '</span><span class="hbdg-t"><small>대표 배지</small><b>' + esc(b.label) + '</b></span></a>';
+  function bgHomeChip() {   /* 2026-11-17 "설명 없애고 3개": 글자 없이 배지 3개 — 첫 번째(제일 높은 것)만 조금 크게 */
+    var L = bgBest(3); if (!L.length) return "";
+    return '<a class="hbdg3" href="#goal-badges" aria-label="내 대표 배지 ' + esc(L.map(function (b) { return b.label; }).join(", ")) + '">' +
+      L.map(function (b, i) { return '<span class="hb' + (i ? ' s' : '') + '">' + bgIcon(b) + '</span>'; }).join("") + '</a>';
   }
   var bgReady = false;
   function badgeCheck() {   /* 새로 받은 배지가 있으면 팝업 한 번 */
