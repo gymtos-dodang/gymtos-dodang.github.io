@@ -73,6 +73,7 @@ _docs/RULES-*.md        작업별 자세한 규칙(위 표)
 - 안내: 처음 둘러보기(tourSteps — 새 탭·칸이 생기면 한 줄 추가) · ⚙️ 설정 메뉴(gearMenu) · 앱으로 설치 안내(#app, renderInstall).
 - 선생님 페이지(coach-tqqnlh/index.html, 회원에게 주소 보내지 말 것): 오늘 출석 카드 · 오늘 수업한 회원 · 회원 아이콘 목록(한 번 누르면 노트, 꾹 누르면 정보 창) · 출석왕(renderRank) · 전체 공지·새 회원 추가(창 .csh, nm… 함수들) · 아이패드 두 칸(body.pad) · 빨리 불러오기(snap·a=all). 회원 수는 사람 수(그룹 PT는 2명).
 - PT 안내서(guide.html 폰 · intro.html 아이패드): 8장, 두 쪽 문구를 같게, 쪽마다 스크롤 없이 한 화면(390×844·375×667 확인), 숫자는 회원 data.js에서 자동, 회원 이름 가운데 O. 손님에게 보이는 곳에 '세일즈' 쓰지 말 것.
+- 복습지 도구(2026-11-16): 기구 사진첩 `_tools/equip_album.py` → `_tools/equipment/sheet-<부위>.jpg`(기구 대조) · 관절 인식 `_tools/pose.py`(T1·T2·T3 자동 + 뼈대 시트). 자세한 건 RULES-form.md.
 - 뼈대 키트: `python3 _tools/build_kit.py <출력 폴더>` — 회원 정보·개인 자료·JANG KAREDO 브랜드를 뺀 키트. 새 개인 정보 종류가 생기면 SECRETS·MEMBER_NAMES에 추가.
 
 ## 하지 말 것 (전에 사고 난 것들 — 이유는 HISTORY '아이폰 캐시 · 화면 잘림 대비'·'앱 화면')

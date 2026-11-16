@@ -1,0 +1,871 @@
+{
+ "고블릿 스쿼트": {
+  "part": "하체",
+  "en": "Goblet Squat",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "goblet-squat",
+    "img": "m/aeran-bsq16i/media/form-goblet-squat/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "goblet-squat",
+    "img": "m/mikyung-7rq2vd/media/form-goblet-squat/step1.jpg"
+   },
+   {
+    "member": "염승완",
+    "id": "goblet-squat",
+    "img": "m/dyn/seungwan/media/form-goblet-squat/step1.jpg"
+   }
+  ]
+ },
+ "핵스쿼트": {
+  "part": "하체",
+  "en": "Hack Squat",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "hack-squat",
+    "img": "m/aeran-bsq16i/media/form-hack-squat/step1.jpg"
+   }
+  ]
+ },
+ "펙덱 플라이": {
+  "part": "가슴",
+  "en": "Pec Deck Fly",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "pec-deck-fly",
+    "img": "m/aeran-bsq16i/media/form-pec-deck-fly/step1.jpg"
+   },
+   {
+    "member": "박찬영",
+    "id": "pec-deck-fly",
+    "img": "m/chanyoung-dvrara/media/form-pec-deck-fly/step1.jpg"
+   },
+   {
+    "member": "조혜영",
+    "id": "pec-deck-fly",
+    "img": "m/hyeyoung-d74063/media/form-pec-deck-fly/step1.jpg"
+   },
+   {
+    "member": "이지환",
+    "id": "pec-deck",
+    "img": "m/jihwan-t7m4qe/media/form-pec-deck/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "pec-deck-fly",
+    "img": "m/jisu-480xne/media/form-pec-deck-fly/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "pec-deck-fly",
+    "img": "m/mikyung-7rq2vd/media/form-pec-deck-fly/step1.jpg"
+   },
+   {
+    "member": "어순래",
+    "id": "pec-deck-fly",
+    "img": "m/sunrae-c7yvid/media/form-pec-deck-fly/step1.jpg"
+   },
+   {
+    "member": "염승완",
+    "id": "pec-deck-fly",
+    "img": "m/dyn/seungwan/media/form-pec-deck-fly/step1.jpg"
+   }
+  ]
+ },
+ "체스트 프레스 머신": {
+  "part": "가슴",
+  "en": "Chest Press Machine",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "chest-press-machine",
+    "img": "m/aeran-bsq16i/media/form-chest-press-machine/step1.jpg"
+   },
+   {
+    "member": "조혜영",
+    "id": "chest-press-machine",
+    "img": "m/hyeyoung-d74063/media/form-chest-press-machine/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "chest-press-machine",
+    "img": "m/jisu-480xne/media/form-chest-press-machine/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "chest-press",
+    "img": "m/mikyung-7rq2vd/media/form-chest-press/step1.jpg"
+   }
+  ]
+ },
+ "뉴텍 인클라인 프레스 머신": {
+  "part": "가슴",
+  "en": "Newtech Incline Press",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "incline-press-machine",
+    "img": "m/aeran-bsq16i/media/form-incline-press-machine/step1.jpg"
+   }
+  ]
+ },
+ "케이블 푸쉬다운": {
+  "part": "팔",
+  "en": "Cable Pushdown",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "cable-pushdown",
+    "img": "m/aeran-bsq16i/media/form-cable-pushdown/step1.jpg"
+   },
+   {
+    "member": "최지훈",
+    "id": "cable-pushdown",
+    "img": "m/jihun-g9kgdo/media/form-cable-pushdown/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "cable-pushdown",
+    "img": "m/jisu-480xne/media/form-cable-pushdown/step1.jpg"
+   },
+   {
+    "member": "어순래",
+    "id": "cable-pushdown",
+    "img": "m/sunrae-c7yvid/media/form-cable-pushdown/step1.jpg"
+   },
+   {
+    "member": "염승완",
+    "id": "cable-pushdown",
+    "img": "m/dyn/seungwan/media/form-cable-pushdown/step1.jpg"
+   }
+  ]
+ },
+ "시티드 페이스풀": {
+  "part": "등",
+  "en": "Seated Face Pull",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "seated-face-pull",
+    "img": "m/aeran-bsq16i/media/form-seated-face-pull/step1.jpg"
+   },
+   {
+    "member": "박찬영",
+    "id": "seated-face-pull",
+    "img": "m/chanyoung-dvrara/media/form-seated-face-pull/step1.jpg"
+   },
+   {
+    "member": "최지훈",
+    "id": "seated-face-pull",
+    "img": "m/jihun-g9kgdo/media/form-seated-face-pull/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "seated-face-pull",
+    "img": "m/mikyung-7rq2vd/media/form-seated-face-pull/step1.jpg"
+   }
+  ]
+ },
+ "랫풀다운": {
+  "part": "등",
+  "en": "Lat Pulldown",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "lat-pulldown",
+    "img": "m/aeran-bsq16i/media/form-lat-pulldown/step1.jpg"
+   },
+   {
+    "member": "박찬영",
+    "id": "lat-pulldown",
+    "img": "m/chanyoung-dvrara/media/form-lat-pulldown/step1.jpg"
+   },
+   {
+    "member": "서인석",
+    "id": "lat-pulldown",
+    "img": "m/inseok-02j3ia/media/form-lat-pulldown/step1.jpg"
+   },
+   {
+    "member": "최지훈",
+    "id": "lat-pulldown",
+    "img": "m/jihun-g9kgdo/media/form-lat-pulldown/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "lat-pulldown",
+    "img": "m/mikyung-7rq2vd/media/form-lat-pulldown/step1.jpg"
+   }
+  ]
+ },
+ "뉴텍 시티드 로우 머신": {
+  "part": "등",
+  "en": "Newtech Seated Row",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "newtech-seated-row",
+    "img": "m/aeran-bsq16i/media/form-newtech-seated-row/step1.jpg"
+   },
+   {
+    "member": "서인석",
+    "id": "nutek-seated-row",
+    "img": "m/inseok-02j3ia/media/form-nutek-seated-row/step1.jpg"
+   },
+   {
+    "member": "이지환",
+    "id": "nutek-seated-row",
+    "img": "m/jihwan-t7m4qe/media/form-nutek-seated-row/step1.jpg"
+   }
+  ]
+ },
+ "벤치프레스": {
+  "part": "가슴",
+  "en": "Bench Press",
+  "shots": [
+   {
+    "member": "박찬영",
+    "id": "bench-press",
+    "img": "m/chanyoung-dvrara/media/form-bench-press/step1.jpg"
+   }
+  ]
+ },
+ "인클라인 덤벨 프레스": {
+  "part": "가슴",
+  "en": "Incline DB Press",
+  "shots": [
+   {
+    "member": "박찬영",
+    "id": "incline-db-press",
+    "img": "m/chanyoung-dvrara/media/form-incline-db-press/step1.jpg"
+   },
+   {
+    "member": "최지훈",
+    "id": "incline-db-press",
+    "img": "m/jihun-g9kgdo/media/form-incline-db-press/step1.jpg"
+   },
+   {
+    "member": "이지환",
+    "id": "incline-db-press",
+    "img": "m/jihwan-t7m4qe/media/form-incline-db-press/step1.jpg"
+   }
+  ]
+ },
+ "덤벨 숄더 프레스": {
+  "part": "어깨",
+  "en": "DB Shoulder Press",
+  "shots": [
+   {
+    "member": "박찬영",
+    "id": "db-shoulder-press",
+    "img": "m/chanyoung-dvrara/media/form-db-shoulder-press/step1.jpg"
+   },
+   {
+    "member": "최지훈",
+    "id": "db-shoulder-press",
+    "img": "m/jihun-g9kgdo/media/form-db-shoulder-press/step1.jpg"
+   },
+   {
+    "member": "이지환",
+    "id": "db-shoulder-press",
+    "img": "m/jihwan-t7m4qe/media/form-db-shoulder-press/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "db-shoulder-press",
+    "img": "m/jisu-480xne/media/form-db-shoulder-press/step1.jpg"
+   },
+   {
+    "member": "어순래",
+    "id": "db-shoulder-press",
+    "img": "m/sunrae-c7yvid/media/form-db-shoulder-press/step1.jpg"
+   }
+  ]
+ },
+ "시티드 레터럴 레이즈": {
+  "part": "어깨",
+  "en": "Seated Lateral Raise",
+  "shots": [
+   {
+    "member": "박찬영",
+    "id": "seated-lateral-raise",
+    "img": "m/chanyoung-dvrara/media/form-seated-lateral-raise/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "seated-lateral-raise",
+    "img": "m/mikyung-7rq2vd/media/form-seated-lateral-raise/step1.jpg"
+   }
+  ]
+ },
+ "해머스트렝스 로우로우": {
+  "part": "등",
+  "en": "Hammer Strength Low Row",
+  "shots": [
+   {
+    "member": "박찬영",
+    "id": "hammer-low-row",
+    "img": "m/chanyoung-dvrara/media/form-hammer-low-row/step1.jpg"
+   },
+   {
+    "member": "최지훈",
+    "id": "hammer-low-row",
+    "img": "m/jihun-g9kgdo/media/form-hammer-low-row/step1.jpg"
+   },
+   {
+    "member": "이지환",
+    "id": "low-row",
+    "img": "m/jihwan-t7m4qe/media/form-low-row/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "hammer-low-row",
+    "img": "m/jisu-480xne/media/form-hammer-low-row/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "hammer-low-row",
+    "img": "m/mikyung-7rq2vd/media/form-hammer-low-row/step1.jpg"
+   },
+   {
+    "member": "박민",
+    "id": "hammer-low-row",
+    "img": "m/dyn/parkmin/media/form-hammer-low-row/step1.jpg"
+   }
+  ]
+ },
+ "레그 익스텐션": {
+  "part": "하체",
+  "en": "Leg Extension",
+  "shots": [
+   {
+    "member": "조혜영",
+    "id": "leg-extension",
+    "img": "m/hyeyoung-d74063/media/form-leg-extension/step1.jpg"
+   }
+  ]
+ },
+ "아웃타이 머신": {
+  "part": "엉덩이",
+  "en": "Outer Thigh (Abduction)",
+  "shots": [
+   {
+    "member": "조혜영",
+    "id": "outer-thigh",
+    "img": "m/hyeyoung-d74063/media/form-outer-thigh/step1.jpg"
+   },
+   {
+    "member": "이지환",
+    "id": "outer-thigh",
+    "img": "m/jihwan-t7m4qe/media/form-outer-thigh/step1.jpg"
+   }
+  ]
+ },
+ "스미스 인클라인 프레스": {
+  "part": "가슴",
+  "en": "Smith Incline Press",
+  "shots": [
+   {
+    "member": "조혜영",
+    "id": "smith-incline-press",
+    "img": "m/hyeyoung-d74063/media/form-smith-incline-press/step1.jpg"
+   },
+   {
+    "member": "서인석",
+    "id": "smith-incline-press",
+    "img": "m/inseok-02j3ia/media/form-smith-incline-press/step1.jpg"
+   },
+   {
+    "member": "최지훈",
+    "id": "smith-incline-press",
+    "img": "m/jihun-g9kgdo/media/form-smith-incline-press/step1.jpg"
+   },
+   {
+    "member": "이지환",
+    "id": "smith-incline-press",
+    "img": "m/jihwan-t7m4qe/media/form-smith-incline-press/step1.jpg"
+   },
+   {
+    "member": "최용민 · 고은성",
+    "id": "smith-incline-press",
+    "img": "m/yongmin-eunseong-1mwau5/media/form-smith-incline-press/step1.jpg"
+   }
+  ]
+ },
+ "뉴텍 체스트 프레스 머신": {
+  "part": "가슴",
+  "en": "Lying Chest Press",
+  "shots": [
+   {
+    "member": "서인석",
+    "id": "nutek-chest-press",
+    "img": "m/inseok-02j3ia/media/form-nutek-chest-press/step1.jpg"
+   },
+   {
+    "member": "이진영",
+    "id": "newtech-chest-press",
+    "img": "m/jinyoung-n73rzx/media/form-newtech-chest-press/step1.jpg"
+   },
+   {
+    "member": "어순래",
+    "id": "chest-press-machine",
+    "img": "m/sunrae-c7yvid/media/form-chest-press-machine/step1.jpg"
+   }
+  ]
+ },
+ "사이드 레터럴 레이즈": {
+  "part": "어깨",
+  "en": "DB Lateral Raise",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "db-lateral-raise",
+    "img": "m/jihun-g9kgdo/media/form-db-lateral-raise/step1.jpg"
+   }
+  ]
+ },
+ "사이드 레터럴 레이즈 머신": {
+  "part": "어깨",
+  "en": "Standing Lateral Raise Machine",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "lateral-raise-machine",
+    "img": "m/jihun-g9kgdo/media/form-lateral-raise-machine/step1.jpg"
+   },
+   {
+    "member": "어순래",
+    "id": "lateral-raise-machine",
+    "img": "m/sunrae-c7yvid/media/form-lateral-raise-machine/step1.jpg"
+   }
+  ]
+ },
+ "어시스트 친업": {
+  "part": "등",
+  "en": "Assisted Chin-up",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "assisted-chin-up",
+    "img": "m/jihun-g9kgdo/media/form-assisted-chin-up/step1.jpg"
+   }
+  ]
+ },
+ "리버스 펙덱 플라이": {
+  "part": "등",
+  "en": "Reverse Pec Deck Fly",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "reverse-pec-deck",
+    "img": "m/jihun-g9kgdo/media/form-reverse-pec-deck/step1.jpg"
+   }
+  ]
+ },
+ "덤벨 컬": {
+  "part": "팔",
+  "en": "DB Curl",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "db-curl",
+    "img": "m/jihun-g9kgdo/media/form-db-curl/step1.jpg"
+   },
+   {
+    "member": "이진영",
+    "id": "db-curl",
+    "img": "m/jinyoung-n73rzx/media/form-db-curl/step1.jpg"
+   }
+  ]
+ },
+ "해머 컬": {
+  "part": "팔",
+  "en": "Hammer Curl",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "hammer-curl",
+    "img": "m/jihun-g9kgdo/media/form-hammer-curl/step1.jpg"
+   }
+  ]
+ },
+ "인클라인 벤치 이두컬": {
+  "part": "팔",
+  "en": "Incline Bench Curl",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "incline-bench-curl",
+    "img": "m/jihun-g9kgdo/media/form-incline-bench-curl/step1.jpg"
+   }
+  ]
+ },
+ "플랫 덤벨프레스": {
+  "part": "가슴",
+  "en": "Flat DB Press",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "flat-db-press",
+    "img": "m/jihun-g9kgdo/media/form-flat-db-press/step1.jpg"
+   },
+   {
+    "member": "이지환",
+    "id": "flat-db-press",
+    "img": "m/jihwan-t7m4qe/media/form-flat-db-press/step1.jpg"
+   }
+  ]
+ },
+ "뉴텍 엠토처 시티드 로우": {
+  "part": "등",
+  "en": "Seated Row Machine",
+  "shots": [
+   {
+    "member": "이지환",
+    "id": "mtorture-seated-row",
+    "img": "m/jihwan-t7m4qe/media/form-mtorture-seated-row/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "mtorture-seated-row",
+    "img": "m/mikyung-7rq2vd/media/form-mtorture-seated-row/step1.jpg"
+   },
+   {
+    "member": "박민",
+    "id": "mtorture-seated-row",
+    "img": "m/dyn/parkmin/media/form-mtorture-seated-row/step1.jpg"
+   }
+  ]
+ },
+ "클로즈그립 랫풀다운": {
+  "part": "등",
+  "en": "Close-grip Pulldown",
+  "shots": [
+   {
+    "member": "이지환",
+    "id": "close-grip-pulldown",
+    "img": "m/jihwan-t7m4qe/media/form-close-grip-pulldown/step1.jpg"
+   }
+  ]
+ },
+ "레그프레스": {
+  "part": "하체",
+  "en": "Leg Press",
+  "shots": [
+   {
+    "member": "이지환",
+    "id": "leg-press",
+    "img": "m/jihwan-t7m4qe/media/form-leg-press/step1.jpg"
+   }
+  ]
+ },
+ "이너타이": {
+  "part": "하체",
+  "en": "Inner Thigh (Adduction)",
+  "shots": [
+   {
+    "member": "이지환",
+    "id": "inner-thigh",
+    "img": "m/jihwan-t7m4qe/media/form-inner-thigh/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "inner-thigh",
+    "img": "m/mikyung-7rq2vd/media/form-inner-thigh/step1.jpg"
+   }
+  ]
+ },
+ "언더그립 시티드 로우": {
+  "part": "등",
+  "en": "Underhand Seated Row",
+  "shots": [
+   {
+    "member": "이지환",
+    "id": "underhand-seated-row",
+    "img": "m/jihwan-t7m4qe/media/form-underhand-seated-row/step1.jpg"
+   }
+  ]
+ },
+ "리버스 펙덱": {
+  "part": "등",
+  "en": "Reverse Pec Deck",
+  "shots": [
+   {
+    "member": "이지환",
+    "id": "reverse-pec-deck",
+    "img": "m/jihwan-t7m4qe/media/form-reverse-pec-deck/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "reverse-pec-deck",
+    "img": "m/jisu-480xne/media/form-reverse-pec-deck/step1.jpg"
+   }
+  ]
+ },
+ "스탠딩 사이드 레터럴 레이즈 머신": {
+  "part": "어깨",
+  "en": "Standing Lateral Raise Machine",
+  "shots": [
+   {
+    "member": "이지환",
+    "id": "lateral-raise-machine",
+    "img": "m/jihwan-t7m4qe/media/form-lateral-raise-machine/step1.jpg"
+   }
+  ]
+ },
+ "바이킹 프레스": {
+  "part": "어깨",
+  "en": "Viking Press",
+  "shots": [
+   {
+    "member": "이지환",
+    "id": "viking-press",
+    "img": "m/jihwan-t7m4qe/media/form-viking-press/step1.jpg"
+   }
+  ]
+ },
+ "케이블 풀오버": {
+  "part": "등",
+  "en": "Cable Pullover",
+  "shots": [
+   {
+    "member": "이지환",
+    "id": "cable-pullover",
+    "img": "m/jihwan-t7m4qe/media/form-cable-pullover/step1.jpg"
+   }
+  ]
+ },
+ "인클라인 프레스 머신": {
+  "part": "가슴",
+  "en": "Incline Press Machine",
+  "shots": [
+   {
+    "member": "이진영",
+    "id": "incline-press-machine",
+    "img": "m/jinyoung-n73rzx/media/form-incline-press-machine/step1.jpg"
+   },
+   {
+    "member": "염승완",
+    "id": "incline-press-machine",
+    "img": "m/dyn/seungwan/media/form-incline-press-machine/step1.jpg"
+   }
+  ]
+ },
+ "페이스풀": {
+  "part": "등",
+  "en": "Face Pull",
+  "shots": [
+   {
+    "member": "김지수",
+    "id": "face-pull",
+    "img": "m/jisu-480xne/media/form-face-pull/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "face-pull",
+    "img": "m/mikyung-7rq2vd/media/form-face-pull/step1.jpg"
+   }
+  ]
+ },
+ "티바로우 머신": {
+  "part": "등",
+  "en": "T-bar Row Machine",
+  "shots": [
+   {
+    "member": "김지수",
+    "id": "tbar-row",
+    "img": "m/jisu-480xne/media/form-tbar-row/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "tbar-row",
+    "img": "m/mikyung-7rq2vd/media/form-tbar-row/step1.jpg"
+   }
+  ]
+ },
+ "케이블 체스트 프레스": {
+  "part": "가슴",
+  "en": "Cable Chest Press",
+  "shots": [
+   {
+    "member": "김지수",
+    "id": "cable-chest-press",
+    "img": "m/jisu-480xne/media/form-cable-chest-press/step1.jpg"
+   }
+  ]
+ },
+ "숄더 프레스 머신": {
+  "part": "어깨",
+  "en": "Shoulder Press Machine",
+  "shots": [
+   {
+    "member": "김지수",
+    "id": "shoulder-press-machine",
+    "img": "m/jisu-480xne/media/form-shoulder-press-machine/step1.jpg"
+   }
+  ]
+ },
+ "덤벨 사이드 레터럴 레이즈": {
+  "part": "어깨",
+  "en": "DB Lateral Raise",
+  "shots": [
+   {
+    "member": "김지수",
+    "id": "db-lateral-raise",
+    "img": "m/jisu-480xne/media/form-db-lateral-raise/step1.jpg"
+   }
+  ]
+ },
+ "힙쓰러스트 머신": {
+  "part": "엉덩이",
+  "en": "Hip Thrust Machine",
+  "shots": [
+   {
+    "member": "서경진",
+    "id": "hip-thrust",
+    "img": "m/kyeongjin-bkwzy9/media/form-hip-thrust/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "hip-thrust",
+    "img": "m/mikyung-7rq2vd/media/form-hip-thrust/step1.jpg"
+   }
+  ]
+ },
+ "핵프레스": {
+  "part": "하체",
+  "en": "Hack Press",
+  "shots": [
+   {
+    "member": "서경진",
+    "id": "hack-press",
+    "img": "m/kyeongjin-bkwzy9/media/form-hack-press/step1.jpg"
+   }
+  ]
+ },
+ "와이드 풀다운": {
+  "part": "등",
+  "en": "Wide Pulldown",
+  "shots": [
+   {
+    "member": "정미경",
+    "id": "wide-pulldown",
+    "img": "m/mikyung-7rq2vd/media/form-wide-pulldown/step1.jpg"
+   }
+  ]
+ },
+ "버티컬 풀다운": {
+  "part": "등",
+  "en": "Vertical Pulldown",
+  "shots": [
+   {
+    "member": "정미경",
+    "id": "vertical-pulldown",
+    "img": "m/mikyung-7rq2vd/media/form-vertical-pulldown/step1.jpg"
+   }
+  ]
+ },
+ "케이블 시티드 로우": {
+  "part": "등",
+  "en": "Seated Cable Row",
+  "shots": [
+   {
+    "member": "정미경",
+    "id": "seated-row",
+    "img": "m/mikyung-7rq2vd/media/form-seated-row/step1.jpg"
+   }
+  ]
+ },
+ "굿모닝 아웃타이": {
+  "part": "엉덩이",
+  "en": "Good Morning Outer Thigh",
+  "shots": [
+   {
+    "member": "정미경",
+    "id": "goodmorning-outer-thigh",
+    "img": "m/mikyung-7rq2vd/media/form-goodmorning-outer-thigh/step1.jpg"
+   }
+  ]
+ },
+ "원암 덤벨 로우": {
+  "part": "등",
+  "en": "One Arm DB Row",
+  "shots": [
+   {
+    "member": "김태영",
+    "id": "one-arm-row",
+    "img": "m/taeyoung-k52qnx/media/form-one-arm-row/step1.jpg"
+   }
+  ]
+ },
+ "프론트 로우": {
+  "part": "등",
+  "en": "Front Row Machine",
+  "shots": [
+   {
+    "member": "김태영",
+    "id": "front-row",
+    "img": "m/taeyoung-k52qnx/media/form-front-row/step1.jpg"
+   }
+  ]
+ },
+ "뉴텍 아이소레터럴 로우": {
+  "part": "등",
+  "en": "Newtech Iso-Lateral Row",
+  "shots": [
+   {
+    "member": "최용민 · 고은성",
+    "id": "iso-row",
+    "img": "m/yongmin-eunseong-1mwau5/media/form-iso-row/step1.jpg"
+   }
+  ]
+ },
+ "뉴텍 원암 아이소레터럴 로우": {
+  "part": "등",
+  "en": "Newtech One Arm Iso-Lateral Row",
+  "shots": [
+   {
+    "member": "최용민 · 고은성",
+    "id": "one-arm-iso-row",
+    "img": "m/yongmin-eunseong-1mwau5/media/form-one-arm-iso-row/step1.jpg"
+   }
+  ]
+ },
+ "스파이더 컬": {
+  "part": "팔",
+  "en": "Spider Curl",
+  "shots": [
+   {
+    "member": "염승완",
+    "id": "spider-curl",
+    "img": "m/dyn/seungwan/media/form-spider-curl/step1.jpg"
+   }
+  ]
+ },
+ "인클라인 덤벨 컬": {
+  "part": "팔",
+  "en": "Incline DB Curl",
+  "shots": [
+   {
+    "member": "염승완",
+    "id": "incline-db-curl",
+    "img": "m/dyn/seungwan/media/form-incline-db-curl/step1.jpg"
+   }
+  ]
+ },
+ "프론트 로우 머신": {
+  "part": "등",
+  "en": "Front Row Machine",
+  "shots": [
+   {
+    "member": "박민",
+    "id": "front-row",
+    "img": "m/dyn/parkmin/media/form-front-row/step1.jpg"
+   }
+  ]
+ }
+}

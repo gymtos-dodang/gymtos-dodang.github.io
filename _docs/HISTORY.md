@@ -346,6 +346,12 @@ _tools/anatomy_v4.py  인체모형 v4 (자극 부위 그림, 2026-11-16 — v3 �
 - **확인받은 뒤엔 끝까지**: 영상 프레임을 보고 종목을 직접 알아봄(도당점 종목 이름 = app.js RT_CAT·메모리 gym-equipment 기준) → 그 종목의 예전 복습지(모든 회원 data.js forms에서 같은 exercise)와 영상 자세로 문구 작성 → 아래 '미디어 만들기'대로 영상·그림·해부도 → data.js forms 맨 위 + part는 가슴/등/어깨/팔/하체/엉덩이/복근 글자 넣기 → notices 맨 위 공지 → 커밋·푸시 → 회원 링크(`…/m/<주소>/#form-<id>`)만 전달. 루틴은 건드리지 않아도 자동 연결(itemForm), 이름이 다르면 also로.
 - (옛 규칙 "헷갈릴 때만 확인"은 위 검수 규칙으로 바뀜) 이름이 여러 회원과 겹치면(예: 같은 이름) 그것만 확인. 폰에서 만든 회원(n…주소)이면 '정식 노트로 옮기기' 먼저.
 
+## 기구 사진첩 · 관절 인식 (2026-11-16 장동욱 "기구 사진첩 + 관절 인식 세팅하자")
+- **기구 사진첩** `_tools/equipment/`: `python3 _tools/equip_album.py`가 모든 회원 복습지(+ m/dyn/forms.js)의 step1.jpg(없으면 poster.jpg)를 종목 이름별로 모아 `album.json` + 부위별 한 장 `sheet-<가슴|등|어깨|팔|하체|엉덩이>.jpg` + 전체 `sheet-all.jpg`를 만듦. 새 영상의 기구가 헷갈리면 그 부위 시트 **한 장만** Read해서 대조(전에 기구 이름을 잘못 올린 일 때문). 장동욱이 찍은 기구 사진은 `_tools/equipment/photos/<종목 이름>/`에 넣으면 맨 앞에 들어감. 복습지를 올린 뒤 커밋 전에 다시 돌려 최신화.
+- **관절 인식** `python3 _tools/pose.py in.mov --out /tmp/pose [--flip]`: YOLO11n-pose(onnxruntime, 모델은 처음에 GitHub에서 /tmp/pose_model/로 받음 12MB — 저장소엔 안 넣음)로 관절 17개 → 가장 크게 움직인 관절 각도/손 이동으로 반복을 나누고 **T1(시작 자세)·T2(힘주기 시작)·T3(돌아오기 시작)**·반복 수·템포(힘주기/돌아오기 초)를 `pose.json`에, 뼈대 그린 확인 시트 `pose_sheet.jpg`(T1~T3 노란 테두리 + 아래 그래프)를 냄. 썸네일 시트 대신 이 시트를 봄.
+  - 시작 자세는 "오래 머무는 쪽"으로 자동 → 틀리면 `--start big|small`(관절 펴진 쪽/굽힌 쪽), 기준이 엉뚱하면 `--joint 팔꿈치|어깨|골반|무릎|손목앞뒤|손목높이`. 옆에서 찍은 펙덱·플라이처럼 앞뒤로 손이 움직이는 종목은 `--joint 손목앞뒤`가 잘 맞음(테스트: 조혜영 펙덱).
+  - 템포·가동범위는 잘한 점 문구 근거로만 씀(숫자를 회원 화면에 그대로 넣지 않음).
+
 ## 자세 복습지 미디어 만들기 (영상 1개 기준)
 - 웹 영상: `ffmpeg -i in.mov -an -vf "scale=540:-2,fps=30" -c:v libx264 -preset veryfast -crf 27 -pix_fmt yuv420p -movflags +faststart form.mp4`
 - 카톡 대비 움직이는 그림: `-vf "scale=324:-2,fps=10" -c:v libwebp_anim -loop 0 -quality 40 form.webp`

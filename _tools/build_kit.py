@@ -53,7 +53,7 @@ def main():
         if os.path.exists(os.path.join(SRC, f)): shutil.copy(os.path.join(SRC, f), KIT)
     shutil.copytree(os.path.join(SRC, "assets"), os.path.join(KIT, "assets"))
     shutil.copytree(os.path.join(SRC, "_tools"), os.path.join(KIT, "_tools"),
-                    ignore=shutil.ignore_patterns("__pycache__", "build_kit.py", "rebrand_jk.py", "brand"))
+                    ignore=shutil.ignore_patterns("__pycache__", "build_kit.py", "rebrand_jk.py", "brand", "equipment"))
     # 2026-11-11: 사이트는 장동욱 개인 브랜드(JANG KAREDO)로 바뀜 → 키트는 GYMTOS 로고·글자 아이콘으로
     shutil.copy(os.path.join(SRC, "_tools", "brand", "gymtos_logo_old.png"), os.path.join(KIT, "assets", "logo.png"))
     for f in ["logo-white.png", "logo-black.png"]:
