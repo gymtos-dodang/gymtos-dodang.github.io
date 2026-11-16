@@ -66,7 +66,7 @@ _docs/RULES-*.md        작업별 자세한 규칙(위 표)
 - 출석: 창고에 저장(attCall), 출석률·달력·게이지(attStats·attCalendar·attGauge). 종목 ✓하면 자동 출석(attAuto). 나 탭 02 출석 순위(rankSection, 선생님 페이지 rankPub가 pub:all:rank 저장, 이름 가운데 O).
 - 운동 탭: 한눈에 루틴(#day, .ex-list.cmp) · 종목 ✓(.exchk → lgToggle, 회원은 오늘만·선생님은 이번 주 지난 날도 chkDate) · 종목 자세히 창(exSheet) · 요일 꾹 눌러 옮기기(mvSheet·mvMap, 이번 주만 — 꾹 → 원하는 요일 칸 고르기 .mv-days: 쉬는 날이면 그리로, 운동 날이면 서로 바꿈 · 쉬는 날 꾹은 운동 가져오기 · 매주 월요일 초기화) · 복습지 부위 칩(formCats).
 - 기록 탭(renderLog): 오늘 한 운동 · 첫날 vs 오늘(grData·#growth 카드) · 근육 지도(muscleSection·MG_RULES) · 인바디(ibPanel·ibParse·#body) · 월간 리포트(#report).
-- 나 탭(renderGoal): 출석률·달력 → 출석 순위 → 배지 30개(2026-11-17 리메이크: 브론즈~레전드 6등급·출석14/기록8/성장8·진행 막대·획득 팝업, badgeList·bgIcon·showBadgePop, 누적은 창고 mw:<주소>:bg) + 특별 배지 "바프 완료"(바프 회원만 보임, data.js journey.bpDone:"촬영 날짜" 넣으면 획득·bpCard) → 12개월 여정(journeyChart·STAGES / 바프 모드 STAGES_BP·journeyChartBP·fit).
+- 나 탭(renderGoal): 출석률·달력 → 출석 순위 → 배지 45개(2026-11-17: 등급 없이 금테+검정 한 가지 디자인, 출석·기록·성장 15개씩 5칸×3줄, 한 칸에 탭 bgTab·.bgx, badgeList·bgIcon·showBadgePop, 누적은 창고 mw:<주소>:bg — 브론즈~레전드 등급·바프 완료 배지는 없앰, 다시 넣지 말 것) → 12개월 여정(journeyChart·STAGES / 바프 모드 STAGES_BP·journeyChartBP·fit).
 - 선생님 폰에서(COACH_MODE): 루틴 고치기(rt… 함수들, 창고 routine_save) · 다른 회원 루틴 가져오기 · 처음 무게 넣기(grSheet) · 회원 메모(memo.js, coach:memo:<주소>) · 출석 도장은 보기만.
 - 알림: 새 공지 팝업(showNoticePop) · 전체 공지(bnotices) · 배지 팝업 · 아래 탭 점등(litApply) · 복습지 NEW.
 - 화면 효과: 로딩 화면 · 화면 넘어갈 때 차례 등장(D안) · 뒤로 갈 땐 아까 화면 그대로(VCACHE) · 뒤로 버튼(navBackDraw) · 칸 접기(setupFold — 누르면 높이가 스르륵 접힘·펼쳐짐 foldAnim, 2026-11-16 · 선생님 페이지도 같음) · 플랜카드 통일(.hero·.rp-home) · 유리(블러) 효과 · 회원별 테마 스킨(skinDeco) · 돌아다니는 동물(data.js `pet: "cat"` 우유정님 고양이 / `pet: "bunny"` 김지수님 토롱이 깡충깡충, .petwalk — 2026-11-16 · 누르면 쓰담쓰담·밥 먹기·한마디 react/.petfx 2026-11-17).

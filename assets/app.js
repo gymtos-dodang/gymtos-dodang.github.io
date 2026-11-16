@@ -1223,31 +1223,18 @@
     l.href = "https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&display=swap";
     document.head.appendChild(l);
   })();
-  /* ---------------- 배지 리메이크 (2026-11-17 장동욱 "브론즈~레전드 등급, 획득 팝업 연출, 나 탭 진행 막대, 업적 30개, 바프 완료 특별 배지 — 개간지나게")
-     - 업적 30개 = 출석 14 · 운동 기록 8 · 성장 8 (badgeList, 비밀 업적 없음). 등급 tier: 1 브론즈 · 2 실버 · 3 골드(원) · 4 플래티넘(팔각+월계수)
-       · 5 다이아(육각+빛 링) · 6 레전드(별빛+왕관+리본). 그림은 bgIcon(84×72 SVG, 리포트 이미지 저장에도 그대로).
+  /* ---------------- 배지 (2026-11-17 2차 장동욱 "바프 배지 없애고, 브론즈~레전드 없애고, 배지는 늘리되 퀄리티 있게, 한 페이지로")
+     - 배지 45개 = 출석·기록·성장 15개씩(5칸×3줄) (badgeList). 등급 없음 — 전부 같은 디자인(금테 + 검정 에나멜 + 금색 그림, bgIcon 84×72 SVG). 못 받은 건 연회색.
+     - 나 탭 배지 칸은 한 칸(.bgx): 전체 막대 + 다음 배지 한 줄 + 탭(출석·기록·성장, bgTab) + 그 탭 배지만. 바프 완료 특별 배지는 없앰(journey.bpDone 안 씀).
      - 받은 날·누적 기록은 창고 mw:<주소>:bg = { on:{배지id:날짜}, m:{"YYYY-MM":[기록한 날, ✓ 수]}, n:[✓한 종목 이름], at } (bgSync·bgServer, 재배포 X)
-       → 운동 기록(mw:log)이 4천 자 넘어 옛날 날이 지워져도 누적 수가 안 줄고, 한 번 받은 배지는 조건이 바뀌어도(루틴 무게 등) 그대로.
-     - 특별 배지 "바프 완료"(bpBadge·bpEmblem·bpCard): 바프 회원(journey.mode bodyprofile)이나 bpDone 있는 회원만 보임. 30개 수에는 안 셈.
-       선생님이 data.js journey.bpDone: "YYYY-MM-DD"(촬영 날짜) 넣으면 획득 → 그 날짜가 배지 리본에 새겨짐. (true만 넣으면 journey.shoot 날짜)
-     - 팝업(showBadgePop): 등급 색 빛줄기가 돌고 메달이 돌며 떨어짐 → 번쩍 → 모은 배지 막대가 차오름. 레전드·바프는 금빛 입자·검정 금색 카드.
-     - 옛 배지 id(att1·10·30·50·100, stk3·7·14·30, dawn, wkend, ib1, lvup)는 그대로 둬서 이미 본 팝업이 다시 안 뜸. */
-  var BG_TN = ["", "브론즈", "실버", "골드", "플래티넘", "다이아", "레전드"];
-  var BG_TE = ["", "BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND", "LEGEND"];
-  var BG_CAT = [["att", "출석", "오는 것부터가 시작"], ["log", "운동 기록", "종목 ✓가 쌓일수록"], ["grow", "성장", "몸과 무게가 바뀐 증거"]];
-  var BG_TC = [null,
-    { r: ["#FBD9B8", "#C8834A", "#6E3712"], ink: "#4E2309", glow: "200,131,74" },
-    { r: ["#FFFFFF", "#C3CBD6", "#68737F"], ink: "#353E4B", glow: "175,190,210" },
-    { r: ["#FFF3B8", "#E7B53D", "#8C5B00"], ink: "#553600", glow: "231,181,61" },
-    { r: ["#F4FFFE", "#A6DCD8", "#3D7D86"], ink: "#1B474E", glow: "110,215,208" },
-    { r: ["#F0FAFF", "#9ED8FF", "#4C6BE0"], f: ["#8FD3FF", "#3046D8", "#1B1F7A"], ink: "#FFFFFF", glow: "100,165,255" },
-    { r: ["#FFF3B8", "#E7B53D", "#8C5B00"], f: ["#FF4A52", "#B00F17", "#1A0103"], ink: "#FFD866", glow: "235,40,40" }];
-  var BG_LOCK = { r: ["#F6F3F3", "#E2DDDD", "#C3BDBD"], ink: "#A7ADB9", glow: "0,0,0" };
-  var BG_SEEN = "ptnote:" + SLUG + ":badges";
+     - 팝업(showBadgePop): 금빛 빛줄기 + 메달이 돌며 떨어짐 + 모은 배지 막대가 차오름. 이미 본 배지 id는 폰 ptnote:<주소>:badges. */
+  var BG_CAT = [["att", "출석"], ["log", "기록"], ["grow", "성장"]];
+  var BG_SEEN = "ptnote:" + SLUG + ":badges", bgTab = "att";
   var BG_IC = {
     check: '<path d="M5 12.5l4.5 4.5L19 7.5" stroke-width="2.8"/>',
     flame: '<path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.4 1.3-4 2.6-5.2.3 1.6 1 2.6 2.1 3.2C11.3 8.6 11.2 5.6 12 3z"/>',
     sun: '<path d="M4 18h16"/><path d="M7 18a5 5 0 0 1 10 0"/><path d="M12 6v3"/><path d="M5.6 10.6l1.8 1.4"/><path d="M18.4 10.6l-1.8 1.4"/>',
+    moon: '<path d="M19.5 14.2A7.8 7.8 0 0 1 9.8 4.5a7.8 7.8 0 1 0 9.7 9.7z"/>',
     cal: '<rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 10h16"/><path d="M8 3v4"/><path d="M16 3v4"/>',
     star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8-4.3-4.1 5.9-.8z"/>',
     pen: '<path d="M4.5 19.5l1-4.5L15.8 4.7a2.1 2.1 0 0 1 3 3L8.5 18z"/><path d="M13.8 6.7l3 3"/>',
@@ -1262,11 +1249,6 @@
     book: '<path d="M4 5.5C6.5 4.3 9.5 4.3 12 6c2.5-1.7 5.5-1.7 8-.5V19c-2.5-1.2-5.5-1.2-8 .5-2.5-1.7-5.5-1.7-8-.5z"/><path d="M12 6v13.5"/>',
     heart: '<path d="M12 20s-7.5-4.6-7.5-10.2A4.1 4.1 0 0 1 12 7.4a4.1 4.1 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20z"/>'
   };
-  var LAUREL = '<g transform="translate(17 57) rotate(45)"><ellipse rx="3" ry="6.5"/></g><g transform="translate(8.5 44) rotate(20)"><ellipse rx="3" ry="6.5"/></g>' +
-    '<g transform="translate(6.5 29) rotate(-5)"><ellipse rx="3" ry="6.5"/></g><g transform="translate(11 15) rotate(-30)"><ellipse rx="3" ry="6"/></g>' +
-    '<g transform="translate(67 57) rotate(-45)"><ellipse rx="3" ry="6.5"/></g><g transform="translate(75.5 44) rotate(-20)"><ellipse rx="3" ry="6.5"/></g>' +
-    '<g transform="translate(77.5 29) rotate(5)"><ellipse rx="3" ry="6.5"/></g><g transform="translate(73 15) rotate(30)"><ellipse rx="3" ry="6"/></g>';
-  var SPARK = 'M7 0 L8.4 5.6 L14 7 L8.4 8.4 L7 14 L5.6 8.4 L0 7 L5.6 5.6 Z';
   function md(k) { var p = k.split("-"); return (+p[1]) + ". " + pad2(+p[2]); }
   function ymOf(d) { return d.getFullYear() + "-" + pad2(d.getMonth() + 1); }
   function ymDate(ym) { var p = ym.split("-"); return new Date(+p[0], +p[1] - 1, 1); }
@@ -1329,31 +1311,38 @@
     return { tot: tot, ch: ch };
   }
 
+
   function badgeList() {
     var a = attLoad().slice().sort(), hs = attHistory(), cur = attStreak(attLoad()), L = [], today = ymd(new Date());
     var S = bgSync(), o = bgsObj(), T = S.tot, LGd = (LG && LG.d) || {}, lgKeys = Object.keys(LGd).filter(function (k) { return LGd[k] && LGd[k].length; }).sort();
-    function add(b) { L.push(b); return b; }
-    function att(n, t) {
-      return add({ id: "att" + n, cat: "att", line: "att", label: n === 1 ? "첫 출석" : "출석 " + n + "회", tier: t, kind: n === 1 ? "check" : "num", num: n,
-        on: a[n - 1] || null, have: a.length, goal: n, how: "출석 " + n + "번이면 받아요",
-        desc: n === 1 ? "PT 노트 첫 출석 체크! 시작이 반이에요." : "출석 " + n + "번 달성! 꾸준함이 몸을 바꿔요." });
+    function add(cat, id, label, ic, sm, on, have, goal, how, desc, x) {
+      var b = { id: id, cat: cat, label: label, ic: ic, sm: sm, on: on, have: have, goal: goal, how: how, desc: desc };
+      if (x) for (var k in x) b[k] = x[k];
+      L.push(b);
     }
-    function stk(n, t) {
-      return add({ id: "stk" + n, cat: "att", line: "stk", label: "연속 " + n + "회", tier: t, kind: "flame", pill: n >= 7 ? n : null,
-        on: hs.first[n] || null, have: cur, goal: n, how: "운동하는 날 " + n + "번 연속으로 오면 받아요",
-        desc: "운동하는 날 " + n + "번 연속으로 한 번도 안 빠졌어요." });
-    }
-    /* 출석 14 */
-    att(1, 1); att(10, 1); att(30, 2); att(50, 3); att(100, 4); att(200, 5); att(300, 6);
-    stk(3, 1); stk(7, 2); stk(14, 3); stk(30, 5);
-    var dawn = null, wk = null;
+    function q(ok) { return ok ? "?" : null; }
+    /* 출석 16 */
+    [1, 10, 30, 50, 100, 200].forEach(function (n) {
+      add("att", "att" + n, n === 1 ? "첫 출석" : "출석 " + n + "회", n === 1 ? "check" : null, null, a[n - 1] || null, a.length, n, "출석 " + n + "번이면 받아요",
+        n === 1 ? "PT 노트 첫 출석 체크! 시작이 반이에요." : "출석 " + n + "번 달성! 꾸준함이 몸을 바꿔요.", n === 1 ? null : { big: n });
+    });
+    [3, 7, 14, 30].forEach(function (n) {
+      add("att", "stk" + n, "연속 " + n + "회", "flame", n, hs.first[n] || null, cur, n, "운동하는 날 " + n + "번 연속으로 오면 받아요", "운동하는 날 " + n + "번 연속으로 한 번도 안 빠졌어요.");
+    });
+    var dawn = null, night = null, wk = null, m20 = null, mc20 = {}, m20have = 0;
     a.forEach(function (k) {
       if (!dawn && attTimes[k] && attTimes[k] < "07:00") dawn = k;
+      if (!night && attTimes[k] && attTimes[k] >= "22:00") night = k;
       var p = k.split("-"), d = new Date(+p[0], +p[1] - 1, +p[2]);
       if (!wk && d.getDay() === 0) { var s = new Date(d); s.setDate(s.getDate() - 1); if (attHas(a, ymd(s))) wk = k; }
+      var ym = k.slice(0, 7); mc20[ym] = (mc20[ym] || 0) + 1;
+      if (mc20[ym] > m20have) m20have = mc20[ym];
+      if (!m20 && mc20[ym] === 20) m20 = k;
     });
-    add({ id: "dawn", cat: "att", label: "새벽 운동", tier: 2, kind: "sun", on: dawn, hint: "7시 전 출석", how: "아침 7시 전에 출석하면 받아요", desc: "아침 7시 전에 출석했어요. 하루를 먼저 이긴 사람!" });
-    add({ id: "wkend", cat: "att", label: "주말 전사", tier: 2, kind: "cal", on: wk, hint: "토·일 둘 다", how: "토요일·일요일 둘 다 오면 받아요", desc: "토·일 둘 다 나왔어요. 주말에도 멈추지 않아요!" });
+    add("att", "dawn", "새벽 운동", "sun", null, dawn, dawn ? 1 : 0, 0, "아침 7시 전에 출석하면 받아요", "아침 7시 전에 출석했어요. 하루를 먼저 이긴 사람!", { hint: "7시 전 출석" });
+    add("att", "night", "심야 운동", "moon", null, night, night ? 1 : 0, 0, "밤 10시 넘어 출석하면 받아요", "밤 10시가 넘어도 운동하러 왔어요. 이 정도면 진심!", { hint: "밤 10시 이후" });
+    add("att", "wkend", "주말 전사", "cal", null, wk, wk ? 1 : 0, 0, "토요일·일요일 둘 다 오면 받아요", "토·일 둘 다 나왔어요. 주말에도 멈추지 않아요!", { hint: "토·일 둘 다" });
+    add("att", "mon20", "한 달 20회", "cal", 20, m20, m20have, 20, "한 달에 20번 출석하면 받아요", "한 달에 20번 출석! 헬스장이 집 같아졌어요.");
     var perf = null, st0 = startDate();   /* 개근: 다 끝난 달 중 운동하는 날을 하나도 안 빠진 달 */
     if (st0 && a.length) {
       var ym = ymOf(st0), nowYm = ymOf(new Date());
@@ -1362,19 +1351,24 @@
         if (r.plan >= 4 && r.done >= r.plan) { var inM = a.filter(function (k) { return k.slice(0, 7) === ym; }); perf = inM[inM.length - 1] || ymd(d1); break; }
       }
     }
-    add({ id: "perf", cat: "att", label: "한 달 개근", tier: 3, kind: "star", on: perf, hint: "한 달 100%", how: "한 달 동안 운동하는 날을 하나도 안 빠지면 받아요", desc: "한 달 출석률 100%! 이건 진짜 아무나 못 해요." });
+    add("att", "perf", "한 달 개근", "star", null, perf, perf ? 1 : 0, 0, "한 달 동안 운동하는 날을 하나도 안 빠지면 받아요", "한 달 출석률 100%! 이건 진짜 아무나 못 해요.", { hint: "한 달 100%" });
 
-    /* 운동 기록 8 */
-    function lgNth(n) { return lgKeys[n - 1] || null; }
-    function chkNth(n) { var c = 0; for (var i = 0; i < lgKeys.length; i++) { c += LGd[lgKeys[i]].length; if (c >= n) return lgKeys[i]; } return null; }
-    add({ id: "log1", cat: "log", line: "logd", label: "첫 운동 기록", tier: 1, kind: "pen", on: lgNth(1) || (T.days >= 1 ? "?" : null), have: T.days, goal: 1, how: "운동 탭에서 끝낸 종목에 ✓하면 받아요", desc: "첫 종목 ✓! 기록하는 사람이 결국 바뀌어요." });
-    add({ id: "logd10", cat: "log", line: "logd", label: "기록 10일", tier: 2, kind: "num", num: 10, on: lgNth(10) || (T.days >= 10 ? "?" : null), have: T.days, goal: 10, how: "✓한 날이 10일이면 받아요", desc: "운동 기록 10일째. 이제 습관이 되어가요!" });
-    add({ id: "logd30", cat: "log", line: "logd", label: "기록 30일", tier: 3, kind: "num", num: 30, on: lgNth(30) || (T.days >= 30 ? "?" : null), have: T.days, goal: 30, how: "✓한 날이 30일이면 받아요", desc: "기록 30일! 한 달 치 운동이 다 남아 있어요." });
-    add({ id: "logd100", cat: "log", line: "logd", label: "기록 100일", tier: 5, kind: "num", num: 100, on: lgNth(100) || (T.days >= 100 ? "?" : null), have: T.days, goal: 100, how: "✓한 날이 100일이면 받아요", desc: "기록 100일. 이 정도면 운동이 생활이에요." });
-    add({ id: "chk300", cat: "log", label: "종목 ✓ 300", tier: 4, kind: "list", on: chkNth(300) || (T.chk >= 300 ? "?" : null), have: T.chk, goal: 300, how: "종목 ✓를 모두 합쳐 300번 하면 받아요", desc: "종목 ✓ 300번! 쌓인 세트만큼 몸이 달라졌어요." });
-    var full5 = null; lgKeys.some(function (k) { if (LGd[k].length >= 5) { full5 = k; return true; } return false; });
-    add({ id: "day5", cat: "log", label: "하루 5종목", tier: 2, kind: "layers", on: full5, have: lgKeys.reduce(function (m, k) { return Math.max(m, LGd[k].length); }, 0), goal: 5, how: "하루에 종목 5개를 ✓하면 받아요", desc: "하루에 5종목 완주! 오늘 운동 제대로 했어요." });
-    add({ id: "var15", cat: "log", label: "종목 15가지", tier: 3, kind: "grid", on: T.names >= 15 ? "?" : null, have: T.names, goal: 15, how: "서로 다른 종목 15가지를 ✓하면 받아요", desc: "15가지 종목을 해봤어요. 몸 구석구석 다 써봤어요!" });
+    /* 기록 12 */
+    function lgNth(n) { return lgKeys[n - 1] || q(T.days >= n); }
+    function chkNth(n) { var c = 0; for (var i = 0; i < lgKeys.length; i++) { c += LGd[lgKeys[i]].length; if (c >= n) return lgKeys[i]; } return q(T.chk >= n); }
+    function dayN(n) { var f = null; lgKeys.some(function (k) { if (LGd[k].length >= n) { f = k; return true; } return false; }); return f; }
+    var dayMax = lgKeys.reduce(function (m, k) { return Math.max(m, LGd[k].length); }, 0);
+    add("log", "log1", "첫 운동 기록", "pen", null, lgNth(1), T.days, 1, "운동 탭에서 끝낸 종목에 ✓하면 받아요", "첫 종목 ✓! 기록하는 사람이 결국 바뀌어요.");
+    [[10, "운동 기록 10일째. 이제 습관이 되어가요!"], [30, "기록 30일! 한 달 치 운동이 다 남아 있어요."], [50, "기록 50일! 운동 일지가 두툼해졌어요."], [100, "기록 100일. 이 정도면 운동이 생활이에요."]].forEach(function (v) {
+      add("log", "logd" + v[0], "기록 " + v[0] + "일", "pen", v[0], lgNth(v[0]), T.days, v[0], "✓한 날이 " + v[0] + "일이면 받아요", v[1]);
+    });
+    [[100, "종목 ✓ 100번! 벌써 이만큼 해냈어요."], [300, "종목 ✓ 300번! 쌓인 세트만큼 몸이 달라졌어요."], [500, "종목 ✓ 500번! 꾸준함이 숫자로 보여요."], [1000, "종목 ✓ 1000번. 말이 필요 없어요, 존경합니다."]].forEach(function (v) {
+      add("log", "chk" + v[0], "종목 ✓ " + v[0], "list", v[0], chkNth(v[0]), T.chk, v[0], "종목 ✓를 모두 합쳐 " + v[0] + "번 하면 받아요", v[1]);
+    });
+    add("log", "day5", "하루 5종목", "layers", 5, dayN(5), dayMax, 5, "하루에 종목 5개를 ✓하면 받아요", "하루에 5종목 완주! 오늘 운동 제대로 했어요.");
+    add("log", "day7", "하루 7종목", "layers", 7, dayN(7), dayMax, 7, "하루에 종목 7개를 ✓하면 받아요", "하루에 7종목! 오늘은 불태웠어요.");
+    add("log", "var15", "종목 15가지", "grid", 15, q(T.names >= 15), T.names, 15, "서로 다른 종목 15가지를 ✓하면 받아요", "15가지 종목을 해봤어요. 몸 구석구석 다 써봤어요!");
+    add("log", "var30", "종목 30가지", "grid", 30, q(T.names >= 30), T.names, 30, "서로 다른 종목 30가지를 ✓하면 받아요", "30가지 종목! 헬스장 기구는 거의 다 내 거예요.");
     var full = null, fullHave = 0;
     if (st0) {
       for (var ym2 = ymOf(st0), g2 = 0; g2 < 40 && ym2 <= ymOf(new Date()); g2++, ym2 = ymAdd(ym2, 1)) {
@@ -1383,31 +1377,39 @@
         if (n6 >= 6 && !full) full = ym2 === ymOf(new Date()) ? today : ymd(new Date(ymDate(ym2).getFullYear(), ymDate(ym2).getMonth() + 1, 0));
       }
     }
-    add({ id: "body6", cat: "log", label: "전신 정복", tier: 4, kind: "body", on: full, have: fullHave, goal: 6, how: "한 달 근육 지도에 부위 6곳 이상 불이 들어오면 받아요", desc: "한 달에 6부위 이상! 근육 지도가 꽉 찼어요." });
+    add("log", "body6", "전신 정복", "body", null, full, fullHave, 6, "한 달 근육 지도에 부위 6곳 이상 불이 들어오면 받아요", "한 달에 6부위 이상! 근육 지도가 꽉 찼어요.");
+    add("log", "body8", "올 클리어", "body", 8, q(fullHave >= 8), fullHave, 8, "한 달 근육 지도 8부위에 전부 불이 들어오면 받아요", "8부위 전부! 빠진 곳 없이 온몸을 다 썼어요.");
 
-    /* 성장 8 */
+    /* 성장 12 */
     var nw = grNowW(), bw = grBase(), up = 0, best = 0;
     Object.keys(nw).forEach(function (k) { if (bw[k] > 0 && nw[k] > bw[k]) { up++; best = Math.max(best, (nw[k] - bw[k]) / bw[k]); } });
-    add({ id: "lift1", cat: "grow", line: "lift", label: "첫 증량", tier: 1, kind: "bell", on: up >= 1 ? "?" : null, have: up, goal: 1, how: "처음보다 무게가 오른 종목이 생기면 받아요", desc: "처음보다 무거운 무게를 들었어요. 몸이 답하기 시작했어요!" });
-    add({ id: "lift5", cat: "grow", line: "lift", label: "증량 5종목", tier: 3, kind: "num", num: 5, on: up >= 5 ? "?" : null, have: up, goal: 5, how: "처음보다 무게가 오른 종목이 5개면 받아요", desc: "5종목이나 무게가 올랐어요. 전체적으로 힘이 붙었어요." });
-    add({ id: "pct30", cat: "grow", label: "무게 +30%", tier: 4, kind: "trend", on: best >= 0.3 ? "?" : null, have: Math.round(best * 100), goal: 30, unit: "%", how: "한 종목이라도 처음보다 30% 무거워지면 받아요", desc: "처음보다 30% 무거워진 종목이 생겼어요. 완전 다른 사람!" });
-    var ver = M.routine && parseInt(String(M.routine.version || "").replace(/\D/g, ""), 10) || 0, lvd = null;
-    if (ver >= 2) { var um = String(M.routine.updated || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/); lvd = um ? um[1] + "-" + pad2(+um[2]) + "-" + pad2(+um[3]) : "?"; }
-    add({ id: "lvup", cat: "grow", line: "lv", label: "루틴 레벨업", tier: 2, kind: "up", on: ver >= 2 ? lvd : null, have: Math.max(1, ver), goal: 2, how: "선생님이 새 루틴(v2)을 올려 주면 받아요", desc: "새 루틴을 받았어요. 한 단계 올라간 거예요!" });
-    add({ id: "lvup4", cat: "grow", line: "lv", label: "루틴 v4", tier: 4, kind: "up", on: ver >= 4 ? lvd : null, have: Math.max(1, ver), goal: 4, how: "루틴이 v4까지 올라가면 받아요", desc: "루틴 v4! 처음과는 차원이 다른 운동을 하고 있어요." });
+    add("grow", "lift1", "첫 증량", "bell", null, q(up >= 1), up, 1, "처음보다 무게가 오른 종목이 생기면 받아요", "처음보다 무거운 무게를 들었어요. 몸이 답하기 시작했어요!");
+    add("grow", "lift3", "증량 3종목", "bell", 3, q(up >= 3), up, 3, "처음보다 무게가 오른 종목이 3개면 받아요", "3종목 증량! 힘이 붙는 게 느껴지죠?");
+    add("grow", "lift5", "증량 5종목", "bell", 5, q(up >= 5), up, 5, "처음보다 무게가 오른 종목이 5개면 받아요", "5종목이나 무게가 올랐어요. 전체적으로 힘이 붙었어요.");
+    add("grow", "lift10", "증량 10종목", "bell", 10, q(up >= 10), up, 10, "처음보다 무게가 오른 종목이 10개면 받아요", "10종목 증량! 온몸이 강해졌어요.");
+    var bp = Math.round(best * 100);
+    add("grow", "pct30", "무게 +30%", "trend", "30%", q(best >= 0.3), bp, 30, "한 종목이라도 처음보다 30% 무거워지면 받아요", "처음보다 30% 무거워진 종목이 생겼어요. 완전 다른 사람!", { unit: "%" });
+    add("grow", "pct50", "무게 +50%", "trend", "50%", q(best >= 0.5), bp, 50, "한 종목이라도 처음보다 50% 무거워지면 받아요", "처음의 1.5배를 들어요. 이건 진짜 성장이에요!", { unit: "%" });
+    var ver = M.routine && parseInt(String(M.routine.version || "").replace(/\D/g, ""), 10) || 0, lvd = "?";
+    var um = M.routine && String(M.routine.updated || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+    if (um) lvd = um[1] + "-" + pad2(+um[2]) + "-" + pad2(+um[3]);
+    add("grow", "lvup", "루틴 레벨업", "up", "v2", ver >= 2 ? lvd : null, Math.max(1, ver), 2, "선생님이 새 루틴(v2)을 올려 주면 받아요", "새 루틴을 받았어요. 한 단계 올라간 거예요!", { pre: "v" });
+    add("grow", "lvup4", "루틴 v4", "up", "v4", ver >= 4 ? lvd : null, Math.max(1, ver), 4, "루틴이 v4까지 올라가면 받아요", "루틴 v4! 처음과는 차원이 다른 운동을 하고 있어요.", { pre: "v" });
+    var fn = (M.forms || []).length;
+    add("grow", "form5", "자세 5개", "book", 5, q(fn >= 5), fn, 5, "자세 복습지가 5개 쌓이면 받아요", "자세 복습지 5개! 배운 동작이 내 것이 되고 있어요.");
+    add("grow", "form10", "자세 10개", "book", 10, q(fn >= 10), fn, 10, "자세 복습지가 10개 쌓이면 받아요", "자세 복습지 10개! 이제 웬만한 동작은 다 알아요.");
     if (IB_ON) {
       var ibs = (ibData || []).map(function (r) { return r.d; }).sort();
-      add({ id: "ib1", cat: "grow", label: "첫 인바디", tier: 1, kind: "scale", on: ibs[0] || null, have: ibs.length, goal: 1, how: "몸변화 탭에서 인바디를 올리면 받아요", desc: "첫 인바디 기록 완료! 이제 변화를 숫자로 봐요." });
-    } else {
-      var fn = (M.forms || []).length;
-      add({ id: "form3", cat: "grow", label: "자세 3개", tier: 1, kind: "book", on: fn >= 3 ? "?" : null, have: fn, goal: 3, how: "자세 복습지가 3개 쌓이면 받아요", desc: "자세 복습지 3개! 배운 동작이 내 것이 되고 있어요." });
-    }
+      add("grow", "ib1", "첫 인바디", "scale", null, ibs[0] || null, ibs.length, 1, "몸변화 탭에서 인바디를 올리면 받아요", "첫 인바디 기록 완료! 이제 변화를 숫자로 봐요.");
+    } else add("grow", "form3", "자세 3개", "book", 3, q(fn >= 3), fn, 3, "자세 복습지가 3개 쌓이면 받아요", "자세 복습지 3개! 차근차근 배워 가고 있어요.");
     var days = st0 ? Math.floor((new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) - st0) / 86400000) + 1 : 0;
     function dayOn(n) { if (!st0 || days < n) return null; var d = new Date(st0); d.setDate(d.getDate() + n - 1); return ymd(d); }
-    add({ id: "day100", cat: "grow", line: "dd", label: "함께 100일", tier: 3, kind: "heart", on: dayOn(100), have: Math.max(0, days), goal: 100, how: "PT 시작하고 100일이 되면 받아요", desc: "선생님과 함께한 지 100일! 여기까지 온 것만으로 대단해요." });
-    add({ id: "day365", cat: "grow", line: "dd", label: "함께 1년", tier: 6, kind: "num", num: 365, on: dayOn(365), have: Math.max(0, days), goal: 365, how: "PT 시작하고 1년이 되면 받아요", desc: "1년 완주. 처음의 나와는 완전히 다른 사람이에요. 레전드!" });
+    add("grow", "day30", "함께 30일", "heart", 30, dayOn(30), Math.max(0, days), 30, "PT 시작하고 30일이 되면 받아요", "첫 한 달 완주! 제일 어려운 구간을 넘었어요.", { unit: "일" });
+    add("grow", "day100", "함께 100일", "heart", 100, dayOn(100), Math.max(0, days), 100, "PT 시작하고 100일이 되면 받아요", "선생님과 함께한 지 100일! 여기까지 온 것만으로 대단해요.", { unit: "일" });
+    add("grow", "day200", "함께 200일", "heart", 200, dayOn(200), Math.max(0, days), 200, "PT 시작하고 200일이 되면 받아요", "200일째 함께하고 있어요. 운동이 일상이 됐어요.", { unit: "일" });
+    add("grow", "day365", "함께 1년", "heart", 365, dayOn(365), Math.max(0, days), 365, "PT 시작하고 1년이 되면 받아요", "1년 완주. 처음의 나와는 완전히 다른 사람이에요!", { unit: "일" });
 
-    /* 받은 날 정리: 기록된 날짜가 있으면 그게 우선(먼저 받은 날), 조건만 맞고 날짜를 모르면("?") 오늘 · 한 번 받은 건 계속 받은 상태 */
+    /* 받은 날 정리: 기록된 날짜가 있으면 그게 우선(먼저 받은 날), 날짜를 모르면("?") 오늘 · 한 번 받은 건 계속 받은 상태 */
     var ch = S.ch;
     L.forEach(function (b) {
       var saved = o.on[b.id];
@@ -1418,165 +1420,86 @@
       if (b.on && saved && saved < b.on) b.on = saved;
       if (b.on && b.goal) b.have = Math.max(b.have || 0, b.goal);
     });
-    if (ch && !COACH_MODE) bgsSave(true); else if (ch) bgsSave(false);
-    var bp = bpBadge(); if (bp) L.push(bp);
+    if (ch) bgsSave(!COACH_MODE);
     return L;
   }
-  function bpBadge() {   /* 특별 등급: 바프 완료 */
-    var J = M.journey || {};
-    if (!(BP || J.bpDone)) return null;
-    var dn = J.bpDone, ds = typeof dn === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dn) ? dn : (J.shoot && /^\d{4}-\d{2}-\d{2}$/.test(J.shoot) ? J.shoot : null);
-    return { id: "bpdone", sp: true, cat: "sp", label: "바프 완료", tier: 7, kind: "sp", on: dn ? (ds || ymd(new Date())) : null, shot: ds || J.shoot || null,
-      how: "바디프로필 촬영을 마치면 선생님이 달아 드려요", desc: "바디프로필 촬영 완주. 끝까지 해낸 사람만 받는 배지예요." };
-  }
-  function bgNorm(L) { return L.filter(function (b) { return !b.sp; }); }
 
-  /* ---- 메달 그림 */
+  /* ---- 메달 그림: 금테 + 검정 에나멜 + 금색 그림 (전부 같은 디자인) */
   var bgUid = 0;
-  function bgLg(id, c) { return '<linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + c[0] + '"/><stop offset=".52" stop-color="' + c[1] + '"/><stop offset="1" stop-color="' + c[2] + '"/></linearGradient>'; }
-  function bgPoly(n, r, rot, cy) { var p = []; for (var i = 0; i < n; i++) { var q = (rot + i * 360 / n) * Math.PI / 180; p.push((42 + r * Math.cos(q)).toFixed(1) + "," + ((cy || 32) + r * Math.sin(q)).toFixed(1)); } return p.join(" "); }
-  function bgBurst(n, r1, r2) { var p = []; for (var i = 0; i < n * 2; i++) { var r = i % 2 ? r2 : r1, q = (-90 + i * 180 / n) * Math.PI / 180; p.push((42 + r * Math.cos(q)).toFixed(1) + "," + (32 + r * Math.sin(q)).toFixed(1)); } return p.join(" "); }
-  function bgShape(t, r, at) {
-    if (t === 4) return '<polygon points="' + bgPoly(8, r * 1.05, 22.5) + '" ' + at + '/>';
-    if (t === 5) return '<polygon points="' + bgPoly(6, r * 1.1, -90) + '" ' + at + '/>';
-    return '<circle cx="42" cy="32" r="' + r.toFixed(2) + '" ' + at + '/>';
-  }
-  function bgIcon(b, gap) {   /* 84×72 배지 그림 — SVG라서 리포트 이미지로 저장해도 그대로 */
-    if (b.sp) return bpMini(b, gap);
-    var on = !!b.on, t = b.tier, C = on ? BG_TC[t] : BG_LOCK, u = "bx" + (++bgUid), R = t === 6 ? 27.5 : t === 5 ? 28.5 : 30;
-    var rim = C.r, face = on && C.f ? C.f : C.r, metal = on ? rim[1] : "#D9D4D4";
-    var s = '<svg class="bdg-s" viewBox="0 0 84 72" width="84" height="72" aria-hidden="true"><defs>' +
-      bgLg(u + "r", rim) + bgLg(u + "h", [rim[2], rim[1], rim[0]]) + bgLg(u + "f", face) +
-      '<clipPath id="' + u + 'c">' + bgShape(t, R * 0.8, '') + '</clipPath></defs>';
-    if (t === 6) s += '<polygon class="bdx-burst" points="' + bgBurst(16, 38, 30.5) + '" fill="' + (on ? "url(#" + u + "r)" : "#E6E2E2") + '"/>';
-    if (t >= 4 && t <= 5) s += '<g fill="' + metal + '">' + LAUREL + '</g>';
-    if (t === 6) s += '<polygon points="31,50 40,55 34,71 28,65" fill="' + (on ? "#E1141E" : "#D9D4D4") + '"/><polygon points="53,50 44,55 50,71 56,65" fill="' + (on ? "#1A1A1E" : "#CFCACA") + '"/>';
-    s += bgShape(t, R, 'fill="url(#' + u + 'r)" stroke="url(#' + u + 'r)" stroke-width="2" stroke-linejoin="round"');
-    s += bgShape(t, R * 0.87, 'fill="url(#' + u + 'h)"');
-    s += bgShape(t, R * 0.8, 'fill="url(#' + u + 'f)"');
-    s += '<g clip-path="url(#' + u + 'c)"><ellipse cx="35" cy="19" rx="21" ry="11" fill="#fff" opacity="' + (on ? (t >= 5 ? .22 : .32) : .4) + '"/>' +
-      (on && t >= 3 ? '<g transform="rotate(22 42 32)"><rect class="bdx-sh" x="-14" y="-20" width="12" height="110" fill="#fff" opacity=".6"/></g>' : '') + '</g>';
-    if (b.kind !== "num") {
-      var sc = t === 6 ? 0.92 : 1, tx = (42 - 12 * sc).toFixed(2), ty = (32 - 12 * sc).toFixed(2);
-      s += '<g transform="translate(' + tx + ' ' + ty + ') scale(' + sc + ')" fill="none" stroke="' + C.ink + '" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">' + BG_IC[b.kind] + '</g>';
+  function bgIcon(b) {   /* 84×72 — SVG라서 리포트 이미지로 저장해도 그대로 */
+    var on = !!b.on, u = "bx" + (++bgUid), ink = on ? "#F4D783" : "#BDB7B7";
+    var s = '<svg class="bdg-s" viewBox="0 0 84 72" width="84" height="72" aria-hidden="true">';
+    if (on) {
+      s += '<defs><linearGradient id="' + u + 'r" x1=".15" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="#FFF4C2"/><stop offset=".45" stop-color="#E4B544"/><stop offset="1" stop-color="#8A5A00"/></linearGradient>' +
+        '<linearGradient id="' + u + 'h" x1=".15" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="#8A5A00"/><stop offset=".55" stop-color="#D9A93A"/><stop offset="1" stop-color="#FFF1B8"/></linearGradient>' +
+        '<radialGradient id="' + u + 'f" cx=".38" cy=".28" r=".85"><stop offset="0" stop-color="#3E3E46"/><stop offset=".6" stop-color="#1A1A1E"/><stop offset="1" stop-color="#08080A"/></radialGradient>' +
+        '<clipPath id="' + u + 'c"><circle cx="42" cy="32" r="24.6"/></clipPath></defs>' +
+        '<ellipse cx="42" cy="65.5" rx="17" ry="2.6" fill="#000" opacity=".13"/>' +
+        '<circle cx="42" cy="32" r="30" fill="url(#' + u + 'r)"/><circle cx="42" cy="32" r="27.3" fill="url(#' + u + 'h)"/>' +
+        '<circle cx="42" cy="32" r="24.6" fill="url(#' + u + 'f)"/>' +
+        '<circle cx="42" cy="32" r="21.8" fill="none" stroke="#E4B544" stroke-width=".9" stroke-dasharray=".1 2.35" stroke-linecap="round" opacity=".75"/>' +
+        '<g clip-path="url(#' + u + 'c)"><ellipse cx="34" cy="14" rx="24" ry="13" fill="#fff" opacity=".1"/></g>';
+    } else {
+      s += '<circle cx="42" cy="32" r="30" fill="#E3DEDE"/><circle cx="42" cy="32" r="27.3" fill="#EFEBEB"/><circle cx="42" cy="32" r="24.6" fill="#F7F5F5"/>';
     }
-    if (t === 6) s += '<path d="M31 7.5 L29 -3 L36.5 2.5 L42 -6 L47.5 2.5 L55 -3 L53 7.5 Z" fill="' + (on ? "url(#" + u + "r)" : "#D9D4D4") + '" stroke="' + (on ? "#8C5B00" : "#C3BDBD") + '" stroke-width=".8" stroke-linejoin="round"/>' +
-      '<circle cx="42" cy="-6" r="1.8" fill="' + (on ? "#FF4A52" : "#C3BDBD") + '"/>';
-    if (on && t >= 4) s += '<g transform="translate(66 -2)"><path class="bdg-spark" d="' + SPARK + '" fill="' + (t === 5 ? "#DDF2FF" : "#FFE48A") + '"/></g>' +
-      '<g transform="translate(3 48) scale(.6)"><path class="bdg-spark s2" d="' + SPARK + '" fill="' + (t === 5 ? "#DDF2FF" : "#FFE48A") + '"/></g>';
-    s += '</svg>';
-    var num = b.kind === "num" ? '<span class="bdg-n' + (String(b.num).length > 2 ? ' sm' : '') + '" style="color:' + C.ink + '">' + b.num + '</span>' : '';
-    var pill = b.pill ? '<span class="bdg-p" style="background:' + (on ? "#1A1A1E" : "#C9C4C4") + ';color:' + (on ? "#FFD866" : "#fff") + ';border-color:' + (gap || "#fff") + '">' + b.pill + '</span>' : '';
-    var fx = on && t >= 2 ? '<span class="bdx-glow" aria-hidden="true"></span>' : '';
-    if (on && t >= 5) fx += '<span class="bdx-ring" aria-hidden="true"></span>';
-    return '<span class="bdg bx t' + t + (on ? ' on' : '') + '" style="--bgc:' + C.glow + '">' + fx + s + num + pill + '</span>';
-  }
-  function bpShield(u, on, w) {   /* 바프 방패 (120×134 기준) */
-    var G = on ? "url(#" + u + "g)" : "#CFCACA", K = on ? "url(#" + u + "k)" : "#E9E6E6";
-    return '<path d="M60 8 L104 22 V62 C104 92 85 111 60 124 C35 111 16 92 16 62 V22 Z" fill="' + G + '"/>' +
-      '<path d="M60 15 L97.5 27 V62.5 C97.5 88 81 104.5 60 116 C39 104.5 22.5 88 22.5 62.5 V27 Z" fill="' + K + '"/>' +
-      '<path d="M60 20.5 L92.5 31 V62.8 C92.5 85.5 78 100 60 110.2 C42 100 27.5 85.5 27.5 62.8 V31 Z" fill="none" stroke="' + G + '" stroke-width="' + (w || 1.2) + '" opacity=".85"/>';
-  }
-  function bpDefs(u) {
-    return '<linearGradient id="' + u + 'g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF6C8"/><stop offset=".3" stop-color="#F2C94C"/><stop offset=".55" stop-color="#A8770A"/><stop offset=".78" stop-color="#FFE38A"/><stop offset="1" stop-color="#B8860B"/></linearGradient>' +
-      '<linearGradient id="' + u + 'k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B2B30"/><stop offset="1" stop-color="#050506"/></linearGradient>' +
-      '<clipPath id="' + u + 'c"><path d="M60 8 L104 22 V62 C104 92 85 111 60 124 C35 111 16 92 16 62 V22 Z"/></clipPath>';
-  }
-  var BP_CROWN = '<path d="M47 60 L44.5 46 L53 53 L60 42 L67 53 L75.5 46 L73 60 Z"/><rect x="47" y="62" width="26" height="4" rx="1.2"/>';
-  function bpEmblem(b) {   /* 큰 바프 완료 엠블럼 — 금빛 방패 + 월계수 + 왕관 + 날짜 새긴 리본 */
-    var on = !!b.on, u = "bp" + (++bgUid), G = on ? "url(#" + u + "g)" : "#CFCACA", d = b.on || b.shot, ds = d ? d.replace(/-/g, ".") : "D-DAY";
-    var lau = '';
-    for (var i = 0; i < 6; i++) {
-      var y = 100 - i * 13, x = 13 - (i === 0 || i === 5 ? -4 : i === 1 || i === 4 ? -1 : 0) - (i === 2 || i === 3 ? 2 : 0), r = 40 - i * 15;
-      lau += '<g transform="translate(' + x + ' ' + y + ') rotate(' + r + ')"><ellipse rx="3.6" ry="8"/></g><g transform="translate(' + (120 - x) + ' ' + y + ') rotate(' + (-r) + ')"><ellipse rx="3.6" ry="8"/></g>';
+    if (b.ic) {
+      var sc = b.sm != null ? 0.8 : 1.08, cy = b.sm != null ? 26 : 32;
+      s += '<g transform="translate(' + (42 - 12 * sc).toFixed(2) + ' ' + (cy - 12 * sc).toFixed(2) + ') scale(' + sc + ')" fill="none" stroke="' + ink + '" stroke-width="' + (b.sm != null ? 2.5 : 2.2) + '" stroke-linecap="round" stroke-linejoin="round">' + BG_IC[b.ic] + '</g>';
     }
-    var s = '<svg class="bp-svg" viewBox="0 0 120 140" aria-hidden="true"><defs>' + bpDefs(u) + '</defs>' +
-      '<g fill="' + G + '">' + lau + '</g>' + bpShield(u, on, 1.3) +
-      '<g clip-path="url(#' + u + 'c)">' + (on ? '<g transform="rotate(24 60 70)"><rect class="bp-sh" x="-20" y="-20" width="16" height="190" fill="#fff" opacity=".35"/></g>' : '') + '</g>' +
-      '<text x="60" y="38" text-anchor="middle" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif" font-size="8.5" font-weight="900" textLength="46" lengthAdjust="spacingAndGlyphs" fill="' + G + '">바디프로필</text>' +
-      '<g fill="' + G + '">' + BP_CROWN + '</g>' +
-      '<text x="60" y="84" text-anchor="middle" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif" font-size="15" font-weight="900" textLength="40" lengthAdjust="spacingAndGlyphs" fill="' + G + '">완 주</text>' +
-      '<path d="M8 104 L22 100 L22 124 L8 128 L14 116 Z" fill="' + (on ? "#8C5B00" : "#B9B3B3") + '"/><path d="M112 104 L98 100 L98 124 L112 128 L106 116 Z" fill="' + (on ? "#8C5B00" : "#B9B3B3") + '"/>' +
-      '<path d="M18 99 Q60 92 102 99 L102 121 Q60 114 18 121 Z" fill="' + G + '" stroke="' + (on ? "#6B4500" : "#B0AAAA") + '" stroke-width=".8"/>' +
-      '<text x="60" y="113.5" text-anchor="middle" font-family="Oswald, sans-serif" font-size="11" font-weight="700" textLength="64" lengthAdjust="spacingAndGlyphs" fill="' + (on ? "#2A1A00" : "#8E8888") + '">' + esc(ds) + '</text>';
-    if (on) [[8, 20, 1], [104, 12, .8], [110, 70, .6], [2, 66, .7], [92, 132, .55], [22, 128, .5]].forEach(function (p, i) {
-      s += '<g transform="translate(' + p[0] + ' ' + p[1] + ') scale(' + p[2] + ')"><path class="bdg-spark' + (i % 2 ? ' s2' : '') + '" d="' + SPARK + '" fill="#FFE9A0"/></g>';
-    });
-    return s + '</svg>';
-  }
-  function bpMini(b, gap) {   /* 84×72 칸에 들어가는 작은 바프 배지 */
-    var on = !!b.on, u = "bp" + (++bgUid);
-    var s = '<svg class="bdg-s" viewBox="0 0 84 72" width="84" height="72" aria-hidden="true"><defs>' + bpDefs(u) + '</defs>' +
-      '<g transform="translate(15.5 -1.5) scale(.445)">' + bpShield(u, on, 2.4) + '<g fill="' + (on ? "url(#" + u + "g)" : "#CFCACA") + '" transform="translate(0 6)">' + BP_CROWN + '</g></g>';
-    if (on) s += '<g transform="translate(66 -2)"><path class="bdg-spark" d="' + SPARK + '" fill="#FFE48A"/></g>';
     s += '</svg>';
-    return '<span class="bdg bx t7' + (on ? ' on' : '') + '" style="--bgc:227,179,65">' + (on ? '<span class="bdx-glow" aria-hidden="true"></span>' : '') + s + '</span>';
-  }
-  function bpCard(b) {
-    var on = !!b.on, dd = null;
-    if (!on && b.shot && /^\d{4}-\d{2}-\d{2}$/.test(b.shot)) dd = Math.ceil((jDate(b.shot) - new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())) / 86400000);
-    var p = b.on ? b.on.split("-") : null;
-    return '<div class="bpcard' + (on ? ' on' : '') + '"><span class="bp-bloom" aria-hidden="true"></span>' +
-      '<div class="bp-em">' + bpEmblem(b) + '</div><div class="bp-t"><small>특별 배지</small><b>바프 완료</b>' +
-      (on ? '<p>' + (+p[0]) + '. ' + (+p[1]) + '. ' + (+p[2]) + ' 촬영 완주<br>끝까지 해낸 사람만 받는 배지</p>'
-        : '<p>바디프로필 촬영을 마치면<br>선생님이 달아 드려요</p>' + (dd != null && dd >= 0 ? '<em>촬영까지 D-' + dd + '</em>' : '<em>아직 잠겨 있어요</em>')) + '</div></div>';
+    var num = b.big ? '<span class="bdg-n' + (String(b.big).length > 2 ? ' sm' : '') + '" style="color:' + ink + '">' + b.big + '</span>' : '';
+    var sm = b.sm != null ? '<span class="bdg-m" style="color:' + ink + '">' + b.sm + '</span>' : '';
+    return '<span class="bdg bx' + (on ? ' on' : '') + '">' + s + num + sm + '</span>';
   }
 
-  /* ---- 나 탭 배지 칸 */
+  /* ---- 나 탭 배지 칸 (한 칸) */
   function bgPct(b) { return b.on ? 1 : b.goal ? Math.min(1, (b.have || 0) / b.goal) : 0; }
   function bgSub(b) {
     if (b.on) return '<small>' + md(b.on) + '</small>';
-    if (b.goal) return '<i class="bgc-bar"><em style="width:' + Math.round(bgPct(b) * 100) + '%"></em></i><small class="pg">' + Math.min(b.have || 0, b.goal) + (b.unit || "") + ' / ' + b.goal + (b.unit || "") + '</small>';
-    return '<small>' + esc(b.hint || "") + '</small>';
+    if (b.goal > 1) return '<small class="pg">' + (b.pre || "") + Math.min(b.have || 0, b.goal) + ' / ' + (b.pre || "") + b.goal + (b.unit === "%" ? "%" : "") + '</small>';
+    return '<small>' + esc(b.hint || "아직") + '</small>';
   }
   function bgNext(L) {   /* 아직 못 받은 것 중 제일 가까운 배지 */
-    var c = L.filter(function (b) { return !b.on && !b.sp && b.goal; }).sort(function (x, y) { return bgPct(y) - bgPct(x) || x.tier - y.tier; });
+    var c = L.filter(function (b) { return !b.on && b.goal; }).sort(function (x, y) { return bgPct(y) - bgPct(x) || x.goal - y.goal; });
     return c[0] || null;
   }
   function badgeSection(num) {
-    var all = badgeList(), L = bgNorm(all), sp = all.filter(function (b) { return b.sp; })[0], got = L.filter(function (b) { return b.on; }).length;
-    var pct = Math.round(got / L.length * 100), tiers = "";
-    for (var t = 1; t <= 6; t++) {
-      var tt = L.filter(function (b) { return b.tier === t; }), tg = tt.filter(function (b) { return b.on; }).length;
-      tiers += '<span class="bxt t' + t + (tg ? ' on' : '') + '"><i></i>' + BG_TN[t] + ' <b>' + tg + '/' + tt.length + '</b></span>';
-    }
-    var seg = L.slice().sort(function (x, y) { return x.tier - y.tier; }).map(function (b) { return '<i class="t' + b.tier + (b.on ? ' on' : '') + '"></i>'; }).join("");
-    var nx = bgNext(L), nxH = '';
+    var L = badgeList(), got = L.filter(function (b) { return b.on; }).length, nx = bgNext(L), top;
     if (nx) {
       var left = nx.goal - Math.min(nx.have || 0, nx.goal);
-      nxH = '<div class="bxnext"><span class="bxn-ic">' + bgIcon(nx) + '</span><div class="bxn-t"><div class="bxn-h"><b>다음 배지 · ' + esc(nx.label) + '</b><span class="bxtag t' + nx.tier + '">' + BG_TN[nx.tier] + '</span></div>' +
-        '<i class="bgn-bar"><em style="width:' + Math.round(bgPct(nx) * 100) + '%"></em></i><p>' + esc(nx.how) + ' · <b>' + left + (nx.unit || (nx.line === "dd" ? "일" : "")) + ' 남음</b></p></div></div>';
-    } else nxH = '<div class="bxnext done"><b>★ 배지를 전부 모았어요! 진짜 레전드</b></div>';
-    var prog = '<div class="panel bxprog"><div class="bxp-h"><span>배지 컬렉션</span><b>' + pct + '<small>%</small></b></div>' +
-      '<div class="bxseg" aria-label="모은 배지 ' + got + '개 / ' + L.length + '개">' + seg + '</div><div class="bxtiers">' + tiers + '</div>' + nxH + '</div>';
-    var cats = BG_CAT.map(function (c) {
-      var cl = [];
-      L.forEach(function (b, i) { if (b.cat === c[0]) cl.push(i); });
-      var cg = cl.filter(function (i) { return L[i].on; }).length;
-      return '<div class="panel bxcat"><div class="bxc-h"><b>' + c[1] + '</b><small>' + c[2] + '</small><span>' + cg + ' / ' + cl.length + '</span></div>' +
-        '<i class="bxc-bar"><em style="width:' + Math.round(cg / cl.length * 100) + '%"></em></i><div class="bggrid">' +
-        cl.map(function (i) {
-          var b = L[i];
-          return '<button type="button" class="bgc' + (b.on ? ' on' : '') + '" data-i="' + i + '" aria-label="' + esc(b.label) + ' ' + BG_TN[b.tier] + (b.on ? ' 받음' : ' 아직') + '">' +
-            bgIcon(b) + '<b>' + esc(b.label) + '</b>' + bgSub(b) + '</button>';
-        }).join("") + '</div></div>';
-    }).join("");
-    return '<section id="badges" data-num="' + num + '">' + head(num, "나의 배지", "등급이 오를수록 더 화려해져요", '<span class="more bg-cnt"><b>' + got + '</b> / ' + L.length + '</span>') +
-      (sp ? bpCard(sp) : '') + prog + cats + '</section>';
+      top = '<div class="bgx-next"><span class="bgx-ic">' + bgIcon(nx) + '</span><div><b>다음 배지 · ' + esc(nx.label) + '</b><p>' + esc(nx.how) + '</p></div>' +
+        '<em>' + (nx.pre ? nx.pre + nx.goal + '까지' : left + (nx.unit || "") + ' 남음') + '</em></div>';
+    } else top = '<div class="bgx-next done"><b>배지를 전부 모았어요! 정말 대단해요</b></div>';
+    var tabs = "", grids = "";
+    BG_CAT.forEach(function (c) {
+      var cl = []; L.forEach(function (b, i) { if (b.cat === c[0]) cl.push(i); });
+      var cg = cl.filter(function (i) { return L[i].on; }).length, on = bgTab === c[0];
+      tabs += '<button type="button" class="bgx-tab' + (on ? ' on' : '') + '" data-c="' + c[0] + '" role="tab" aria-selected="' + on + '">' + c[1] + ' <i>' + cg + '/' + cl.length + '</i></button>';
+      grids += '<div class="bggrid" data-c="' + c[0] + '"' + (on ? '' : ' hidden') + '>' + cl.map(function (i) {
+        var b = L[i];
+        return '<button type="button" class="bgc' + (b.on ? ' on' : '') + '" data-i="' + i + '" aria-label="' + esc(b.label) + (b.on ? ' 받음' : ' 아직') + '">' + bgIcon(b) + '<b>' + esc(b.label) + '</b>' + bgSub(b) + '</button>';
+      }).join("") + '</div>';
+    });
+    return '<section id="badges" data-num="' + num + '">' + head(num, "나의 배지", "꾸준함이 쌓이는 곳", '<span class="more bg-cnt"><b>' + got + '</b> / ' + L.length + '</span>') +
+      '<div class="panel bgx"><i class="bgx-bar" aria-label="모은 배지 ' + got + '개 / ' + L.length + '개"><em style="width:' + (got / L.length * 100).toFixed(1) + '%"></em></i>' + top +
+      '<div class="bgx-tabs" role="tablist">' + tabs + '</div>' + grids + '</div></section>';
   }
   function setupBadges() {
-    Array.prototype.forEach.call(document.querySelectorAll(".bgc"), function (el) {
+    var sec = document.getElementById("badges"); if (!sec) return;
+    Array.prototype.forEach.call(sec.querySelectorAll(".bgc"), function (el) {
       el.addEventListener("click", function () {
-        var L = bgNorm(badgeList()), b = L[+el.getAttribute("data-i")];
+        var b = badgeList()[+el.getAttribute("data-i")];
         if (!b) return;
         var p = b.on ? b.on.split("-") : null;
-        attToast(b.label + " · " + BG_TN[b.tier] + " — " + (p ? (+p[1]) + "월 " + (+p[2]) + "일에 받았어요" : b.how));
+        attToast(b.label + " — " + (p ? (+p[1]) + "월 " + (+p[2]) + "일에 받았어요" : b.how));
       });
     });
-    var c = document.querySelector(".bpcard");
-    if (c) c.addEventListener("click", function () {
-      var b = bpBadge(); if (!b) return;
-      attToast(b.on ? "바프 완료 — 정말 끝까지 해냈어요!" : b.how);
+    Array.prototype.forEach.call(sec.querySelectorAll(".bgx-tab"), function (el) {
+      el.addEventListener("click", function () {
+        bgTab = el.getAttribute("data-c");
+        Array.prototype.forEach.call(sec.querySelectorAll(".bgx-tab"), function (t) { var on = t === el; t.classList.toggle("on", on); t.setAttribute("aria-selected", on); });
+        Array.prototype.forEach.call(sec.querySelectorAll(".bggrid"), function (g) { g.hidden = g.getAttribute("data-c") !== bgTab; });
+      });
     });
   }
   var bgReady = false;
@@ -1588,39 +1511,31 @@
     var fresh = L.filter(function (b) { return b.on && seen.indexOf(b.id) < 0; });
     if (!fresh.length) return;
     lsAdd(BG_SEEN, fresh.map(function (b) { return b.id; }));
-    fresh.sort(function (x, y) { return y.tier - x.tier || (y.on > x.on ? 1 : y.on < x.on ? -1 : 0); });
+    fresh.sort(function (x, y) { return (y.on > x.on ? 1 : y.on < x.on ? -1 : 0) || (y.goal || 0) - (x.goal || 0); });
     showBadgePop(fresh[0], fresh.length - 1, L);
   }
-  function showBadgePop(b, extra, all) {
-    var L = bgNorm(all), got = L.filter(function (x) { return x.on; }).length, sp = !!b.sp, t = sp ? 7 : b.tier;
-    var C = sp ? { glow: "227,179,65" } : BG_TC[t], pal = sp || t === 6 ? ["#FFE48A", "#E3B341", "#FFFFFF", "#FF4A52", "#FFF3B8"] : [BG_TC[t].r[0], BG_TC[t].r[1], "#FFFFFF", BG_TC[t].r[2], "#FFE48A"];
-    var conf = "";
-    for (var i = 0; i < (t >= 5 ? 34 : 24); i++) {
+  function showBadgePop(b, extra, L) {
+    var got = L.filter(function (x) { return x.on; }).length, prev = Math.max(0, got - 1 - extra), conf = "", pal = ["#FFE48A", "#E4B544", "#FFFFFF", "#E1141E", "#FFF4C2"];
+    for (var i = 0; i < 22; i++) {
       conf += '<i style="left:' + (3 + (i * 37) % 94) + '%;background:' + pal[i % 5] + ';animation-delay:' + (0.9 + (i * 0.11) % 1.5).toFixed(2) + 's;animation-duration:' + (2.4 + (i % 4) * 0.4).toFixed(2) + 's' +
-        (i % 3 === 0 ? ';border-radius:50%;width:7px;height:7px' : i % 3 === 1 ? ';width:4px;height:12px' : '') + '"></i>';
+        (i % 3 === 0 ? ';border-radius:50%;width:7px;height:7px' : '') + '"></i>';
     }
-    var nx = sp ? null : bgNext(L), hint = nx ? '다음 목표 · <b>' + esc(nx.label) + '</b> (' + BG_TN[nx.tier] + ')' : '';
-    var p = b.on.split("-"), prev = Math.max(0, got - 1 - extra);
-    var box = document.createElement("div");
-    box.className = "bgpop-wrap bxp t" + t;
-    box.style.setProperty("--bgc", C.glow);
+    var nx = bgNext(L), box = document.createElement("div");
+    box.className = "bgpop-wrap bxp";
     box.innerHTML = '<div class="bxp-rays" aria-hidden="true"></div><div class="bxp-flash" aria-hidden="true"></div><div class="bgpop-conf" aria-hidden="true">' + conf + '</div>' +
-      '<div class="bxp-card" role="dialog" aria-modal="true" aria-labelledby="bxpT">' +
-      '<div class="bxp-medal">' + (sp ? bpEmblem(b) : bgIcon(b)) + '</div>' +
-      '<small class="bxp-k">' + (sp ? '특별 배지 획득!' : '새 배지 획득!') + '</small>' +
-      '<h3 id="bxpT">' + esc(b.label) + '</h3>' +
-      (sp ? '<span class="bxp-tier">바디프로필 촬영 · ' + (+p[0]) + '. ' + (+p[1]) + '. ' + (+p[2]) + '</span>' : '<span class="bxp-tier">' + BG_TN[t] + ' 등급</span>') +
+      '<div class="bxp-card" role="dialog" aria-modal="true" aria-labelledby="bxpT"><div class="bxp-medal">' + bgIcon(b) + '</div>' +
+      '<small class="bxp-k">새 배지 획득!</small><h3 id="bxpT">' + esc(b.label) + '</h3>' +
       '<p>' + esc(b.desc) + (extra > 0 ? '<br><em>외 ' + extra + '개도 함께 받았어요</em>' : '') + '</p>' +
-      (sp ? '' : '<div class="bxp-bar"><div><span>모은 배지</span><b><span class="bxp-n">' + prev + '</span> / ' + L.length + '</b></div><i><em style="width:' + (prev / L.length * 100).toFixed(1) + '%" data-to="' + (got / L.length * 100).toFixed(1) + '"></em></i>' +
-        (hint ? '<small>' + hint + '</small>' : '') + '</div>') +
+      '<div class="bxp-bar"><div><span>모은 배지</span><b><span class="bxp-n">' + prev + '</span> / ' + L.length + '</b></div><i><em style="width:' + (prev / L.length * 100).toFixed(1) + '%" data-to="' + (got / L.length * 100).toFixed(1) + '"></em></i>' +
+      (nx ? '<small>다음 목표 · <b>' + esc(nx.label) + '</b></small>' : '') + '</div>' +
       '<a class="bxp-go" href="#goal-badges">내 배지 보러 가기</a><button type="button" class="bxp-x">닫기</button></div>';
     document.body.appendChild(box);
     requestAnimationFrame(function () { requestAnimationFrame(function () { box.classList.add("in"); }); });
     var em = box.querySelector(".bxp-bar em"), nEl = box.querySelector(".bxp-n");
-    if (em) setTimeout(function () {
+    setTimeout(function () {
       em.style.width = em.getAttribute("data-to") + "%";
-      var n = prev, iv = setInterval(function () { n++; nEl.textContent = n; if (n >= got) clearInterval(iv); }, Math.max(60, 600 / Math.max(1, got - prev)));
-      if (got <= prev) clearInterval(iv);
+      if (got <= prev) return;
+      var n = prev, iv = setInterval(function () { n++; nEl.textContent = n; if (n >= got) clearInterval(iv); }, Math.max(40, 600 / (got - prev)));
     }, 1350);
     function close() { box.classList.remove("in"); setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 320); }
     box.querySelector(".bxp-x").addEventListener("click", close);
