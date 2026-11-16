@@ -252,6 +252,20 @@
     hl: function (P) { return [{ dot: P.sh, r: 5.6 }]; },
     back: function (P) { return seatEq(34, 65, false).concat([L("eq2", [[89, 8], [89, 93]], 3.5), L("eq2", [P.ha, [87, 25]], 2), D("eq2", [87, 25], 3.2)]); },
     front: function (P) { return [D("eq", P.ha, 3.4)]; } };
+  /* 페이스풀 (서서, 2026-11-16 김지수님): 머리 높이 케이블 로프를 얼굴 쪽으로, 팔꿈치 높게 당김 */
+  EX.standing_face_pull = { t: .9, p0: ext(stand(34), { kn: [33, 75], el: [48, 30], ha: [62, 27] }), p1: { el: [21, 25], ha: [40, 22] }, bones: SIDE,
+    hl: function (P) { return [{ dot: P.sh, r: 5.6 }]; },
+    back: function (P) { return [floor(14, 92), L("eq2", [[89, 8], [89, 93]], 3.5), L("eq2", [P.ha, [87, 22]], 2), D("eq2", [87, 22], 3.2)]; },
+    front: function (P) { return [D("eq", P.ha, 3.4)]; } };
+  /* 티바로우 머신 (2026-11-16 김지수님): 비스듬한 발판에 서서 가슴 패드에 기대고, T자 손잡이를 배꼽 쪽으로 당김 */
+  EX.tbar_row = { t: .85,
+    p0: { head: [61, 31], sh: [52, 39], hip: [30, 57], kn: [37, 73], ft: [29, 88], toe: [37, 87], el: [55, 56], ha: [56, 72] },
+    p1: { el: [37, 50], ha: [50, 61] }, bones: SIDE,
+    hl: function (P) { return [seg(P.sh, P.hip, .05, .6, 13)]; },
+    back: function (P) { var pc = off(P.ha, 10, 3);
+      return [floor(8, 92), L("eq2", [[20, 92], [44, 86]], 4), L("eq2", [[47, 49], [60, 38]], 5.5), L("eq2", [[54, 45], [62, 92]], 3),
+        L("eq", [[90, 90], P.ha], 3.4), D("eq2", [90, 90], 3), R("eq", pc, 7, 3.2)]; },
+    front: function (P) { return [L("eq", [off(P.ha, -4, 0), off(P.ha, 4, 0)], 4)]; } };
   function shrug(front, back) {
     return { t: 1, p0: mir(ext(FSTAND, { elL: [35, 42], haL: [35, 56] })), p1: mir({ shL: [40, 23.5], elL: [35, 37.5], haL: [35, 51.5] }), bones: FRONT,
       hl: function (P) { var y = P.shL[1]; return [{ poly: [[P.shL[0] + 2, y - 1.5], [46.5, y - 7], [53.5, y - 7], [P.shR[0] - 2, y - 1.5], [53.5, y + 3], [46.5, y + 3]], w: 2 }]; },

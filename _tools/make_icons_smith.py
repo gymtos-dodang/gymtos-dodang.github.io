@@ -235,9 +235,42 @@ def close_grip_pulldown(c):
     c.arrow((78, 71), (78, 58))
 
 
+def standing_face_pull(c):
+    """2026-11-16 페이스풀(서서): 머리 높이 케이블 로프를 얼굴 쪽으로, 팔꿈치 높게 당김"""
+    p = side((36, 44), 94, 92, arm=(155, 15), leg=(-88, -92, 0))
+    E, W = p["arm"]
+    floor(c, 4, 12, 96)
+    c.stroke([(88.5, 4), (88.5, 92)], 3.2, GRAY)
+    knot = (W[0] + 11, W[1])
+    c.stroke([knot, (85, knot[1])], 1.8, GRAY)
+    mi.pulley(c, (88.5, knot[1]))
+    draw_side(c, p)
+    for dy in (3.2, -3.2):
+        c.stroke([(W[0] + 1, W[1] + dy), knot], 2.0, GRAY)
+    c.arrow((W[0] + 26, W[1] - 12), (W[0] + 10, W[1] - 12))
+
+
+def tbar_row(c):
+    """2026-11-16 티바로우 머신: 비스듬한 발판에 서서 가슴 패드에 기대고, T자 손잡이를 배꼽 쪽으로 당김"""
+    p = side((30, 44), 40, 36, arm=(-125, -80), leg=(-80, -112, 0))
+    E, W = p["arm"]
+    floor(c, 4, 8, 92)
+    c.stroke([(20, 6), (44, 11)], 4, GRAY)
+    pad = fk(fk(p["S"], -50, 7), 220, 4)
+    pill(c, fk(pad, 40, 5), fk(pad, 220, 6), 5.2)
+    c.stroke([fk(pad, -50, 3), (66, 4)], 3, GRAY)
+    c.stroke([(92, 8), W], 3, GRAY)
+    pc = (W[0] + 13, W[1] - 5)
+    c.circle(pc, 7.2, fill=GRAY)
+    c.circle(pc, 2.4, fill=WHITE)
+    draw_side(c, p)
+    pill(c, (W[0] - 4, W[1]), (W[0] + 4, W[1]), 3.4)
+    c.arrow((W[0] + 22, W[1] + 4), (W[0] + 22, W[1] + 20))
+
+
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
        "smith_shrug": smith_shrug, "band_push_up": band_push_up,
-       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press, "spider_curl": spider_curl, "close_grip_pulldown": close_grip_pulldown}
+       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press, "spider_curl": spider_curl, "close_grip_pulldown": close_grip_pulldown, "standing_face_pull": standing_face_pull, "tbar_row": tbar_row}
 
 
 if __name__ == "__main__":
