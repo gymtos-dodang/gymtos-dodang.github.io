@@ -1398,5 +1398,43 @@
 "forearm_ext": "S",
 "rhomboid": "S"
 }
+},
+"m/aeran-bsq16i/media/form-hack-squat/anatomy.png": {
+"sex": "F",
+"front": {
+"abs": "S",
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P",
+"add_long": "S",
+"add_mag": "S"
+},
+"back": {
+"erector": "S",
+"glute_max": "P",
+"ham_bf": "S",
+"ham_st": "S",
+"erector_thoracic": "S",
+"add_mag": "S"
+}
+},
+"m/aeran-bsq16i/media/form-goblet-squat/anatomy.png": {
+"sex": "F",
+"front": {
+"abs": "S",
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P",
+"add_long": "S",
+"add_mag": "S"
+},
+"back": {
+"erector": "S",
+"glute_max": "P",
+"ham_bf": "S",
+"ham_st": "S",
+"erector_thoracic": "S",
+"add_mag": "S"
+}
 }
 }
