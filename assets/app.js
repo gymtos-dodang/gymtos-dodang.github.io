@@ -1249,6 +1249,56 @@
     book: '<path d="M4 5.5C6.5 4.3 9.5 4.3 12 6c2.5-1.7 5.5-1.7 8-.5V19c-2.5-1.2-5.5-1.2-8 .5-2.5-1.7-5.5-1.7-8-.5z"/><path d="M12 6v13.5"/>',
     heart: '<path d="M12 20s-7.5-4.6-7.5-10.2A4.1 4.1 0 0 1 12 7.4a4.1 4.1 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20z"/>'
   };
+  (function (I) {   /* 2026-11-17 3차 "각자 다른 아이콘": 배지마다 그림이 다름 */
+    I.flag = '<path d="M6 21V4"/><path d="M6 4.5h11l-2.5 4 2.5 4H6z"/>';
+    I.stamp = '<circle cx="12" cy="12" r="8.8"/><path d="M12 7.6l1.4 2.9 3.2.4-2.3 2.2.6 3.1L12 14.7l-2.9 1.5.6-3.1-2.3-2.2 3.2-.4z"/>';
+    I.medal = '<path d="M8.5 10.5L6 3h4l2 5"/><path d="M15.5 10.5L18 3h-4l-2 5"/><circle cx="12" cy="15" r="5.5"/>';
+    I.trophy = '<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5.5H4a3 3 0 0 0 3 4"/><path d="M17 5.5h3a3 3 0 0 1-3 4"/><path d="M12 14v3.5M9.5 17.5h5M8 20.5h8"/>';
+    I.crown = '<path d="M4 17.5L2.5 8l5 4L12 5l4.5 7 5-4L20 17.5z"/><path d="M4.5 21h15"/>';
+    I.flame = '<path d="M12 2.5c1 3.5 5.5 6 5.5 11a5.5 5.5 0 0 1-11 0c0-2.6 1.4-4.3 2.8-5.6.3 1.7 1 2.8 2.2 3.4C11.2 8.6 11.2 5.4 12 2.5z"/>';
+    I.flame2 = I.flame + '<path d="M12 19.5a2.4 2.4 0 0 0 2.4-2.4c0-1.5-1.3-2.2-2.4-3.8-1.1 1.6-2.4 2.3-2.4 3.8a2.4 2.4 0 0 0 2.4 2.4z"/>';
+    I.bolt = '<path d="M13.5 2.5L5 13.5h6l-1 8 8.5-11h-6z"/>';
+    I.rocket = '<path d="M12 2.5c3.2 2.4 4.5 6 4.5 9.5l-1.5 4H9l-1.5-4c0-3.5 1.3-7.1 4.5-9.5z"/><circle cx="12" cy="9.5" r="1.7"/><path d="M7.5 13l-3 3.5 3.5-.5M16.5 13l3 3.5-3.5-.5M10.5 18.5l1.5 3 1.5-3"/>';
+    I.moon = '<path d="M18.5 14.7A7.6 7.6 0 0 1 9.3 5.5a7.6 7.6 0 1 0 9.2 9.2z"/><path d="M17 3.5v3.4M15.3 5.2h3.4"/>';
+    I.calw = I.cal + '<circle cx="9" cy="15" r="1.3"/><circle cx="15" cy="15" r="1.3"/>';
+    I.calc = I.cal + '<path d="M8.5 14.6l2.5 2.5 4.5-4.6"/>';
+    I.clip = '<rect x="5" y="4.5" width="14" height="16" rx="2.5"/><path d="M9 3h6v3.5H9z"/><path d="M8.5 11.5h7M8.5 15.5h5"/>';
+    I.bookmark = '<path d="M6.5 3.5h11v17l-5.5-4-5.5 4z"/>';
+    I.shield = '<path d="M12 2.8l7.5 2.7v6c0 4.6-3 8-7.5 9.7-4.5-1.7-7.5-5.1-7.5-9.700v-6z"/><path d="M8.5 11.8l2.5 2.5 4.5-4.6"/>';
+    I.ccheck = '<circle cx="12" cy="12" r="8.8"/><path d="M8 12.3l2.8 2.8L16 9.7"/>';
+    I.dcheck = '<path d="M2.5 12.5l4 4 8-8.5"/><path d="M10.5 15.5l1.5 1.5 9.5-10"/>';
+    I.target = '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.2"/><circle cx="12" cy="12" r="1.5"/>';
+    I.mount = '<path d="M2.5 19.5L9 7l4 7 2.5-3.5 6 9z"/><path d="M7.3 10.300l1.7 1.5 1.7-1.3"/>';
+    I.compass = '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>';
+    var r8 = '<circle cx="12" cy="12" r="2.2"/>'; for (var i = 0; i < 8; i++) r8 += '<circle cx="' + (12 + 8 * Math.cos(i * Math.PI / 4)).toFixed(1) + '" cy="' + (12 + 8 * Math.sin(i * Math.PI / 4)).toFixed(1) + '" r="1.7"/>';
+    I.ring8 = r8;
+    I.kettle = '<path d="M8.8 9.5V7a3.2 3.2 0 0 1 6.4 0v2.5"/><circle cx="12" cy="14.7" r="6.3"/>';
+    I.barbell = '<path d="M2 12h20M5.5 6.5v11M8.5 8.5v7M18.5 6.5v11M15.5 8.5v7"/>';
+    I.plate = '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="1.6"/>';
+    I.chev2 = '<path d="M5 12.5l7-7 7 7"/><path d="M5 19.5l7-7 7 7"/>';
+    I.stairs = '<path d="M3 20.5h4.5V16H12v-4.5h4.5V7H21"/>';
+    I.cap = '<path d="M2 9.5L12 5l10 4.5-10 4.5z"/><path d="M6.5 12v4.5c1.5 1.6 3.4 2.3 5.5 2.300s4-.7 5.5-2.300V12M21.5 10v5"/>';
+    I.award = '<circle cx="12" cy="9" r="5.5"/><path d="M8.5 13.5L7 21l5-2.5 5 2.5-1.5-7.5"/>';
+    I.sprout = '<path d="M12 21v-9"/><path d="M12 13c0-4-2.5-6.5-7-6.5 0 4 2.5 6.5 7 6.5z"/><path d="M12 11c0-3.5 2-6 6.5-6 0 3.8-2 6-6.5 6z"/>';
+    I.tree = '<path d="M12 21.5v-6"/><path d="M12 3l-5.5 7h3L5 15.5h14L14.5 10h3z"/>';
+    I.gem = '<path d="M6.5 4h11l4 5.5L12 21 2.5 9.5z"/><path d="M2.5 9.5h19M9 4L7.5 9.5 12 21l4.5-11.5L15 4"/>';
+  })(BG_IC);
+  var BG_PAL = { R: ["#FF7A80", "#B00E17"], O: ["#FFB259", "#DD4A12"], Y: ["#FFD96E", "#D07F00"], G: ["#73E6A5", "#0C8A54"], T: ["#66E2D8", "#0A7785"], B: ["#74BCFF", "#1B48CC"],
+    I: ["#9AA1FF", "#3729B4"], P: ["#C894FF", "#6520BF"], K: ["#FF97C7", "#C91867"], N: ["#5567D8", "#11164A"], S: ["#FFCB6E", "#EC4777"], D: ["#5C5C68", "#0C0C0F"] };
+  var BG_ST = {   /* 배지 id: [색, 그림, 효과(shine 빛 지나감·pulse 빛 숨쉬기·spin 빛 링·rays 햇살·twinkle 별·flame 일렁·float 둥실·beat 두근)] */
+    att1: ["R", "check", "shine"], att10: ["O", "flag", "pulse"], att30: ["K", "stamp", "shine"], att50: ["P", "medal", "pulse shine"], att100: ["Y", "trophy", "rays shine"], att200: ["D", "crown", "spin twinkle"],
+    stk3: ["O", "flame", "flame"], stk7: ["R", "flame2", "flame pulse"], stk14: ["Y", "bolt", "beat pulse"], stk30: ["I", "rocket", "float spin"],
+    dawn: ["S", "sun", "rays"], night: ["N", "moon", "twinkle float"], wkend: ["T", "calw", "shine"], mon20: ["G", "calc", "pulse"], perf: ["P", "star", "spin twinkle"],
+    log1: ["B", "pen", "shine"], logd10: ["T", "clip", "pulse"], logd30: ["I", "book", "shine"], logd50: ["P", "bookmark", "pulse shine"], logd100: ["D", "shield", "spin twinkle"],
+    chk100: ["G", "ccheck", "shine"], chk300: ["T", "dcheck", "pulse"], chk500: ["B", "list", "shine pulse"], chk1000: ["R", "target", "spin"],
+    day5: ["O", "layers", "float"], day7: ["G", "mount", "shine"], var15: ["K", "grid", "pulse"], var30: ["N", "compass", "twinkle shine"], body6: ["G", "body", "beat"], body8: ["Y", "ring8", "rays twinkle"],
+    lift1: ["T", "kettle", "shine"], lift3: ["B", "bell", "beat"], lift5: ["I", "barbell", "pulse shine"], lift10: ["D", "plate", "spin"],
+    pct30: ["G", "trend", "shine"], pct50: ["Y", "chev2", "float pulse"], lvup: ["P", "up", "float"], lvup4: ["K", "stairs", "shine pulse"],
+    form3: ["B", "book", "shine"], form5: ["B", "cap", "shine"], form10: ["P", "award", "twinkle pulse"], ib1: ["T", "scale", "pulse"],
+    day30: ["G", "sprout", "float"], day100: ["K", "heart", "beat pulse"], day200: ["T", "tree", "shine"], day365: ["D", "gem", "spin twinkle rays"]
+  };
+  var BG_SPK = 'M7 0 L8.4 5.6 L14 7 L8.4 8.4 L7 14 L5.6 8.4 L0 7 L5.6 5.6 Z';
+  function bgRgb(h) { return parseInt(h.slice(1, 3), 16) + "," + parseInt(h.slice(3, 5), 16) + "," + parseInt(h.slice(5, 7), 16); }
   function md(k) { var p = k.split("-"); return (+p[1]) + ". " + pad2(+p[2]); }
   function ymOf(d) { return d.getFullYear() + "-" + pad2(d.getMonth() + 1); }
   function ymDate(ym) { var p = ym.split("-"); return new Date(+p[0], +p[1] - 1, 1); }
@@ -1412,6 +1462,9 @@
     /* 받은 날 정리: 기록된 날짜가 있으면 그게 우선(먼저 받은 날), 날짜를 모르면("?") 오늘 · 한 번 받은 건 계속 받은 상태 */
     var ch = S.ch;
     L.forEach(function (b) {
+      var stl = BG_ST[b.id] || ["D", "star", "shine"];
+      b.col = BG_PAL[stl[0]]; b.ic = stl[1]; b.fx = stl[2];
+      if (b.big) { b.sm = b.big; b.big = null; }
       var saved = o.on[b.id];
       if (b.on === "?") b.on = saved || today;
       if (!b.on && saved) b.on = saved;
@@ -1426,30 +1479,36 @@
 
   /* ---- 메달 그림: 금테 + 검정 에나멜 + 금색 그림 (전부 같은 디자인) */
   var bgUid = 0;
-  function bgIcon(b) {   /* 84×72 — SVG라서 리포트 이미지로 저장해도 그대로 */
-    var on = !!b.on, u = "bx" + (++bgUid), ink = on ? "#F4D783" : "#BDB7B7";
+  function bgIcon(b) {   /* 84×72 — 금테 + 배지마다 다른 색 그라데이션 + 다른 그림 + 다른 효과 */
+    var on = !!b.on, u = "bx" + (++bgUid), c = b.col || BG_PAL.D, fx = on ? " " + (b.fx || "") + " " : " ";
+    function has(k) { return fx.indexOf(" " + k + " ") >= 0; }
     var s = '<svg class="bdg-s" viewBox="0 0 84 72" width="84" height="72" aria-hidden="true">';
     if (on) {
       s += '<defs><linearGradient id="' + u + 'r" x1=".15" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="#FFF4C2"/><stop offset=".45" stop-color="#E4B544"/><stop offset="1" stop-color="#8A5A00"/></linearGradient>' +
         '<linearGradient id="' + u + 'h" x1=".15" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="#8A5A00"/><stop offset=".55" stop-color="#D9A93A"/><stop offset="1" stop-color="#FFF1B8"/></linearGradient>' +
-        '<radialGradient id="' + u + 'f" cx=".38" cy=".28" r=".85"><stop offset="0" stop-color="#3E3E46"/><stop offset=".6" stop-color="#1A1A1E"/><stop offset="1" stop-color="#08080A"/></radialGradient>' +
-        '<clipPath id="' + u + 'c"><circle cx="42" cy="32" r="24.6"/></clipPath></defs>' +
-        '<ellipse cx="42" cy="65.5" rx="17" ry="2.6" fill="#000" opacity=".13"/>' +
-        '<circle cx="42" cy="32" r="30" fill="url(#' + u + 'r)"/><circle cx="42" cy="32" r="27.3" fill="url(#' + u + 'h)"/>' +
-        '<circle cx="42" cy="32" r="24.6" fill="url(#' + u + 'f)"/>' +
-        '<circle cx="42" cy="32" r="21.8" fill="none" stroke="#E4B544" stroke-width=".9" stroke-dasharray=".1 2.35" stroke-linecap="round" opacity=".75"/>' +
-        '<g clip-path="url(#' + u + 'c)"><ellipse cx="34" cy="14" rx="24" ry="13" fill="#fff" opacity=".1"/></g>';
+        '<linearGradient id="' + u + 'f" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="' + c[0] + '"/><stop offset="1" stop-color="' + c[1] + '"/></linearGradient>' +
+        '<radialGradient id="' + u + 'v" cx=".5" cy=".42" r=".6"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".38"/></radialGradient>' +
+        '<clipPath id="' + u + 'c"><circle cx="42" cy="32" r="24.6"/></clipPath></defs>';
+      if (has("rays")) { var p = []; for (var i = 0; i < 28; i++) { var r = i % 2 ? 30.5 : 37.5, q = i * Math.PI / 14; p.push((42 + r * Math.cos(q)).toFixed(1) + "," + (32 + r * Math.sin(q)).toFixed(1)); }
+        s += '<polygon class="bdx-rays" points="' + p.join(" ") + '" fill="' + c[0] + '" opacity=".85"/>'; }
+      s += '<circle cx="42" cy="32" r="30" fill="url(#' + u + 'r)"/><circle cx="42" cy="32" r="27.3" fill="url(#' + u + 'h)"/>' +
+        '<circle cx="42" cy="32" r="24.6" fill="url(#' + u + 'f)"/><circle cx="42" cy="32" r="24.6" fill="url(#' + u + 'v)"/>' +
+        '<g clip-path="url(#' + u + 'c)"><ellipse cx="33" cy="13" rx="25" ry="13" fill="#fff" opacity=".26"/>' +
+        '<ellipse cx="50" cy="55" rx="20" ry="8" fill="' + c[0] + '" opacity=".35"/></g>' +
+        '<circle cx="42" cy="32" r="22" fill="none" stroke="#fff" stroke-width=".8" stroke-dasharray=".1 2.4" stroke-linecap="round" opacity=".45"/>';
     } else {
       s += '<circle cx="42" cy="32" r="30" fill="#E3DEDE"/><circle cx="42" cy="32" r="27.3" fill="#EFEBEB"/><circle cx="42" cy="32" r="24.6" fill="#F7F5F5"/>';
     }
-    if (b.ic) {
-      var sc = b.sm != null ? 0.8 : 1.08, cy = b.sm != null ? 26 : 32;
-      s += '<g transform="translate(' + (42 - 12 * sc).toFixed(2) + ' ' + (cy - 12 * sc).toFixed(2) + ') scale(' + sc + ')" fill="none" stroke="' + ink + '" stroke-width="' + (b.sm != null ? 2.5 : 2.2) + '" stroke-linecap="round" stroke-linejoin="round">' + BG_IC[b.ic] + '</g>';
-    }
+    var sc = 1.16, cy = b.sm != null ? 29.5 : 32, ik = has("flame") ? " bdx-flame" : has("float") ? " bdx-float" : has("beat") ? " bdx-beat" : "";
+    s += '<g transform="translate(' + (42 - 12 * sc).toFixed(2) + ' ' + (cy - 12 * sc).toFixed(2) + ') scale(' + sc + ')"><g class="bdx-i' + ik + '" fill="' + (on ? "rgba(255,255,255,.22)" : "none") + '" stroke="' + (on ? "#fff" : "#BDB7B7") +
+      '" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' + (BG_IC[b.ic] || BG_IC.star) + '</g></g>';
+    if (has("shine")) s += '<g clip-path="url(#' + u + 'c)"><g transform="rotate(22 42 32)"><rect class="bdx-sh" x="-16" y="-20" width="11" height="110" fill="#fff" opacity=".55"/></g></g>';
+    if (has("twinkle")) s += '<g transform="translate(63 -1) scale(.95)"><path class="bdg-spark" d="' + BG_SPK + '" fill="#FFE48A"/></g><g transform="translate(6 40) scale(.6)"><path class="bdg-spark s2" d="' + BG_SPK + '" fill="#fff"/></g>' +
+      '<g transform="translate(14 2) scale(.45)"><path class="bdg-spark s3" d="' + BG_SPK + '" fill="#FFE48A"/></g>';
     s += '</svg>';
-    var num = b.big ? '<span class="bdg-n' + (String(b.big).length > 2 ? ' sm' : '') + '" style="color:' + ink + '">' + b.big + '</span>' : '';
-    var sm = b.sm != null ? '<span class="bdg-m" style="color:' + ink + '">' + b.sm + '</span>' : '';
-    return '<span class="bdg bx' + (on ? ' on' : '') + '">' + s + num + sm + '</span>';
+    var sm = b.sm != null ? '<span class="bdg-m' + (on ? '' : ' off') + '">' + b.sm + '</span>' : '';
+    var ex = (has("pulse") ? '<span class="bdx-glow" aria-hidden="true"></span>' : '') + (has("spin") ? '<span class="bdx-ring" aria-hidden="true"></span>' : '');
+    return '<span class="bdg bx' + (on ? ' on' : '') + '" style="--bgc:' + bgRgb(c[0]) + '">' + ex + s + sm + '</span>';
   }
 
   /* ---- 나 탭 배지 칸 (한 칸) */
@@ -1522,6 +1581,7 @@
     }
     var nx = bgNext(L), box = document.createElement("div");
     box.className = "bgpop-wrap bxp";
+    if (b.col && b.col !== BG_PAL.D) box.style.setProperty("--bgc", bgRgb(b.col[0]));
     box.innerHTML = '<div class="bxp-rays" aria-hidden="true"></div><div class="bxp-flash" aria-hidden="true"></div><div class="bgpop-conf" aria-hidden="true">' + conf + '</div>' +
       '<div class="bxp-card" role="dialog" aria-modal="true" aria-labelledby="bxpT"><div class="bxp-medal">' + bgIcon(b) + '</div>' +
       '<small class="bxp-k">새 배지 획득!</small><h3 id="bxpT">' + esc(b.label) + '</h3>' +
