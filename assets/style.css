@@ -1924,11 +1924,17 @@ html[data-skin="sheep"] { --barbg: rgba(255, 248, 241, .6); --glass: rgba(255, 2
 
 /* 2026-11-16 뛰어다니는 토끼 (pet:"bunny" — 김지수님 토롱이 테마 그림 base.svg 그대로, 한 칸씩 폴짝폴짝. app.js HOP. 정면 그림이라 좌우로 안 뒤집음) */
 .petwalk { height: 84px; }
-.petwalk .pet.hop { width: 46px; height: 49px; transition-timing-function: cubic-bezier(.3, .1, .6, .9); }
-.petwalk .pet.hop .b-all { display: block; width: 46px; height: 49px; transform-origin: 50% 100%; filter: drop-shadow(0 1px 2px rgba(120, 30, 60, .2)); }
+.petwalk .pet.hop { width: 46px; height: 50px; transition-timing-function: cubic-bezier(.3, .1, .6, .9); }
+.petwalk .pet.hop .b-all { display: block; width: 46px; height: 50px; overflow: visible; transform-origin: 50% 100%; filter: drop-shadow(0 1px 2px rgba(120, 30, 60, .2)); }
 .petwalk .pet.hop.jump .b-all { animation: bnyJump .42s linear both; }
 .petwalk .pet.hop.sit .b-all { animation: bnySit 4.8s ease-in-out infinite; }
 @keyframes bnyJump { 0% { transform: translateY(0) scale(1.14, .84); } 14% { transform: translateY(-9px) scale(.9, 1.12); } 32% { transform: translateY(-21px) scale(.95, 1.06); } 50% { transform: translateY(-26px) scale(1, 1); } 70% { transform: translateY(-19px) scale(1, 1); } 88% { transform: translateY(-5px) scale(.95, 1.06); } 100% { transform: translateY(0) scale(1.16, .82); } }
 @keyframes bnySit { 0%, 30%, 60%, 100% { transform: scale(1, 1) rotate(0deg); } 15%, 45% { transform: scale(1.03, .97); } 72%, 88% { transform: rotate(6deg); } }
 html[data-pet="bunny"] .bny-peek { display: none; }
 @media (prefers-reduced-motion: reduce) { .petwalk .pet.hop .b-all { animation: none; } }
+/* 뛰어다니는 토롱이 손·발 (2026-11-16) — 뛸 때 손은 위로 번쩍, 발은 아래로 쭉 */
+.petwalk .pet.hop.jump .b-hand { animation: bnyHand .42s linear both; }
+.petwalk .pet.hop.jump .b-foot { animation: bnyFootD .42s linear both; }
+@keyframes bnyHand { 0%, 100% { transform: translateY(0); } 25%, 70% { transform: translateY(-13px); } }
+@keyframes bnyFootD { 0%, 100% { transform: translateY(0); } 25%, 70% { transform: translateY(5px); } }
+@media (prefers-reduced-motion: reduce) { .petwalk .pet.hop .b-hand, .petwalk .pet.hop .b-foot { animation: none; } }
