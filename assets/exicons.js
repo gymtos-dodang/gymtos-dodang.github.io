@@ -185,12 +185,12 @@
       L("eq2", [[36, 79.5], [64, 79.5]], 6), L("eq2", [[22, 93], [78, 93]], 3), floor(28, 72)];
   };
   /* 프론트 로우 머신 (2026-11-16 매장 사진, Torque 원판식): 앉아서 가슴 패드에 기대고 허벅지 롤러로 고정, 앞쪽 위 축에서 내려온 지렛대 손잡이를 가슴 쪽으로 당김 */
-  EX.front_row = { t: .9, p0: ext(sit(34, 66), { el: [46, 40], ha: [66, 38] }), p1: { el: [22, 46], ha: [44, 41] }, bones: SIDE,
+  EX.front_row = { t: .9, p0: ext(sit(34, 66), { head: [43, 24], sh: [40, 38], el: [55, 40], ha: [71, 38] }), p1: { el: [30, 46], ha: [47, 43] }, bones: SIDE,
     hl: function (P) { return [seg(P.sh, P.hip, .05, .55, 13)]; },
-    back: function (P) { var pv = [60, 6], pc = mix(pv, P.ha, .3);
-      return seatEq(34, 66, false).concat([L("eq2", [[52, 6], [52, 93]], 3), L("eq2", [[86, 6], [86, 93]], 3), L("eq2", [[52, 6], [86, 6]], 3),
-        L("eq", [pv, P.ha], 3.4), D("eq2", pv, 3), R("eq", pc, 6, 3)]); },
-    front: function (P) { return [L("eq2", [[45, 34], [45, 56]], 5.5), D("eq2", [50, 62], 4.5), L("eq", [off(P.ha, 0, -4), off(P.ha, 0, 4)], 4)]; } };
+    back: function (P) { var pv = [66, 6], pc = mix(pv, P.ha, .3);
+      return seatEq(34, 66, false).concat([L("eq2", [[56, 6], [56, 93]], 3), L("eq2", [[88, 6], [88, 93]], 3), L("eq2", [[56, 6], [88, 6]], 3),
+        L("eq", [pv, P.ha], 3.4), D("eq2", pv, 3), R("eq", pc, 6, 3), L("eq2", [[47, 30], [47, 58]], 5.5), D("eq2", [51, 61], 4.5)]); },
+    front: function (P) { return [L("eq", [off(P.ha, 0, -4), off(P.ha, 0, 4)], 4)]; } };
   EX.underhand_pulldown = pulldown({ elL: [37, 33], haL: [39, 19] }, { elL: [31, 58], haL: [39, 44] }, function (y) { return L("eq", [[28, y], [72, y]], 3.8); });
   /* 어시스트 친업(2026-11-11 최지훈님 영상): 앞모습 — 무릎 받침에 무릎 꿇고 머리 위 손잡이를 잡은 채, 몸을 끌어올려 턱이 손잡이 위로. 받침이 몸과 같이 올라감 */
   EX.assisted_chin_up = { t: .35,
