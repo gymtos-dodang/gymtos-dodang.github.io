@@ -169,6 +169,8 @@
       front: function () { return []; } };
   }
   EX.lat_pulldown = pulldown({ elL: [31, 33], haL: [27, 19] }, { elL: [25, 57], haL: [28, 42] }, function (y) { return L("eq", [[16, y + 6], [23, y], [77, y], [84, y + 6]], 3.8); });
+  /* 클로즈그립 랫풀다운 (2026-11-16 이지환님): 손을 모아 잡는 좁은 손잡이(V바)로 가슴 위까지 당김 — 팔꿈치가 몸통 가까이 내려옴 */
+  EX.close_grip_pulldown = pulldown({ elL: [40, 33], haL: [47, 19] }, { elL: [35, 58], haL: [46.5, 42] }, function (y) { return L("eq", [[42, y + 1], [50, y - 4], [58, y + 1], [42, y + 1]], 3.4); });
   EX.underhand_pulldown = pulldown({ elL: [37, 33], haL: [39, 19] }, { elL: [31, 58], haL: [39, 44] }, function (y) { return L("eq", [[28, y], [72, y]], 3.8); });
   /* 어시스트 친업(2026-11-11 최지훈님 영상): 앞모습 — 무릎 받침에 무릎 꿇고 머리 위 손잡이를 잡은 채, 몸을 끌어올려 턱이 손잡이 위로. 받침이 몸과 같이 올라감 */
   EX.assisted_chin_up = { t: .35,

@@ -221,9 +221,23 @@ def spider_curl(c):
     c.arc_arrow(E, 19, -100, -8)
 
 
+def close_grip_pulldown(c):
+    """2026-11-16 클로즈그립 랫풀다운: 손을 모아 잡는 좁은 손잡이(V바)를 가슴 위까지 당김 (앞모습, 팔꿈치가 몸 가까이)"""
+    head, Ls, Rs, Lh, Rh = (50, 61), (40.5, 49), (59.5, 49), (44, 28), (56, 28)
+    mi.pulley(c, (50, 94.5))
+    c.stroke([(50, 87), (50, 92)], 1.8, GRAY)
+    c.stroke([(42, 82), (50, 87), (58, 82), (42, 82)], 3.2, GRAY)
+    arms = [((37, 66), (46, 81)), ((63, 66), (54, 81))]
+    legs = [((37.5, 21.5), (37.5, 7), (32.5, 6.4)), ((62.5, 21.5), (62.5, 7), (67.5, 6.4))]
+    mi.draw_front(c, head, Ls, Rs, Lh, Rh, arms, legs)
+    pill(c, (30.5, 24.5), (69.5, 24.5), 5.4)
+    c.arrow((22, 71), (22, 58))
+    c.arrow((78, 71), (78, 58))
+
+
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
        "smith_shrug": smith_shrug, "band_push_up": band_push_up,
-       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press, "spider_curl": spider_curl}
+       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press, "spider_curl": spider_curl, "close_grip_pulldown": close_grip_pulldown}
 
 
 if __name__ == "__main__":
