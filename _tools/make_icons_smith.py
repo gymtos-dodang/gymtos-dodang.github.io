@@ -289,26 +289,26 @@ def wide_pulldown(c):
 
 
 def front_row(c):
-    """2026-11-16 프론트 로우 머신 (매장 Torque 원판식): 기구를 바라보고 앉아 가슴을 패드에 대고, 앞쪽 위 축에서 내려온 지렛대 손잡이를 몸 쪽으로 당김 (팔 뻗은 시작 자세 + 당기는 화살표)"""
-    p = side((34, 33), 82, 85, arm=(-12, 2), leg=(2, -88, 0))
+    """2026-11-16 프론트 로우 머신 (매장 사진): 기구 기둥·축이 몸 뒤쪽 위, 지렛대가 머리 위로 넘어와 앞쪽 높은 손잡이. 가슴 패드에 가슴 대고 앞 위 손잡이를 가슴 쪽으로 끌어당김 (팔 뻗은 시작 자세 + 화살표)"""
+    p = side((34, 33), 84, 85, arm=(28, 30), leg=(2, -88, 0))
     S = p["S"]
     E, W = p["arm"]
     floor(c, 4, 6, 94)
     c.stroke([(34, 28), (34, 4)], 3, GRAY)
     pill(c, (24, 28.5), (44, 28.5), 5.2)
-    c.stroke([(70, 4), (70, 96)], 3, GRAY)
-    c.stroke([(92, 4), (92, 96)], 3, GRAY)
-    c.stroke([(70, 95), (92, 95)], 3, GRAY)
-    pv = (76, 94)
-    c.stroke([pv, W], 3, GRAY)
-    pc = (pv[0] + (W[0] - pv[0]) * 0.3, pv[1] + (W[1] - pv[1]) * 0.3)
-    c.circle(pc, 6.2, fill=GRAY)
-    c.circle(pc, 2.2, fill=WHITE)
-    pill(c, (S[0] + 7, 40), (S[0] + 7, 62), 5)
-    c.circle((S[0] + 11, 37), 4.2, fill=GRAY)
+    c.stroke([(10, 4), (10, 96)], 3, GRAY)
+    c.stroke([(22, 4), (22, 96)], 3, GRAY)
+    c.stroke([(8, 95), (30, 95)], 3, GRAY)
+    pv = (24, 86)
+    ex = (pv[0] + (pv[0] - W[0]) * 0.2, pv[1] + (pv[1] - W[1]) * 0.2)
+    c.stroke([ex, W], 3, GRAY)
+    c.circle(ex, 6, fill=GRAY)
+    c.circle(ex, 2.1, fill=WHITE)
     draw_side(c, p)
-    pill(c, (W[0], W[1] - 4.5), (W[0], W[1] + 4.5), 3.4)
-    c.arrow((W[0] - 2, W[1] + 12), (W[0] - 18, W[1] + 12))
+    pill(c, (S[0] + 8, 38), (S[0] + 8, 58), 5)
+    c.circle((S[0] + 12, 35), 4.2, fill=GRAY)
+    c.stroke([(W[0] - 3, W[1] + 3), (W[0] + 3, W[1] - 3)], 3.4, GRAY)
+    c.arrow((W[0] + 6, W[1] - 6), (W[0] - 8, W[1] - 20))
 
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
        "smith_shrug": smith_shrug, "band_push_up": band_push_up,
