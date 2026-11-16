@@ -271,15 +271,22 @@ def tbar_row(c):
 def wide_pulldown(c):
     """2026-11-16 와이드 풀다운: 원판식 풀다운 기구의 양쪽 손잡이를 넓게 잡고 끌어내림 (앞모습, 손잡이 좌우 따로)"""
     head, Ls, Rs, Lh, Rh = (50, 61), (40.5, 49), (59.5, 49), (44, 28), (56, 28)
+    c.stroke([(6, 4), (6, 96)], 3, GRAY)
+    c.stroke([(94, 4), (94, 96)], 3, GRAY)
+    c.stroke([(6, 95), (94, 95)], 3, GRAY)
     for sx in (1, -1):
-        c.stroke([(50 + sx * 28, 92), (50 + sx * 22, 84)], 3, GRAY)
-        c.stroke([(50 + sx * 38, 80), (50 + sx * 25, 86)], 3.4, GRAY)
+        pv, hd = (50 - sx * 40, 92), (50 - sx * 30, 83)
+        c.stroke([pv, hd], 3, GRAY)
+        pc = (pv[0] + (hd[0] - pv[0]) * 0.4, pv[1] + (hd[1] - pv[1]) * 0.4)
+        c.circle(pc, 6.4, fill=GRAY)
+        c.circle(pc, 2.2, fill=WHITE)
+        c.stroke([(hd[0] - sx * 4, hd[1] - 4), (hd[0] + sx * 3, hd[1] + 3)], 3.4, GRAY)
     arms = [((31, 66), (20, 83)), ((69, 66), (80, 83))]
     legs = [((37.5, 21.5), (37.5, 7), (32.5, 6.4)), ((62.5, 21.5), (62.5, 7), (67.5, 6.4))]
     draw_front(c, head, Ls, Rs, Lh, Rh, arms, legs)
     pill(c, (30.5, 24.5), (69.5, 24.5), 5.4)
-    c.arrow((9, 71), (9, 58))
-    c.arrow((91, 71), (91, 58))
+    c.arrow((13, 66), (13, 53))
+    c.arrow((87, 66), (87, 53))
 
 
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
