@@ -269,24 +269,23 @@ def tbar_row(c):
 
 
 def wide_pulldown(c):
-    """2026-11-16 와이드 풀다운: 원판식 풀다운 기구의 양쪽 손잡이를 넓게 잡고 끌어내림 (앞모습, 손잡이 좌우 따로)"""
+    """2026-11-16 와이드 풀다운 (매장 원판식 기구 사진): 가운데 기둥 양쪽 축에서 지렛대가 X자로 엇갈려 올라가 손잡이, 축 아래 연장에 원판 (앞모습)"""
     head, Ls, Rs, Lh, Rh = (50, 61), (40.5, 49), (59.5, 49), (44, 28), (56, 28)
-    c.stroke([(6, 4), (6, 96)], 3, GRAY)
-    c.stroke([(94, 4), (94, 96)], 3, GRAY)
-    c.stroke([(6, 95), (94, 95)], 3, GRAY)
-    for sx in (1, -1):
-        pv, hd = (50 - sx * 40, 92), (50 - sx * 30, 83)
-        c.stroke([pv, hd], 3, GRAY)
-        pc = (pv[0] + (hd[0] - pv[0]) * 0.4, pv[1] + (hd[1] - pv[1]) * 0.4)
-        c.circle(pc, 6.4, fill=GRAY)
-        c.circle(pc, 2.2, fill=WHITE)
-        c.stroke([(hd[0] - sx * 4, hd[1] - 4), (hd[0] + sx * 3, hd[1] + 3)], 3.4, GRAY)
+    c.stroke([(50, 48), (50, 4)], 3, GRAY)
+    c.stroke([(42, 48), (58, 48)], 3, GRAY)
+    for pv, hd in (((58, 48), (20, 83)), ((42, 48), (80, 83))):
+        ex = (pv[0] + (pv[0] - hd[0]) * 0.32, pv[1] + (pv[1] - hd[1]) * 0.32)
+        c.stroke([ex, hd], 3, GRAY)
+        c.circle(ex, 6, fill=GRAY)
+        c.circle(ex, 2.1, fill=WHITE)
+        sx = -1 if hd[0] < 50 else 1
+        c.stroke([(hd[0] + sx * 5, hd[1] - 2), (hd[0] - sx * 4, hd[1] + 3)], 3.4, GRAY)
     arms = [((31, 66), (20, 83)), ((69, 66), (80, 83))]
     legs = [((37.5, 21.5), (37.5, 7), (32.5, 6.4)), ((62.5, 21.5), (62.5, 7), (67.5, 6.4))]
     draw_front(c, head, Ls, Rs, Lh, Rh, arms, legs)
     pill(c, (30.5, 24.5), (69.5, 24.5), 5.4)
-    c.arrow((13, 66), (13, 53))
-    c.arrow((87, 66), (87, 53))
+    c.arrow((10, 70), (10, 57))
+    c.arrow((90, 70), (90, 57))
 
 
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
