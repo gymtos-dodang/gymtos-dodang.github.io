@@ -1530,5 +1530,24 @@
 "forearm_ext": "S",
 "rhomboid": "S"
 }
+},
+"m/hyeyoung-d74063/media/form-leg-extension/anatomy.png": {
+"sex": "F",
+"front": {
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P"
+},
+"back": {}
+},
+"m/hyeyoung-d74063/media/form-outer-thigh/anatomy.png": {
+"sex": "F",
+"front": {
+"tfl": "S"
+},
+"back": {
+"glute_med": "P",
+"glute_max": "S"
+}
 }
 }
