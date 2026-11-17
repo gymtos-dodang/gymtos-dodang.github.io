@@ -2135,3 +2135,15 @@ html[data-pet="bunny"] .bny-peek { display: none; }
 .hbdg3 .hb.s { width: 38px; height: 34px; }
 .hbdg3 .hb.s .bdg { transform: scale(.452); }
 .hbdg3 .bdg-m, .hbdg3 .bdx-glow, .hbdg3 .bdx-ring { display: none; }
+/* 2026-11-17 루틴 고치기 옵션 다양화: 요일 정리 창·종목 ⋯ 창 */
+.rtw-tip { margin: 0; font-size: 12.5px; font-weight: 700; color: var(--sub); }
+.rtw-list { display: flex; flex-direction: column; gap: 6px; }
+.rtw { display: flex; align-items: center; gap: 10px; width: 100%; border: 1.5px solid var(--line); background: #fff; border-radius: 12px; padding: 11px 12px; font: inherit; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.rtw b { flex: none; width: 54px; font-size: 14px; font-weight: 900; color: var(--ink); }
+.rtw span { flex: 1; min-width: 0; font-size: 13px; font-weight: 700; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rtw em { flex: none; font-style: normal; font-size: 11px; font-weight: 900; color: #fff; background: var(--primary); border-radius: 99px; padding: 2px 8px; }
+.rtw.rest span { color: var(--faint); font-weight: 500; }
+.rtw.on { border-color: var(--primary); background: var(--tint); }
+.rtw.sure { border-color: var(--bad); } .rtw.sure span { color: var(--bad); }
+.rtctl button[data-rt="more"] { font-size: 16px; line-height: 1; }
+.rts-seg button:disabled { opacity: .4; }

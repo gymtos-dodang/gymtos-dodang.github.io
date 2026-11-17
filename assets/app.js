@@ -2954,6 +2954,7 @@
     if (!CAN_EDIT) return "";
     if (RT_EDIT) return '<div class="rtbar edit"><div><b>✎ 고치는 중</b><span>아래 저장을 눌러야 회원님께 보여요</span></div>' +
       '<div class="rtbar-b">' + (RT_REC ? '<button type="button" class="rtb" data-rt="reset">처음 루틴으로</button>' : '') +
+      '<button type="button" class="rtb" data-rt="week">요일 정리</button>' +
       '<button type="button" class="rtb" data-rt="copy">가져오기</button>' +
       '<button type="button" class="rtb" data-rt="info">제목·계획</button></div></div>';
     var st = RT_REC ? '폰에서 고친 루틴 · ' + rtAt(RT_REC) + ' 반영' : RT_STALE ? '새 루틴이 올라와서 예전에 폰에서 고친 것(' + rtAt(RT_STALE) + ')은 꺼졌어요' : '선생님 보기 · 고치면 회원님 노트에 바로 반영';
@@ -2970,6 +2971,7 @@
     return '<div class="rtctl"><button type="button" data-rt="item" data-i="' + i + '">✎ 고치기</button>' +
       '<button type="button" data-rt="up" data-i="' + i + '"' + (i ? '' : ' disabled') + ' aria-label="위로">↑</button>' +
       '<button type="button" data-rt="down" data-i="' + i + '"' + (i < n - 1 ? '' : ' disabled') + ' aria-label="아래로">↓</button>' +
+      '<button type="button" data-rt="more" data-i="' + i + '" aria-label="복제·다른 날로 옮기기">⋯</button>' +
       '<button type="button" class="del" data-rt="del" data-i="' + i + '">삭제</button></div>';
   }
 
@@ -3202,6 +3204,10 @@
       '<label>영어 <small>오른쪽 작은 글자</small><input id="dEn" value="' + esc(d.en) + '"></label>' +
       (plain ? '<label class="rts-ck"><input type="checkbox" id="dCardio"' + (d.cardio ? ' checked' : '') + '> 마무리 유산소' +
         (R.cardio ? ' ' + R.cardio.minutes + '분' : ' (유산소는 제목·계획 고치기에서 정해요)') + '</label>' : '') +
+      (d.items && d.items.length ? '<div class="rts-pre"><span class="rts-l">이날 전체 한 번에 <small>누르면 바로 바뀌어요</small></span>' +
+        '<div class="rts-seg" id="dBulk"><button type="button" data-kg="-5">−5kg</button><button type="button" data-kg="-2.5">−2.5kg</button><button type="button" data-kg="2.5">+2.5kg</button><button type="button" data-kg="5">+5kg</button>' +
+        '<button type="button" data-set="-1">세트 −1</button><button type="button" data-set="1">세트 +1</button></div></div>' : '') +
+      '<button type="button" class="rtb" id="dWeek" style="width:100%">다른 날과 바꾸기 · 복사</button>' +
       (!ROT && !d.rest ? '<button type="button" class="rtb warn" id="dRest">이날을 쉬는 날로 바꾸기</button>' : '');
     var sh = rtSheet(dayName(dk) + " 정보", body, function (sh) {
       var part = fv(sh, "dPart");
@@ -3210,6 +3216,21 @@
       var c = sh.querySelector("#dCardio"); if (c) d.cardio = c.checked;
       rtDirty();
     });
+    var bk = sh.querySelector("#dBulk");
+    if (bk) bk.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      var kg = parseFloat(b.getAttribute("data-kg")), st = parseInt(b.getAttribute("data-set"), 10), n = 0;
+      d.items.forEach(function (it) {
+        if (!it.sets || !it.sets.length) return;
+        if (kg) it.sets.forEach(function (x) { var v = parseFloat(x[1]); if (isFinite(v) && v > 0) { x[1] = Math.max(0, Math.round((v + kg) * 2) / 2); n++; } });
+        else if (st > 0 && it.sets.length < 8) { it.sets.push(it.sets[it.sets.length - 1].slice()); n++; }
+        else if (st < 0 && it.sets.length > 1) { it.sets.pop(); n++; }
+      });
+      if (!n) { sh.msg("바꿀 수 있는 세트가 없어요"); return; }
+      rtDirty();
+      sh.msg(kg ? "무게가 적힌 세트 " + n + "개를 " + (kg > 0 ? "+" : "−") + Math.abs(kg) + "kg 했어요" : n + "종목을 세트 " + (st > 0 ? "+1" : "−1") + " 했어요");
+    });
+    sh.querySelector("#dWeek").addEventListener("click", function () { sh.close(); rtWeekSheet(d); });
     var rb = sh.querySelector("#dRest");
     if (rb) rb.addEventListener("click", function () {
       if (!rb.classList.contains("sure")) { rb.classList.add("sure"); rb.textContent = "한 번 더 누르면 쉬는 날이 돼요 (종목도 지워져요)"; return; }
@@ -3232,6 +3253,91 @@
     if (d.cardio == null) d.cardio = true;
     rtDirty();
     rtDaySheet(dk);
+  }
+
+  /* ---- 2026-11-17 장동욱 "루틴 항목 바꾸는 옵션 다양화(월↔목 요일 바꾸기 등), 세팅하기 편하게"
+     요일 정리 창(rtWeekSheet: 두 날 서로 바꾸기 / 한 날을 다른 날에 복사) · 종목 ⋯ 창(rtMoreSheet: 복제·맨 위/아래·다른 날로 옮기기/복사) · 이날 정보 창의 무게·세트 한 번에(#dBulk) */
+  function rtDayList() {   /* [{label, d}] — 요일 루틴은 월~일 7칸(없는 날 d=null), 순환 루틴은 DAY 1~N */
+    var D = M.routine.days || [];
+    if (ROT) return D.map(function (d, i) { return { label: "DAY " + (i + 1), d: d }; });
+    return ["월", "화", "수", "목", "금", "토", "일"].map(function (k) { return { label: k + "요일", ko: k, d: D.filter(function (x) { return x.day === k; })[0] || null }; });
+  }
+  function rtDayEnsure(x) {
+    if (x.d) return x.d;
+    var d = { day: x.ko, part: "휴식", en: "Rest", rest: true, items: [] }, ord = ["월", "화", "수", "목", "금", "토", "일"];
+    M.routine.days.push(d); M.routine.days.sort(function (a, b) { return ord.indexOf(a.day) - ord.indexOf(b.day); });
+    return (x.d = d);
+  }
+  function rtDayBody(d) { var o = {}; for (var k in d) if (k !== "day") o[k] = clone(d[k]); return o; }
+  function rtDayPut(d, body) { var k; for (k in d) if (k !== "day") delete d[k]; for (k in body) d[k] = clone(body[k]); }
+  function rtDayLine(d) { return !d || d.rest ? "쉬는 날" : (d.part || "이름 없음") + " · " + ((d.items || []).length) + "종목"; }
+  function rtWeekSheet(pre) {
+    var mode = "swap", sel = -1, sure = -1;
+    var sh = rtSheet("요일 정리", '<div class="rts-seg" id="wMode"><button type="button" data-m="swap" aria-pressed="true">서로 바꾸기</button><button type="button" data-m="copy" aria-pressed="false">복사하기</button></div>' +
+      '<p class="rtw-tip" id="wTip"></p><div class="rtw-list" id="wList"></div>', function () {}, false);
+    sh.querySelector(".rts-foot [data-close]").textContent = "닫기";
+    function draw() {
+      var L = rtDayList();
+      sh.querySelector("#wTip").textContent = mode === "swap" ? (sel < 0 ? "바꿀 두 날을 차례로 눌러 주세요" : L[sel].label + "과 바꿀 날을 눌러 주세요") : (sel < 0 ? "복사할 날을 먼저 눌러 주세요" : L[sel].label + " 운동을 붙여 넣을 날을 눌러 주세요 (그날 내용은 덮어써요)");
+      sh.querySelector("#wList").innerHTML = L.map(function (x, i) {
+        return '<button type="button" class="rtw' + (i === sel ? ' on' : '') + (i === sure ? ' sure' : '') + (!x.d || x.d.rest ? ' rest' : '') + '" data-i="' + i + '"><b>' + x.label + '</b><span>' + esc(i === sure ? "한 번 더 누르면 덮어써요" : rtDayLine(x.d)) + '</span>' +
+          (i === sel ? '<em>' + (mode === "swap" ? "선택" : "복사할 날") + '</em>' : '') + '</button>';
+      }).join("");
+    }
+    if (pre) rtDayList().forEach(function (x, i) { if (x.d === pre) sel = i; });
+    draw();
+    sh.querySelector("#wMode").addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      mode = b.getAttribute("data-m"); sure = -1;
+      Array.prototype.forEach.call(sh.querySelectorAll("#wMode button"), function (x) { x.setAttribute("aria-pressed", x === b); });
+      draw(); sh.msg("");
+    });
+    sh.querySelector("#wList").addEventListener("click", function (e) {
+      var b = e.target.closest(".rtw"); if (!b) return;
+      var i = +b.getAttribute("data-i"), L = rtDayList();
+      if (sel < 0) { if (mode === "copy" && (!L[i].d || L[i].d.rest)) { sh.msg("쉬는 날은 복사할 게 없어요"); return; } sel = i; sure = -1; sh.msg(""); draw(); return; }
+      if (i === sel) { sel = -1; sure = -1; draw(); return; }
+      var A = L[sel], B = L[i];
+      if (mode === "swap") {
+        if ((!A.d || A.d.rest) && (!B.d || B.d.rest)) { sh.msg("둘 다 쉬는 날이에요"); sel = -1; draw(); return; }
+        var a = rtDayEnsure(A), b2 = rtDayEnsure(B), t = rtDayBody(a);
+        rtDayPut(a, rtDayBody(b2)); rtDayPut(b2, t);
+        rtDirty(); sh.msg(A.label + " ↔ " + B.label + " 바꿨어요"); sel = -1; draw(); return;
+      }
+      if (B.d && !B.d.rest && (B.d.items || []).length && sure !== i) { sure = i; draw(); return; }
+      rtDayPut(rtDayEnsure(B), rtDayBody(A.d));
+      rtDirty(); sh.msg(A.label + " 운동을 " + B.label + "에 복사했어요"); sel = -1; sure = -1; draw();
+    });
+  }
+  function rtMoreSheet(dk, i) {
+    var d = dayByKey(dk), it = d.items[i], mode = "move";
+    var L = rtDayList().filter(function (x) { return x.d !== d; });
+    var sh = rtSheet(it.name, '<span class="rts-l">이날 안에서</span><div class="rts-seg" id="mIn"><button type="button" data-a="dup">복제</button>' +
+      '<button type="button" data-a="top"' + (i ? '' : ' disabled') + '>맨 위로</button><button type="button" data-a="end"' + (i < d.items.length - 1 ? '' : ' disabled') + '>맨 아래로</button></div>' +
+      '<span class="rts-l">다른 날로</span><div class="rts-seg" id="mMode"><button type="button" data-m="move" aria-pressed="true">옮기기</button><button type="button" data-m="copy" aria-pressed="false">복사하기</button></div>' +
+      '<div class="rtw-list" id="mList">' + L.map(function (x, k) { return '<button type="button" class="rtw' + (!x.d || x.d.rest ? ' rest' : '') + '" data-i="' + k + '"><b>' + x.label + '</b><span>' + esc(rtDayLine(x.d)) + '</span></button>'; }).join("") + '</div>', function () {}, false);
+    sh.querySelector(".rts-foot [data-close]").textContent = "닫기";
+    sh.querySelector("#mIn").addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b || b.disabled) return;
+      var a = b.getAttribute("data-a");
+      if (a === "dup") d.items.splice(i + 1, 0, clone(it));
+      else { d.items.splice(i, 1); if (a === "top") d.items.unshift(it); else d.items.push(it); }
+      sh.close(); rtDirty();
+    });
+    sh.querySelector("#mMode").addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      mode = b.getAttribute("data-m");
+      Array.prototype.forEach.call(sh.querySelectorAll("#mMode button"), function (x) { x.setAttribute("aria-pressed", x === b); });
+    });
+    sh.querySelector("#mList").addEventListener("click", function (e) {
+      var b = e.target.closest(".rtw"); if (!b) return;
+      var x = L[+b.getAttribute("data-i")], t = rtDayEnsure(x);
+      if (t.rest) { delete t.rest; t.part = d.part; t.en = d.en; t.items = []; if (t.cardio == null) t.cardio = true; }
+      t.items = t.items || []; t.items.push(clone(it));
+      if (mode === "move") d.items.splice(i, 1);
+      sh.close(); rtDirty();
+      attToast(it.name + " → " + x.label + (mode === "move" ? "로 옮겼어요" : "에 복사했어요"));
+    });
   }
 
   /* 제목·계획·KEY POINT·메모·유산소 */
@@ -3433,11 +3539,13 @@
       if (act === "createcopy") { RT_EDIT = { saved: null, dirty: 0 }; M.routine = rtNewRoutine(); location.hash = ROT ? "#routine" : "#routine-mon"; rerender(); rtCopySheet(); return; }
       if (act === "reset") { rtResetSheet(); return; }
       if (act === "info") { rtInfoSheet(); return; }
+      if (act === "week") { rtWeekSheet(); return; }
       if (!d) return;
       if (act === "day") { rtDaySheet(dk); return; }
       if (act === "work") { rtMakeWorkDay(dk); return; }
       if (act === "add") { rtPicker(dayName(dk) + " · 종목 고르기", function (e) { rtItemSheet(dk, -1, e); }, true); return; }
       if (act === "item") { rtItemSheet(dk, i); return; }
+      if (act === "more") { rtMoreSheet(dk, i); return; }
       if (act === "up" || act === "down") {
         var j = act === "up" ? i - 1 : i + 1, t = d.items[i]; d.items[i] = d.items[j]; d.items[j] = t; rtDirty(); return;
       }
