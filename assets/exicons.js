@@ -70,13 +70,12 @@
     return [{ poly: [[P.shL[0] + 1, P.shL[1] + 2], [48.6, P.shL[1] + 2], [48.6, P.shL[1] + 11], [P.shL[0] + 2.5, P.shL[1] + 11]], w: 2.4 },
       { poly: [[P.shR[0] - 1, P.shR[1] + 2], [51.4, P.shR[1] + 2], [51.4, P.shR[1] + 11], [P.shR[0] - 2.5, P.shR[1] + 11]], w: 2.4 }];
   }
-  function latPolys(P) {   /* 광배근(뒤에서 본 모습): 겨드랑이에서 넓게 펴져 허리 가운데로 좁아지는 날개 + 겨드랑이에서 척추로 퍼지는 근섬유 결 */
+  function latPolys(P) {   /* 광배근(뒤에서 본 모습): 겨드랑이 아래에서 넓고 허리 쪽으로 좁아지는 둥근 날개 두 장, 가운데(척추)는 띄움. 안쪽 결 선은 뺌(2026-11-18) */
     var mS = mix(P.shL, P.shR, .5), mH = mix(P.hipL, P.hipR, .5);
     function wing(sh, hip, d) {
-      var A = off(sh, -1.5 * d, 4), B = off(mix(sh, hip, .36), -2.4 * d, 0), C = off(mix(sh, hip, .74), 1.2 * d, 0), D = off(mH, -1 * d, -4), E = off(mS, -1.3 * d, 9), F = off(A, 2.5 * d, 2.5);
-      return [{ poly: [A, B, C, D, E], w: 2 }, { f: 1, line: [F, mix(E, D, .3)], w: .8 }, { f: 1, line: [F, mix(E, D, .68)], w: .8 }];
+      return { poly: [off(sh, -2.6 * d, 5), off(mS, -3.2 * d, 9.5), off(mix(mS, mH, .62), -3 * d, 0), off(mH, -3.6 * d, -7), off(mix(sh, hip, .7), 1 * d, 0), off(mix(sh, hip, .36), -3 * d, 0)], w: 3.4 };
     }
-    return wing(P.shL, P.hipL, 1).concat(wing(P.shR, P.hipR, -1));
+    return [wing(P.shL, P.hipL, 1), wing(P.shR, P.hipR, -1)];
   }
   function delts(P) { return [{ dot: P.shL, r: 5.4 }, { dot: P.shR, r: 5.4 }]; }
 
