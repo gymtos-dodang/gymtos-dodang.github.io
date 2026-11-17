@@ -310,9 +310,26 @@ def front_row(c):
     c.stroke([(W[0] - 3, W[1] + 3), (W[0] + 3, W[1] - 3)], 3.4, GRAY)
     c.arrow((W[0] + 6, W[1] - 6), (W[0] - 8, W[1] - 20))
 
+def preacher_curl_machine(c):
+    """2026-11-17 프리처 컬 머신: 앉아서 위팔을 비스듬한 패드에 올리고, 기계 손잡이를 감아 올림 (옆모습)"""
+    p = side((30, 34), 96, 88, arm=(-42, 70), leg=(-2, -88, 0))
+    E, W = p["arm"]
+    floor(c, 4, 8, 92)
+    c.stroke([(30, 29), (30, 4)], 3, GRAY)
+    pill(c, (20, 29.5), (40, 29.5), 5.2)
+    pad0 = (p["S"][0] + 8, p["S"][1] - 12)
+    pill(c, pad0, (E[0] + 4, E[1] - 7), 8)
+    c.stroke([(E[0] + 3, E[1] - 6), (E[0] + 7, 4)], 3, GRAY)
+    c.stroke([E, (E[0] + 20, E[1] + 2)], 3, GRAY)
+    c.stroke([W, (E[0] + 20, E[1] + 2)], 3, GRAY)
+    draw_side(c, p)
+    pill(c, (W[0], W[1] - 4.5), (W[0], W[1] + 4.5), 3.4)
+    c.arc_arrow(E, 21, -40, 70)
+
+
 NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
        "smith_shrug": smith_shrug, "band_push_up": band_push_up,
-       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press, "spider_curl": spider_curl, "close_grip_pulldown": close_grip_pulldown, "standing_face_pull": standing_face_pull, "tbar_row": tbar_row, "wide_pulldown": wide_pulldown, "front_row": front_row}
+       "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press, "spider_curl": spider_curl, "close_grip_pulldown": close_grip_pulldown, "standing_face_pull": standing_face_pull, "tbar_row": tbar_row, "wide_pulldown": wide_pulldown, "front_row": front_row, "preacher_curl_machine": preacher_curl_machine}
 
 
 if __name__ == "__main__":

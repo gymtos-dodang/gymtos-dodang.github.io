@@ -344,6 +344,13 @@
     hl: function (P) { return [seg(P.sh, P.el, .25, 1, 7.5)]; },
     back: function () { return [floor(10, 90), L("eq2", [[39, 67], [54, 53]], 5.5), L("eq2", [[46, 62], [44, 92]], 3), L("eq2", [[32, 92], [58, 92]], 3.5)]; },
     front: function (P) { return db(P.ha, perp(P.el, P.ha), 7.5); } };
+  /* 프리처 컬 머신 (2026-11-17 염승완님): 앉아서 위팔을 비스듬한 패드에 올리고, 기계 손잡이를 감아 올림 */
+  EX.preacher_curl_machine = { t: .75,
+    p0: { head: [40, 22], sh: [36, 36], hip: [30, 64], kn: [50, 66], ft: [52, 89], toe: [60, 90], el: [55, 54], ha: [69, 66] },
+    p1: { ha: [52, 38] }, arcs: { ha: "el" }, bones: SIDE,
+    hl: function (P) { return [seg(P.sh, P.el, .3, 1, 7.5)]; },
+    back: function (P) { return seatEq(30, 64, false).concat([L("eq", [[45, 50], [60, 63]], 8), L("eq2", [[58, 62], [62, 93]], 3), L("eq2", [[55, 54], [76, 52]], 3)]); },
+    front: function (P) { return [L("eq", [P.ha, [76, 52]], 3), L("eq", [off(P.ha, 0, -4), off(P.ha, 0, 4)], 4)]; } };
   EX.cable_pushdown = { t: .85, p0: ext(stand(38), { el: [41, 45], ha: [54, 37] }), p1: { ha: [46, 60] }, arcs: { ha: "el" }, bones: SIDE,
     hl: function (P) { return [seg(P.sh, P.el, .2, 1, 7.5)]; },
     back: function (P) { return [floor(18, 86), L("eq2", [[78, 6], [78, 93]], 3.5), L("eq2", [[62, 8], [78, 8]], 3), L("eq2", [[62, 8], P.ha], 2), D("eq2", [62, 8], 3.2)]; },

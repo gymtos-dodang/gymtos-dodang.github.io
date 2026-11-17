@@ -1549,5 +1549,25 @@
 "glute_med": "P",
 "glute_max": "S"
 }
+},
+"m/dyn/seungwan/media/form-preacher-curl-machine/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "P",
+"biceps_long": "P",
+"brachialis": "S",
+"forearm_flex": "S"
+},
+"back": {}
+},
+"m/dyn/seungwan/media/form-db-curl/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "P",
+"biceps_long": "P",
+"brachialis": "S",
+"forearm_flex": "S"
+},
+"back": {}
 }
 }
