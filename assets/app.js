@@ -2108,7 +2108,7 @@
     var h = '<section id="rank" data-num="' + num + '">' + head(num, (now.getMonth() + 1) + "월 출석 순위", sub) + '<div class="panel rklist">';
     h += show.map(function (x) {
       return '<div class="rk' + (x.me ? ' me' : '') + (x.r <= 3 && x.c ? ' r' + x.r : '') + '"><span class="no">' + (x.r <= 3 && x.c ? ["", "🥇", "🥈", "🥉"][x.r] : x.r) + '</span>' +
-        '<span class="nm"><b>' + esc(x.n) + (x.me ? ' <i>나</i>' : '') + '</b><span class="bar"><i style="width:' + Math.round(x.c / max * 100) + '%"></i></span></span><span class="cnt">' + x.c + '회</span></div>';
+        '<span class="nm"><b>' + esc(x.n) + (x.me ? ' <i>나</i>' : '') + '</b><span class="rk-bar"><i style="width:' + Math.round(x.c / max * 100) + '%"></i></span></span><span class="cnt">' + x.c + '회</span></div>';
     }).join("");
     if (L.length < 2) h += '<p class="rk-note">다른 회원님 순위는 곧 보여요</p>';
     else h += '<p class="rk-note">PT 노트 출석 도장 · 운동 ✓ 기준 · 이름은 가려서 보여요</p>';
