@@ -1,4 +1,46 @@
 {
+ "프리처 컬 머신": {
+  "part": "팔",
+  "en": "Preacher Curl Machine",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "preacher-curl-machine",
+    "img": "m/aeran-bsq16i/media/form-preacher-curl-machine/step1.jpg"
+   },
+   {
+    "member": "염승완",
+    "id": "preacher-curl-machine",
+    "img": "m/dyn/seungwan/media/form-preacher-curl-machine/step1.jpg"
+   }
+  ]
+ },
+ "덤벨 컬": {
+  "part": "팔",
+  "en": "Dumbbell Curl",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "db-curl",
+    "img": "m/aeran-bsq16i/media/form-db-curl/step1.jpg"
+   },
+   {
+    "member": "최지훈",
+    "id": "db-curl",
+    "img": "m/jihun-g9kgdo/media/form-db-curl/step1.jpg"
+   },
+   {
+    "member": "이진영",
+    "id": "db-curl",
+    "img": "m/jinyoung-n73rzx/media/form-db-curl/step1.jpg"
+   },
+   {
+    "member": "염승완",
+    "id": "db-curl",
+    "img": "m/dyn/seungwan/media/form-db-curl/step1.jpg"
+   }
+  ]
+ },
  "고블릿 스쿼트": {
   "part": "하체",
   "en": "Goblet Squat",
@@ -463,22 +505,6 @@
     "member": "최지훈",
     "id": "reverse-pec-deck",
     "img": "m/jihun-g9kgdo/media/form-reverse-pec-deck/step1.jpg"
-   }
-  ]
- },
- "덤벨 컬": {
-  "part": "팔",
-  "en": "DB Curl",
-  "shots": [
-   {
-    "member": "최지훈",
-    "id": "db-curl",
-    "img": "m/jihun-g9kgdo/media/form-db-curl/step1.jpg"
-   },
-   {
-    "member": "이진영",
-    "id": "db-curl",
-    "img": "m/jinyoung-n73rzx/media/form-db-curl/step1.jpg"
    }
   ]
  },

@@ -1569,5 +1569,25 @@
 "forearm_flex": "S"
 },
 "back": {}
+},
+"m/aeran-bsq16i/media/form-preacher-curl-machine/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "P",
+"biceps_long": "P",
+"brachialis": "S",
+"forearm_flex": "S"
+},
+"back": {}
+},
+"m/aeran-bsq16i/media/form-db-curl/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "P",
+"biceps_long": "P",
+"brachialis": "S",
+"forearm_flex": "S"
+},
+"back": {}
 }
 }
