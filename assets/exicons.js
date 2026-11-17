@@ -70,9 +70,13 @@
     return [{ poly: [[P.shL[0] + 1, P.shL[1] + 2], [48.6, P.shL[1] + 2], [48.6, P.shL[1] + 11], [P.shL[0] + 2.5, P.shL[1] + 11]], w: 2.4 },
       { poly: [[P.shR[0] - 1, P.shR[1] + 2], [51.4, P.shR[1] + 2], [51.4, P.shR[1] + 11], [P.shR[0] - 2.5, P.shR[1] + 11]], w: 2.4 }];
   }
-  function latPolys(P) {
-    return [{ poly: [[P.shL[0] - 1, P.shL[1] + 3], [P.shL[0] + 7, P.shL[1] + 5], [P.hipL[0] + 3, P.hipL[1] - 7], [P.hipL[0] - .5, P.hipL[1] - 5]], w: 3 },
-      { poly: [[P.shR[0] + 1, P.shR[1] + 3], [P.shR[0] - 7, P.shR[1] + 5], [P.hipR[0] - 3, P.hipR[1] - 7], [P.hipR[0] + .5, P.hipR[1] - 5]], w: 3 }];
+  function latPolys(P) {   /* 광배근(뒤에서 본 모습): 겨드랑이에서 넓게 펴져 허리 가운데로 좁아지는 날개 + 겨드랑이에서 척추로 퍼지는 근섬유 결 */
+    var mS = mix(P.shL, P.shR, .5), mH = mix(P.hipL, P.hipR, .5);
+    function wing(sh, hip, d) {
+      var A = off(sh, -1.5 * d, 4), B = off(mix(sh, hip, .36), -2.4 * d, 0), C = off(mix(sh, hip, .74), 1.2 * d, 0), D = off(mH, -1 * d, -4), E = off(mS, -1.3 * d, 9), F = off(A, 2.5 * d, 2.5);
+      return [{ poly: [A, B, C, D, E], w: 2 }, { f: 1, line: [F, mix(E, D, .3)], w: .8 }, { f: 1, line: [F, mix(E, D, .68)], w: .8 }];
+    }
+    return wing(P.shL, P.hipL, 1).concat(wing(P.shR, P.hipR, -1));
   }
   function delts(P) { return [{ dot: P.shL, r: 5.4 }, { dot: P.shR, r: 5.4 }]; }
 
@@ -491,7 +495,7 @@
     ex.back(P).forEach(addEq);
     var hlDone = false;
     ex.bones.forEach(function (b) {
-      if (b.hlHere) { ex.hl(P).forEach(function (s) { add(s, S.hl, 0, true); }); hlDone = true; return; }
+      if (b.hlHere) { ex.hl(P).forEach(function (s) { add(s, s.f ? S.cut : S.hl, 0, true); }); hlDone = true; return; }
       var s = b.poly ? { poly: b.poly.map(function (k) { return P[k]; }), w: b.w } : { line: b.pts.map(function (k) { return P[k]; }), w: b.w };
       if (b.o) add(s, S.tile, 3.2);   /* 몸통 앞을 지나는 팔다리는 옅은 테두리로 구분 */
       add(s, S.fig);
@@ -506,7 +510,7 @@
     });
     if (ex.headO) add({ dot: P.head, r: (ex.headR || 7.2) + 1.7 }, S.tile);
     add({ dot: P.head, r: ex.headR || 7.2 }, S.fig);
-    if (!hlDone) ex.hl(P).forEach(function (s) { add(s, S.cut, 3); add(s, S.hl, 0, true); });
+    if (!hlDone) ex.hl(P).forEach(function (s) { add(s, s.f ? S.cut : S.hl, 0, true); });   /* f: 근섬유 결(옅은 선). 자극 부위 테두리는 옷 같다고 해서 뺌(2026-11-18) */
     ex.front(P).forEach(addEq);
     return out;
   }
