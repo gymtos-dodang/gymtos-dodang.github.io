@@ -1589,5 +1589,64 @@
 "forearm_flex": "S"
 },
 "back": {}
+},
+"m/jisu-480xne/media/form-outer-thigh/anatomy.png": {
+"sex": "F",
+"front": {
+"tfl": "S"
+},
+"back": {
+"glute_med": "P",
+"glute_max": "S"
+}
+},
+"m/jisu-480xne/media/form-inner-thigh/anatomy.png": {
+"sex": "F",
+"front": {
+"pectineus": "S",
+"add_long": "P",
+"add_mag": "P",
+"gracilis": "P"
+},
+"back": {
+"add_mag": "P",
+"gracilis": "S"
+}
+},
+"m/jisu-480xne/media/form-hack-squat/anatomy.png": {
+"sex": "F",
+"front": {
+"abs": "S",
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P",
+"add_long": "S",
+"add_mag": "S"
+},
+"back": {
+"erector": "S",
+"glute_max": "P",
+"ham_bf": "S",
+"ham_st": "S",
+"erector_thoracic": "S",
+"add_mag": "S"
+}
+},
+"m/jisu-480xne/media/form-leg-press/anatomy.png": {
+"sex": "F",
+"front": {
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P",
+"pectineus": "S",
+"add_long": "S",
+"add_mag": "S",
+"gracilis": "S"
+},
+"back": {
+"glute_max": "S",
+"ham_bf": "S",
+"ham_st": "S"
+}
 }
 }
