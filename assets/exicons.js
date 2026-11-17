@@ -70,10 +70,9 @@
     return [{ poly: [[P.shL[0] + 1, P.shL[1] + 2], [48.6, P.shL[1] + 2], [48.6, P.shL[1] + 11], [P.shL[0] + 2.5, P.shL[1] + 11]], w: 2.4 },
       { poly: [[P.shR[0] - 1, P.shR[1] + 2], [51.4, P.shR[1] + 2], [51.4, P.shR[1] + 11], [P.shR[0] - 2.5, P.shR[1] + 11]], w: 2.4 }];
   }
-  function latPolys(P) {   /* 광배근(뒤에서 본 모습): 겨드랑이 아래에서 넓고 허리 쪽으로 좁아지는 둥근 날개 두 장, 가운데(척추)는 띄움. 안쪽 결 선은 뺌(2026-11-18) */
-    var mS = mix(P.shL, P.shR, .5), mH = mix(P.hipL, P.hipR, .5);
+  function latPolys(P) {   /* 광배근(뒤에서 본 모습): 등 가운데는 비우고, 겨드랑이 아래에서 몸통 바깥으로 살짝 펼쳐졌다가 허리로 좁아지는 옆구리 날개 두 장. 가운데까지 덮으면 조끼(옷)처럼 보여서 바꿈(2026-11-18). 안쪽 결 선 없음 */
     function wing(sh, hip, d) {
-      return { poly: [off(sh, -2.6 * d, 5), off(mS, -3.2 * d, 9.5), off(mix(mS, mH, .62), -3 * d, 0), off(mH, -3.6 * d, -7), off(mix(sh, hip, .7), 1 * d, 0), off(mix(sh, hip, .36), -3 * d, 0)], w: 3.4 };
+      return { poly: [off(sh, -3.6 * d, 3.5), off(mix(sh, hip, .3), -5.2 * d, 0), off(mix(sh, hip, .72), -1.6 * d, 0), off(mix(sh, hip, .86), 2.4 * d, 0), off(mix(sh, hip, .42), 4.4 * d, 0), off(sh, 2.6 * d, 6.5)], w: 2.6 };
     }
     return [wing(P.shL, P.hipL, 1), wing(P.shR, P.hipR, -1)];
   }
