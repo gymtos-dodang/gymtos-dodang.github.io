@@ -449,8 +449,8 @@
 
   /* ---------- 그리기 ---------- */
   var STY = {
-    M: { tile: "#F1ECEC", fig: "#1A1A1E", eq: "#958A8B", eq2: "#D2C8C9", floor: "#D2C8C9", hl: "#E1141E" },
-    F: { tile: "#FBEAF1", fig: "#D6204F", eq: "#A9909C", eq2: "#E3C9D4", floor: "#E3C9D4", hl: "#1A1A1E" }
+    M: { tile: "#F1ECEC", fig: "#1A1A1E", eq: "#958A8B", eq2: "#D2C8C9", floor: "#D2C8C9", hl: "#E1141E", cut: "#F1ECEC" },
+    F: { tile: "#FBEAF1", fig: "#D6204F", eq: "#A9909C", eq2: "#E3C9D4", floor: "#E3C9D4", hl: "#1A1A1E", cut: "#FBEAF1" }
   };
   function pose(ex, t) {
     var P = {}, k;
@@ -480,21 +480,34 @@
       else if (s.ring) o = { tag: "circle", fix: 'r="' + s.r + '" fill="none" stroke="' + col + '" stroke-width="' + s.w + '"', dyn: { cx: f1(s.ring[0]), cy: f1(s.ring[1]) } };
       else if (s.dot) o = { tag: "circle", fix: 'r="' + f1(s.r + (grow || 0) / 2) + '" fill="' + col + '"', dyn: { cx: f1(s.dot[0]), cy: f1(s.dot[1]) } };
       else o = { tag: "rect", fix: 'x="' + s.rect[0] + '" y="' + s.rect[1] + '" width="' + s.rect[2] + '" height="' + s.rect[3] + '" rx="' + (s.r || 0) + '" fill="' + col + '"', dyn: {} };
-      if (hl) o.dyn.opacity = f1(.5 + .5 * t);
+      if (hl) o.dyn.opacity = f1(.8 + .2 * t);
       out.push(o);
     }
-    ex.back(P).forEach(function (s) { add(s, S[s.k]); });
+    function addEq(s) {   /* 원판: 꽉 찬 원반 + 안쪽 홈 + 가운데 허브 */
+      if (s.ring && s.k === "eq" && s.r >= 5.5) {
+        add({ dot: s.ring, r: s.r + s.w / 2 }, S.eq); add({ ring: s.ring, r: Math.round(s.r * 6.8) / 10, w: 1.1 }, S.eq2); add({ dot: s.ring, r: s.r * .34 }, S.eq2); add({ dot: s.ring, r: s.r * .15 }, S.eq);
+      } else add(s, S[s.k]);
+    }
+    ex.back(P).forEach(addEq);
     var hlDone = false;
     ex.bones.forEach(function (b) {
       if (b.hlHere) { ex.hl(P).forEach(function (s) { add(s, S.hl, 0, true); }); hlDone = true; return; }
       var s = b.poly ? { poly: b.poly.map(function (k) { return P[k]; }), w: b.w } : { line: b.pts.map(function (k) { return P[k]; }), w: b.w };
       if (b.o) add(s, S.tile, 3.2);   /* 몸통 앞을 지나는 팔다리는 옅은 테두리로 구분 */
       add(s, S.fig);
+      if (b.pts) {   /* 마디마다 둥근 이음새: 아래 마디를 옅은 테두리와 함께 덧그려 관절이 둥글게 나뉘어 보임 */
+        var pp = s.line, arm = /^sh/.test(b.pts[0]) && /^el/.test(b.pts[1] || "");
+        for (var j = arm ? 0 : 1; j < pp.length - 1; j++) {
+          if (b.pts[j + 1] === "toe") continue;
+          var sg = { line: [pp[j], pp[j + 1]], w: b.w };
+          add(sg, S.cut, 2); add(b.pts[j + 2] === "toe" ? { line: [pp[j], pp[j + 1], pp[j + 2]], w: b.w } : sg, S.fig);
+        }
+      }
     });
     if (ex.headO) add({ dot: P.head, r: (ex.headR || 7.2) + 1.7 }, S.tile);
     add({ dot: P.head, r: ex.headR || 7.2 }, S.fig);
-    if (!hlDone) ex.hl(P).forEach(function (s) { add(s, S.hl, 0, true); });
-    ex.front(P).forEach(function (s) { add(s, S[s.k]); });
+    if (!hlDone) ex.hl(P).forEach(function (s) { add(s, S.cut, 3); add(s, S.hl, 0, true); });
+    ex.front(P).forEach(addEq);
     return out;
   }
   function ease(x) { return (1 - Math.cos(x * Math.PI)) / 2; }
