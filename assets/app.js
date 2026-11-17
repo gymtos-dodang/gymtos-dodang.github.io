@@ -1543,59 +1543,61 @@
         'C' + x(-.45) + ' ' + y(.88) + ' ' + x(-.92) + ' ' + y(.6) + ' ' + x(-.92) + ' ' + y(.08) + 'V' + y(-.74) + 'Z"' + at + rj + '/>'; }
     return '<circle cx="42" cy="' + cy + '" r="' + r + '"' + at + '/>';
   }
-  function bgIcon(b) {   /* 84×72 — 금테 + 배지마다 다른 모양·색 그라데이션·그림·효과, 두께가 있는 3D */
-    var on = !!b.on, u = "bx" + (++bgUid), c = b.col || BG_PAL.D, sh = b.sh || "circle", lv = b.lv || 1, sp = !!b.sp, fx = on ? " " + (b.fx || "") + " " : " ", CY = 30;
+  /* 2026-11-17 7차 장동욱 "에나멜 핀 느낌으로 리메이크": 금색 가는 선(금선)으로 나눈 칸마다 쨍한 단색을 채운 칠보·에나멜 핀 스타일
+     · 색 3가지(BG_EN: 바탕·둘째·셋째) + 무늬 6가지(배지 id로 고름) · 높은 단계일수록 칸이 많아짐 · 그림은 금선 테두리 + 크림색 선 */
+  var BG_EN = { R: ["#E8263C", "#FF8FA3", "#FFD53D"], O: ["#FF8A1F", "#FFD53D", "#E8263C"], Y: ["#FFD53D", "#FF8A1F", "#17245C"], G: ["#1FA85A", "#C8F03C", "#2EC8F0"],
+    T: ["#14B8A6", "#C8F03C", "#17245C"], B: ["#2E7BF0", "#2EC8F0", "#C8F03C"], I: ["#3B2FC9", "#2EC8F0", "#FF3D7F"], P: ["#6A2BD9", "#FF3D7F", "#FFD53D"],
+    K: ["#FF3D7F", "#FFB3D1", "#6A2BD9"], N: ["#17245C", "#2E7BF0", "#FFD53D"], S: ["#FF8A1F", "#FF3D7F", "#FFD53D"], D: ["#17171C", "#E8263C", "#FFD53D"], SP: ["#F6CF58", "#17171C", "#FFF3B0"] };
+  var BG_OFF = ["#F4F2F2", "#E9E5E5", "#DEDADA"];
+  function bgFields(pat, n, c, CY, R, wire) {   /* 금선으로 나눈 색 칸들 (배지 모양으로 잘라서 씀) */
+    var W = ' stroke="' + wire + '" stroke-width="1.3"', X = 42, o = "";
+    function ci(dx, dy, r, f) { return '<circle cx="' + (X + dx * R).toFixed(1) + '" cy="' + (CY + dy * R).toFixed(1) + '" r="' + (r * R).toFixed(1) + '" fill="' + f + '"' + W + '/>'; }
+    function po(pts, f) { return '<polygon points="' + pts.map(function (q) { return (X + q[0] * R).toFixed(1) + "," + (CY + q[1] * R).toFixed(1); }).join(" ") + '" fill="' + f + '"' + W + '/>'; }
+    if (pat === 0) { o += ci(0, 0, .68, c[1]); if (n >= 2) o += ci(0, 0, .4, c[2]); }
+    else if (pat === 1) { o += po([[-1.4, 1.1], [1.1, -1.4], [1.5, 1.5]], c[1]); if (n >= 2) o += po([[-.5, 1.5], [1.5, -.5], [1.5, 1.5]], c[2]); if (n >= 3) o += po([[-1.5, -.45], [-.45, -1.5], [-1.5, -1.5]], c[2]); }
+    else if (pat === 2) { o += ci(-.5, 1.15, .95, c[1]); if (n >= 2) o += ci(.7, 1.25, .85, c[2]); if (n >= 3) o += ci(.5, -.52, .2, c[2]); }
+    else if (pat === 3) { o += ci(-.95, 0, .95, c[1]); if (n >= 2) o += ci(1, .2, .82, c[2]); }
+    else if (pat === 4) { o += po([[-1.5, .28], [1.5, .28], [1.5, 1.5], [-1.5, 1.5]], c[1]); if (n >= 2) o += po([[-1.5, .66], [1.5, .66], [1.5, 1.5], [-1.5, 1.5]], c[2]); if (n >= 3) o += po([[-1.5, -1.5], [1.5, -1.5], [1.5, -.66], [-1.5, -.66]], c[2]); }
+    else { o += ci(0, -.8, .72, c[1]); if (n >= 2) o += ci(-.75, .62, .62, c[2]); if (n >= 3) o += ci(.75, .62, .62, c[1]); }
+    return o;
+  }
+  function bgIcon(b) {   /* 84×72 에나멜 핀 */
+    var on = !!b.on, u = "bx" + (++bgUid), sh = b.sh || "circle", lv = b.lv || 1, sp = !!b.sp, fx = on ? " " + (b.fx || "") + " " : " ", CY = 30;
     function has(k) { return fx.indexOf(" " + k + " ") >= 0; }
-    var R = sh === "circle" || sh === "scallop" ? 29 : 27.6, R2 = R * 0.9, R3 = R * 0.8;
-    var s = '<svg class="bdg-s" viewBox="0 0 84 72" width="84" height="72" aria-hidden="true">';
+    var key = "D"; if (!sp && b.col) for (var k in BG_PAL) if (BG_PAL[k] === b.col) key = k;
+    var c = on ? (sp ? BG_EN.SP : BG_EN[key]) : BG_OFF, hsh = 0; for (var i = 0; i < b.id.length; i++) hsh = (hsh * 31 + b.id.charCodeAt(i)) % 997;
+    var R = sh === "circle" || sh === "scallop" ? 29 : 27.6, RI = R * 0.925, wire = on ? "url(#" + u + "w)" : "#CBC6C6";
+    var s = '<svg class="bdg-s" viewBox="0 0 84 72" width="84" height="72" aria-hidden="true"><defs>' +
+      '<linearGradient id="' + u + 'w" x1=".1" y1="0" x2=".9" y2="1"><stop offset="0" stop-color="#FFF6C8"/><stop offset=".35" stop-color="#EFC452"/><stop offset=".6" stop-color="#B8860B"/><stop offset=".8" stop-color="#F7D774"/><stop offset="1" stop-color="#8A5A00"/></linearGradient>' +
+      '<linearGradient id="' + u + 'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+      (on && lv >= 3 ? '<linearGradient id="' + u + 'o" gradientUnits="userSpaceOnUse" x1="18" y1="6" x2="66" y2="54"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".36" stop-color="#fff" stop-opacity="0"/>' +
+        '<stop offset=".64" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".4"/>' +
+        '<animateTransform attributeName="gradientTransform" type="rotate" from="0 42 30" to="360 42 30" dur="' + (lv === 4 ? 7 : 10) + 's" repeatCount="indefinite"/></linearGradient>' : '') +
+      '<clipPath id="' + u + 'c">' + bgSh(sh, RI, CY, "#000") + '</clipPath></defs>';
     if (on) {
-      s += '<defs><linearGradient id="' + u + 'r" x1=".15" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="#FFF8D2"/>' + (lv >= 3 ? '<stop offset=".28" stop-color="#F0C24E"/><stop offset=".5" stop-color="#9A6800"/><stop offset=".72" stop-color="#F9DA7A"/>' : '<stop offset=".4" stop-color="#EDBE48"/>') + '<stop offset="1" stop-color="#8A5A00"/></linearGradient>' +
-        '<linearGradient id="' + u + 'h" x1=".15" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="#7A4E00"/><stop offset=".55" stop-color="#D9A93A"/><stop offset="1" stop-color="#FFF4C4"/></linearGradient>' +
-        '<linearGradient id="' + u + 'e" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8A5A00"/><stop offset=".5" stop-color="#4E3200"/><stop offset="1" stop-color="#7A4E00"/></linearGradient>' +
-        '<linearGradient id="' + u + 'f" x1=".2" y1="0" x2=".8" y2="1">' + (sp ? '<stop offset="0" stop-color="#FFFBE0"/><stop offset=".3" stop-color="#F6CF58"/><stop offset=".62" stop-color="#B97F06"/><stop offset="1" stop-color="#FFE38A"/>' :
-          lv === 1 ? '<stop offset="0" stop-color="' + c[0] + '"/><stop offset="1" stop-color="' + c[1] + '"/>' :
-          lv === 2 ? '<stop offset="0" stop-color="' + bgMix(c[0], "#ffffff", .35) + '"/><stop offset=".38" stop-color="' + c[0] + '"/><stop offset="1" stop-color="' + c[1] + '"/>' :
-          '<stop offset="0" stop-color="' + bgMix(c[0], "#ffffff", .5) + '"/><stop offset=".3" stop-color="' + c[0] + '"/><stop offset=".68" stop-color="' + c[1] + '"/><stop offset="1" stop-color="' + bgMix(c[1], "#000000", lv === 4 ? .55 : .35) + '"/>') + '</linearGradient>' +
-        (lv >= 3 ? '<linearGradient id="' + u + 'o" gradientUnits="userSpaceOnUse" x1="18" y1="6" x2="66" y2="54"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset=".36" stop-color="#fff" stop-opacity="0"/>' +
-          '<stop offset=".64" stop-color="#FFE9A8" stop-opacity="0"/><stop offset="1" stop-color="#FFE9A8" stop-opacity=".7"/>' +
-          '<animateTransform attributeName="gradientTransform" type="rotate" from="0 42 30" to="360 42 30" dur="' + (lv === 4 ? 7 : 10) + 's" repeatCount="indefinite"/></linearGradient>' : '') +
-        '<radialGradient id="' + u + 'v" cx=".5" cy=".4" r=".62"><stop offset=".5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".42"/></radialGradient>' +
-        '<linearGradient id="' + u + 'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
-        '<linearGradient id="' + u + 'i" gradientUnits="userSpaceOnUse" x1="0" y1="2" x2="0" y2="22">' + (sp ? '<stop offset="0" stop-color="#5A3A00"/><stop offset="1" stop-color="#1E1200"/>' :
-          '<stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#fff"/><stop offset="1" stop-color="' + (lv >= 3 ? "#FFD966" : bgMix(c[0], "#ffffff", .55)) + '"/>') + '</linearGradient>' +
-        '<clipPath id="' + u + 'c">' + bgSh(sh, R3, CY, "#000") + '</clipPath></defs>';
-      if (has("rays")) s += '<polygon class="bdx-rays" points="' + bgPts(14, 38, 0, CY, 30.5) + '" fill="' + (sp ? "#F3C94F" : c[0]) + '" opacity=".85"/>';
-      if (sp) s += '<g fill="url(#' + u + 'r)" transform="translate(0 -2)">' + BG_LAU + '</g>';
-      s += '<ellipse cx="42" cy="66.5" rx="19" ry="2.8" fill="#000" opacity=".16"/>' +
-        '<g transform="translate(0 4.2)">' + bgSh(sh, R, CY, "url(#" + u + "e)") + '</g><g transform="translate(0 2.1)">' + bgSh(sh, R, CY, "url(#" + u + "e)") + '</g>' +
-        bgSh(sh, R, CY, "url(#" + u + "r)") + bgSh(sh, R2, CY, sp ? "#141416" : "url(#" + u + "h)") +
-        '<g transform="translate(0 1.1)">' + bgSh(sh, R3, CY, c[1]) + '</g>' + bgSh(sh, R3, CY, "url(#" + u + "f)") + (sp ? '' : bgSh(sh, R3, CY, "url(#" + u + "v)")) +
-        (lv >= 3 ? bgSh(sh, R3, CY, "url(#" + u + "o)", ' opacity="' + (lv === 4 ? .85 : .55) + '"') : '') +
-        (lv === 4 ? bgSh(sh, R3 * 0.95, CY, "none", ' stroke="#FFE9A8" stroke-width=".9" stroke-linejoin="round" opacity=".75"') : '') +
-        '<g clip-path="url(#' + u + 'c)"><ellipse cx="34" cy="' + (CY - 20) + '" rx="27" ry="15" fill="url(#' + u + 'g)"/>' +
-        '<ellipse cx="50" cy="' + (CY + 24) + '" rx="20" ry="8" fill="' + c[0] + '" opacity=".4"/></g>' +
-        bgSh(sh, R3 * 0.88, CY, "none", ' stroke="#fff" stroke-width=".8" stroke-linejoin="round" opacity=".38"') +
-        '<g transform="rotate(-38 ' + (42 - R * 0.62).toFixed(1) + ' ' + (CY - R * 0.72).toFixed(1) + ')"><ellipse cx="' + (42 - R * 0.62).toFixed(1) + '" cy="' + (CY - R * 0.72).toFixed(1) + '" rx="5.5" ry="1.5" fill="#fff" opacity=".8"/></g>';
-    } else {
-      s += '<g transform="translate(0 3.2)">' + bgSh(sh, R, CY, "#D2CCCC") + '</g>' + bgSh(sh, R, CY, "#E3DEDE") + bgSh(sh, R2, CY, "#EFEBEB") + bgSh(sh, R3, CY, "#F7F5F5");
-    }
-    var sc = sh === "circle" || sh === "scallop" ? 1.22 : 1.1, cy = CY + (b.sm != null ? -2 : 0) + (sh === "shield" ? -1.5 : sh === "pent" ? 1 : 0), ik = has("flame") ? " bdx-flame" : has("float") ? " bdx-float" : has("beat") ? " bdx-beat" : "";
-    var tr = 'transform="translate(' + (42 - 12 * sc).toFixed(2) + ' ' + (cy - 12 * sc).toFixed(2) + ') scale(' + sc + ')"', IC = BG_IC[b.ic] || BG_IC.star;
-    s += '<g ' + tr + '><g class="bdx-i' + ik + '" stroke-linecap="round" stroke-linejoin="round">' + (on ?
-      '<g fill="none" stroke="' + (sp ? "#FFF6C8" : bgMix(c[1], "#000000", .45)) + '" stroke-width="4.4" opacity="' + (sp ? .7 : .55) + '">' + IC + '</g>' +
-      '<g transform="translate(0 1.5)" fill="none" stroke="' + (sp ? "#fff" : "#000") + '" stroke-width="2.5" opacity=".4">' + IC + '</g>' +
-      '<g fill="' + (sp ? "rgba(255,246,200,.55)" : "rgba(255,255,255,.42)") + '" stroke="url(#' + u + 'i)" stroke-width="2.5">' + IC + '</g>' +
-      (sp ? '' : '<g transform="translate(-.35 -.45)" fill="none" stroke="#fff" stroke-width=".7" opacity=".85">' + IC + '</g>')
-      : '<g fill="none" stroke="#BDB7B7" stroke-width="2">' + IC + '</g>') + '</g></g>';
-    if (has("shine")) s += '<g clip-path="url(#' + u + 'c)"><g transform="rotate(22 42 32)"><rect class="bdx-sh" x="-16" y="-20" width="11" height="110" fill="#fff" opacity=".55"/></g></g>';
+      if (has("rays")) s += '<polygon class="bdx-rays" points="' + bgPts(14, 38, 0, CY, 30.5) + '" fill="' + (sp ? "#F3C94F" : c[1]) + '" opacity=".9"/>';
+      if (sp) s += '<g fill="' + wire + '" transform="translate(0 -2)">' + BG_LAU + '</g>';
+      s += '<ellipse cx="42" cy="66.5" rx="19" ry="2.8" fill="#000" opacity="' + (sp ? .3 : .16) + '"/>' +
+        '<g transform="translate(0 3)">' + bgSh(sh, R, CY, "#7A4E00") + '</g>';
+    } else s += '<g transform="translate(0 2.6)">' + bgSh(sh, R, CY, "#D2CCCC") + '</g>';
+    s += bgSh(sh, R, CY, on ? wire : "#DAD5D5") + bgSh(sh, RI, CY, c[0]) +
+      '<g clip-path="url(#' + u + 'c)">' + bgFields(hsh % 6, Math.min(3, lv), c, CY, R, wire) +
+      (on ? '<ellipse cx="34" cy="' + (CY - 21) + '" rx="30" ry="17" fill="url(#' + u + 'g)"/>' : '') + '</g>' +
+      (lv >= 3 ? bgSh(sh, RI * 0.9, CY, "none", ' stroke="' + wire + '" stroke-width="1.1" stroke-linejoin="round"') : '') +
+      (on && lv >= 3 ? bgSh(sh, RI, CY, "url(#" + u + "o)", ' opacity="' + (lv === 4 ? .8 : .5) + '"') : '');
+    var sc = sh === "circle" || sh === "scallop" ? 1.2 : 1.08, cy = CY + (b.sm != null ? -2 : 0) + (sh === "shield" ? -1.5 : sh === "pent" ? 1 : 0), ik = has("flame") ? " bdx-flame" : has("float") ? " bdx-float" : has("beat") ? " bdx-beat" : "";
+    var IC = BG_IC[b.ic] || BG_IC.star, ink = !on ? "#F7F5F5" : sp || key === "Y" ? "#17171C" : "#FFF8E7";
+    s += '<g transform="translate(' + (42 - 12 * sc).toFixed(2) + ' ' + (cy - 12 * sc).toFixed(2) + ') scale(' + sc + ')"><g class="bdx-i' + ik + '" stroke-linecap="round" stroke-linejoin="round">' +
+      '<g fill="none" stroke="' + (on ? wire : "#C4BEBE") + '" stroke-width="4.3">' + IC + '</g>' +
+      '<g fill="' + ink + '" fill-opacity="' + (on ? .5 : .6) + '" stroke="' + ink + '" stroke-width="2.1">' + IC + '</g></g></g>';
+    if (has("shine")) s += '<g clip-path="url(#' + u + 'c)"><g transform="rotate(22 42 32)"><rect class="bdx-sh" x="-16" y="-20" width="11" height="110" fill="#fff" opacity=".5"/></g></g>';
     if (has("twinkle")) s += '<g transform="translate(63 -1) scale(.95)"><path class="bdg-spark" d="' + BG_SPK + '" fill="#FFE48A"/></g><g transform="translate(6 40) scale(.6)"><path class="bdg-spark s2" d="' + BG_SPK + '" fill="#fff"/></g>' +
       '<g transform="translate(14 2) scale(.45)"><path class="bdg-spark s3" d="' + BG_SPK + '" fill="#FFE48A"/></g>';
     s += '</svg>';
     var sm = b.sm != null ? '<span class="bdg-m' + (on ? '' : ' off') + '">' + b.sm + '</span>' : '';
     var ex = (has("pulse") ? '<span class="bdx-glow" aria-hidden="true"></span>' : '') + (has("spin") ? '<span class="bdx-ring" aria-hidden="true"></span>' : '');
-    return '<span class="bdg bx' + (on ? ' on' : '') + '" style="--bgc:' + bgRgb(c[0]) + '">' + ex + s + sm + '</span>';
+    return '<span class="bdg bx' + (on ? ' on' : '') + '" style="--bgc:' + bgRgb(on ? (sp ? "#F3C94F" : c[key === "D" || key === "N" ? 1 : 0]) : "#BBBBBB") + '">' + ex + s + sm + '</span>';
   }
-
   function bpBadge() {   /* 전설 배지 "바프 완료": 바프 회원(journey.mode bodyprofile)만 보임. 선생님이 data.js journey.bpDone: "촬영 날짜" 넣으면 획득. 45개 수에는 안 셈 */
     var J = M.journey || {};
     if (!(BP || J.bpDone)) return null;
@@ -1731,7 +1733,7 @@
     }
     var nx = bgNext(L), box = document.createElement("div");
     box.className = "bgpop-wrap bxp" + (b.sp ? " sp" : "");
-    if (b.col && b.col !== BG_PAL.D) box.style.setProperty("--bgc", bgRgb(b.col[0]));
+    if (b.col && b.col !== BG_PAL.D) box.style.setProperty("--bgc", bgRgb(b.col[1]));
     box.innerHTML = '<div class="bxp-rays" aria-hidden="true"></div><div class="bxp-flash" aria-hidden="true"></div><div class="bgpop-conf" aria-hidden="true">' + conf + '</div>' +
       '<div class="bxp-card" role="dialog" aria-modal="true" aria-labelledby="bxpT"><div class="bxp-medal">' + bgIcon(b) + '</div>' +
       '<small class="bxp-k">' + (b.sp ? '전설 배지 획득!' : '새 배지 획득!') + '</small><h3 id="bxpT">' + esc(b.label) + '</h3>' +
