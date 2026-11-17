@@ -452,9 +452,16 @@
     back: function () { return [floor(6, 94)]; }, front: function () { return []; } };
 
   /* ---------- 그리기 ---------- */
+  function defs(S) {
+    function lg(id, a, b) { return '<linearGradient id="' + id + '~ID~" gradientUnits="userSpaceOnUse" x1="30" y1="10" x2="70" y2="95"><stop offset="0" stop-color="' + a + '"/><stop offset="1" stop-color="' + b + '"/></linearGradient>'; }
+    return "<defs>" + lg("exg", S.g[0], S.g[1]) + lg("exh", S.g[2], S.g[3]) + "</defs>";
+  }
+  var uid = 0;
+  function stamp(h) { var n = ++uid; return h.replace(/~ID~/g, n); }
   var STY = {
-    M: { tile: "#F1ECEC", fig: "#1A1A1E", eq: "#958A8B", eq2: "#D2C8C9", floor: "#D2C8C9", hl: "#E1141E", cut: "#F1ECEC" },
-    F: { tile: "#FBEAF1", fig: "#D6204F", eq: "#A9909C", eq2: "#E3C9D4", floor: "#E3C9D4", hl: "#1A1A1E", cut: "#FBEAF1" }
+    /* 2026-11-18 몸·자극 부위는 위가 밝고 아래가 짙은 그라데이션(g: [몸 위, 몸 아래, 자극 위, 자극 아래]). ~ID~는 아이콘마다 다른 번호로 바뀜 */
+    M: { tile: "#F1ECEC", fig: "url(#exg~ID~)", eq: "#958A8B", eq2: "#D2C8C9", floor: "#D2C8C9", hl: "url(#exh~ID~)", cut: "#F1ECEC", g: ["#4A4A54", "#111114", "#FF5A52", "#C40D17"] },
+    F: { tile: "#FBEAF1", fig: "url(#exg~ID~)", eq: "#A9909C", eq2: "#E3C9D4", floor: "#E3C9D4", hl: "url(#exh~ID~)", cut: "#FBEAF1", g: ["#F56A8E", "#BF1443", "#4A4A54", "#111114"] }
   };
   function pose(ex, t) {
     var P = {}, k;
@@ -499,14 +506,6 @@
       var s = b.poly ? { poly: b.poly.map(function (k) { return P[k]; }), w: b.w } : { line: b.pts.map(function (k) { return P[k]; }), w: b.w };
       if (b.o) add(s, S.tile, 3.2);   /* 몸통 앞을 지나는 팔다리는 옅은 테두리로 구분 */
       add(s, S.fig);
-      if (b.pts) {   /* 마디마다 둥근 이음새: 아래 마디를 옅은 테두리와 함께 덧그려 관절이 둥글게 나뉘어 보임 */
-        var pp = s.line, arm = /^sh/.test(b.pts[0]) && /^el/.test(b.pts[1] || "");
-        for (var j = arm ? 0 : 1; j < pp.length - 1; j++) {
-          if (b.pts[j + 1] === "toe") continue;
-          var sg = { line: [pp[j], pp[j + 1]], w: b.w };
-          add(sg, S.cut, 2); add(b.pts[j + 2] === "toe" ? { line: [pp[j], pp[j + 1], pp[j + 2]], w: b.w } : sg, S.fig);
-        }
-      }
     });
     if (ex.headO) add({ dot: P.head, r: (ex.headR || 7.2) + 1.7 }, S.tile);
     add({ dot: P.head, r: ex.headR || 7.2 }, S.fig);
@@ -545,7 +544,7 @@
       });
       cache[ck] = h;
     }
-    return '<svg class="' + (opt.cls || "icn") + ' exi" viewBox="0 0 100 100" aria-hidden="true" focusable="false">' + cache[ck] + "</svg>";
+    return '<svg class="' + (opt.cls || "icn") + ' exi" viewBox="0 0 100 100" aria-hidden="true" focusable="false">' + stamp(defs(STY[sex]) + cache[ck]) + "</svg>";
   }
   var noMotion = false;
   try { noMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
@@ -554,6 +553,6 @@
     frame: function (k, t, sex) {   /* 확인용: 특정 순간의 멈춘 그림 */
       var S = STY[sex === "F" ? "F" : "M"], h = '<rect x=".75" y=".75" width="98.5" height="98.5" rx="23" fill="' + S.tile + '"/>';
       shapes(EX[k], S, t).forEach(function (o) { var a = "", d; for (d in o.dyn) a += " " + d + '="' + o.dyn[d] + '"'; h += "<" + o.tag + " " + o.fix + a + "/>"; });
-      return '<svg viewBox="0 0 100 100">' + h + "</svg>";
+      return '<svg viewBox="0 0 100 100">' + stamp(defs(S) + h) + "</svg>";
     } };
 })();
