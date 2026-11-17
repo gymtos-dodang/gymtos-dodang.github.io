@@ -2178,3 +2178,47 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 /* 2026-11-17 7차: 에나멜 핀 스타일 — 숫자 명찰도 금테 에나멜로 */
 .bdg-m { background: #17171C; border: 1.5px solid #E9BD4A; color: #FFE08A; }
 .bdx-i { filter: none; }
+/* 2026-11-17 확대·획득 창 빛 효과(bgAura): 후광 + 가는 빛살 두 겹 + 배지마다 다른 연출 */
+.bgpop-wrap.bxp { background: radial-gradient(120% 80% at 50% 30%, rgba(24, 22, 30, .82), rgba(4, 4, 8, .93)); }
+.bxa { position: absolute; width: 0; height: 0; left: 50%; top: 30%; pointer-events: none; opacity: 0; transition: opacity .7s ease .15s; }
+.bgpop-wrap.in .bxa { opacity: 1; }
+.bgpop-wrap.bxp:not(.dt) .bxa { transition-delay: .9s; }
+.bxa > i, .bxa > svg { position: absolute; display: block; }
+.bxa-halo { left: -230px; top: -230px; width: 460px; height: 460px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, .5) 0%, rgba(var(--bgc), .6) 16%, rgba(var(--bgc), .22) 38%, rgba(var(--bgc), 0) 68%); animation: bxahalo 3.6s ease-in-out infinite; }
+@keyframes bxahalo { 0%, 100% { transform: scale(.94); opacity: .8; } 50% { transform: scale(1.06); opacity: 1; } }
+.bxa-fine { left: -330px; top: -330px; width: 660px; height: 660px; border-radius: 50%; opacity: .55;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 255, 255, 0) 0deg 5.2deg, rgba(var(--bgc), .9) 5.8deg, rgba(255, 255, 255, .95) 6deg, rgba(var(--bgc), .9) 6.2deg, rgba(255, 255, 255, 0) 6.8deg 12deg);
+  -webkit-mask: radial-gradient(circle, transparent 17%, #000 24%, rgba(0, 0, 0, .35) 42%, transparent 64%); mask: radial-gradient(circle, transparent 17%, #000 24%, rgba(0, 0, 0, .35) 42%, transparent 64%);
+  animation: bxaspin 60s linear infinite; }
+.bxa-fine.b { opacity: .35; background: repeating-conic-gradient(from 3deg, rgba(255, 255, 255, 0) 0deg 8.4deg, rgba(255, 236, 170, .95) 9deg, rgba(255, 255, 255, 0) 9.6deg 18deg);
+  -webkit-mask: radial-gradient(circle, transparent 19%, #000 27%, rgba(0, 0, 0, .25) 50%, transparent 70%); mask: radial-gradient(circle, transparent 19%, #000 27%, rgba(0, 0, 0, .25) 50%, transparent 70%);
+  animation: bxaspin 44s linear infinite reverse; }
+@keyframes bxaspin { to { transform: rotate(360deg); } }
+.bxa-sun { left: -300px; top: -300px; width: 600px; height: 600px; border-radius: 50%; opacity: .5;
+  background: repeating-conic-gradient(from 0deg, rgba(var(--bgc), 0) 0deg 9deg, rgba(var(--bgc), .55) 15deg, rgba(255, 244, 200, .7) 18deg, rgba(var(--bgc), .55) 21deg, rgba(var(--bgc), 0) 27deg 36deg);
+  -webkit-mask: radial-gradient(circle, #000 12%, rgba(0, 0, 0, .5) 30%, transparent 58%); mask: radial-gradient(circle, #000 12%, rgba(0, 0, 0, .5) 30%, transparent 58%);
+  animation: bxaspin 30s linear infinite, bxahalo 4s ease-in-out infinite; }
+.bxa-sun { animation: bxaspin 30s linear infinite; }
+.bxa-rip { left: -95px; top: -95px; width: 190px; height: 190px; border-radius: 50%; border: 1.5px solid rgba(var(--bgc), .9); box-shadow: 0 0 14px rgba(var(--bgc), .6), inset 0 0 14px rgba(var(--bgc), .35); opacity: 0; animation: bxarip 3.3s ease-out infinite; }
+@keyframes bxarip { 0% { transform: scale(.75); opacity: 0; } 15% { opacity: .9; } 100% { transform: scale(2.3); opacity: 0; } }
+.bxa-beat { left: -95px; top: -95px; width: 190px; height: 190px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .8); box-shadow: 0 0 18px rgba(var(--bgc), .9); opacity: 0; animation: bxabeat 1.6s ease-out infinite; }
+@keyframes bxabeat { 0% { transform: scale(.85); opacity: 0; } 12% { opacity: .9; } 55%, 100% { transform: scale(1.7); opacity: 0; } }
+.bxa-orb { left: -128px; top: -128px; width: 256px; height: 256px; border-radius: 50%; border: 1px solid rgba(255, 236, 170, .28); animation: bxaspin 7s linear infinite; }
+.bxa-orb.o2 { left: -150px; top: -150px; width: 300px; height: 300px; border-color: rgba(var(--bgc), .3); animation-duration: 11s; animation-direction: reverse; }
+.bxa-orb.o3 { left: -108px; top: -108px; width: 216px; height: 216px; border-color: transparent; animation-duration: 4.6s; }
+.bxa-orb b { position: absolute; left: 50%; top: -5px; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px 3px #FFE9A8, 0 0 22px 8px rgba(var(--bgc), .9); }
+.bxa-orb.o3 b { width: 5px; height: 5px; top: -3px; margin-left: -2.5px; }
+.bxa-beam { left: -260px; top: -150px; width: 520px; height: 300px; overflow: hidden; -webkit-mask: radial-gradient(ellipse, #000 30%, transparent 68%); mask: radial-gradient(ellipse, #000 30%, transparent 68%); }
+.bxa-beam::before { content: ""; position: absolute; top: -60px; left: -40%; width: 26%; height: 420px; transform: rotate(24deg);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .55) 45%, rgba(255, 244, 200, .8) 50%, rgba(255, 255, 255, .55) 55%, rgba(255, 255, 255, 0)); animation: bxabeam 4.2s ease-in-out infinite; }
+@keyframes bxabeam { 0%, 20% { left: -40%; } 70%, 100% { left: 120%; } }
+.bxa-ember { top: 40px; height: auto; aspect-ratio: 1; border-radius: 50%; background: #FFD27A; box-shadow: 0 0 8px 2px #FF8A1F, 0 0 16px 5px rgba(232, 38, 60, .55); opacity: 0; animation: bxaember 3s ease-out infinite; }
+@keyframes bxaember { 0% { transform: translate(0, 0) scale(1); opacity: 0; } 12% { opacity: 1; } 100% { transform: translate(var(--dx, 0), -250px) scale(.3); opacity: 0; } }
+.bxa-bok { top: 110px; height: auto; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .85), rgba(var(--bgc), .55) 55%, rgba(var(--bgc), 0) 72%); opacity: 0; animation: bxabok 5s ease-in-out infinite; }
+@keyframes bxabok { 0% { transform: translateY(0) scale(.7); opacity: 0; } 25% { opacity: .85; } 100% { transform: translateY(-330px) scale(1.15); opacity: 0; } }
+.bxa-star { fill: #FFE9A8; filter: drop-shadow(0 0 5px rgba(255, 233, 168, .95)); opacity: 0; animation: bxastar 2.4s ease-in-out infinite; transform-origin: 50% 50%; }
+@keyframes bxastar { 0%, 100% { transform: scale(.2) rotate(0); opacity: 0; } 50% { transform: scale(1) rotate(45deg); opacity: 1; } }
+.bxp.sp .bxa-halo { background: radial-gradient(circle, rgba(255, 255, 255, .6) 0%, rgba(255, 214, 102, .7) 16%, rgba(255, 190, 60, .28) 40%, rgba(255, 190, 60, 0) 70%); }
+.bxp-card { box-shadow: 0 0 0 1px rgba(var(--bgc), .5), 0 0 70px rgba(var(--bgc), .28), 0 24px 60px rgba(0, 0, 0, .55); }
+@media (prefers-reduced-motion: reduce) { .bxa > i, .bxa > svg { animation: none !important; } .bxa-ember, .bxa-bok, .bxa-rip, .bxa-beat { display: none !important; } .bxa-star { opacity: .8; } }

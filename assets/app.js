@@ -1683,6 +1683,28 @@
       });
     });
   }
+  /* 2026-11-17 장동욱 "확대했을 때 빛 효과 더 고급스럽게, 배지마다 고유 효과": 굵은 줄무늬 빛줄기 대신
+     부드러운 후광 + 가는 빛살 두 겹(서로 반대로 천천히) + 배지 효과(BG_ST 3번째 값)마다 다른 연출
+     flame 불티가 올라감 · twinkle 금빛 별 · spin 궤도를 도는 빛 · pulse 퍼지는 물결 · shine 빛이 스침 · float 떠오르는 빛망울 · beat 두근 물결 · rays 햇살 */
+  function bgAura(b) {
+    var fx = " " + (b.fx || "") + " ", h = '<div class="bxa" aria-hidden="true"><i class="bxa-halo"></i><i class="bxa-fine"></i><i class="bxa-fine b"></i>', i, q;
+    function has(k) { return fx.indexOf(" " + k + " ") >= 0; }
+    function rnd(n) { var x = Math.sin((b.id.length * 7 + n) * 12.9898) * 43758.5453; return x - Math.floor(x); }
+    if (has("rays")) h += '<i class="bxa-sun"></i>';
+    if (has("pulse")) for (i = 0; i < 3; i++) h += '<i class="bxa-rip" style="animation-delay:' + (i * 1.1) + 's"></i>';
+    if (has("beat")) h += '<i class="bxa-beat"></i><i class="bxa-beat" style="animation-delay:.22s"></i>';
+    if (has("spin")) h += '<i class="bxa-orb"><b></b></i><i class="bxa-orb o2"><b></b></i><i class="bxa-orb o3"><b></b></i>';
+    if (has("shine")) h += '<i class="bxa-beam"></i>';
+    if (has("flame")) for (i = 0; i < 14; i++) h += '<i class="bxa-ember" style="left:' + Math.round(rnd(i) * 150 - 75) + 'px;--dx:' + Math.round(rnd(i + 30) * 60 - 30) + 'px;width:' + (3 + Math.round(rnd(i + 60) * 4)) + 'px;animation-delay:' + (rnd(i + 90) * 2.6).toFixed(2) + 's;animation-duration:' + (2.2 + rnd(i + 120) * 1.6).toFixed(2) + 's"></i>';
+    if (has("float")) for (i = 0; i < 9; i++) h += '<i class="bxa-bok" style="left:' + Math.round(rnd(i) * 240 - 120) + 'px;width:' + (10 + Math.round(rnd(i + 20) * 22)) + 'px;animation-delay:' + (rnd(i + 40) * 4).toFixed(2) + 's;animation-duration:' + (4 + rnd(i + 70) * 3).toFixed(2) + 's"></i>';
+    if (has("twinkle")) for (i = 0; i < 10; i++) { q = (i / 10 + rnd(i) * .08) * Math.PI * 2; var rr = 95 + rnd(i + 11) * 70, sz = 10 + Math.round(rnd(i + 22) * 12);
+      h += '<svg class="bxa-star" viewBox="0 0 14 14" style="left:' + Math.round(Math.cos(q) * rr - sz / 2) + 'px;top:' + Math.round(Math.sin(q) * rr - sz / 2) + 'px;width:' + sz + 'px;height:' + sz + 'px;animation-delay:' + (rnd(i + 33) * 2.4).toFixed(2) + 's"><path d="' + BG_SPK + '"/></svg>'; }
+    return h + '</div>';
+  }
+  function bgAuraPos(box) {   /* 후광을 메달 한가운데에 맞춤 */
+    var a = box.querySelector(".bxa"), c = box.querySelector(".bxp-card"); if (!a || !c) return;
+    a.style.left = (c.offsetLeft + c.offsetWidth / 2) + "px"; a.style.top = (c.offsetTop - 42) + "px";
+  }
   function bgDetail(b) {   /* 배지를 누르면 크게 보여 주는 창: 받은 날 · 설명 · 받는 방법 · (아직이면) 진행 막대 */
     var old = document.querySelector(".bgpop-wrap.dt"); if (old && old.parentNode) old.parentNode.removeChild(old);
     var p = b.on ? b.on.split("-") : null, box = document.createElement("div"), pg = "";
@@ -1690,7 +1712,7 @@
       pg = '<div class="bxp-bar"><div><span>지금까지</span><b>' + (b.pre || "") + hv + u2 + ' / ' + (b.pre || "") + b.goal + u2 + '</b></div><i><em style="width:' + (hv / b.goal * 100).toFixed(1) + '%"></em></i></div>'; }
     box.className = "bgpop-wrap bxp dt" + (b.sp && b.on ? " sp" : "") + (b.on ? "" : " off");
     if (b.on && b.col && !b.sp && b.col !== BG_PAL.D) box.style.setProperty("--bgc", bgRgb(b.col[0]));
-    box.innerHTML = (b.on ? '<div class="bxp-rays" aria-hidden="true"></div>' : '') +
+    box.innerHTML = (b.on ? bgAura(b) : '') +
       '<div class="bxp-card" role="dialog" aria-modal="true" aria-labelledby="bxdT"><div class="bxp-medal">' + bgIcon(b) + '</div>' +
       '<small class="bxp-k">' + (b.sp ? '전설 배지' : (BG_CAT.filter(function (c) { return c[0] === b.cat; })[0] || ["", "배지"])[1] + ' 배지') + '</small><h3 id="bxdT">' + esc(b.label) + '</h3>' +
       '<span class="bxd-when' + (b.on ? ' on' : '') + '">' + (p ? (+p[0]) + '년 ' + (+p[1]) + '월 ' + (+p[2]) + '일에 받았어요' : '아직 못 받았어요') + '</span>' +
@@ -1701,7 +1723,8 @@
     requestAnimationFrame(function () { requestAnimationFrame(function () { box.classList.add("in"); }); });
     function close() { box.classList.remove("in"); setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 260); }
     box.querySelector(".bxp-go").addEventListener("click", close);
-    box.addEventListener("click", function (e) { if (e.target === box || e.target.classList.contains("bxp-rays")) close(); });
+    box.addEventListener("click", function (e) { if (e.target === box) close(); });
+    bgAuraPos(box);
   }
   function bgBest(n) {   /* 대표 배지: 받은 것 중 높은 순(전설 → 단계 높은 순 → 최근)으로 n개 — 홈 맨 위 */
     var L; try { L = badgeList().filter(function (b) { return b.on; }); } catch (e) { return []; }
@@ -1734,7 +1757,7 @@
     var nx = bgNext(L), box = document.createElement("div");
     box.className = "bgpop-wrap bxp" + (b.sp ? " sp" : "");
     if (b.col && b.col !== BG_PAL.D) box.style.setProperty("--bgc", bgRgb(b.col[1]));
-    box.innerHTML = '<div class="bxp-rays" aria-hidden="true"></div><div class="bxp-flash" aria-hidden="true"></div><div class="bgpop-conf" aria-hidden="true">' + conf + '</div>' +
+    box.innerHTML = bgAura(b) + '<div class="bxp-flash" aria-hidden="true"></div><div class="bgpop-conf" aria-hidden="true">' + conf + '</div>' +
       '<div class="bxp-card" role="dialog" aria-modal="true" aria-labelledby="bxpT"><div class="bxp-medal">' + bgIcon(b) + '</div>' +
       '<small class="bxp-k">' + (b.sp ? '전설 배지 획득!' : '새 배지 획득!') + '</small><h3 id="bxpT">' + esc(b.label) + '</h3>' +
       '<p>' + esc(b.desc) + (extra > 0 ? '<br><em>외 ' + extra + '개도 함께 받았어요</em>' : '') + '</p>' +
@@ -1742,6 +1765,7 @@
       (nx ? '<small>다음 목표 · <b>' + esc(nx.label) + '</b></small>' : '') + '</div>' +
       '<a class="bxp-go" href="#goal-badges">내 배지 보러 가기</a><button type="button" class="bxp-x">닫기</button></div>';
     document.body.appendChild(box);
+    bgAuraPos(box);
     requestAnimationFrame(function () { requestAnimationFrame(function () { box.classList.add("in"); }); });
     var em = box.querySelector(".bxp-bar em"), nEl = box.querySelector(".bxp-n");
     setTimeout(function () {
