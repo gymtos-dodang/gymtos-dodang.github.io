@@ -2678,7 +2678,7 @@
     if (ROT) {
       rotKeys().forEach(function (k) {
         var d = dayByKey(k);
-        h += '<a class="day-tile' + (k === tk ? " today" : "") + '" href="#routine-' + k + '" role="tab" aria-current="' + (k === sel) + '"><b class="rot"><small>DAY</small>' + k.slice(1) + '</b>' +
+        h += '<a class="day-tile' + (k === tk ? " today" : "") + (ED ? ' rtdk' : '') + '" data-dk="' + k + '" href="#routine-' + k + '" role="tab" aria-current="' + (k === sel) + '"><b class="rot"><small>DAY</small>' + k.slice(1) + '</b>' +
           img(dayIcon(d), "wk-ic", true) + '<span>' + esc(d.part) + '</span></a>';
       });
       if (rotKeys().length < 7) h += '<div class="day-tile rest"><b class="rot"><small>OFF</small>휴</b>' + img("rest", "wk-ic") + '<span>근무표 따라</span></div>';
@@ -2686,7 +2686,7 @@
     ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].forEach(function (k) {
       var d = dayByKey(k), mvs = mvMap()[k];
       var cls = "day-tile" + (!d || d.rest ? " rest" : "") + (k === tk ? " today" : "") + (!ED && mvMissed(k) ? " missed" : "");
-      h += '<a class="' + cls + '" href="#routine-' + k + '" role="tab" aria-current="' + (k === sel) + '"><b>' + DAY_KO[k] + '</b>' +
+      h += '<a class="' + cls + (ED ? ' rtdk' : '') + '" data-dk="' + k + '" href="#routine-' + k + '" role="tab" aria-current="' + (k === sel) + '"><b>' + DAY_KO[k] + '</b>' +
         img(dayIcon(d), "wk-ic", true) + '<span>' +
         esc(d ? d.part : "휴식") + '</span>' + (ED || !mvs ? '' : '<em class="mv-tag' + (mvs === "-" ? ' off' : '') + '">' + (mvs === "-" ? '옮김' : DAY_KO[mvs] + '에서') + '</em>') + '</a>';
     });
@@ -2719,7 +2719,7 @@
           return '<div class="set"><small>' + (j + 1) + '세트</small><b>' + reps + '</b><i>' + kg + '</i></div>';
         }).join("");
         var dn = !!ckD && lgDone(it.name, ckD);
-        return '<div class="ex' + (main ? ' main' : '') + (it.tag === "워밍업" ? ' t-warm' : it.tag === "선행" ? ' t-pre' : '') + (dn ? ' done' : '') + '"' + (ED ? '' : ' data-exi="' + i + '" role="button" tabindex="0" aria-label="' + esc(it.name) + ' 자세히 보기"') + '><div class="ex-top"><span class="ex-ic">' + img(iconOf(it)) + '<span class="ex-no">' + (i + 1) + '</span>' +
+        return '<div class="ex' + (main ? ' main' : '') + (it.tag === "워밍업" ? ' t-warm' : it.tag === "선행" ? ' t-pre' : '') + (dn ? ' done' : '') + (ED ? ' rtdr' : '') + '"' + (ED ? ' data-di="' + i + '"' : ' data-exi="' + i + '" role="button" tabindex="0" aria-label="' + esc(it.name) + ' 자세히 보기"') + '><div class="ex-top"><span class="ex-ic">' + img(iconOf(it)) + '<span class="ex-no">' + (i + 1) + '</span>' +
           (main ? '<span class="main-badge">메인</span>' : '') + '</span><div>' +
           '<h3>' + esc(it.name) + '</h3><div class="meta">' + esc(it.en) + ' ' + tagChip(it.tag) + '</div>' +
           '<div class="tip">' + esc(it.tip) + '</div><div class="sets">' + sets + '</div></div></div>' +
@@ -2952,15 +2952,16 @@
   /* 루틴 탭 위 선생님 띠 */
   function rtTopBar() {
     if (!CAN_EDIT) return "";
-    if (RT_EDIT) return '<div class="rtbar edit"><div><b>✎ 고치는 중</b><span>아래 저장을 눌러야 회원님께 보여요</span></div>' +
-      '<div class="rtbar-b">' + (RT_REC ? '<button type="button" class="rtb" data-rt="reset">처음 루틴으로</button>' : '') +
-      '<button type="button" class="rtb" data-rt="week">요일 정리</button>' +
-      '<button type="button" class="rtb" data-rt="copy">가져오기</button>' +
-      '<button type="button" class="rtb" data-rt="info">제목·계획</button></div></div>';
+    if (RT_EDIT) {   /* 2026-11-17 "글자가 잘리고 간섭" → 두 줄: 위 한 줄 안내, 아래 아이콘 칸 */
+      var tool = function (k, t) { return '<button type="button" class="rtt" data-rt="' + k + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + RT_TIC[k] + '</svg><span>' + t + '</span></button>'; };
+      return '<div class="rtbar2"><div class="rtb2-h"><b>✎ 고치는 중</b><span>카드를 꾹 눌러 끌면 순서·요일이 바뀌어요</span></div><div class="rtb2-t">' +
+        tool("week", "요일 정리") + tool("info", "제목·계획") + tool("copy", "가져오기") + (RT_REC ? tool("reset", "처음으로") : '') + '</div></div>';
+    }
     var st = RT_REC ? '폰에서 고친 루틴 · ' + rtAt(RT_REC) + ' 반영' : RT_STALE ? '새 루틴이 올라와서 예전에 폰에서 고친 것(' + rtAt(RT_STALE) + ')은 꺼졌어요' : '선생님 보기 · 고치면 회원님 노트에 바로 반영';
     return '<div class="rtbar"><div><b>선생님만 보여요</b><span>' + esc(st) + '</span></div>' +
       '<button type="button" class="rtb fill" data-rt="start">✎ 루틴 고치기</button></div>';
   }
+  var RT_TIC = {"reset": "<path d=\"M4 12a8 8 0 1 0 2.4-5.7\"/><path d=\"M4 4v4.5h4.5\"/>", "week": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"15\" rx=\"2.5\"/><path d=\"M3.5 10h17M8 3v4M16 3v4\"/><path d=\"M8.5 15h7M13 13l2.5 2-2.5 2\"/>", "copy": "<rect x=\"8\" y=\"8\" width=\"12\" height=\"12\" rx=\"2.5\"/><path d=\"M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8\"/>", "info": "<path d=\"M5 6h14M5 11h14M5 16h9\"/>"};
   function rtSaveBar() {
     if (!RT_EDIT) return "";
     return '<div class="rtsave"><div class="rtsave-in"><span>' + (RT_EDIT.dirty ? '고친 곳 <b>' + RT_EDIT.dirty + '</b>' : '아직 안 고침') + '</span>' +
@@ -2968,10 +2969,8 @@
       '<button type="button" class="rtb fill" data-rt="save"' + (RT_EDIT.dirty ? '' : ' disabled') + '>저장 · 바로 반영</button></div></div>';
   }
   function rtItemCtl(i, n) {
-    return '<div class="rtctl"><button type="button" data-rt="item" data-i="' + i + '">✎ 고치기</button>' +
-      '<button type="button" data-rt="up" data-i="' + i + '"' + (i ? '' : ' disabled') + ' aria-label="위로">↑</button>' +
-      '<button type="button" data-rt="down" data-i="' + i + '"' + (i < n - 1 ? '' : ' disabled') + ' aria-label="아래로">↓</button>' +
-      '<button type="button" data-rt="more" data-i="' + i + '" aria-label="복제·다른 날로 옮기기">⋯</button>' +
+    return '<span class="rtgrip" aria-hidden="true"><i></i><i></i><i></i></span><div class="rtctl"><button type="button" data-rt="item" data-i="' + i + '">✎ 고치기</button>' +
+      '<button type="button" data-rt="more" data-i="' + i + '" aria-label="복제·다른 날로 옮기기">⋯ 더보기</button>' +
       '<button type="button" class="del" data-rt="del" data-i="' + i + '">삭제</button></div>';
   }
 
@@ -3340,6 +3339,88 @@
     });
   }
 
+  /* ---- 꾹 눌러 끌기 (2026-11-17 장동욱 "종목을 꾹 누르면 끌고 와서 손을 떼면 버튼 안 눌러도 이동")
+     종목 카드(.rtdr) 꾹 0.35초 → 떠오름 → 끌어서 순서 바꾸기 / 위 요일 칸에 놓으면 그날로 옮김
+     요일 칸(.rtdk) 꾹 → 다른 요일 칸에 놓으면 두 날을 서로 바꿈. 떠다니는 복사본은 body에 붙임(.view엔 transform 안 씀) */
+  var RT_DRAG = null, rtDragEnd = 0;
+  function rtListByKey(k) { var L = rtDayList(); return L[ROT ? +k.slice(1) - 1 : ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].indexOf(k)] || null; }
+  function rtDragDown(e) {
+    if (!RT_EDIT || RT_DRAG || (e.button && e.button !== 0) || e.target.closest("button, input, .rtsheet")) return;
+    var el = e.target.closest(".ex.rtdr, .day-tile.rtdk"); if (!el) return;
+    var x0 = e.clientX, y0 = e.clientY, tm, pid = e.pointerId;
+    function off() { clearTimeout(tm); document.removeEventListener("pointermove", mv0); document.removeEventListener("pointerup", off); document.removeEventListener("pointercancel", off); }
+    function mv0(ev) { if (ev.pointerId === pid && Math.abs(ev.clientX - x0) + Math.abs(ev.clientY - y0) > 10) off(); }
+    document.addEventListener("pointermove", mv0); document.addEventListener("pointerup", off); document.addEventListener("pointercancel", off);
+    el.classList.add("rt-press");
+    tm = setTimeout(function () { off(); el.classList.remove("rt-press"); rtDragStart(el, x0, y0, pid); }, 350);
+    setTimeout(function () { el.classList.remove("rt-press"); }, 360);
+  }
+  function rtDragStart(el, x, y, pid) {
+    var r = el.getBoundingClientRect(), fly = el.cloneNode(true), item = el.classList.contains("ex");
+    fly.className += " rt-fly"; fly.removeAttribute("href");
+    fly.style.cssText = "width:" + r.width + "px;height:" + r.height + "px;left:" + r.left + "px;top:" + r.top + "px";
+    document.body.appendChild(fly);
+    el.classList.add("rt-hold");
+    document.documentElement.classList.add("rt-dragging");
+    try { navigator.vibrate && navigator.vibrate(12); } catch (er) {}
+    fly.style.transformOrigin = (x - r.left) + "px " + (y - r.top) + "px";
+    RT_DRAG = { el: el, fly: fly, item: item, dx: x - r.left, dy: y - r.top, x: x, y: y, over: null, raf: 0 };
+    function move(ev) { if (ev.pointerId !== pid) return; RT_DRAG.x = ev.clientX; RT_DRAG.y = ev.clientY; rtDragMove(); }
+    function up(ev) { if (ev.pointerId !== pid) return; document.removeEventListener("pointermove", move); document.removeEventListener("pointerup", up); document.removeEventListener("pointercancel", up); rtDragDrop(ev.type === "pointercancel"); }
+    document.addEventListener("pointermove", move); document.addEventListener("pointerup", up); document.addEventListener("pointercancel", up);
+    (function scroll() {   /* 화면 위·아래 끝에 가면 저절로 스크롤 */
+      if (!RT_DRAG) return;
+      var H = window.innerHeight, v = RT_DRAG.y < 110 ? -(110 - RT_DRAG.y) / 6 : RT_DRAG.y > H - 170 ? (RT_DRAG.y - (H - 170)) / 6 : 0;
+      if (v) { window.scrollBy(0, v); rtDragMove(); }
+      RT_DRAG.raf = requestAnimationFrame(scroll);
+    })();
+  }
+  function rtDragMove() {
+    var D = RT_DRAG; if (!D) return;
+    D.fly.style.left = (D.x - D.dx) + "px"; D.fly.style.top = (D.y - D.dy) + "px";
+    var hit = document.elementFromPoint(D.x, D.y), tile = hit && hit.closest(".day-tile.rtdk");
+    if (tile === D.el || (tile && D.item && tile.getAttribute("data-dk") === view.getAttribute("data-day"))) tile = null;
+    if (D.over !== tile) { if (D.over) D.over.classList.remove("rt-drop"); if (tile) tile.classList.add("rt-drop"); D.over = tile; }
+    D.fly.classList.toggle("to-day", !!tile);
+    if (!D.item || tile) return;
+    var sibs = Array.prototype.filter.call(D.el.parentNode.children, function (c) { return c !== D.el && c.classList.contains("rtdr"); });
+    if (!sibs.length) return;
+    var before = null;
+    for (var i = 0; i < sibs.length; i++) { var rr = sibs[i].getBoundingClientRect(); if (D.y < rr.top + rr.height / 2) { before = sibs[i]; break; } }
+    if (before) { if (D.el.nextElementSibling !== before) D.el.parentNode.insertBefore(D.el, before); }
+    else { var last = sibs[sibs.length - 1]; if (last.nextElementSibling !== D.el) last.parentNode.insertBefore(D.el, last.nextElementSibling); }
+  }
+  function rtDragDrop(cancel) {
+    var D = RT_DRAG; if (!D) return;
+    cancelAnimationFrame(D.raf); RT_DRAG = null; rtDragEnd = Date.now();
+    D.fly.remove(); D.el.classList.remove("rt-hold"); document.documentElement.classList.remove("rt-dragging");
+    if (D.over) D.over.classList.remove("rt-drop");
+    if (cancel) { rerender(); return; }
+    var sk = view.getAttribute("data-day"), src = rtListByKey(sk);
+    if (D.item) {
+      var i = +D.el.getAttribute("data-di"), sd = src && src.d; if (!sd) return;
+      if (D.over) {   /* 다른 요일 칸에 놓음 → 그날로 옮기기 */
+        var tx = rtListByKey(D.over.getAttribute("data-dk")); if (!tx) return;
+        var t = rtDayEnsure(tx), it = sd.items[i];
+        if (t.rest) { delete t.rest; t.part = sd.part; t.en = sd.en; t.items = []; if (t.cardio == null) t.cardio = true; }
+        t.items = t.items || []; t.items.push(it); sd.items.splice(i, 1);
+        rtDirty(); attToast(it.name + " → " + tx.label + "로 옮겼어요");
+        return;
+      }
+      var ord = Array.prototype.map.call(D.el.parentNode.querySelectorAll(".rtdr"), function (c) { return +c.getAttribute("data-di"); });
+      if (ord.every(function (v, k) { return v === k; })) return;
+      var old = sd.items.slice(); sd.items = ord.map(function (k) { return old[k]; });
+      rtDirty();
+      return;
+    }
+    if (!D.over) return;   /* 요일 칸끼리 → 서로 바꾸기 */
+    var A = rtListByKey(D.el.getAttribute("data-dk")), B = rtListByKey(D.over.getAttribute("data-dk"));
+    if (!A || !B || ((!A.d || A.d.rest) && (!B.d || B.d.rest))) return;
+    var a = rtDayEnsure(A), b = rtDayEnsure(B), tmp = rtDayBody(a);
+    rtDayPut(a, rtDayBody(b)); rtDayPut(b, tmp);
+    rtDirty(); attToast(A.label + " ↔ " + B.label + " 바꿨어요");
+  }
+
   /* 제목·계획·KEY POINT·메모·유산소 */
   function rtInfoSheet() {
     var R = M.routine, C = R.cardio;
@@ -3558,6 +3639,17 @@
         d.items.splice(i, 1); rtDirty();
       }
     });
+    document.addEventListener("click", function (e) {   /* 고치는 중 카드 빈 곳을 누르면 고치기 창 */
+      if (!RT_EDIT || rtDragEnd > Date.now() - 400) return;
+      var c = e.target.closest(".ex.rtdr");
+      if (!c || e.target.closest("button, a")) return;
+      rtItemSheet(view.getAttribute("data-day"), +c.getAttribute("data-di"));
+    });
+    document.addEventListener("click", function (e) { if (rtDragEnd > Date.now() - 400 && e.target.closest(".rtdr, .rtdk")) { e.preventDefault(); e.stopPropagation(); } }, true);
+    document.addEventListener("contextmenu", function (e) { if (RT_EDIT && e.target.closest(".rtdr, .rtdk")) e.preventDefault(); });
+    document.addEventListener("dragstart", function (e) { if (RT_EDIT && e.target.closest && e.target.closest(".rtdr, .rtdk")) e.preventDefault(); });
+    document.addEventListener("touchmove", function (e) { if (RT_DRAG) e.preventDefault(); }, { passive: false });
+    document.addEventListener("pointerdown", rtDragDown);
     window.addEventListener("beforeunload", function (e) { if (RT_EDIT && RT_EDIT.dirty) { e.preventDefault(); e.returnValue = ""; } });
   }
 
