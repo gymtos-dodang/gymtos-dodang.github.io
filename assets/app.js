@@ -1292,9 +1292,9 @@
     log1: ["B", "pen", "shine", "circle", 1], logd10: ["T", "clip", "pulse", "diamond", 1], logd30: ["I", "book", "shine", "hex", 2], logd50: ["P", "bookmark", "pulse shine", "oct", 3], logd100: ["D", "shield", "spin twinkle", "shield", 4],
     chk100: ["G", "ccheck", "shine", "scallop", 1], chk300: ["T", "dcheck", "pulse", "circle", 2], chk500: ["B", "list", "shine pulse", "pent", 3], chk1000: ["R", "target", "spin", "star", 4],
     day5: ["O", "layers", "float", "hex", 1], day7: ["G", "mount", "shine", "pent", 2], var15: ["K", "grid", "pulse", "diamond", 2], var30: ["N", "compass", "twinkle shine", "oct", 3], body6: ["G", "body", "beat", "shield", 3], body8: ["Y", "ring8", "rays twinkle", "scallop", 4],
-    lift1: ["T", "kettle", "shine", "circle", 1], lift3: ["B", "bell", "beat", "pent", 2], lift5: ["I", "barbell", "pulse shine", "hex", 3], lift10: ["D", "plate", "spin", "oct", 4],
-    pct30: ["G", "trend", "shine", "diamond", 3], pct50: ["Y", "chev2", "float pulse", "star", 4], lvup: ["P", "up", "float", "shield", 2], lvup4: ["K", "stairs", "shine pulse", "scallop", 3],
-    form3: ["B", "book", "shine", "circle", 1], form5: ["B", "cap", "shine", "pent", 2], form10: ["P", "award", "twinkle pulse", "oct", 3], ib1: ["T", "scale", "pulse", "hex", 1],
+    lf1: ["T", "kettle", "shine", "circle", 1], lf3: ["B", "bell", "beat", "pent", 2], lf5: ["I", "barbell", "pulse shine", "hex", 3], lf10: ["D", "plate", "spin", "oct", 4],
+    pc30: ["G", "trend", "shine", "diamond", 3], pc50: ["Y", "chev2", "float pulse", "star", 4], pw1: ["P", "up", "float", "shield", 2], pw4: ["K", "stairs", "shine pulse", "scallop", 3],
+    fv3: ["B", "book", "shine", "circle", 1], fv5: ["B", "cap", "shine", "pent", 2], fv10: ["P", "award", "twinkle pulse", "oct", 3], ib1: ["T", "scale", "pulse", "hex", 1],
     day30: ["G", "sprout", "float", "circle", 1], day100: ["K", "heart", "beat pulse", "scallop", 2], day200: ["T", "tree", "shine", "pent", 3], day365: ["D", "gem", "spin twinkle rays", "star", 4]
   };
   BG_IC.camera = '<path d="M3.5 8h3.3L8.5 5.5h7L17.2 8h3.3v11.5h-17z"/><circle cx="12" cy="13.3" r="3.7"/><path d="M12 11.8l.5 1 1.1.2-.8.8.2 1.1-1-.5-1 .5.2-1.1-.8-.8 1.1-.2z"/>';
@@ -1333,11 +1333,20 @@
   /* ---- 누적 기록·받은 날 (창고 mw:<주소>:bg) */
   var BGS_LS = "ptnote:" + SLUG + ":bgs", BGS = null, BGS_T = 0;
   try { BGS = JSON.parse(localStorage.getItem(BGS_LS) || "null"); } catch (e) {}
-  function bgsObj() { if (!BGS || typeof BGS !== "object") BGS = { on: {}, m: {}, n: [], at: 0 }; BGS.on = BGS.on || {}; BGS.m = BGS.m || {}; BGS.n = BGS.n || []; return BGS; }
+  /* 2026-11-17 장동욱 "내가 루틴 고치면 업적이 완료돼 — 구조적으로 바꾸자": 배지는 회원님이 한 일로만 받음
+     · 증량·무게% = 회원님이 ✓한 무게(x[종목]=[처음 ✓ kg, 가장 무거운 ✓ kg])끼리 비교 — 루틴 무게를 올려도 회원님이 그 무게로 ✓해야 받음
+     · '루틴 레벨업'·'복습지 개수'(선생님이 올리면 생기던 것) 없앰 → '완벽한 한 주'(출석)·'복습지 열어 보기'(회원님이 연 것)
+     · 선생님 폰(COACH_MODE)에선 창고에 절대 안 올림 · 선생님 '배지 초기화' = 창고 rs(초기화 시각) → 회원 폰이 받으면 받은 배지를 비우고 다시 계산 */
+  function bgsObj() {
+    if (!BGS || typeof BGS !== "object") BGS = { on: {}, m: {}, x: {}, at: 0 };
+    BGS.on = BGS.on || {}; BGS.m = BGS.m || {}; BGS.x = BGS.x || {};
+    if (BGS.n) { BGS.n.forEach(function (k) { if (!BGS.x[k]) BGS.x[k] = [0, 0]; }); delete BGS.n; }
+    return BGS;
+  }
   function bgsSave(push) {
     var o = bgsObj(); o.at = Date.now();
     try { localStorage.setItem(BGS_LS, JSON.stringify(o)); } catch (e) {}
-    if (!push || DEMO || !ATT_API) return;
+    if (!push || DEMO || !ATT_API || COACH_MODE) return;
     clearTimeout(BGS_T);
     BGS_T = setTimeout(function () { rtPost({ a: "kv_set", k: "mw:" + SLUG + ":bg", v: BGS }).catch(function () {}); }, 1500);
   }
@@ -1345,13 +1354,20 @@
     var v = kv && kv["mw:" + SLUG + ":bg"];
     if (!v || typeof v !== "object") { if (BGS && Object.keys(BGS.on || {}).length) bgsSave(true); return; }
     var o = bgsObj(), ch = false, more = false, k;
+    if ((v.rs || 0) > (o.rs || 0)) { o.on = {}; o.rs = v.rs; ch = true; }   /* 선생님이 배지 초기화 */
+    else if ((o.rs || 0) > (v.rs || 0)) more = true;
     for (k in (v.on || {})) if (!o.on[k] || v.on[k] < o.on[k]) { o.on[k] = v.on[k]; ch = true; }
     for (k in o.on) if (!(v.on || {})[k]) more = true;
     for (k in (v.m || {})) {
       var a = v.m[k] || [0, 0], b = o.m[k] || [0, 0];
       if (a[0] > b[0] || a[1] > b[1]) { o.m[k] = [Math.max(a[0], b[0]), Math.max(a[1], b[1])]; ch = true; }
     }
-    (v.n || []).forEach(function (x) { if (o.n.indexOf(x) < 0 && o.n.length < 90) { o.n.push(x); ch = true; } });
+    (v.n || []).forEach(function (x) { if (!o.x[x] && Object.keys(o.x).length < 60) { o.x[x] = [0, 0]; ch = true; } });
+    for (k in (v.x || {})) {
+      var p = v.x[k] || [0, 0], q = o.x[k];
+      if (!q) { if (Object.keys(o.x).length < 60) { o.x[k] = p.slice(); ch = true; } continue; }
+      if ((p[0] > 0 && (!q[0] || p[0] < q[0])) || p[1] > q[1]) { o.x[k] = [p[0] > 0 && (!q[0] || p[0] < q[0]) ? p[0] : q[0], Math.max(p[1], q[1])]; ch = true; }
+    }
     if (ch || more) bgsSave(more);
   }
   function bgSync() {   /* 운동 기록(LG) → 달마다 [기록한 날, ✓ 수]·종목 이름을 누적 (큰 값 유지) */
@@ -1359,10 +1375,17 @@
     Object.keys(L).forEach(function (k) {
       var t = L[k] || []; if (!t.length) return;
       var ym = k.slice(0, 7); mm[ym] = mm[ym] || [0, 0]; mm[ym][0]++; mm[ym][1] += t.length;
-      t.forEach(function (x) { if (x[0] && o.n.indexOf(x[0]) < 0 && o.n.length < 90) { o.n.push(x[0]); ch = true; } });
+      t.forEach(function (x) {   /* 종목 이름·회원님이 ✓한 무게 */
+        var nm = x[0], kg = +x[1] || 0; if (!nm) return;
+        var q = o.x[nm];
+        if (!q) { if (Object.keys(o.x).length >= 60) return; q = o.x[nm] = [0, 0]; ch = true; }
+        var f0 = LG && LG.f && +LG.f[nm] > 0 ? +LG.f[nm] : kg;
+        if (kg > 0 && !q[0]) { q[0] = Math.min(f0 || kg, kg); ch = true; }
+        if (kg > q[1]) { q[1] = kg; ch = true; }
+      });
     });
     for (var ym in mm) { var b = o.m[ym] || [0, 0]; if (mm[ym][0] > b[0] || mm[ym][1] > b[1]) { o.m[ym] = [Math.max(mm[ym][0], b[0]), Math.max(mm[ym][1], b[1])]; ch = true; } }
-    var tot = { days: 0, chk: 0, names: o.n.length };
+    var tot = { days: 0, chk: 0, names: Object.keys(o.x).length };
     for (ym in o.m) { tot.days += o.m[ym][0]; tot.chk += o.m[ym][1]; }
     return { tot: tot, ch: ch };
   }
@@ -1437,27 +1460,36 @@
     add("log", "body8", "올 클리어", "body", 8, q(fullHave >= 8), fullHave, 8, "한 달 근육 지도 8부위에 전부 불이 들어오면 받아요", "8부위 전부! 빠진 곳 없이 온몸을 다 썼어요.");
 
     /* 성장 12 */
-    var nw = grNowW(), bw = grBase(), up = 0, best = 0;
-    Object.keys(nw).forEach(function (k) { if (bw[k] > 0 && nw[k] > bw[k]) { up++; best = Math.max(best, (nw[k] - bw[k]) / bw[k]); } });
-    add("grow", "lift1", "첫 증량", "bell", null, q(up >= 1), up, 1, "처음보다 무게가 오른 종목이 생기면 받아요", "처음보다 무거운 무게를 들었어요. 몸이 답하기 시작했어요!");
-    add("grow", "lift3", "증량 3종목", "bell", 3, q(up >= 3), up, 3, "처음보다 무게가 오른 종목이 3개면 받아요", "3종목 증량! 힘이 붙는 게 느껴지죠?");
-    add("grow", "lift5", "증량 5종목", "bell", 5, q(up >= 5), up, 5, "처음보다 무게가 오른 종목이 5개면 받아요", "5종목이나 무게가 올랐어요. 전체적으로 힘이 붙었어요.");
-    add("grow", "lift10", "증량 10종목", "bell", 10, q(up >= 10), up, 10, "처음보다 무게가 오른 종목이 10개면 받아요", "10종목 증량! 온몸이 강해졌어요.");
+    var up = 0, best = 0;   /* 회원님이 ✓한 무게끼리: 처음 ✓ kg → 가장 무거운 ✓ kg */
+    Object.keys(o.x).forEach(function (k) { var p = o.x[k]; if (p[0] > 0 && p[1] > p[0]) { up++; best = Math.max(best, (p[1] - p[0]) / p[0]); } });
+    add("grow", "lf1", "첫 증량", "bell", null, q(up >= 1), up, 1, "처음 ✓한 무게보다 무겁게 ✓한 종목이 생기면 받아요", "처음보다 무거운 무게를 들었어요. 몸이 답하기 시작했어요!");
+    add("grow", "lf3", "증량 3종목", "bell", 3, q(up >= 3), up, 3, "처음보다 무겁게 ✓한 종목이 3개면 받아요", "3종목 증량! 힘이 붙는 게 느껴지죠?");
+    add("grow", "lf5", "증량 5종목", "bell", 5, q(up >= 5), up, 5, "처음보다 무겁게 ✓한 종목이 5개면 받아요", "5종목이나 무게가 올랐어요. 전체적으로 힘이 붙었어요.");
+    add("grow", "lf10", "증량 10종목", "bell", 10, q(up >= 10), up, 10, "처음보다 무겁게 ✓한 종목이 10개면 받아요", "10종목 증량! 온몸이 강해졌어요.");
     var bp = Math.round(best * 100);
-    add("grow", "pct30", "무게 +30%", "trend", "30%", q(best >= 0.3), bp, 30, "한 종목이라도 처음보다 30% 무거워지면 받아요", "처음보다 30% 무거워진 종목이 생겼어요. 완전 다른 사람!", { unit: "%" });
-    add("grow", "pct50", "무게 +50%", "trend", "50%", q(best >= 0.5), bp, 50, "한 종목이라도 처음보다 50% 무거워지면 받아요", "처음의 1.5배를 들어요. 이건 진짜 성장이에요!", { unit: "%" });
-    var ver = M.routine && parseInt(String(M.routine.version || "").replace(/\D/g, ""), 10) || 0, lvd = "?";
-    var um = M.routine && String(M.routine.updated || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
-    if (um) lvd = um[1] + "-" + pad2(+um[2]) + "-" + pad2(+um[3]);
-    add("grow", "lvup", "루틴 레벨업", "up", "v2", ver >= 2 ? lvd : null, Math.max(1, ver), 2, "선생님이 새 루틴(v2)을 올려 주면 받아요", "새 루틴을 받았어요. 한 단계 올라간 거예요!", { pre: "v" });
-    add("grow", "lvup4", "루틴 v4", "up", "v4", ver >= 4 ? lvd : null, Math.max(1, ver), 4, "루틴이 v4까지 올라가면 받아요", "루틴 v4! 처음과는 차원이 다른 운동을 하고 있어요.", { pre: "v" });
-    var fn = (M.forms || []).length;
-    add("grow", "form5", "자세 5개", "book", 5, q(fn >= 5), fn, 5, "자세 복습지가 5개 쌓이면 받아요", "자세 복습지 5개! 배운 동작이 내 것이 되고 있어요.");
-    add("grow", "form10", "자세 10개", "book", 10, q(fn >= 10), fn, 10, "자세 복습지가 10개 쌓이면 받아요", "자세 복습지 10개! 이제 웬만한 동작은 다 알아요.");
+    add("grow", "pc30", "무게 +30%", "trend", "30%", q(best >= 0.3), bp, 30, "한 종목이라도 처음 ✓한 무게보다 30% 무겁게 ✓하면 받아요", "처음보다 30% 무거워진 종목이 생겼어요. 완전 다른 사람!", { unit: "%" });
+    add("grow", "pc50", "무게 +50%", "trend", "50%", q(best >= 0.5), bp, 50, "한 종목이라도 처음 ✓한 무게보다 50% 무겁게 ✓하면 받아요", "처음의 1.5배를 들어요. 이건 진짜 성장이에요!", { unit: "%" });
+    var pw = [], pwN = 0;   /* 완벽한 한 주: 다 끝난 주(월~일) 중 운동하는 날을 다 출석한 주 */
+    if (st0 && a.length) {
+      var w0 = new Date(st0); w0.setDate(w0.getDate() - ((w0.getDay() + 6) % 7));
+      var nowD = new Date(), wNow = new Date(nowD.getFullYear(), nowD.getMonth(), nowD.getDate()); wNow.setDate(wNow.getDate() - ((wNow.getDay() + 6) % 7));
+      for (var g3 = 0; g3 < 120 && w0 < wNow; g3++) {
+        var w1 = new Date(w0); w1.setDate(w1.getDate() + 6);
+        var rw = attStats(a, w0, w1);
+        if (rw.plan >= 2 && rw.done >= rw.plan) { pwN++; var inW = a.filter(function (k) { return k >= ymd(w0) && k <= ymd(w1); }); pw.push(inW[inW.length - 1] || ymd(w1)); }
+        w0.setDate(w0.getDate() + 7);
+      }
+    }
+    add("grow", "pw1", "완벽한 한 주", "up", null, pw[0] || null, pwN, 1, "한 주 동안 운동하는 날을 하나도 안 빠지면 받아요", "이번 주 계획을 100% 지켰어요. 이게 쌓이면 몸이 바뀌어요!");
+    add("grow", "pw4", "완벽한 4주", "up", 4, pw[3] || null, pwN, 4, "운동하는 날을 다 지킨 주가 4번 쌓이면 받아요", "완벽한 주가 4번! 한 달을 꽉 채운 셈이에요.");
+    var fids = (M.forms || []).map(function (f) { return f.id; }), fo = lsArr(FOPEN_KEY).filter(function (id) { return fids.indexOf(id) >= 0; }).length;
+    if (!COACH_MODE) o.fo = Math.max(o.fo || 0, fo); fo = Math.max(fo, COACH_MODE ? 0 : (o.fo || 0));
+    add("grow", "fv5", "자세 공부 5개", "book", 5, q(fo >= 5), fo, 5, "자세 복습지를 5개 열어 보면 받아요", "복습지 5개를 직접 봤어요. 배운 동작이 내 것이 되고 있어요.");
+    add("grow", "fv10", "자세 공부 10개", "book", 10, q(fo >= 10), fo, 10, "자세 복습지를 10개 열어 보면 받아요", "복습지 10개! 이제 웬만한 동작은 다 알아요.");
     if (IB_ON) {
       var ibs = (ibData || []).map(function (r) { return r.d; }).sort();
       add("grow", "ib1", "첫 인바디", "scale", null, ibs[0] || null, ibs.length, 1, "몸변화 탭에서 인바디를 올리면 받아요", "첫 인바디 기록 완료! 이제 변화를 숫자로 봐요.");
-    } else add("grow", "form3", "자세 3개", "book", 3, q(fn >= 3), fn, 3, "자세 복습지가 3개 쌓이면 받아요", "자세 복습지 3개! 차근차근 배워 가고 있어요.");
+    } else add("grow", "fv3", "자세 공부 3개", "book", 3, q(fo >= 3), fo, 3, "자세 복습지를 3개 열어 보면 받아요", "복습지 3개를 직접 봤어요. 차근차근 배워 가고 있어요.");
     var days = st0 ? Math.floor((new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) - st0) / 86400000) + 1 : 0;
     function dayOn(n) { if (!st0 || days < n) return null; var d = new Date(st0); d.setDate(d.getDate() + n - 1); return ymd(d); }
     add("grow", "day30", "함께 30일", "heart", 30, dayOn(30), Math.max(0, days), 30, "PT 시작하고 30일이 되면 받아요", "첫 한 달 완주! 제일 어려운 구간을 넘었어요.", { unit: "일" });
@@ -1466,7 +1498,10 @@
     if (!bpB) add("grow", "day200", "함께 200일", "heart", 200, dayOn(200), Math.max(0, days), 200, "PT 시작하고 200일이 되면 받아요", "200일째 함께하고 있어요. 운동이 일상이 됐어요.", { unit: "일" });
     add("grow", "day365", "함께 1년", "heart", 365, dayOn(365), Math.max(0, days), 365, "PT 시작하고 1년이 되면 받아요", "1년 완주. 처음의 나와는 완전히 다른 사람이에요!", { unit: "일" });
 
-    if (bpB) L.push(bpB);   /* 바프 회원은 '함께 200일' 자리에 전설 배지 '바프 완료' (성장 칸 맨 끝) */
+    if (bpB) L.push(bpB);
+    var ids = {}; L.forEach(function (b) { ids[b.id] = 1; });
+    for (var ok in o.on) if (!ids[ok] && ok !== "bpdone") { delete o.on[ok]; S.ch = true; }   /* 없어진 배지(루틴 레벨업 등) 기록 지우기 */
+    /* 바프 회원은 '함께 200일' 자리에 전설 배지 '바프 완료' (성장 칸 맨 끝) */
     /* 받은 날 정리: 기록된 날짜가 있으면 그게 우선(먼저 받은 날), 날짜를 모르면("?") 오늘 · 한 번 받은 건 계속 받은 상태 */
     var ch = S.ch;
     L.forEach(function (b) {
@@ -1608,7 +1643,8 @@
     });
     return '<section id="badges" data-num="' + num + '">' + head(num, "나의 배지", "꾸준함이 쌓이는 곳", '<span class="more bg-cnt"><b>' + got + '</b> / ' + L.length + '</span>') +
       '<div class="panel bgx"><i class="bgx-bar" aria-label="모은 배지 ' + got + '개 / ' + L.length + '개"><em style="width:' + (got / L.length * 100).toFixed(1) + '%"></em></i>' + top +
-      '<div class="bgx-tabs" role="tablist">' + tabs + '</div>' + grids + '</div></section>';
+      '<div class="bgx-tabs" role="tablist">' + tabs + '</div>' + grids +
+      (COACH_MODE && !DEMO ? '<button type="button" class="bgx-reset">선생님만 보여요 · 이 회원님 배지 초기화</button>' : '') + '</div></section>';
   }
   function setupBadges() {
     var sec = document.getElementById("badges"); if (!sec) return;
@@ -1618,6 +1654,18 @@
         if (!b) return;
         bgDetail(b);
       });
+    });
+    var rsb = sec.querySelector(".bgx-reset");
+    if (rsb) rsb.addEventListener("click", function () {   /* 선생님: 배지 초기화 — 받은 배지를 비우고, 회원님 폰이 다음에 열 때 회원님이 한 일로 다시 계산 */
+      if (!rsb.classList.contains("sure")) { rsb.classList.add("sure"); rsb.textContent = "한 번 더 누르면 받은 배지가 전부 지워져요"; setTimeout(function () { rsb.classList.remove("sure"); rsb.textContent = "선생님만 보여요 · 이 회원님 배지 초기화"; }, 3000); return; }
+      var o = bgsObj(), t = Date.now();
+      o.on = {}; o.rs = t; o.at = t;
+      try { localStorage.setItem(BGS_LS, JSON.stringify(o)); } catch (e) {}
+      rsb.disabled = true; rsb.textContent = "초기화하는 중…";
+      rtPost({ a: "kv_set", k: "mw:" + SLUG + ":bg", v: { on: {}, m: o.m, x: o.x, fo: o.fo || 0, rs: t, at: t } }).then(function (j) {
+        if (j && j.ok === false) throw new Error(j.error || "fail");
+        attToast("배지를 초기화했어요 · 회원님이 한 일로 다시 계산돼요"); rerender();
+      }).catch(function () { rsb.disabled = false; rsb.classList.remove("sure"); rsb.textContent = "실패했어요 · 다시 누르기"; });
     });
     var spb = sec.querySelector(".bgx-sp");
     if (spb) spb.addEventListener("click", function () {
