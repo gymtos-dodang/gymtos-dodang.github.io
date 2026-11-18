@@ -3081,13 +3081,19 @@
     if (f.u) { var cnt = Math.max(f.u[3], Math.min(f.u[2], Math.round(g / f.u[0] / f.u[3]) * f.u[3])); return { g: cnt * f.u[0], t: (cnt % 1 ? cnt.toFixed(1) : cnt) + f.u[1] }; }
     var r = f.r || 10; g = Math.max(f.r ? r : 20, Math.round(g / r) * r); return { g: g, t: g + "g" };
   }
-  function dbMeal(R, i) {   /* i번째 끼니에서 고른 음식과 양 */
-    var pk = dbGet().p[i] || [], cf = dbFind(DB_C, pk[0]), pf = dbFind(DB_P, pk[1]), ff = dbFind(DB_F, pk[2]), o = { c: 0, p: 0, f: 0, k: 0 };
-    if (cf) { o.cf = cf; o.ca = dbAmt(cf, R.C / R.n, "c"); }
-    if (pf) { o.pf = pf; o.pa = dbAmt(pf, R.P / R.n - (cf ? cf.p * o.ca.g / 100 : R.C / R.n * .08), "p"); }
-    o.fn = R.F / R.n - (cf ? cf.f * o.ca.g / 100 : 1) - (pf ? pf.f * o.pa.g / 100 : 5);   /* 탄수·단백질 음식에 든 지방을 빼고 남은 지방 */
-    if (ff) { o.ff = ff; o.fa = dbAmt(ff, o.fn, "f"); }
-    [[cf, o.ca], [pf, o.pa], [ff, o.fa]].forEach(function (x) { if (x[0]) { var m = x[1].g / 100; o.c += x[0].c * m; o.p += x[0].p * m; o.f += x[0].f * m; o.k += x[0].k * m; } });
+  function dbIds(pk, idx) { var v = (pk || [])[idx]; return (Array.isArray(v) ? v : v ? [v] : []).slice(0, 2); }   /* 한 칸에 담은 음식 id들(예전 저장은 글자 하나) */
+  function dbMeal(R, i) {   /* i번째 끼니에서 고른 음식과 양 — 한 칸에 두 가지를 담으면 필요한 양을 반반으로 나눔(2026-11-19 "한 끼에 탄수를 두 가지") */
+    var pk = dbGet().p[i] || [], o = { c: 0, p: 0, f: 0, k: 0, cs: [], ps: [], fs: [] };
+    function fill(L, idx, need, key, out) {
+      var fs = dbIds(pk, idx).map(function (id) { return dbFind(L, id); }).filter(Boolean);
+      fs.forEach(function (f) { var a = dbAmt(f, need / fs.length, key), m = a.g / 100; out.push({ f: f, a: a }); o.c += f.c * m; o.p += f.p * m; o.f += f.f * m; o.k += f.k * m; });
+      return fs.length;
+    }
+    var nc = fill(DB_C, 0, R.C / R.n, "c", o.cs);
+    o.pn = R.P / R.n - (nc ? o.p : R.C / R.n * .08);                 /* 탄수 음식에 든 단백질을 뺀 나머지 */
+    var f0 = o.f, np = fill(DB_P, 1, o.pn, "p", o.ps);
+    o.fn = R.F / R.n - (nc ? f0 : 1) - (np ? o.f - f0 : 5);          /* 탄수·단백질 음식에 든 지방을 뺀 나머지 */
+    fill(DB_F, 2, o.fn, "f", o.fs);
     return o;
   }
   function dbIcon(id) { return '<img src="' + BASE + 'food/' + id + '.png" alt="" loading="lazy">'; }
@@ -3097,7 +3103,7 @@
     var d = dbGet(), R = dbCalc(), b = dbBody(), h = '<section class="db">' + head("", "내 식단 짜기", "목적을 고르면 내 몸에 맞는 양을 계산해 줘요");
     h += '<div class="panel db-set"><small class="db-l">목적</small><div class="db-seg">' + ["cut", "keep", "bulk"].map(function (g) {
       return '<button type="button" class="' + (d.g === g ? "on" : "") + '" data-db="g:' + g + '"><b>' + DB_GOAL[g].n + '</b><i>' + DB_GOAL[g].d + '</i></button>'; }).join("") + '</div>';
-    h += '<small class="db-l">내 몸</small>';
+    h += '<small class="db-l db-lr">내 몸' + (b || d.h || d.w ? '<button type="button" class="db-reset" data-db="reset:1">내 몸 초기화</button>' : '') + '</small>';
     if (b && b.src) h += '<div class="db-body"><span class="db-chip">인바디 ' + esc(b.src.slice(5).replace("-", "/")) + ' 기준</span><label class="db-hl">키<input type="number" inputmode="decimal" class="db-in db-h" value="' + (d.h || "") + '" placeholder="cm"></label><b><small>체중</small> ' + b.w + '<i>kg</i></b>' + (b.pbf ? '<b><small>체지방</small> ' + (Math.round(b.pbf * 10) / 10) + '<i>%</i></b>' : '') +
       '<button type="button" class="db-link" data-db="manual:1">직접 입력</button></div>';
     else h += '<div class="db-body in"><label>키<input type="number" inputmode="decimal" class="db-in" data-k="h" value="' + (d.h || "") + '" placeholder="cm"></label><label>체중<input type="number" inputmode="decimal" class="db-in" data-k="w" value="' + (d.w || "") + '" placeholder="kg"></label><label>체지방률<input type="number" inputmode="decimal" class="db-in" data-k="pbf" value="' + (d.pbf || "") + '" placeholder="%"></label>' +
@@ -3113,8 +3119,9 @@
     for (var i = 0; i < R.n; i++) {
       var m = dbMeal(R, i); T.c += m.c; T.p += m.p; T.f += m.f; T.k += m.k;
       meals += '<div class="db-meal"><div class="db-mh"><b>' + (i + 1) + '끼</b><span>' + (m.k ? Math.round(m.k) + ' kcal' : '탄수 ' + Math.round(R.C / R.n) + 'g · 단백질 ' + Math.round(R.P / R.n) + 'g · 지방 ' + Math.round(R.F / R.n) + 'g') + '</span></div><div class="db-slots s3">' +
-        [["c", m.cf, m.ca, "탄수화물"], ["p", m.pf, m.pa, "단백질"], ["f", m.ff, m.fa, "지방"]].map(function (x) {
-          return '<button type="button" class="db-slot' + (x[1] ? " on" : "") + '" data-db="pick:' + i + ':' + x[0] + '">' + (x[1] ? dbIcon(x[1].id) + '<b>' + esc(x[1].n) + '</b><em>' + x[2].t + '</em>' : '<span class="db-plus">＋</span><b>' + x[3] + '</b><small>고르기</small>') + '</button>';
+        [["c", m.cs, "탄수화물"], ["p", m.ps, "단백질"], ["f", m.fs, "지방"]].map(function (x) {
+          return '<button type="button" class="db-slot' + (x[1].length ? " on" : "") + (x[1].length > 1 ? " two" : "") + '" data-db="pick:' + i + ':' + x[0] + '">' + (x[1].length ? x[1].map(function (q) { return '<span class="db-it">' + dbIcon(q.f.id) + '<b>' + esc(q.f.n) + '</b><em>' + q.a.t + '</em></span>'; }).join("") +
+            '<span class="db-x" role="button" aria-label="' + x[2] + ' 빼기" data-db="rm:' + i + ':' + x[0] + '">×</span>' : '<span class="db-plus">＋</span><b>' + x[2] + '</b><small>고르기</small>') + '</button>';
         }).join("") + '</div></div>';
     }
     function bar(l, v, t, u) { var pc = Math.min(100, Math.round(v / t * 100)); return '<div class="db-bar"><span>' + l + '</span><div class="db-track"><i style="width:' + pc + '%"' + (v > t * 1.08 ? ' class="over"' : '') + '></i></div><b>' + Math.round(v) + '<i>/' + t + u + '</i></b></div>'; }
@@ -3128,25 +3135,34 @@
       (d.p.length ? '<button type="button" class="db-link" data-db="clear:1">담은 것 비우기</button>' : '') + '</div>';
     return h + '</section>';
   }
-  function dbPick(i, kind) {
-    var R = dbCalc(); if (!R) return; var d = dbGet(), idx = kind === "c" ? 0 : kind === "p" ? 1 : 2, L = [DB_C, DB_P, DB_F][idx], cur = (d.p[i] || [])[idx];
-    var cf = dbFind(DB_C, (d.p[i] || [])[0]), cAmt = cf ? dbAmt(cf, R.C / R.n, "c") : null, fn = dbMeal(R, i).fn, much = 0;
-    var cards = L.map(function (f) {
-      var a = kind === "c" ? dbAmt(f, R.C / R.n, "c") : kind === "p" ? dbAmt(f, R.P / R.n - (cf ? cf.p * cAmt.g / 100 : R.C / R.n * .08), "p") : dbAmt(f, fn, "f"), hn = dbHint(f, a);
-      if (hn.much) much = 1;
-      return '<button type="button" class="db-food' + (cur === f.id ? " on" : "") + (hn.much ? " much" : "") + '" data-f="' + f.id + '">' + dbIcon(f.id) + '<b>' + esc(f.n) + '</b><em>' + a.t + '</em><small>' + Math.round(f.k * a.g / 100) + ' kcal' + (hn.t ? ' · ' + hn.t : '') + '</small>' + (hn.much ? '<i class="db-much">한 끼엔 많아요</i>' : '') + '</button>';
-    }).join("");
-    var body = '<p class="rts-note">' + (i + 1) + '끼에 먹을 양이에요 · 하나를 골라 주세요</p>' +
-      (kind === "f" ? '<p class="db-tip">' + (fn < 3 ? '이 끼니는 고른 음식에 지방이 충분해요 · 안 담아도 돼요' : '탄수·단백질 음식에 든 지방을 빼고 남은 ' + Math.round(fn) + 'g 기준이에요 · 먼저 탄수·단백질을 고르면 더 정확해요') + '</p>' : '') +
-      '<div class="db-foods">' + cards + '</div>' + (much ? '<p class="db-tip">"한 끼엔 많아요" 음식은 다 먹기 힘든 양이에요 · 다른 음식을 고르거나 끼니 수를 늘려 보세요</p>' : '') +
-      (cur ? '<button type="button" class="db-link" data-f="">이 칸 비우기</button>' : '') +
+  function dbPick(i, kind) {   /* 음식 고르기 창 — 눌러서 담고, 다시 누르면 빠짐. 두 가지까지(반반) */
+    var R = dbCalc(); if (!R) return; var d = dbGet(), idx = kind === "c" ? 0 : kind === "p" ? 1 : 2, L = [DB_C, DB_P, DB_F][idx], KN = ["탄수화물", "단백질", "지방"][idx];
+    var sel = dbIds(d.p[i], idx), M0 = dbMeal(R, i), need = kind === "c" ? R.C / R.n : kind === "p" ? M0.pn : M0.fn, key = kind;
+    function cards() {
+      var much = 0, h = L.map(function (f) {
+        var on = sel.indexOf(f.id) >= 0, a = dbAmt(f, need / (on ? sel.length : sel.length ? 2 : 1), key), hn = dbHint(f, a);
+        if (hn.much) much = 1;
+        return '<button type="button" class="db-food' + (on ? " on" : "") + (hn.much ? " much" : "") + '" data-f="' + f.id + '">' + (on ? '<i class="db-ck">✓</i>' : '') + dbIcon(f.id) + '<b>' + esc(f.n) + '</b><em>' + a.t + '</em><small>' + Math.round(f.k * a.g / 100) + ' kcal' + (hn.t ? ' · ' + hn.t : '') + '</small>' + (hn.much ? '<i class="db-much">한 끼엔 많아요</i>' : '') + '</button>';
+      }).join("");
+      return '<div class="db-foods">' + h + '</div>' + (much ? '<p class="db-tip">"한 끼엔 많아요" 음식은 다 먹기 힘든 양이에요 · 두 가지를 섞거나 끼니 수를 늘려 보세요</p>' : '');
+    }
+    function state() { return '<b>' + (sel.length ? sel.map(function (id) { return esc(dbFind(L, id).n); }).join(" + ") + (sel.length > 1 ? ' · 반반' : '') : '아직 안 담았어요') + '</b>' + (sel.length ? '<button type="button" class="db-out" data-out="1">전부 빼기</button>' : ''); }
+    var body = '<p class="rts-note">' + (i + 1) + '끼 ' + KN + ' · 눌러서 담고, 다시 누르면 빠져요</p><p class="db-tip">두 가지까지 담을 수 있어요 · 두 가지면 양을 반반으로 나눠 계산해요</p>' +
+      (kind === "f" ? '<p class="db-tip">' + (need < 3 ? '이 끼니는 고른 음식에 지방이 충분해요 · 안 담아도 돼요' : '탄수·단백질 음식에 든 지방을 빼고 남은 ' + Math.round(need) + 'g 기준이에요 · 먼저 탄수·단백질을 고르면 더 정확해요') + '</p>' : '') +
+      '<div class="db-cards">' + cards() + '</div><div class="db-state">' + state() + '</div>' +
       (R.n > 1 ? '<label class="db-all"><input type="checkbox" class="db-allc"> 모든 끼니에 똑같이 담기</label>' : '');
-    var sh = rtSheet((i + 1) + "끼 " + (kind === "c" ? "탄수화물" : kind === "p" ? "단백질" : "지방"), body, function () {}, false);
+    var sh = rtSheet((i + 1) + "끼 " + KN, body, function () {
+      var all = sh.querySelector(".db-allc");
+      for (var j = 0; j < R.n; j++) if (j === i || (all && all.checked)) { d.p[j] = d.p[j] || [null, null, null]; d.p[j][idx] = sel.length ? sel.slice() : null; }
+      setTimeout(dbSave, 0);
+    }, "담기");
     sh.addEventListener("click", function (e) {
-      var t = e.target.closest("[data-f]"); if (!t) return;
-      var id = t.getAttribute("data-f"), all = sh.querySelector(".db-allc");
-      for (var j = 0; j < R.n; j++) if (j === i || (all && all.checked)) { d.p[j] = d.p[j] || [null, null, null]; d.p[j][idx] = id || null; }
-      sh.querySelector("[data-close]").click(); dbSave();
+      var o = e.target.closest("[data-out]"), t = e.target.closest("[data-f]"); if (!o && !t) return;
+      if (o) sel = [];
+      else { var id = t.getAttribute("data-f"), k = sel.indexOf(id);
+        if (k >= 0) sel.splice(k, 1); else if (sel.length >= 2) { attToast("두 가지까지 담을 수 있어요 · 담은 음식을 눌러 먼저 빼 주세요"); return; } else sel.push(id); }
+      var sc = sh.querySelector(".rts-body"), y = sc ? sc.scrollTop : 0;
+      sh.querySelector(".db-cards").innerHTML = cards(); sh.querySelector(".db-state").innerHTML = state(); if (sc) sc.scrollTop = y;
     });
   }
   document.addEventListener("click", function (e) {
@@ -3159,6 +3175,11 @@
       var hh = parseFloat(box.querySelector('[data-k="h"]').value);
       if (!(w >= 30 && w <= 250)) { attToast("체중을 kg으로 적어 주세요"); return; } d.w = w; d.h = hh >= 120 && hh <= 220 ? hh : null; d.pbf = f >= 3 && f <= 60 ? f : null; }
     else if (a[0] === "pick") { dbPick(+a[1], a[2]); return; }
+    else if (a[0] === "rm") { if (d.p[+a[1]]) d.p[+a[1]][a[2] === "c" ? 0 : a[2] === "p" ? 1 : 2] = null; attToast("음식을 뺐어요"); }
+    else if (a[0] === "reset") {   /* 한 번 더 눌러야 초기화 (2026-11-19) */
+      if (!t.classList.contains("sure")) { t.classList.add("sure"); t.textContent = "한 번 더 누르면 초기화돼요"; setTimeout(function () { if (t.isConnected) { t.classList.remove("sure"); t.textContent = "내 몸 초기화"; } }, 4000); return; }
+      d.w = d.h = d.pbf = null; d.manual = 1; attToast("내 몸 숫자를 지웠어요");
+    }
     else if (a[0] === "ib") { d.manual = 0; try { localStorage.setItem(DB_LS, JSON.stringify(d)); } catch (e2) {} ibSheetOpen(); return; }
     else if (a[0] === "tab") { DB_TAB = a[1]; rerender(); return; }
     else return;

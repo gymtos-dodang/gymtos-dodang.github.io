@@ -2372,6 +2372,24 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .db-food small { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .db-food.much em { color: var(--sub); } .db-much { font-style: normal; font-size: 10px; font-weight: 800; color: #E1141E; }
 
+/* 2026-11-19 식단 짜기 2: 내 몸 초기화(두 번 눌러 확인)·칸 × 빼기·두 가지 반반·고르기 창 ✓ */
+.db-lr { display: flex; align-items: center; justify-content: space-between; }
+.db-reset { border: 0; background: none; font: inherit; font-size: 11.5px; font-weight: 800; color: var(--sub); padding: 3px 8px; border-radius: 99px; box-shadow: 0 0 0 1px var(--line); cursor: pointer; }
+.db-reset.sure { color: #fff; background: #E1141E; box-shadow: none; }
+.db-slot { position: relative; }
+.db-it { display: flex; flex-direction: column; align-items: center; gap: 1px; max-width: 100%; min-width: 0; }
+.db-it b { max-width: 100%; }
+.db-slot.two { gap: 6px; padding-top: 10px; } .db-slot.two img { width: 36px; height: 36px; } .db-slots.s3 .db-slot.two b { font-size: 11.5px; } .db-slots.s3 .db-slot.two em { font-size: 12.5px; }
+.db-slot.two .db-it + .db-it { border-top: 1px dashed var(--line); padding-top: 6px; width: 86%; }
+.db-x { position: absolute; top: 3px; right: 3px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 16px; font-weight: 800; line-height: 1; color: var(--sub); background: #fff; box-shadow: 0 0 0 1px var(--line); }
+.db-food { position: relative; }
+.db-ck { position: absolute; top: 5px; right: 5px; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 12px; font-weight: 900; color: #fff; background: var(--primary); }
+.db-state { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 4px 0 2px; padding: 9px 12px; border-radius: 12px; background: var(--tint); font-size: 13px; min-width: 0; }
+.db-state b { font-weight: 800; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.db-out { flex: none; border: 0; font: inherit; font-size: 12px; font-weight: 800; color: #E1141E; background: #fff; border-radius: 99px; padding: 5px 10px; box-shadow: 0 0 0 1px var(--line); cursor: pointer; }
+
+.rtsheet .db-all { flex-direction: row; justify-content: flex-start; text-align: left; } .rtsheet .db-all input { width: 18px; height: 18px; flex: none; margin: 0; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -2562,6 +2580,9 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .db-meal { background: var(--paper); }
 :where(html:not([data-theme="light"])) .db-track i { background: var(--seal); }
 :where(html:not([data-theme="light"])) .db-food { background: var(--paper); }
+:where(html:not([data-theme="light"])) .db-x { background: var(--paper); }
+:where(html:not([data-theme="light"])) .db-ck { background: var(--seal); }
+:where(html:not([data-theme="light"])) .db-out { background: var(--paper); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -2846,6 +2867,9 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .db-meal { background: var(--paper); }
 :where(html[data-theme="dark"]) .db-track i { background: var(--seal); }
 :where(html[data-theme="dark"]) .db-food { background: var(--paper); }
+:where(html[data-theme="dark"]) .db-x { background: var(--paper); }
+:where(html[data-theme="dark"]) .db-ck { background: var(--seal); }
+:where(html[data-theme="dark"]) .db-out { background: var(--paper); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {
