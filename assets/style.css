@@ -2270,13 +2270,16 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .pet .pzz i { position: absolute; font-style: normal; opacity: 0; animation: petZz 3s ease-in-out infinite; }
 .pet .pzz i:nth-child(1) { font-size: 9px; } .pet .pzz i:nth-child(2) { font-size: 11px; animation-delay: 1s; } .pet .pzz i:nth-child(3) { font-size: 14px; animation-delay: 2s; }
 @keyframes petZz { 0% { opacity: 0; transform: translate(0, 6px) scale(.6); } 25% { opacity: 1; } 100% { opacity: 0; transform: translate(14px, -22px) scale(1.15); } }
-.pet.sleep .b-eyes, .pet.sleep .p-eyes { display: none; } .pet.sleep .b-happy, .pet.sleep .p-happy { display: inline; }
+.b-sleep, .b-slit, .p-sleep, .p-slit { display: none; }
+.pet.sleep .b-eyes, .pet.sleep .p-eyes, .pet.sleep .b-happy, .pet.sleep .p-happy, .pet.sleep .b-slit, .pet.sleep .p-slit { display: none; }
+.pet.sleep .b-sleep, .pet.sleep .p-sleep { display: inline; }
+.frs-grumpy .b-mouth { display: none; }
 .petwalk .pet.sleep svg { animation: petSleep 3.4s ease-in-out infinite; transform-origin: 50% 100%; }
 .pet.sleep .b-ears { transform: rotate(14deg); transform-box: fill-box; transform-origin: 50% 100%; transition: transform .6s; }
 .petwalk .pet.sleep.wake svg { animation: petWake .5s ease 2; }
 @keyframes petSleep { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.035, .955); } }
 @keyframes petWake { 50% { transform: translateY(-5px) rotate(-5deg); } }
-.frs-c-gray .p-eyes { display: none; } .frs-c-gray .p-happy { display: inline; }
+.frs-c-gray .p-eyes { display: none; } .frs-c-gray .p-slit { display: inline; }
 @media (prefers-reduced-motion: reduce) { .pet .pzz i, .petwalk .pet.sleep svg { animation: none; } .pet .pzz i { opacity: .8; } }
 
 /* 2026-11-18 토롱이 친구들 (app.js FR·petSpawn·frDex·frFound) — 근육이·졸졸이·번개·냠냠이·수줍이·까칠이 */
@@ -2305,7 +2308,7 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .frd b { display: block; font-size: 13.5px; font-weight: 900; } .frd small { display: block; font-size: 10.5px; color: var(--sub, #6B6B76); line-height: 1.35; margin-top: 2px; }
 .frd.unk .frd-pic svg { filter: brightness(0); opacity: .16; } .frd.unk b { color: #A0A0AA; }
 @media (prefers-reduced-motion: reduce) { .pet .acc, .pet .zz, .frpop, .frpop-pic svg { animation: none !important; } }
-.frs-sleepy .b-eyes { display: none; } .frs-sleepy .b-happy { display: inline; }
+.frs-sleepy .b-eyes { display: none; } .frs-sleepy .b-slit { display: inline; }
 .fr-sleepy.sit .z2 { animation-delay: .8s; }
 
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
