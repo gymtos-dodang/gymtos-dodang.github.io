@@ -1094,7 +1094,7 @@
   }
   function ibRefresh() {
     var b = document.querySelector(".ibpanel"); if (b) { b.outerHTML = ibPanel(); setupIb(); }
-    if (document.querySelector(".db-set") && !DB_IBDRAWN && ibData && ibData.length) { DB_IBDRAWN = 1; rerender(); }   /* 식단 짜기: 인바디가 도착하면 한 번 다시 계산 */
+    if (document.querySelector(".db-set") && dbIbSig() !== DB_IBDRAWN) { DB_IBDRAWN = dbIbSig(); rerender(); }   /* 식단 짜기: 인바디가 도착하면 한 번 다시 계산 */
     var tr = document.querySelector(".ibtrend"); if (tr) tr.outerHTML = ibTrend();
     var s = document.querySelector(".ibstrip, .ibstrip-slot");
     if (s) { var h = ibHomeStrip(); s.outerHTML = h || '<span class="ibstrip-slot"></span>'; }
@@ -3044,6 +3044,7 @@
     DB = v; try { localStorage.setItem(DB_LS, JSON.stringify(v)); } catch (e) {}
     if (/^#diet/.test(location.hash)) rerender();
   }
+  function dbIbSig() { return ibData && ibData.length ? JSON.stringify(ibData[ibData.length - 1]) : ""; }   /* 인바디가 새로 올라오거나 지워지면 식단도 다시 계산 */
   function dbBody() {   /* 가장 최근 인바디 → 없으면 직접 넣은 값 */
     var d = dbGet(), p = IB_ON && !d.manual ? ibPair() : null, c = p && p.cur;
     if (c && c.w) return { w: c.w, pbf: c.pbf != null ? c.pbf : (c.bfm != null ? c.bfm / c.w * 100 : null), smm: c.smm, src: c.d };
@@ -3072,7 +3073,7 @@
   function dbIcon(id) { return '<img src="' + BASE + 'food/' + id + '.png" alt="" loading="lazy">'; }
   function dbBuilder() {
     if (IB_ON && !ibData && !DB_IBSYNC) { DB_IBSYNC = 1; try { ibData = JSON.parse(localStorage.getItem(IB_KEY) || "null"); } catch (e) {} ibSync(); }
-    if (ibData && ibData.length) DB_IBDRAWN = 1;
+    DB_IBDRAWN = dbIbSig();
     var d = dbGet(), R = dbCalc(), b = dbBody(), h = '<section class="db">' + head("", "내 식단 짜기", "목적을 고르면 내 몸에 맞는 양을 계산해 줘요");
     h += '<div class="panel db-set"><small class="db-l">목적</small><div class="db-seg">' + ["cut", "keep", "bulk"].map(function (g) {
       return '<button type="button" class="' + (d.g === g ? "on" : "") + '" data-db="g:' + g + '"><b>' + DB_GOAL[g].n + '</b><i>' + DB_GOAL[g].d + '</i></button>'; }).join("") + '</div>';
@@ -3080,9 +3081,11 @@
     if (b && b.src) h += '<div class="db-body"><span class="db-chip">인바디 ' + esc(b.src.slice(5).replace("-", "/")) + ' 기준</span><label class="db-hl">키<input type="number" inputmode="decimal" class="db-in db-h" value="' + (d.h || "") + '" placeholder="cm"></label><b><small>체중</small> ' + b.w + '<i>kg</i></b>' + (b.pbf ? '<b><small>체지방</small> ' + (Math.round(b.pbf * 10) / 10) + '<i>%</i></b>' : '') +
       '<button type="button" class="db-link" data-db="manual:1">직접 입력</button></div>';
     else h += '<div class="db-body in"><label>키<input type="number" inputmode="decimal" class="db-in" data-k="h" value="' + (d.h || "") + '" placeholder="cm"></label><label>체중<input type="number" inputmode="decimal" class="db-in" data-k="w" value="' + (d.w || "") + '" placeholder="kg"></label><label>체지방률<input type="number" inputmode="decimal" class="db-in" data-k="pbf" value="' + (d.pbf || "") + '" placeholder="%"></label>' +
-      '<button type="button" class="db-ok" data-db="body:1">계산</button></div><p class="db-tip">' + (IB_ON ? (d.manual ? '<button type="button" class="db-link" data-db="manual:0">인바디 기록으로 계산하기</button>' : '기록 탭에 인바디 결과지를 올리면 자동으로 채워져요') : '체지방률을 넣으면 더 정확해요') + '</p>';
+      '<button type="button" class="db-ok" data-db="body:1">계산</button></div><p class="db-tip">' + (IB_ON ? (d.manual ? '<button type="button" class="db-link" data-db="manual:0">인바디 기록으로 계산하기</button>' : '아래에서 인바디 결과지를 올리면 자동으로 채워져요') : '체지방률을 넣으면 더 정확해요') + '</p>';
     if (b && d.h) { var bmi = b.w / Math.pow(d.h / 100, 2), std = Math.pow(d.h / 100, 2) * (M.sex === "F" ? 21 : 22);
       h += '<div class="db-bmi"><span>키 <b>' + d.h + '</b>cm</span><span>체중 <b>' + b.w + '</b>kg</span><span>BMI <b>' + bmi.toFixed(1) + '</b></span><span>표준 체중 <b>' + std.toFixed(1) + '</b>kg</span></div>'; }
+    if (IB_ON && ibReady !== false) h += '<div class="db-ib"><button type="button" class="db-ibbtn" data-db="ib:1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>' +
+      (b && b.src ? '새 인바디 결과지 올리기' : '인바디 결과지 사진 올리기') + '</button><a class="db-link" href="#body">몸변화 기록 보기</a></div><p class="db-tip">결과지 사진을 올리면 숫자를 읽어서 식단도 바로 다시 계산해요 · 기록 탭 인바디와 같은 기록이에요</p>';
     h += '<small class="db-l">운동 횟수</small><div class="db-chips">' + DB_ACT.map(function (a, i) { return '<button type="button" class="' + ((d.a || 0) === i ? "on" : "") + '" data-db="a:' + i + '">' + a[1] + '</button>'; }).join("") + '</div>';
     h += '<small class="db-l">하루 끼니</small><div class="db-chips">' + [2, 3, 4, 5].map(function (n) { return '<button type="button" class="' + ((d.n || 3) === n ? "on" : "") + '" data-db="n:' + n + '">' + n + '끼</button>'; }).join("") + '</div></div>';
     if (!R) return h + '<div class="panel empty"><h3>체중을 넣으면 계산해 드려요</h3><p>인바디 결과지를 올리거나 위에 체중을 적어 주세요</p></div></section>';
@@ -3131,6 +3134,7 @@
       var hh = parseFloat(box.querySelector('[data-k="h"]').value);
       if (!(w >= 30 && w <= 250)) { attToast("체중을 kg으로 적어 주세요"); return; } d.w = w; d.h = hh >= 120 && hh <= 220 ? hh : null; d.pbf = f >= 3 && f <= 60 ? f : null; }
     else if (a[0] === "pick") { dbPick(+a[1], a[2]); return; }
+    else if (a[0] === "ib") { d.manual = 0; try { localStorage.setItem(DB_LS, JSON.stringify(d)); } catch (e2) {} ibSheetOpen(); return; }
     else if (a[0] === "tab") { DB_TAB = a[1]; rerender(); return; }
     else return;
     dbSave();
