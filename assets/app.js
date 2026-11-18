@@ -43,10 +43,10 @@
   try { var rtc = JSON.parse(localStorage.getItem(RT_LS) || "null"); if (rtc) rtUse(rtc); } catch (e) {}
   /* 종목 이름 → 루틴일지 아이콘 (data.js에서 icon을 따로 주면 그게 우선) */
   /* 2026-11-18 장동욱 "유산소도 종목 추가 형태로, 유산소 칸 만들어서 일반 종목처럼" — 유산소 종목(세트 = ["20분", null], 무게 칸엔 "맨몸" 대신 "유산소") */
-  var RT_CARDIO = ["러닝머신", "경사 걷기", "사이클", "스텝밀", "일립티컬", "로잉머신", "인터벌 러닝"];
+  var RT_CARDIO = ["러닝머신", "경사 걷기", "사이클", "스텝밀", "천국의 계단", "마이마운틴", "일립티컬", "로잉머신", "인터벌 러닝"];
   function isCardio(n) { return RT_CARDIO.indexOf(String(n || "").replace(/\s*\(.*\)\s*$/, "")) >= 0; }
   var ICON_BY_NAME = {
-    "러닝머신": "treadmill", "인터벌 러닝": "treadmill", "경사 걷기": "walk", "스텝밀": "walk", "사이클": "bike", "일립티컬": "bike", "로잉머신": "bike",
+    "러닝머신": "treadmill", "인터벌 러닝": "treadmill", "경사 걷기": "walk", "스텝밀": "walk", "천국의 계단": "walk", "마이마운틴": "walk", "사이클": "bike", "일립티컬": "bike", "로잉머신": "bike",
     "플랫 덤벨프레스": "db_bench_press", "덤벨 벤치프레스": "db_bench_press", "바벨 벤치프레스": "bench_press", "벤치프레스": "bench_press",
     "인클라인 덤벨 프레스": "incline_db_press", "스미스 인클라인 프레스": "smith_incline_press", "인클라인 프레스 머신": "incline_machine_press", "머신 인클라인 프레스": "incline_machine_press",
     "체스트 프레스": "chest_press", "뉴텍 체스트 프레스 머신": "lying_chest_press", "뉴텍 체스트프레스 머신": "lying_chest_press", "펙덱 플라이": "pec_deck", "펙덱": "pec_deck", "케이블 푸쉬다운": "cable_pushdown",
@@ -3451,7 +3451,7 @@
     ["복근", ["플랭크"]],
     ["유산소", RT_CARDIO]
   ];
-  var RT_CAT_EN = { "러닝머신": "Treadmill", "경사 걷기": "Incline Walk", "사이클": "Cycle", "스텝밀": "Stair Climber", "일립티컬": "Elliptical", "로잉머신": "Rowing Machine", "인터벌 러닝": "Interval Run", "스미스 벤트오버 로우": "Smith Bent-over Row", "뉴텍 버티컬 풀다운": "Vertical Pulldown", "시티드 레터럴 레이즈": "Seated Lateral Raise", "백 익스텐션": "Back Extension", "스미스 벤치프레스": "Smith Bench Press" };
+  var RT_CAT_EN = { "러닝머신": "Treadmill", "경사 걷기": "Incline Walk", "사이클": "Cycle", "스텝밀": "Stair Climber", "천국의 계단": "Stairmaster", "마이마운틴": "My Mountain", "일립티컬": "Elliptical", "로잉머신": "Rowing Machine", "인터벌 러닝": "Interval Run", "스미스 벤트오버 로우": "Smith Bent-over Row", "뉴텍 버티컬 풀다운": "Vertical Pulldown", "시티드 레터럴 레이즈": "Seated Lateral Raise", "백 익스텐션": "Back Extension", "스미스 벤치프레스": "Smith Bench Press" };
   function rtEnOf(n) { return RT_EN[n] || RT_CAT_EN[n] || ""; }
   function rtMine() {   /* 이 회원님 루틴에 이미 있는 종목 (이름별 첫 번째) */
     var seen = {}, out = [];

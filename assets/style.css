@@ -2411,6 +2411,10 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 
 .db-bl { margin-top: 10px; } .db-hl.db-bl .db-in { width: 110px; } .db-bl i { font-style: normal; font-size: 12px; color: var(--sub); }
 
+/* 2026-11-19 종목 고르기 부위 칩: 옆으로 밀기 힘들다 → 한 화면에 다 보이게 5칸 격자(두 줄) */
+.rtp-f { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; overflow: visible; flex-wrap: wrap; }
+.rtp-f button { min-width: 0; padding: 8px 2px; font-size: 13px; white-space: nowrap; letter-spacing: -.3px; text-align: center; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
