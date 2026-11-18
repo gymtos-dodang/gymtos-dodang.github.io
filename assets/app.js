@@ -4130,7 +4130,10 @@
         themeApply();
         Array.prototype.forEach.call(m.querySelectorAll("[data-th]"), function (x) { if (x === b) x.setAttribute("aria-pressed", "true"); else x.removeAttribute("aria-pressed"); });
       });
-      document.addEventListener("click", function cl(e) { if (e.target.closest("#gearMenu .gm-theme")) return; if (!e.target.closest("#gearMenu a")) { m.remove(); } else setTimeout(function () { m.remove(); }, 50); document.removeEventListener("click", cl, true); }, true);
+      document.addEventListener("click", function cl(e) { if (e.target.closest("#gearMenu .gm-theme")) return;
+        /* 2026-11-18 장동욱 "설정 아이콘 누르면 켜지고 한 번 더 누르면 꺼지는 토글": 열린 채로 ⚙️를 또 누르면 닫히기만(전엔 닫혔다 바로 다시 열렸음) */
+        if (e.target.closest("#gearBtn")) { e.stopPropagation(); e.preventDefault(); m.remove(); document.removeEventListener("click", cl, true); return; }
+        if (!e.target.closest("#gearMenu a")) { m.remove(); } else setTimeout(function () { m.remove(); }, 50); document.removeEventListener("click", cl, true); }, true);
     }, 0);
   }
   (function () { var g = document.getElementById("gearBtn"); if (g) g.addEventListener("click", function (e) { e.stopPropagation(); gearMenu(); }); })();
