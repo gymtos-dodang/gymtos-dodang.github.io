@@ -3141,12 +3141,15 @@
     var R = dbCalc(); if (!R) return; var d = dbGet(), idx = kind === "c" ? 0 : kind === "p" ? 1 : 2, L = [DB_C, DB_P, DB_F][idx], KN = ["탄수화물", "단백질", "지방"][idx];
     var sel = dbIds(d.p[i], idx), M0 = dbMeal(R, i), need = kind === "c" ? R.C / R.n : kind === "p" ? M0.pn : M0.fn, key = kind;
     function cards() {
-      var much = 0, h = L.map(function (f) {
+      var much = 0, base = [], h = L.map(function (f) {
         var on = sel.indexOf(f.id) >= 0, a = dbAmt(f, need / (on ? sel.length : sel.length ? 2 : 1), key), hn = dbHint(f, a);
         if (hn.much) much = 1;
-        return '<button type="button" class="db-food' + (on ? " on" : "") + (hn.much ? " much" : "") + '" data-f="' + f.id + '">' + (on ? '<i class="db-ck">✓</i>' : '') + dbIcon(f.id) + '<b>' + esc(f.n) + '</b><em>' + a.t + '</em><small>' + Math.round(f.k * a.g / 100) + ' kcal</small>' + (hn.t || hn.b ? '<small class="db-hint">' + (hn.t ? '<u>' + hn.t + '</u>' : '') + (hn.b ? '<span>' + hn.b + '</span>' : '') + '</small>' : '') + (hn.much ? '<i class="db-much">한 끼엔 많아요</i>' : '') + '</button>';
+        var bt = (f.h ? "1" + f.h[1] + " " + f.h[0] + "g" : f.u ? "1" + f.u[1] + " " + f.u[0] + "g" : "").replace("(", " (");
+        if (bt) { bt = esc(f.n.replace(/\(.*\)/, "")) + " " + bt; if (base.indexOf(bt) < 0) base.push(bt); }
+        return '<button type="button" class="db-food' + (on ? " on" : "") + (hn.much ? " much" : "") + '" data-f="' + f.id + '">' + (on ? '<i class="db-ck">✓</i>' : '') + dbIcon(f.id) + '<b>' + esc(f.n) + '</b><em>' + a.t + '</em><small>' + Math.round(f.k * a.g / 100) + ' kcal' + (hn.t ? ' · <u>' + hn.t.replace(/\(.*\)/, "") + '</u>' : '') + '</small>' + (hn.much ? '<i class="db-much">많아요</i>' : '') + '</button>';
       }).join("");
-      return '<div class="db-foods">' + h + '</div>' + (much ? '<p class="db-tip">"한 끼엔 많아요" 음식은 다 먹기 힘든 양이에요 · 두 가지를 섞거나 끼니 수를 늘려 보세요</p>' : '');
+      return '<div class="db-foods">' + h + '</div>' + (much ? '<p class="db-tip"><b class="db-mt">많아요</b> 표시는 한 끼에 다 먹기 힘든 양이에요 · 두 가지를 섞거나 끼니 수를 늘려 보세요</p>' : '') +
+        (base.length ? '<details class="db-base"><summary>1공기·1팩은 몇 g? 어림 기준 보기</summary><p>' + base.join(" · ") + '</p></details>' : '');
     }
     function state() { return '<b>' + (sel.length ? sel.map(function (id) { return esc(dbFind(L, id).n); }).join(" + ") + (sel.length > 1 ? ' · 반반' : '') : '아직 안 담았어요') + '</b>' + (sel.length ? '<button type="button" class="db-out" data-out="1">전부 빼기</button>' : ''); }
     var body = '<p class="rts-note">' + (i + 1) + '끼 ' + KN + ' · 눌러서 담고, 다시 누르면 빠져요</p><p class="db-tip">두 가지까지 담을 수 있어요 · 두 가지면 양을 반반으로 나눠 계산해요</p>' +
