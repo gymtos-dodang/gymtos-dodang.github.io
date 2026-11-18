@@ -72,6 +72,11 @@
     "img": "m/aeran-bsq16i/media/form-hack-squat/step1.jpg"
    },
    {
+    "member": "서인석",
+    "id": "hack-squat",
+    "img": "m/inseok-02j3ia/media/form-hack-squat/step1.jpg"
+   },
+   {
     "member": "김지수",
     "id": "hack-squat",
     "img": "m/jisu-480xne/media/form-hack-squat/step1.jpg"
@@ -393,6 +398,11 @@
     "member": "조혜영",
     "id": "leg-extension",
     "img": "m/hyeyoung-d74063/media/form-leg-extension/step1.jpg"
+   },
+   {
+    "member": "서인석",
+    "id": "leg-extension",
+    "img": "m/inseok-02j3ia/media/form-leg-extension/step1.jpg"
    }
   ]
  },
@@ -404,6 +414,11 @@
     "member": "조혜영",
     "id": "outer-thigh",
     "img": "m/hyeyoung-d74063/media/form-outer-thigh/step1.jpg"
+   },
+   {
+    "member": "서인석",
+    "id": "outer-thigh",
+    "img": "m/inseok-02j3ia/media/form-outer-thigh/step1.jpg"
    },
    {
     "member": "이지환",
@@ -445,6 +460,32 @@
     "member": "최용민 · 고은성",
     "id": "smith-incline-press",
     "img": "m/yongmin-eunseong-1mwau5/media/form-smith-incline-press/step1.jpg"
+   }
+  ]
+ },
+ "이너타이": {
+  "part": "하체",
+  "en": "Inner Thigh (Adduction)",
+  "shots": [
+   {
+    "member": "서인석",
+    "id": "inner-thigh",
+    "img": "m/inseok-02j3ia/media/form-inner-thigh/step1.jpg"
+   },
+   {
+    "member": "이지환",
+    "id": "inner-thigh",
+    "img": "m/jihwan-t7m4qe/media/form-inner-thigh/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "inner-thigh",
+    "img": "m/jisu-480xne/media/form-inner-thigh/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "inner-thigh",
+    "img": "m/mikyung-7rq2vd/media/form-inner-thigh/step1.jpg"
    }
   ]
  },
@@ -601,27 +642,6 @@
     "member": "김지수",
     "id": "leg-press",
     "img": "m/jisu-480xne/media/form-leg-press/step1.jpg"
-   }
-  ]
- },
- "이너타이": {
-  "part": "하체",
-  "en": "Inner Thigh (Adduction)",
-  "shots": [
-   {
-    "member": "이지환",
-    "id": "inner-thigh",
-    "img": "m/jihwan-t7m4qe/media/form-inner-thigh/step1.jpg"
-   },
-   {
-    "member": "김지수",
-    "id": "inner-thigh",
-    "img": "m/jisu-480xne/media/form-inner-thigh/step1.jpg"
-   },
-   {
-    "member": "정미경",
-    "id": "inner-thigh",
-    "img": "m/mikyung-7rq2vd/media/form-inner-thigh/step1.jpg"
    }
   ]
  },

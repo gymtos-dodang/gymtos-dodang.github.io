@@ -1665,5 +1665,56 @@
 "triceps_med": "S",
 "triceps_lat": "S"
 }
+},
+"m/inseok-02j3ia/media/form-leg-extension/anatomy.png": {
+"sex": "M",
+"front": {
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P"
+},
+"back": {}
+},
+"m/inseok-02j3ia/media/form-hack-squat/anatomy.png": {
+"sex": "M",
+"front": {
+"abs": "S",
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P",
+"add_long": "S",
+"add_mag": "S"
+},
+"back": {
+"erector": "S",
+"glute_max": "P",
+"ham_bf": "S",
+"ham_st": "S",
+"erector_thoracic": "S",
+"add_mag": "S"
+}
+},
+"m/inseok-02j3ia/media/form-inner-thigh/anatomy.png": {
+"sex": "M",
+"front": {
+"pectineus": "P",
+"add_long": "P",
+"add_mag": "P",
+"gracilis": "S"
+},
+"back": {
+"gracilis": "P",
+"add_mag": "P"
+}
+},
+"m/inseok-02j3ia/media/form-outer-thigh/anatomy.png": {
+"sex": "M",
+"front": {
+"tfl": "S"
+},
+"back": {
+"glute_med": "P",
+"glute_max": "S"
+}
 }
 }
