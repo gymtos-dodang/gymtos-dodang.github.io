@@ -936,7 +936,7 @@
   function attCall(q) {
     return fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + (q || ""), { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw new Error("save"); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); dbServer(j.kv); lgServer(j.kv); bgServer(j.kv); mvServer(j.kv); rkServer(j.kv); } return j; });
+      .then(function (j) { if (!j || !j.ok) throw new Error("save"); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); dbServer(j.kv); lgServer(j.kv); bgServer(j.kv); mvServer(j.kv); fvServer(j.kv); rkServer(j.kv); } return j; });
   }
   function attSync() {
     if (!ATT_API) return;
@@ -2714,6 +2714,67 @@
     return o;
   }
   function formNew(f) { return !DEMO && dRecent(f.date) && lsArr(FOPEN_KEY).indexOf(f.id) < 0; }
+  /* 복습지 본 기록 (2026-11-19 장동욱 "회원님들이 복습지 보면 본 거 알 수 있게 표시"):
+     회원 폰에서 #form-<id>를 열면 창고 mw:<주소>:fv = { v: { id: [처음 본 시각, 마지막 본 시각, 본 횟수] }, at } (ms, 0 = 이 기능 전에 본 것) — 재배포 X
+     10분 안에 다시 열면 횟수 안 셈. 선생님 폰(COACH_MODE)·DEMO는 절대 안 올림. 처음엔 예전 열어 본 기록(…:fopen)을 [0,0,1]로 옮겨 담음
+     회원 화면: 본 복습지 카드에 "✓ 봤어요" · 선생님 폰: 카드·상세에 "👀 11/18 · 3번" / "아직 안 봄" (fvTag·fvPaint) */
+  var FV_LS = "ptnote:" + SLUG + ":fv", FV = null, FV_T = 0;
+  if (!COACH_MODE) { try { FV = JSON.parse(localStorage.getItem(FV_LS) || "null"); } catch (e) {} }
+  function fvObj() {
+    if (!FV || typeof FV !== "object" || !FV.v || typeof FV.v !== "object") {
+      FV = { v: {}, at: 0 };
+      if (!COACH_MODE && !DEMO) lsArr(FOPEN_KEY).forEach(function (id) { FV.v[id] = [0, 0, 1]; });
+    }
+    return FV;
+  }
+  function fvSave(push) {
+    if (COACH_MODE || DEMO) return;
+    var o = fvObj(); o.at = Date.now();
+    try { localStorage.setItem(FV_LS, JSON.stringify(o)); } catch (e) {}
+    if (!push || !ATT_API) return;
+    clearTimeout(FV_T);
+    FV_T = setTimeout(function () { rtPost({ a: "kv_set", k: "mw:" + SLUG + ":fv", v: FV }).catch(function () {}); }, 1200);
+  }
+  function fvMark(id) {
+    if (COACH_MODE || DEMO || !id) return;
+    var o = fvObj(), t = Date.now(), r = o.v[id];
+    if (r && r[1] && t - r[1] < 600000) return;
+    o.v[id] = r ? [r[0] || t, t, (r[2] || 1) + 1] : [t, t, 1];
+    fvSave(true);
+  }
+  function fvServer(kv) {
+    var v = kv && kv["mw:" + SLUG + ":fv"];
+    if (v && (typeof v !== "object" || !v.v || typeof v.v !== "object")) v = null;
+    if (COACH_MODE) { FV = v || { v: {}, at: 0 }; fvPaint(); return; }
+    if (DEMO) return;
+    var o = fvObj(), sv = v ? v.v : {}, more = false, k;
+    for (k in sv) {
+      var a = sv[k], b = o.v[k];
+      if (!Array.isArray(a)) continue;
+      if (!b) { o.v[k] = a.slice(0, 3); continue; }
+      var f0 = a[0] && b[0] ? Math.min(a[0], b[0]) : (a[0] || b[0]), l = Math.max(a[1] || 0, b[1] || 0), c = Math.max(a[2] || 1, b[2] || 1);
+      if (f0 !== b[0] || l !== b[1] || c !== b[2]) o.v[k] = [f0, l, c];
+      if (f0 !== a[0] || l !== a[1] || c !== a[2]) more = true;
+    }
+    for (k in o.v) if (!sv[k]) more = true;
+    fvSave(more);
+    fvPaint();
+  }
+  function fvWhen(t) { var d = new Date(t); return (d.getMonth() + 1) + "/" + d.getDate(); }
+  function fvTag(id, long) {
+    var r = FV && FV.v && FV.v[id];
+    if (!COACH_MODE) return r ? '<span class="fvs ok">✓ 봤어요</span>' : '';
+    if (!r) return '<span class="fvs no">' + (long ? '회원님이 아직 안 열어 봤어요' : '아직 안 봄') + '</span>';
+    var d = new Date(r[1]), hm = (d.getHours() < 10 ? "0" : "") + d.getHours() + ":" + (d.getMinutes() < 10 ? "0" : "") + d.getMinutes();
+    if (!r[1]) return '<span class="fvs ok">👀 ' + (long ? '회원님이 봤어요 (날짜 기록 전)' : '봄') + '</span>';
+    return '<span class="fvs ok">👀 ' + (long ? '회원님 확인 · 마지막 ' + fvWhen(r[1]) + ' ' + hm + (r[0] && r[0] !== r[1] ? ' · 처음 ' + fvWhen(r[0]) : '') + ' · ' + (r[2] || 1) + '번'
+      : fvWhen(r[1]) + ' · ' + (r[2] || 1) + '번') + '</span>';
+  }
+  function fvPaint() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-fv]"), function (el) {
+      el.innerHTML = fvTag(el.getAttribute("data-fv"), el.hasAttribute("data-fvl"));
+    });
+  }
   function litApply(curTab) {
     if (DEMO) return;
     var sg = litSigs();
@@ -2735,7 +2796,7 @@
   }
   function formCard(f) {
     return '<a class="card-link" data-cat="' + esc(formCats(f).join(" ")) + '" href="#form-' + esc(f.id) + '"><div class="thumb"><img src="' + esc(f.dir) + 'poster.jpg" alt="" loading="lazy"></div>' +
-      '<div><span class="tagc">' + esc(f.part) + '</span>' + (formNew(f) ? '<span class="fnew">NEW</span>' : '') + '<h3>' + esc(f.exercise) + '</h3><p>' + esc(f.exercise_en) + ' · ' + esc(f.date) + '</p></div></a>';
+      '<div><span class="tagc">' + esc(f.part) + '</span>' + (formNew(f) && !COACH_MODE ? '<span class="fnew">NEW</span>' : '') + '<span class="fvw" data-fv="' + esc(f.id) + '">' + (DEMO ? '' : fvTag(f.id)) + '</span><h3>' + esc(f.exercise) + '</h3><p>' + esc(f.exercise_en) + ' · ' + esc(f.date) + '</p></div></a>';
   }
   function renderForms() {
     var h = wkSeg("forms") + '<section>' + head("", "자세 복습지", "수업에서 배운 자세를 영상으로 다시 봐요");
@@ -2773,6 +2834,7 @@
   function renderForm(f) {
     var D = f.dir;
     var h = '<a class="back" href="#forms">← 자세 복습지</a>';
+    if (COACH_MODE) h += '<div class="fvline" data-fv="' + esc(f.id) + '" data-fvl>' + fvTag(f.id, true) + '</div>';
     h += '<div class="hero"><div class="hero-main split"><div class="hero-l">' +
       '<div class="eyebrow">MY FORM NOTE <b>· 자세 복습지</b></div><h1>' + esc(f.exercise) + '</h1>' +
       '<div class="en">' + esc(f.exercise_en) + '</div>' +
@@ -4650,7 +4712,7 @@
     });
     tabInd();
     alignText(document);
-    if (/^form-/.test(hsh) && !DEMO) lsAdd(FOPEN_KEY, [hsh.slice(5)]);
+    if (/^form-/.test(hsh) && !DEMO) { if (findForm(hsh.slice(5))) fvMark(hsh.slice(5)); lsAdd(FOPEN_KEY, [hsh.slice(5)]); }
     litApply(tab);
     setupFold(tab, jumpTo || (scrollDay ? "day" : null));
     setupAttCheck(); setupCal(); setupIb(); setupBadges(); setupMuscle(); setupRtEdit();

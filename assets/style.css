@@ -2423,6 +2423,14 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .bxl .bdg-spark { animation-duration: 2.4s; }
 @media (prefers-reduced-motion: reduce) { .bxl .bdx-glow { animation: none !important; opacity: .7; } }
 
+/* 2026-11-19 복습지 본 기록 표시 (장동욱 "회원님들이 복습지 보면 본 거 알 수 있게") — 카드 .fvs, 선생님 폰 상세 맨 위 .fvline */
+.fvw:empty { display: none; }
+.fvs { display: inline-block; margin-left: 6px; font-size: 10.5px; font-weight: 800; border-radius: 99px; padding: 2px 7px; vertical-align: 1px; white-space: nowrap; }
+.fvs.ok { color: #1F8A4C; background: rgba(31,138,76,.12); }
+.fvs.no { color: #8A8A93; background: rgba(138,138,147,.14); }
+.fvline { margin: 2px 0 10px; }
+.fvline .fvs { margin-left: 0; font-size: 12.5px; padding: 6px 11px; white-space: normal; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -2616,6 +2624,7 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .db-ck { background: var(--seal); }
 :where(html:not([data-theme="light"])) .db-out { background: var(--paper); }
 :where(html:not([data-theme="light"])) .db-seg button { background-image: linear-gradient(160deg, var(--paper), var(--tint)); }
+:where(html:not([data-theme="light"])) .fvs.no { color: var(--sub); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -2903,6 +2912,7 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .db-ck { background: var(--seal); }
 :where(html[data-theme="dark"]) .db-out { background: var(--paper); }
 :where(html[data-theme="dark"]) .db-seg button { background-image: linear-gradient(160deg, var(--paper), var(--tint)); }
+:where(html[data-theme="dark"]) .fvs.no { color: var(--sub); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {
