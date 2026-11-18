@@ -1744,5 +1744,28 @@
 "ham_bf": "S",
 "ham_st": "S"
 }
+},
+"m/jihun-g9kgdo/media/form-inner-thigh/anatomy.png": {
+"sex": "M",
+"front": {
+"pectineus": "P",
+"add_long": "P",
+"add_mag": "P",
+"gracilis": "S"
+},
+"back": {
+"gracilis": "P",
+"add_mag": "P"
+}
+},
+"m/jihun-g9kgdo/media/form-outer-thigh/anatomy.png": {
+"sex": "M",
+"front": {
+"tfl": "S"
+},
+"back": {
+"glute_med": "P",
+"glute_max": "S"
+}
 }
 }
