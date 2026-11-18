@@ -6,19 +6,19 @@
 (function () {
   "use strict";
   var F = {
-    routine: { t: "요일별 루틴일지", d: "요일마다 할 운동이 무게·세트까지 정리돼 있어요. 다 한 운동은 ✓ 체크하면 끝.", h: "routine",
+    routine: { q: "뭘 해야 할지 모르겠어요", c: "루틴", t: "요일별 루틴일지", d: "요일마다 할 운동이 무게·세트까지 정리돼 있어요. 다 한 운동은 ✓ 체크하면 끝.", h: "routine",
       s: [{ t: "요일 칸", q: ".week" }, { t: "오늘 운동", q: ".ex.main, .ex-list .ex" }, { t: "다 하면 ✓", q: ".exchk" }] },
-    form: { t: "수업 영상 자세 복습지", d: "수업 때 찍은 영상으로 잘한 점·자극 부위·동작 3단계를 정리해 드려요. 집에서도 다시 보며 복습.", h: "form",
+    form: { q: "자세가 맞는지 헷갈려요", c: "복습지", t: "수업 영상 자세 복습지", d: "수업 때 찍은 영상으로 잘한 점·자극 부위·동작 3단계를 정리해 드려요. 집에서도 다시 보며 복습.", h: "form",
       s: [{ t: "수업 영상", q: "video" }, { t: "잘한 점", q: ".good" }, { t: "자극 부위", q: ".mcol, img[src*=anatomy]" }, { t: "동작 3단계", q: ".step" }] },
-    diet: { t: "회원님 맞춤 선택 식단", d: "목적과 몸 상태에 맞춰, 먹고 싶은 음식을 직접 고르면 양이 자동으로 계산돼요.", h: "diet",
+    diet: { q: "뭘 먹어야 할지 모르겠어요", c: "식단", t: "회원님 맞춤 선택 식단", d: "목적과 몸 상태에 맞춰, 먹고 싶은 음식을 직접 고르면 양이 자동으로 계산돼요.", h: "diet",
       auto: '[data-db="tab:my"]',
       s: [{ t: "목적 고르기", q: ".db-seg", pre: '[data-db="tab:my"]' }, { t: "운동 횟수·끼니 수", q: ".db-chips", pre: '[data-db="tab:my"]' },
         { t: "음식 고르기", q: ".db-slots, .db-meal, .db .panel.empty", pre: '[data-db="tab:my"]' }, { t: "선생님 식단표도", q: ".hero, .mp", pre: '[data-db="tab:coach"]' }] },
-    goal: { t: "출석 도장 · 배지", d: "운동 온 날 도장을 꾹. 출석률·출석 순위·배지 45개로 매일 동기부여돼요.", h: "home",
+    goal: { q: "혼자 하면 작심삼일이에요", c: "출석", t: "출석 도장 · 배지", d: "운동 온 날 도장을 꾹. 출석률·출석 순위·배지 45개로 매일 동기부여돼요.", h: "home",
       s: [{ t: "출석 도장 꾹", q: ".stamp" }, { t: "출석률", q: ".hatt, .hw" }, { t: "배지", q: ".bgx", hash: "goal" }] },
-    body: { t: "인바디로 지난달과 비교", d: "인바디 결과지를 찍어 올리면 지난달과 이번 달 변화를 한눈에 비교해 드려요.", h: "body",
+    body: { q: "변화가 안 보여요", c: "인바디", t: "인바디로 지난달과 비교", d: "인바디 결과지를 찍어 올리면 지난달과 이번 달 변화를 한눈에 비교해 드려요.", h: "body",
       s: [{ t: "지난달 vs 이번 달", q: ".ibpanel, #view .panel" }, { t: "재는 법", q: "#view section:last-of-type" }] },
-    rehab: { t: "재활 트레이닝", d: "아픈 곳부터 확인하고 안 아픈 동작으로 시작해요. 복습지에 자극 부위와 O·X 동작을 그림으로.", h: "form",
+    rehab: { q: "허리·무릎이 아파요", c: "재활", t: "재활 트레이닝", d: "아픈 곳부터 확인하고 안 아픈 동작으로 시작해요. 복습지에 자극 부위와 O·X 동작을 그림으로.", h: "form",
       s: [{ t: "자극 부위", q: ".mcol, img[src*=anatomy]" }, { t: "이렇게 O · 이렇게 X", q: ".ox" }] }
   };
 
@@ -196,5 +196,69 @@
     };
   }
 
-  window.PTTry = { sheet: sheet, mount: mount, F: F };
+  /* ---------- 폰 안내서(guide.html) 2쪽: 아이패드처럼 페이지 안에 폰 + 옆 설명 (2026-11-19 "폰버전 2페이지도 아이패드처럼")
+     위: 기능 칩 6개(한 줄) → 고민 말풍선 + 해결 제목 → 아래: 왼쪽 실제 폰 · 오른쪽 설명·단계 버튼 */
+  var css2 = [
+    ".tpi{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}",
+    ".tpi-chips{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}",
+    ".tpi-chips button{font:800 12.5px 'Noto Sans KR',sans-serif;color:#4A505C;background:#fff;border:0;border-radius:12px;min-height:40px;padding:0 2px;box-shadow:0 1px 3px rgba(18,18,20,.08);cursor:pointer;white-space:nowrap}",
+    ".tpi-chips button.on{background:#D6204F;color:#fff;box-shadow:0 6px 14px rgba(214,32,79,.3)}",
+    ".tpi-qa{display:flex;flex-direction:column;gap:4px}",
+    ".tpi-qa q{quotes:none;align-self:flex-start;font:600 12.5px 'Noto Sans KR',sans-serif;color:#4A505C;background:#fff;border-radius:12px 12px 12px 3px;padding:5px 10px}",
+    ".tpi-qa b{align-self:flex-end;font:900 16px/1.3 'Noto Sans KR',sans-serif;color:#fff;background:#D6204F;border-radius:14px 14px 3px 14px;padding:6px 12px}",
+    ".tpi-row{flex:1;min-height:0;display:flex;gap:10px;align-items:flex-start}",
+    ".tpi-ph{flex:none}",
+    ".tpi-side{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}",
+    ".tpi-side p{margin:0;font:500 12px/1.45 'Noto Sans KR',sans-serif;color:#4A505C;word-break:keep-all}",
+    ".tpi-side .tp-steps{flex-direction:column;gap:6px}",
+    ".tpi-side .tp-steps button{font-size:12.5px;padding:6px 9px;min-height:44px;border-radius:14px;text-align:left;line-height:1.3;word-break:keep-all}",
+    ".tpi-side .tp-tap{font-size:11.5px;line-height:1.35;align-items:flex-start}.tpi-side .tp-tap i{flex:none;margin-top:4px}",
+    ".tpi-side .tpi-cta{margin-top:auto;font:800 12px/1.4 'Noto Sans KR',sans-serif;color:#121214;word-break:keep-all}.tpi-side .tpi-cta em{font-style:normal;color:#D6204F}"
+  ].join("\n");
+  function inline(box, first) {
+    addCss();
+    if (!document.getElementById("tpcss2")) { var st = document.createElement("style"); st.id = "tpcss2"; st.textContent = css2; document.head.appendChild(st); }
+    var K = ["routine", "form", "diet", "goal", "body", "rehab"];
+    box.classList.add("tpi");
+    box.innerHTML = '<div class="tpi-chips" role="tablist" aria-label="PT 노트 기능">' +
+      K.map(function (k) { return '<button type="button" role="tab" data-k="' + k + '">' + F[k].c + "</button>"; }).join("") + "</div>" +
+      '<div class="tpi-qa"><q></q><b></b></div>' +
+      '<div class="tpi-row"><div class="tpi-ph"></div><div class="tpi-side"><p data-d></p><div class="tp-steps"></div>' +
+      '<span class="tp-tap"><i></i>왼쪽 화면을 직접 눌러 보세요 · 이름은 가렸어요</span>' +
+      '<span class="tpi-cta">이 모든 게 회원님 폰 하나에 <em>나만의 PT 노트</em> · 앱 설치 없이 카톡 링크 하나</span></div></div>';
+    var row = box.querySelector(".tpi-row"), P = { kind: null }, cur = null, started = false;
+    function fit() {
+      var hgt = row.clientHeight, wmax = row.clientWidth - 10 - 104;
+      var pw = Math.max(150, Math.min(wmax, Math.floor((hgt - 14) * 390 / 844) + 14));
+      if (!P.el) { var Q = phone(pw); P.el = Q.el; P.fr = Q.fr; box.querySelector(".tpi-ph").appendChild(P.el); }
+      var k = (pw - 14) / 390;
+      P.el.style.width = pw + "px"; P.el.style.height = Math.round(844 * k + 14) + "px"; P.fr.style.transform = "scale(" + k + ")";
+    }
+    function set(kind) {
+      cur = kind;
+      Array.prototype.forEach.call(box.querySelectorAll(".tpi-chips button"), function (b) {
+        var on = b.getAttribute("data-k") === kind; b.classList.toggle("on", on); b.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      box.querySelector(".tpi-qa q").textContent = "“" + F[kind].q + "”";
+      box.querySelector(".tpi-qa b").textContent = F[kind].t;
+      box.querySelector("[data-d]").textContent = F[kind].d;
+      fit();
+      steps(P, kind, box.querySelector(".tp-steps"));
+      if (started) load(P, kind);
+    }
+    Array.prototype.forEach.call(box.querySelectorAll(".tpi-chips button"), function (b) {
+      b.addEventListener("click", function () { set(b.getAttribute("data-k")); });
+    });
+    set(first || "routine");
+    window.addEventListener("resize", fit);
+    /* 실제 노트(iframe)는 2쪽이 보일 때 처음 불러옴 — 안내서 첫 화면을 느리게 하지 않게 */
+    function start() { if (started) return; started = true; fit(); load(P, cur); }
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { start(); io.disconnect(); } }); }, { threshold: 0.3 });
+      io.observe(box);
+    } else start();
+    return { set: set, start: start };
+  }
+
+  window.PTTry = { sheet: sheet, mount: mount, inline: inline, F: F };
 })();

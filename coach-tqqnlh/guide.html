@@ -262,6 +262,7 @@ body.editing .edit-n { outline: 2px dashed var(--pink2); outline-offset: 3px; bo
 .wq i { font-style: normal; font-size: 12px; font-weight: 900; color: var(--pink); margin-top: auto; padding-top: 4px; }
 .wq div { cursor: default; background: var(--pinkT); box-shadow: none; } .wq div b { color: var(--pink); }
 .wq .wait { opacity: .55; }
+.in.tpp { height: 100%; box-sizing: border-box; }   /* 2쪽 체험 폰: 남은 높이를 폰이 채움 (2026-11-19) */
 .cta.slim { padding: 14px 16px; gap: 6px; } .cta.slim > b { font-size: 16px; } .cta.slim b em { font-style: normal; color: var(--pink2); } .cta.slim > span { font-size: 12px; color: var(--muted); }
 .stair .s1 { height: 84px; } .stair .s2 { height: 140px; } .stair .s3 { height: 196px; }
 .stair > div span { font-size: 10.5px; line-height: 1.35; opacity: .9; }
@@ -458,18 +459,10 @@ html, body { background: #141416; }
   </div></section>
 
   <!-- 2 이런 고민 → PT 노트로 해결 (칸을 누르면 실제 회원 PT 노트) -->
-  <section class="pg" aria-label="2쪽 이런 고민과 PT 노트"><div class="in fit">
+  <section class="pg" aria-label="2쪽 이런 고민과 PT 노트"><div class="in fit tpp">
     <p class="ey2 pk">SOUND FAMILIAR? → PT 노트로 해결</p>
     <h2>혹시 이런 고민 있으세요?</h2>
-    <div class="wq">
-      <button type="button" class="go" data-go="routine"><img class="th" src="guide/t3-routine.jpg?v=1119" alt="루틴일지 화면: 요일별 운동 아이콘"><q>“뭘 해야 할지 모르겠어요”</q><b>요일별 루틴일지에 무게까지 <i>보기 →</i></b></button>
-      <button type="button" class="go" data-go="form"><img class="th" src="guide/t3-form.jpg?v=1119" alt="자세 복습지 화면: 오늘 수업 영상"><q>“자세가 맞는지 헷갈려요”</q><b>수업 영상으로 자세 복습지 <i>보기 →</i></b></button>
-      <button type="button" class="go" data-go="diet"><img class="th" src="guide/t3-diet.jpg?v=1119b" alt="식단 화면: 목적에 맞춰 음식을 골라 짜는 내 식단"><q>“뭘 먹어야 할지 모르겠어요”</q><b>회원님 맞춤 선택 식단 <i>보기 →</i></b></button>
-      <button type="button" class="go" data-go="goal"><img class="th" src="guide/t3-goal.jpg?v=1119" alt="PT 노트 홈 화면: 오늘 출석 버튼"><q>“혼자 하면 작심삼일이에요”</q><b>출석 도장·배지로 매일 확인 <i>보기 →</i></b></button>
-      <button type="button" class="go" data-go="body"><img class="th" src="guide/t3-body.jpg?v=1119" alt="인바디 체지방률 기록 그래프"><q>“변화가 안 보여요”</q><b>인바디로 지난달과 비교 <i>보기 →</i></b></button>
-      <button type="button" class="go" data-go="rehab"><img class="th" src="guide/t3-rehab.jpg?v=1119" alt="자극 부위 근육 그림"><q>“허리·무릎이 아파요”</q><b>재활 트레이닝으로 안 아픈 동작부터 <i>보기 →</i></b></button>
-    </div>
-    <div class="cta slim"><b>이 모든 게 회원님 폰 하나에 <em>나만의 PT 노트</em>로</b><span>앱 설치 없이 카톡 링크 하나</span></div>
+    <div id="tpInline"></div>
   </div></section>
 
   <!-- 3 12개월 여정 + 첫 달 -->
@@ -567,7 +560,7 @@ html, body { background: #141416; }
 </div>
 
 <script src="members.js"></script>
-<script src="guide/try.js?v=1119"></script>
+<script src="guide/try.js?v=1119c"></script>
 <script>
 (function () {
   "use strict";
@@ -750,6 +743,8 @@ html, body { background: #141416; }
     var h = kind === "form" ? "form-" + x.M.forms[0].id : kind;
     return "/m/" + x.slug + "/#" + h;
   }
+  /* 2쪽: 페이지 안 체험 폰 (guide/try.js inline — 아이패드 2쪽과 같은 방식) */
+  if (window.PTTry && document.getElementById("tpInline")) PTTry.inline(document.getElementById("tpInline"), "routine");
   Array.prototype.forEach.call(document.querySelectorAll(".go"), function (b) {
     b.addEventListener("click", function () {
       /* 2026-11-19: 다른 화면으로 넘어가지 않고, 아래에서 올라오는 창에 실제 폰 화면(눌러 볼 수 있음) + 짧은 설명 */
