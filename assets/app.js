@@ -3977,9 +3977,17 @@
     var zr = zEl.getBoundingClientRect();
     /* 커지며 열리기(B안) — 2026-11-12 다시 켬: transform 없이 clip-path만 써서 화면 폭에 영향 없음 */
     /* 2026-11-14 끔: 아이폰에서 다음 화면이 작게·왼쪽으로 쏠린 채 시작해 커지는 게 "화면 쏠림"으로 보임 → 다른 화면처럼 차례로 올라오기(D안)만 */
-    void zr;
+    tapWave(e.clientX || zr.left + zr.width / 2, e.clientY || zr.top + zr.height / 2);
     if (NAVS.length > 20) NAVS.shift();
   }, true);
+  function tapWave(x, y) {   /* 2026-11-18 누른 자리에서 색 원이 퍼져 화면을 덮었다가 사라짐 — 본문(.view)은 건드리지 않고 body에 따로 붙인 막만 움직임(B안 쏠림·멈춤 사고 피함) */
+    try { if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return; } catch (er) {}
+    var W = window.innerWidth, H = window.innerHeight, R = Math.ceil(Math.sqrt(Math.pow(Math.max(x, W - x), 2) + Math.pow(Math.max(y, H - y), 2)));
+    var w = document.createElement("div"); w.className = "tapwave"; w.setAttribute("aria-hidden", "true");
+    w.innerHTML = '<i style="left:' + Math.round(x - R) + 'px;top:' + Math.round(y - R) + 'px;width:' + 2 * R + 'px;height:' + 2 * R + 'px"></i>';
+    document.body.appendChild(w);
+    setTimeout(function () { if (w.parentNode) w.parentNode.removeChild(w); }, 700);
+  }
   function navBackDraw(view) {
     if (!NAVS.length) return;
     var top = NAVS[NAVS.length - 1], bar = document.querySelector(".bar");

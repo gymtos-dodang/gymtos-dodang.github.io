@@ -2246,3 +2246,8 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .hatt-st small { font-size: 11px; }
 .hw .hatt-st b { font-size: 28px; color: var(--seal); }
 .hatt .wk { margin-top: auto; padding-top: 8px; }
+
+/* 누른 자리에서 퍼지는 원 (2026-11-18, app.js tapWave) — .view가 아닌 body 위 막이라 화면 폭·쏠림에 영향 없음 */
+.tapwave { position: fixed; inset: 0; pointer-events: none; z-index: 15; overflow: hidden; }
+.tapwave i { position: absolute; border-radius: 50%; background: var(--seal); opacity: 0; transform: scale(.02); animation: tapwave .62s cubic-bezier(.2, .7, .2, 1) forwards; }
+@keyframes tapwave { 0% { transform: scale(.02); opacity: .26; } 55% { transform: scale(1); opacity: .14; } 100% { transform: scale(1); opacity: 0; } }
