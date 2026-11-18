@@ -510,6 +510,38 @@
    }
   ]
  },
+ "라잉 레그컬": {
+  "part": "하체",
+  "en": "Lying Leg Curl",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "lying-leg-curl",
+    "img": "m/jihun-g9kgdo/media/form-lying-leg-curl/step1.jpg"
+   }
+  ]
+ },
+ "레그프레스": {
+  "part": "하체",
+  "en": "Leg Press",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "leg-press",
+    "img": "m/jihun-g9kgdo/media/form-leg-press/step1.jpg"
+   },
+   {
+    "member": "이지환",
+    "id": "leg-press",
+    "img": "m/jihwan-t7m4qe/media/form-leg-press/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "leg-press",
+    "img": "m/jisu-480xne/media/form-leg-press/step1.jpg"
+   }
+  ]
+ },
  "사이드 레터럴 레이즈": {
   "part": "어깨",
   "en": "DB Lateral Raise",
@@ -626,22 +658,6 @@
     "member": "이지환",
     "id": "close-grip-pulldown",
     "img": "m/jihwan-t7m4qe/media/form-close-grip-pulldown/step1.jpg"
-   }
-  ]
- },
- "레그프레스": {
-  "part": "하체",
-  "en": "Leg Press",
-  "shots": [
-   {
-    "member": "이지환",
-    "id": "leg-press",
-    "img": "m/jihwan-t7m4qe/media/form-leg-press/step1.jpg"
-   },
-   {
-    "member": "김지수",
-    "id": "leg-press",
-    "img": "m/jisu-480xne/media/form-leg-press/step1.jpg"
    }
   ]
  },
