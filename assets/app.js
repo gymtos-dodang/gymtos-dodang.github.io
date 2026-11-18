@@ -756,10 +756,11 @@
       var k = ymd(d), c = attHas(a, k) ? "on" : (!ROT && !isWorkoutDay(d)) ? "rest" : "";
       wk += '<span class="' + c + (k === today ? ' today' : '') + '"></span>';
     }
-    return '<div class="hwid" id="hwid"><a class="hw" href="#goal"><svg class="ring" viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="' + R + '" fill="none" stroke="var(--hw-track)" stroke-width="7"/>' +
+    /* 2026-11-18 출석률·연속 출석을 한 칸으로 합치고, 옆에 출석 순위 칸(rankHome) */
+    return '<div class="hwid" id="hwid"><a class="hw col hi hatt" href="#goal" aria-label="이번 달 출석률 ' + m.rate + '%, 연속 출석 ' + s + '회"><span class="hi-top"><svg class="ring" viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="' + R + '" fill="none" stroke="var(--hw-track)" stroke-width="7"/>' +
       (m.rate > 0 ? '<circle cx="27" cy="27" r="' + R + '" fill="none" stroke="var(--seal)" stroke-width="7" stroke-linecap="round" stroke-dasharray="' + (m.rate >= 100 ? C.toFixed(1) + ' 0' : len.toFixed(1) + ' ' + C.toFixed(1)) + '" transform="rotate(-90 27 27)"/>' : '') +
-      '</svg><span><small>이번 달 출석률</small><b>' + m.rate + '<i>%</i></b></span></a>' +
-      '<a class="hw col" href="#goal-badges"><small>연속 출석</small><b>' + s + '<i>회</i></b><span class="wk" aria-label="이번 주 출석">' + wk + '</span></a></div>';
+      '<text x="27" y="31.5" text-anchor="middle" font-size="13" font-weight="900" fill="var(--ink)">' + m.rate + '%</text></svg><span class="hatt-st"><small>연속</small><b>' + s + '<i>회</i></b></span></span>' +
+      '<small>이번 달 출석률 · 이번 주</small><span class="wk" aria-label="이번 주 출석">' + wk + '</span></a>' + rankHome() + '</div>';
   }
   function homeInfo() {   /* 홈 작은 위젯 2칸 (2026-11-12 "공지·최근 복습지도 출석률 칸처럼"): 선생님 공지 / 최근 자세 복습지 */
     var n = (M.notices || [])[0], f = M.forms[0], nNew = n && nUnseen().length > 0;
@@ -775,7 +776,7 @@
     } else {
       h += '<a class="hw col hi" href="#forms"><span class="hi-top"><span class="hi-ic bellc" aria-hidden="true">' + img("dumbbell", "hi-ex", true) + '</span><i class="hi-go">›</i></span><small>최근 자세 복습지</small><b class="hi-t">수업에서 배운 자세가 여기에 쌓여요</b></a>';
     }
-    return h + rankHome() + '</div>';
+    return h + '</div>';
   }
   document.addEventListener("click", function (e) {   /* 홈 공지 칸 → 그 공지로 바로 (반짝 표시) */
     var a = e.target.closest && e.target.closest("a.hi[data-nk]");

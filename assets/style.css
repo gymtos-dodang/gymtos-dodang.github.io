@@ -2239,3 +2239,10 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 /* 홈 최근 자세 복습지 칸: 최신 영상 미리보기 (2026-11-18) */
 .hi-ic.hi-vid { width: 64px; height: 64px; border-radius: 16px; background: #000; box-shadow: 0 2px 8px -3px rgba(0,0,0,.35); }
 .hi-ic.hi-vid .hi-ph { width: 64px; height: 64px; object-fit: cover; }
+
+/* 홈 출석률+연속 출석 합친 칸 (2026-11-18) */
+.hatt .ring { width: 52px; height: 52px; flex: none; }
+.hatt-st { text-align: right; }
+.hatt-st small { font-size: 11px; }
+.hw .hatt-st b { font-size: 28px; color: var(--seal); }
+.hatt .wk { margin-top: auto; padding-top: 8px; }
