@@ -1759,8 +1759,10 @@
         '<animateTransform attributeName="gradientTransform" type="rotate" from="0 42 30" to="360 42 30" dur="' + (lv === 4 ? 7 : 10) + 's" repeatCount="indefinite"/></linearGradient>' : '') +
       '<clipPath id="' + u + 'c">' + bgSh(sh, RI, CY, "#000") + '</clipPath></defs>';
     if (on) {
-      if (has("rays")) s += '<polygon class="bdx-rays" points="' + bgPts(14, 38, 0, CY, 30.5) + '" fill="' + (sp ? (b.spc || "#F3C94F") : c[1]) + '" opacity=".9"/>';
-      if (sp) s += '<g fill="' + wire + '" transform="translate(0 -2)">' + BG_LAU + '</g>';
+      if (has("rays") && b.art === "loss") s += bgRaysFine(u, sp ? (b.spc || "#F3C94F") : c[1], CY);
+      else if (has("rays")) s += '<polygon class="bdx-rays" points="' + bgPts(14, 38, 0, CY, 30.5) + '" fill="' + (sp ? (b.spc || "#F3C94F") : c[1]) + '" opacity=".9"/>';
+      if (sp && b.art === "loss") s += bgWreath(wire, CY);
+      else if (sp) s += '<g fill="' + wire + '" transform="translate(0 -2)">' + BG_LAU + '</g>';
       s += '<ellipse cx="42" cy="66.5" rx="19" ry="2.8" fill="#000" opacity="' + (sp ? .3 : .16) + '"/>' +
         '<g transform="translate(0 3)">' + bgSh(sh, R, CY, "#7A4E00") + '</g>';
     } else s += '<g transform="translate(0 2.6)">' + bgSh(sh, R, CY, "#D2CCCC") + '</g>';
@@ -1780,7 +1782,7 @@
     s += '</svg>';
     var sm = b.sm != null ? '<span class="bdg-m' + (on ? '' : ' off') + '">' + b.sm + '</span>' : '';
     var ex = (has("pulse") ? '<span class="bdx-glow" aria-hidden="true"></span>' : '') + (has("spin") ? '<span class="bdx-ring" aria-hidden="true"></span>' : '');
-    return '<span class="bdg bx' + (on ? ' on' : '') + '" style="--bgc:' + bgRgb(on ? (sp ? (b.spc || "#F3C94F") : c[key === "D" || key === "N" ? 1 : 0]) : "#BBBBBB") + '">' + ex + s + sm + '</span>';
+    return '<span class="bdg bx' + (b.art === "loss" ? ' bxl' : '') + (on ? ' on' : '') + '" style="--bgc:' + bgRgb(on ? (sp ? (b.spc || "#F3C94F") : c[key === "D" || key === "N" ? 1 : 0]) : "#BBBBBB") + '">' + ex + s + sm + '</span>';
   }
   /* 감량 배지 그림 (2026-11-19 장동욱이 보내 준 에나멜 핀 참고 사진 느낌 — 작은 아이콘 대신 배지 가득 금선 그림):
      금선으로 나눈 내리막 언덕 두 칸 + 언덕을 따라 내려가는 굵은 금 화살표 + 금선 큰 숫자(kg). 명찰(bdg-m)은 안 씀 */
@@ -1794,6 +1796,31 @@
       '<g class="bdx-i" fill="none" stroke-linecap="round" stroke-linejoin="round">' +
       '<g stroke="' + wire + '" stroke-width="5"><path d="M17 23C28 24 32 37 44 42L57 46"/><path d="M49.5 49.5L58.5 46.5L55 38"/></g>' +
       '<g stroke="' + ink + '" stroke-width="2"><path d="M17 23C28 24 32 37 44 42L57 46"/><path d="M49.5 49.5L58.5 46.5L55 38"/></g></g>';
+  }
+  /* 감량 배지 주변 효과 다듬기 (2026-11-19 "주변 효과들 좀 더 다듬을 수 없나"): 뾰족한 색 톱니 → 가늘고 길이가 번갈아 나오는 빛살(바깥으로 옅어짐),
+     뭉툭한 잎 → 줄기가 있는 가는 월계관. 빛 번짐·빛 링은 style.css .bxl */
+  function bgRaysFine(u, col, CY) {
+    var o = '<defs><radialGradient id="' + u + 'r" gradientUnits="userSpaceOnUse" cx="42" cy="' + CY + '" r="41"><stop offset=".62" stop-color="' + col + '" stop-opacity=".95"/><stop offset=".82" stop-color="' + col + '" stop-opacity=".45"/>' +
+      '<stop offset="1" stop-color="' + col + '" stop-opacity="0"/></radialGradient></defs><g class="bdx-rays" fill="url(#' + u + 'r)">';
+    for (var i = 0; i < 24; i++) {
+      var q = i * Math.PI / 12, L = i % 2 ? 35 : 41, w = i % 2 ? .045 : .06;
+      o += '<polygon points="' + (42 + 24 * Math.cos(q - w * 1.6)).toFixed(1) + ',' + (CY + 24 * Math.sin(q - w * 1.6)).toFixed(1) + ' ' + (42 + L * Math.cos(q)).toFixed(1) + ',' + (CY + L * Math.sin(q)).toFixed(1) + ' ' +
+        (42 + 24 * Math.cos(q + w * 1.6)).toFixed(1) + ',' + (CY + 24 * Math.sin(q + w * 1.6)).toFixed(1) + '"/>';
+    }
+    return o + '</g>';
+  }
+  function bgWreath(wire, CY) {
+    var o = '<g fill="' + wire + '">', R = 34.5;
+    [-1, 1].forEach(function (sd) {
+      o += '<path d="M' + (42 + sd * R * Math.sin(.42)).toFixed(1) + ' ' + (CY + R * Math.cos(.42)).toFixed(1) + 'A' + R + ' ' + R + ' 0 0 ' + (sd < 0 ? 1 : 0) + ' ' + (42 + sd * R * Math.sin(2.5)).toFixed(1) + ' ' + (CY + R * Math.cos(2.5)).toFixed(1) +
+        '" fill="none" stroke="' + wire + '" stroke-width=".9" stroke-linecap="round"/>';
+      for (var i = 0; i < 8; i++) {
+        var a = .5 + i * .27, x = 42 + sd * R * Math.sin(a), y = CY + R * Math.cos(a), out = i % 2 ? 1 : -1, sz = 1 - i * .035;
+        var rot = (sd < 0 ? 1 : -1) * (a * 180 / Math.PI) + (sd < 0 ? 1 : -1) * out * 38 + 180;
+        o += '<g transform="translate(' + (x + sd * out * 1.6 * Math.sin(a)).toFixed(1) + ' ' + (y + out * 1.6 * Math.cos(a)).toFixed(1) + ') rotate(' + rot.toFixed(0) + ')"><path d="M0 ' + (-4.6 * sz).toFixed(1) + 'C' + (2.3 * sz).toFixed(1) + ' -1.5 ' + (2 * sz).toFixed(1) + ' 2 0 ' + (4.2 * sz).toFixed(1) + 'C' + (-2 * sz).toFixed(1) + ' 2 ' + (-2.3 * sz).toFixed(1) + ' -1.5 0 ' + (-4.6 * sz).toFixed(1) + 'Z"/></g>';
+      }
+    });
+    return o + '</g>';
   }
   function bpBadge() {   /* 전설 배지 "바프 완료": 바프 회원(journey.mode bodyprofile)만 보임. 선생님이 data.js journey.bpDone: "촬영 날짜" 넣으면 획득. 45개 수에는 안 셈 */
     var J = M.journey || {};

@@ -2415,6 +2415,14 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .rtp-f { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; overflow: visible; flex-wrap: wrap; }
 .rtp-f button { min-width: 0; padding: 8px 2px; font-size: 13px; white-space: nowrap; letter-spacing: -.3px; text-align: center; }
 
+/* 감량 배지(.bxl) 주변 효과 다듬기 (2026-11-19): 흰 원반처럼 보이던 빛 → 부드럽게 번지는 빛, 빛 링은 가늘고 천천히, 빛살은 느리게 */
+.bxl .bdx-glow { left: 0; top: -12px; width: 84px; height: 84px; box-shadow: none !important; background: radial-gradient(circle, rgba(var(--bgc), .6) 30%, rgba(var(--bgc), .22) 52%, rgba(var(--bgc), 0) 70%); animation: bxlglow 3.2s ease-in-out infinite; }
+@keyframes bxlglow { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+.bxl .bdx-ring { -webkit-mask: radial-gradient(circle, transparent 35.2px, #000 35.9px, #000 37.1px, transparent 37.8px); mask: radial-gradient(circle, transparent 35.2px, #000 35.9px, #000 37.1px, transparent 37.8px); animation-duration: 6s; opacity: .9; }
+.bxl .bdx-rays { animation-duration: 40s; }
+.bxl .bdg-spark { animation-duration: 2.4s; }
+@media (prefers-reduced-motion: reduce) { .bxl .bdx-glow { animation: none !important; opacity: .7; } }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
