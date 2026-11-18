@@ -1,0 +1,3 @@
+/* 선생님 페이지(PT통합노트) 다크 손 규칙 — make_dark.py가 coach-tqqnlh/index.html에 끼움. 앞머리 D */
+D .sbar { background: rgba(16, 16, 19, .62); }
+D .msh-p, D .csh-p { background: rgba(26, 26, 31, .84); color: var(--ink); }
