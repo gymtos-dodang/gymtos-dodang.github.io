@@ -1181,7 +1181,7 @@
     wrap.className = "ibsheet";
     wrap.innerHTML = '<div class="ibs-back" data-close></div><form class="ibs-card" novalidate>' +
       '<div class="ibs-top"><h3>인바디 올리기</h3><button type="button" class="ibs-x" data-close aria-label="닫기">×</button></div>' +
-      '<label class="ibs-file"><input type="file" id="ibFile" accept="image/*"><span class="ibs-ph"><b>결과지 사진 찍기 · 고르기</b><small>사진을 올리면 숫자를 자동으로 읽어 채워요</small></span><img alt="" hidden></label>' +
+      '<label class="ibs-file"><input type="file" id="ibFile" accept="image/*,application/pdf"><span class="ibs-ph"><b>결과지 사진 찍기 · 고르기</b><small>사진이나 PDF 파일을 올리면 숫자를 자동으로 읽어 채워요</small></span><img alt="" hidden></label>' +
       '<label class="ibs-f"><span>측정한 날</span><input type="date" id="ibDate" value="' + ymd(new Date()) + '" max="' + ymd(new Date()) + '"></label>' +
       '<p class="ibs-hint">결과지 맨 위 <b>체성분분석 · 골격근·지방분석</b> 칸의 숫자를 넣어요</p>' +
       '<div class="ibs-nums">' +
@@ -1200,14 +1200,17 @@
     file.addEventListener("change", function () {
       var f = file.files && file.files[0];
       if (!f) return;
-      msg.textContent = "사진 준비 중…";
-      ibShrink(f, 1800).then(function (d) {
-        b64 = d; pv.src = "data:image/jpeg;base64," + d; pv.hidden = false;
-        wrap.querySelector(".ibs-ph").hidden = true; msg.textContent = "";
+      var pdf = f.type === "application/pdf" || /\.pdf$/i.test(f.name || "");   /* 2026-11-19 PDF 결과지도 — 숫자만 읽고 사진으로는 안 남김 */
+      if (pdf && f.size > 5500000) { msg.textContent = "PDF가 너무 커요 (5MB까지) · 화면을 캡처해서 사진으로 올려 주세요"; return; }
+      msg.textContent = pdf ? "파일 준비 중…" : "사진 준비 중…";
+      (pdf ? new Promise(function (res, rej) { var fr = new FileReader(); fr.onload = function () { res(String(fr.result).split(",")[1] || ""); }; fr.onerror = rej; fr.readAsDataURL(f); }) : ibShrink(f, 1800)).then(function (d) {
+        if (pdf) { b64 = null; pv.hidden = true; var ph = wrap.querySelector(".ibs-ph"); ph.hidden = false; ph.querySelector("b").textContent = "PDF · " + (f.name || "결과지"); ph.querySelector("small").textContent = "숫자만 읽어요 (사진으로는 저장되지 않아요)"; }
+        else { b64 = d; pv.src = "data:image/jpeg;base64," + d; pv.hidden = false; wrap.querySelector(".ibs-ph").hidden = true; }
+        msg.textContent = "";
         if (!ATT_API) return;
         var my = ++ocrRun;
         msg.className = "ibs-msg info"; msg.textContent = "결과지 숫자 읽는 중… (몇 초 걸려요)";
-        fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "inbody_ocr", m: SLUG, img: d }) })
+        fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "inbody_ocr", m: SLUG, img: d, mime: pdf ? "application/pdf" : "image/jpeg" }) })
           .then(function (r) { return r.json(); })
           .then(function (j) {
             if (my !== ocrRun || !wrap.isConnected) return;
@@ -1244,7 +1247,7 @@
       if (bf !== null && !(bf > 0 && bf < w)) { msg.textContent = "체지방량을 확인해 주세요 (모르면 비워 두세요)"; return; }
       if (!ATT_API) { msg.textContent = "저장할 곳이 아직 준비 안 됐어요"; return; }
       busy = true; form.classList.add("saving"); msg.className = "ibs-msg info"; msg.textContent = "저장하는 중…";
-      fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "inbody_add", m: SLUG, n: M._real || M.name, d: d, w: w, smm: s, bfm: bf, pbf: pf, img: b64 || "" }) })
+      fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "inbody_add", m: SLUG, n: M._real || M.name, d: d, w: w, smm: s, bfm: bf, pbf: pf, img: b64 || "", bmr: (wrap._x && wrap._x.bmr) || null, h: (wrap._x && wrap._x.h) || null }) })
         .then(function (r) { return r.json(); })
         .then(function (j) {
           if (!j || !j.ok) throw new Error(j && j.error || "save");
@@ -3083,10 +3086,10 @@
     d.at = Date.now(); try { localStorage.setItem(DB_LS, JSON.stringify(d)); } catch (e) {}
     if (ATT_API && !DEMO) rtPost({ a: "kv_set", k: "mw:" + SLUG + ":diet", v: d }).catch(function () {});
   }
-  function dbBmr(b) { var d = dbGet(), k = b && b.src || "m"; return d.ib && d.ib.d === k && d.ib.bmr >= 800 && d.ib.bmr <= 3500 ? d.ib.bmr : null; }   /* 결과지(또는 직접 적은) 기초대사량 */
+  function dbBmr(b) { var d = dbGet(), k = b && b.src || "m"; return d.ib && d.ib.d === k && d.ib.bmr >= 800 && d.ib.bmr <= 3500 ? d.ib.bmr : (b && b.bmr) || null; }   /* 손으로 적은 값 → 없으면 인바디 기록(시트)에 저장된 값 */   /* 결과지(또는 직접 적은) 기초대사량 */
   function dbBody() {   /* 가장 최근 인바디 → 없으면 직접 넣은 값 */
     var d = dbGet(), p = IB_ON && !d.manual ? ibPair() : null, c = p && p.cur;
-    if (c && c.w) return { w: c.w, pbf: c.pbf != null ? c.pbf : (c.bfm != null ? c.bfm / c.w * 100 : null), smm: c.smm, src: c.d };
+    if (c && c.w) return { w: c.w, pbf: c.pbf != null ? c.pbf : (c.bfm != null ? c.bfm / c.w * 100 : null), smm: c.smm, src: c.d, bmr: c.bmr || null, h: c.h || null };
     return d.w ? { w: d.w, pbf: d.pbf || null, src: null } : null;
   }
   function dbCalc() {
@@ -3121,7 +3124,8 @@
   function dbBuilder() {
     if (IB_ON && !ibData && !DB_IBSYNC) { DB_IBSYNC = 1; try { ibData = JSON.parse(localStorage.getItem(IB_KEY) || "null"); } catch (e) {} ibSync(); }
     DB_IBDRAWN = dbIbSig();
-    var d = dbGet(), R = dbCalc(), b = dbBody(), h = '<section class="db">' + head("", "내 식단 짜기", "목적을 고르면 내 몸에 맞는 양을 계산해 줘요");
+    var d = dbGet(), b = dbBody(); if (b && b.h && !d.h) d.h = b.h;   /* 키: 인바디 기록에 있으면 그걸로 */
+    var R = dbCalc(), h = '<section class="db">' + head("", "내 식단 짜기", "목적을 고르면 내 몸에 맞는 양을 계산해 줘요");
     h += '<div class="panel db-set"><small class="db-l">목적</small><div class="db-seg">' + ["cut", "keep", "bulk"].map(function (g) {
       return '<button type="button" class="' + (d.g === g ? "on" : "") + '" data-db="g:' + g + '"><b>' + DB_GOAL[g].n + '</b><i>' + DB_GOAL[g].d + '</i></button>'; }).join("") + '</div>';
     h += '<small class="db-l db-lr">내 몸' + (b || d.h || d.w ? '<button type="button" class="db-reset" data-db="reset:1">내 몸 초기화</button>' : '') + '</small>';

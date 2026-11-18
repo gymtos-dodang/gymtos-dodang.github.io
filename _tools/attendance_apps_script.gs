@@ -56,6 +56,7 @@ function ibSheet_() {
     s.appendRow(['회원주소', '이름', '측정일', '체중', '골격근량', '체지방량', '체지방률', '사진ID', '기록ID', '기록시각']);
     s.setFrozenRows(1);
   }
+  if (s.getLastColumn() < 12) s.getRange(1, 11, 1, 2).setValues([['기초대사량', '키']]);   // 2026-11-19 결과지의 기초대사량·키도 저장
   return s;
 }
 
@@ -74,7 +75,8 @@ function ibList_(m) {
   for (let i = 1; i < v.length; i++) {
     if (v[i][0] !== m) continue;
     out.push({ id: String(v[i][8]), d: txt_(v[i][2], 'yyyy-MM-dd'), w: Number(v[i][3]), smm: Number(v[i][4]),
-               bfm: Number(v[i][5]), pbf: Number(v[i][6]), img: !!v[i][7] });
+               bfm: Number(v[i][5]), pbf: Number(v[i][6]), img: !!v[i][7],
+               bmr: Number(v[i][10]) || null, h: Number(v[i][11]) || null });
   }
   out.sort(function (a, b) { return a.d < b.d ? -1 : a.d > b.d ? 1 : 0; });
   return out;
@@ -260,8 +262,8 @@ function allFor_(ms) {
 }
 
 /* 결과지 사진 → 글자 (구글 드라이브 OCR: 사진을 구글 문서로 바꿔 글자만 읽고 바로 휴지통) */
-function ocr_(b64) {
-  const blob = Utilities.newBlob(Utilities.base64Decode(b64), 'image/jpeg', 'inbody_ocr.jpg');
+function ocr_(b64, pdf) {   // pdf = true면 PDF 결과지(2026-11-19)
+  const blob = Utilities.newBlob(Utilities.base64Decode(b64), pdf ? 'application/pdf' : 'image/jpeg', pdf ? 'inbody_ocr.pdf' : 'inbody_ocr.jpg');
   let id = null;
   try {
     id = Drive.Files.create({ name: 'inbody_ocr_tmp', mimeType: 'application/vnd.google-apps.document' }, blob, { ocrLanguage: 'ko' }).id;   // Drive API v3
@@ -283,7 +285,7 @@ function doPost(e) {
   if (!memberOk_(m)) return json_({ ok: false, error: 'member' });
   if (b.a === 'inbody_ocr') {
     if (!b.img || String(b.img).length > 8000000) return json_({ ok: false, error: 'img' });
-    try { return json_({ ok: true, text: ocr_(String(b.img)) }); }
+    try { return json_({ ok: true, text: ocr_(String(b.img), b.mime === 'application/pdf') }); }
     catch (err) { return json_({ ok: false, error: 'ocr', msg: String(err) }); }
   }
   if (b.a === 'kv_get') {   // 선생님: 이름 앞부분(prefix)으로 읽기
@@ -363,6 +365,7 @@ function doPost(e) {
   let bfm = num_(b.bfm, 0.5, 200);
   if (w === null || smm === null || pbf === null) return json_({ ok: false, error: 'number' });
   if (bfm === null) bfm = Math.round(w * pbf) / 100;
+  const bmr = num_(b.bmr, 800, 3500), hgt = num_(b.h, 120, 220);
 
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
@@ -373,7 +376,7 @@ function doPost(e) {
       photo = ibFolder_().createFile(blob).getId();
     }
     const id = Utilities.getUuid().replace(/-/g, '').slice(0, 10);
-    ibSheet_().appendRow([m, String(b.n || ''), "'" + d, w, smm, bfm, pbf, photo, id, new Date()]);
+    ibSheet_().appendRow([m, String(b.n || ''), "'" + d, w, smm, bfm, pbf, photo, id, new Date(), bmr === null ? '' : bmr, hgt === null ? '' : hgt]);
     return json_({ ok: true, inbody: ibList_(m) });
   } finally {
     lock.releaseLock();
