@@ -109,11 +109,12 @@
   }
   /* 2026-11-16 돌아다니는 고양이 (data.js pet: "cat" — 우유정님 "귀여운 고양이 돌아다니게"). 아래 탭 바로 위를 걸어다니다 앉아서 쉼.
      오리지널 그림(크림색 고양이 + 분홍 리본), 화면 위에 따로 떠 있는 칸(.petwalk)이라 본문(.view)엔 효과 없음 · pointer-events none · 폭 안 넓어짐(overflow hidden) */
-  (function () {
-    var PET = M.pet; if ((PET !== "cat" && PET !== "bunny") || document.querySelector(".petwalk")) return;
-    document.documentElement.setAttribute("data-pet", PET);   /* bunny = 김지수님 토롱이가 깡충깡충(2026-11-16) — 테마 그림 base.svg 그대로, 탭 위 빼꼼 그림은 숨김 */
+  function petSpawn(PET, F) {   /* F = 토롱이 친구 설정(2026-11-18), 없으면 주인공 */
+    if (!F && ((PET !== "cat" && PET !== "bunny") || document.querySelector(".petwalk"))) return;
+    if (!F) document.documentElement.setAttribute("data-pet", PET);   /* bunny = 김지수님 토롱이가 깡충깡충(2026-11-16) — 테마 그림 base.svg 그대로, 탭 위 빼꼼 그림은 숨김 */
     var wrap = document.createElement("div"); wrap.className = "petwalk"; wrap.setAttribute("aria-hidden", "true");
-    if (PET === "bunny") wrap.innerHTML = '<div class="pet hop sit"><svg class="b-all" viewBox="0 -6 64 68" width="48" height="51"><g class="b-body"><circle cx="11" cy="44" r="5.2" fill="#fff" stroke="#B8325A" stroke-width="1.5"/><ellipse class="b-foot" cx="20" cy="56" rx="9" ry="3.8" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/><ellipse cx="25" cy="45" rx="14.5" ry="11.5" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/><ellipse class="b-paw" cx="38" cy="56" rx="4.6" ry="3.4" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/></g><g class="b-ears"><g transform="translate(11.2 1.2) scale(.48)"><ellipse cx="45" cy="17" rx="9" ry="20" transform="rotate(-12 45 17)" fill="#FFE8EE" stroke="#B8325A" stroke-width="3"/><ellipse cx="45" cy="19" rx="4" ry="13" transform="rotate(-12 45 19)" fill="#F7A9BC"/><path d="M68 36 C66 20 72 5 81 6 C90 7 106 16 104 27 C102 34 92 31 84 27 C81 31 79 35 77 37 Z" fill="#FFE8EE" stroke="#B8325A" stroke-width="3" stroke-linejoin="round"/><path d="M74 30 C73 20 77 12 82 12 C88 13 97 19 97 24 C93 25 87 22 82 20 C79 23 77 27 76 31 Z" fill="#F7A9BC"/></g></g><g class="b-head"><g transform="translate(11.2 1.2) scale(.48)"><ellipse cx="60" cy="60" rx="34" ry="30" fill="#FFE8EE" stroke="#B8325A" stroke-width="3"/><path d="M27 50 Q60 34 93 50 L92 58 Q60 43 28 58 Z" fill="#D6204F" stroke="#B8325A" stroke-width="2" stroke-linejoin="round"/><g class="b-eyes"><ellipse cx="47" cy="65" rx="5.4" ry="7" fill="#4A2030"/><circle cx="49" cy="62" r="2.1" fill="#fff"/><circle cx="45.4" cy="67.6" r="1" fill="#fff"/><ellipse cx="73" cy="65" rx="5.4" ry="7" fill="#4A2030"/><circle cx="75" cy="62" r="2.1" fill="#fff"/><circle cx="71.4" cy="67.6" r="1" fill="#fff"/></g><g class="b-happy"><path d="M41 67q6-8 12 0M67 67q6-8 12 0" fill="none" stroke="#4A2030" stroke-width="3.4" stroke-linecap="round"/></g><ellipse cx="37" cy="76" rx="6.5" ry="4" fill="#FF8FA8" opacity=".8"/><ellipse cx="83" cy="76" rx="6.5" ry="4" fill="#FF8FA8" opacity=".8"/><path d="M56 73 Q58 76 60 73 Q62 76 64 73" fill="none" stroke="#B8325A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g></g></svg></div>';   /* 2026-11-16 "처음 측면 토롱이가 좋았는데" — 옆모습 토끼(솜꼬리·발 있음)로 다시 */
+    if (F) wrap.innerHTML = '<div class="pet hop sit fr fr-' + F.id + '">' + frSvg(F) + '</div>';
+    else if (PET === "bunny") wrap.innerHTML = '<div class="pet hop sit">' + BNY_SVG + '</div>';
     else wrap.innerHTML = '<div class="pet sit"><svg viewBox="0 0 64 48" width="52" height="39">'
       + '<g class="p-walk"><path class="p-tail" d="M12 30 C4 28 3 18 8 14" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/>'
       + '<g class="p-legs"><g class="lg a"><path d="M16 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="19.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M22 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="25.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M36 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="39.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg a"><path d="M42 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="45.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g></g>'
@@ -127,9 +128,10 @@
       + '<path d="M40.500 26.200l-4-2.200v4.400zM42.500 26.200l4-2.200v4.400z" fill="#D6204F"/><circle cx="41.500" cy="26.200" r="1.500" fill="#B8173F"/></g>'
       + '</svg></div>';
     document.body.appendChild(wrap);
-    var pet = wrap.firstChild, x = 16, dir = 1, tm = 0, W = PET === "bunny" ? 48 : 52, HOP = PET === "bunny", FLIP = true;
+    var pet = wrap.firstChild, x = F ? 30 + Math.random() * 220 : 16, HMS = (F && F.hop) || 420, dir = 1, tm = 0, W = PET === "bunny" ? 48 : 52, HOP = PET === "bunny", FLIP = true;
     var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     function place(ms) { pet.style.transitionDuration = ms + "ms"; pet.style.transform = "translateX(" + x + "px) scaleX(" + (FLIP ? dir : 1) + ")"; }
+    pet.style.setProperty("--hop", HMS / 1000 + "s");
     place(0);
     function next() {
       if (still || document.hidden) { tm = setTimeout(next, 4000); return; }
@@ -140,9 +142,9 @@
         var n = Math.max(2, Math.round(Math.abs(to - x) / 46)), step = (to - x) / n;
         pet.classList.remove("sit");
         (function hop() {
-          if (n-- <= 0) { pet.classList.add("sit"); tm = setTimeout(next, 3000 + Math.random() * 5500); return; }
-          x += step; pet.classList.remove("jump"); void pet.offsetWidth; pet.classList.add("jump"); place(420);
-          tm = setTimeout(function () { pet.classList.remove("jump"); tm = setTimeout(hop, 110); }, 420);
+          if (n-- <= 0) { pet.classList.add("sit"); tm = setTimeout(next, ((F && F.rest) || 3000) + Math.random() * 5500); return; }
+          x += step; pet.classList.remove("jump"); void pet.offsetWidth; pet.classList.add("jump"); place(HMS);
+          tm = setTimeout(function () { pet.classList.remove("jump"); tm = setTimeout(hop, 110); }, HMS);
         })();
         return;
       }
@@ -175,25 +177,89 @@
     function react() {
       if (busy) { hearts(1); return; }
       busy = 1; freeze();
-      var kind = tapN++ % 3, end = 1800;
+      var n = tapN++, R = F ? F.tap(n) : { k: n % 3 }, kind = R.k, end = 1800, cls = [];
       if (kind === 0) {   /* 쓰담쓰담 → 웃는 눈 + 하트 */
-        pet.classList.add("happy", "pat"); hearts(3); bubble(PET === "bunny" ? "헤헤 좋아요!" : "골골골~ 좋아냥");
+        cls = R.happy === false ? ["pat"] : ["happy", "pat"]; if (R.h !== 0) hearts(R.h || 3);
+        bubble(R.say || (PET === "bunny" ? "헤헤 좋아요!" : "골골골~ 좋아냥"));
       } else if (kind === 1) {   /* 밥 먹기 → 앞에 음식, 세 입에 냠냠 */
-        end = 2600; pet.classList.add("eat");
+        end = 2600; cls = ["eat"];
         var f = fx("pfood", FOOD, (FLIP ? dir : 1) * 24, 20, 2400);
-        bubble(PET === "bunny" ? "당근 냠냠!" : "생선 냠냠!", 2300);
+        bubble(R.say || (PET === "bunny" ? "당근 냠냠!" : "생선 냠냠!"), 2300);
         setTimeout(function () { f.classList.add("bite1"); }, 700); setTimeout(function () { f.classList.add("bite2"); }, 1300); setTimeout(function () { f.classList.add("gone"); }, 1900);
         setTimeout(function () { pet.classList.add("happy"); hearts(2); }, 2000);
-      } else {   /* 한마디 → 폴짝 */
-        pet.classList.add("hi"); bubble(LINES[Math.floor(Math.random() * LINES.length)], 2100);
+      } else if (kind === 2) {   /* 한마디 → 폴짝 */
+        cls = ["hi"]; bubble(R.say || LINES[Math.floor(Math.random() * LINES.length)], 2100);
+      } else {   /* 도망(수줍이) → 반대쪽 끝으로 쪼르르 */
+        cls = ["shy"]; end = 1500; bubble(R.say, 1400);
+        setTimeout(function () { var mx = Math.max(20, wrap.clientWidth - W - 8); dir = x < mx / 2 ? 1 : -1; x = dir > 0 ? mx : 8; place(650); }, 300);
       }
+      if (R.blush) cls.push("blush");
+      cls.forEach(function (c) { pet.classList.add(c); });
       try { navigator.vibrate && navigator.vibrate(12); } catch (e) {}
-      setTimeout(function () { pet.classList.remove("happy", "pat", "eat", "hi"); busy = 0; tm = setTimeout(next, 1500 + Math.random() * 2500); }, end);
+      setTimeout(function () { pet.classList.remove("happy", "pat", "eat", "hi", "shy", "blush"); busy = 0; tm = setTimeout(next, 1500 + Math.random() * 2500); }, end);
     }
+    /* 꾹(0.6초) 누르면 친구 도감 */
+    (function () { var lt = 0; pet.addEventListener("pointerdown", function () { lt = setTimeout(function () { lt = -1; frDex(); }, 600); });
+      ["pointerup", "pointercancel", "pointerleave"].forEach(function (ev) { pet.addEventListener(ev, function () { if (lt > 0) clearTimeout(lt); }); });
+      pet.addEventListener("click", function (e) { if (lt === -1) { lt = 0; e.stopImmediatePropagation(); e.preventDefault(); } }, true); })();
     pet.addEventListener("click", function (e) { e.preventDefault(); e.stopPropagation(); react(); });
-    wrap.removeAttribute("aria-hidden"); pet.setAttribute("role", "button"); pet.setAttribute("aria-label", PET === "bunny" ? "토롱이 쓰다듬기" : "고양이 쓰다듬기");
-    tm = setTimeout(next, 2500);
+    wrap.removeAttribute("aria-hidden"); pet.setAttribute("role", "button"); pet.setAttribute("aria-label", (F ? F.name : PET === "bunny" ? "토롱이" : "고양이") + " 쓰다듬기");
+    tm = setTimeout(next, F ? 900 + Math.random() * 3000 : 2500);
     window.addEventListener("resize", function () { var max = Math.max(20, wrap.clientWidth - W - 8); if (x > max) { x = max; place(0); } });
+  }
+  /* ---- 토롱이 친구들 (2026-11-18 장동욱 "각자 고유의 성격을 가진 토롱이들, 랜덤으로 나오는 날도 안 나오는 날도" + "약간 까칠한 토롱이도")
+     주인공 토롱이(pet:"bunny") 회원만. 날마다(날짜+회원 주소로 정해짐) 0~2마리, 하루 동안은 같은 친구. 처음 만나면 "새 친구 발견!" + 도감(꾹 누르기) */
+  var BNY_SVG = '<svg class="b-all" viewBox="0 -6 64 68" width="48" height="51"><g class="b-body"><circle cx="11" cy="44" r="5.2" fill="#fff" stroke="#B8325A" stroke-width="1.5"/><ellipse class="b-foot" cx="20" cy="56" rx="9" ry="3.8" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/><ellipse cx="25" cy="45" rx="14.5" ry="11.5" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/><ellipse class="b-paw" cx="38" cy="56" rx="4.6" ry="3.4" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/></g><g class="b-ears"><g transform="translate(11.2 1.2) scale(.48)"><ellipse cx="45" cy="17" rx="9" ry="20" transform="rotate(-12 45 17)" fill="#FFE8EE" stroke="#B8325A" stroke-width="3"/><ellipse cx="45" cy="19" rx="4" ry="13" transform="rotate(-12 45 19)" fill="#F7A9BC"/><path d="M68 36 C66 20 72 5 81 6 C90 7 106 16 104 27 C102 34 92 31 84 27 C81 31 79 35 77 37 Z" fill="#FFE8EE" stroke="#B8325A" stroke-width="3" stroke-linejoin="round"/><path d="M74 30 C73 20 77 12 82 12 C88 13 97 19 97 24 C93 25 87 22 82 20 C79 23 77 27 76 31 Z" fill="#F7A9BC"/></g></g><g class="b-head"><g transform="translate(11.2 1.2) scale(.48)"><ellipse cx="60" cy="60" rx="34" ry="30" fill="#FFE8EE" stroke="#B8325A" stroke-width="3"/><path d="M27 50 Q60 34 93 50 L92 58 Q60 43 28 58 Z" fill="#D6204F" stroke="#B8325A" stroke-width="2" stroke-linejoin="round"/><g class="b-eyes"><ellipse cx="47" cy="65" rx="5.4" ry="7" fill="#4A2030"/><circle cx="49" cy="62" r="2.1" fill="#fff"/><circle cx="45.4" cy="67.6" r="1" fill="#fff"/><ellipse cx="73" cy="65" rx="5.4" ry="7" fill="#4A2030"/><circle cx="75" cy="62" r="2.1" fill="#fff"/><circle cx="71.4" cy="67.6" r="1" fill="#fff"/></g><g class="b-happy"><path d="M41 67q6-8 12 0M67 67q6-8 12 0" fill="none" stroke="#4A2030" stroke-width="3.4" stroke-linecap="round"/></g><ellipse cx="37" cy="76" rx="6.5" ry="4" fill="#FF8FA8" opacity=".8"/><ellipse cx="83" cy="76" rx="6.5" ry="4" fill="#FF8FA8" opacity=".8"/><path d="M56 73 Q58 76 60 73 Q62 76 64 73" fill="none" stroke="#B8325A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g></g></svg>';
+  var FR = [
+    { id: "muscle", name: "근육이", desc: "덤벨을 놓지 않는 운동광. 쉬는 시간에도 한 세트 더!", fur: "#ECECF1", line: "#5A5A66", band: "#2B2B33",
+      acc: '<g class="acc"><rect x="36.5" y="49.2" width="15" height="2.4" rx="1.2" fill="#6B6B76"/><rect x="34.4" y="45.4" width="3.6" height="10" rx="1.3" fill="#2B2B33"/><rect x="50" y="45.4" width="3.6" height="10" rx="1.3" fill="#2B2B33"/></g>',
+      tap: function (n) { return [{ k: 2, say: "한 세트 더!" }, { k: 0, say: "근육 만져 볼래요? 💪", h: 2 }, { k: 2, say: "근육은 배신 안 해!" }][n % 3]; } },
+    { id: "sleepy", name: "졸졸이", desc: "언제나 5분만 더… 느릿느릿 꾸벅꾸벅 조는 잠꾸러기.", fur: "#E1EEFB", line: "#4C6E9A", band: "#7FA8E0", hop: 640, rest: 6500,
+      acc: '<text class="zz" x="50" y="8" font-size="10" font-weight="900" fill="#4C6E9A">z</text><text class="zz z2" x="56" y="1" font-size="7" font-weight="900" fill="#4C6E9A">z</text>',
+      tap: function (n) { return { k: 0, happy: false, h: 1, say: ["으음… 5분만…", "졸려요… zZ", "어? 벌써 운동 가요?"][n % 3] }; } },
+    { id: "bolt", name: "번개", desc: "가만히 있질 못하는 스피드광. 유산소가 제일 좋아!", fur: "#FFF3C2", line: "#A9810C", band: "#FF8A00", hop: 290, rest: 700,
+      acc: '<path class="acc" d="M24.5 37.5l-4.2 7.2h4.1l-2.9 7.1 8.2-9.3h-4.2l3.1-5z" fill="#FFB300" stroke="#A9810C" stroke-width=".8" stroke-linejoin="round"/>',
+      tap: function (n) { return { k: 2, say: ["유산소 가자!", "더 빨리! 더 빨리!", "심박수 올려~!"][n % 3] }; } },
+    { id: "foodie", name: "냠냠이", desc: "볼이 빵빵한 먹보. 단백질은 절대 안 거른다.", fur: "#FFE6CF", line: "#BF6129", band: "#FF7A45",
+      acc: '<circle cx="28.6" cy="37.8" r="3.9" fill="#FF9F80" opacity=".8"/><circle cx="51.2" cy="37.8" r="3.9" fill="#FF9F80" opacity=".8"/>',
+      tap: function (n) { return n % 2 ? { k: 2, say: "단백질 챙겼어요?" } : { k: 1, say: "단백질 냠냠!" }; } },
+    { id: "shy", name: "수줍이", desc: "부끄럼쟁이. 누르면 화들짝 놀라 도망가요.", fur: "#F1E6FB", line: "#7D5BA6", band: "#C9A6F0",
+      acc: '<circle cx="28.6" cy="37.8" r="3.6" fill="#FF8FB1" opacity=".85"/><circle cx="51.2" cy="37.8" r="3.6" fill="#FF8FB1" opacity=".85"/>',
+      tap: function (n) { return { k: 3, say: ["부, 부끄러워…", "히익!", "…아, 안녕"][n % 3] }; } },
+    { id: "grumpy", name: "까칠이", desc: "툴툴대는 츤데레. 자꾸 만지면… 사실 챙겨 줘요.", fur: "#D5DAF0", line: "#2E3A6B", band: "#2E3A6B",
+      acc: '<path d="M29.4 27.6l7 2.6M50.6 27.6l-7 2.6" stroke="#2E3A6B" stroke-width="1.7" stroke-linecap="round"/><g class="gblush"><circle cx="28.6" cy="37.8" r="3.6" fill="#FF7A9A" opacity=".9"/><circle cx="51.2" cy="37.8" r="3.6" fill="#FF7A9A" opacity=".9"/></g>',
+      tap: function (n) { return n % 5 < 3 ? { k: 2, say: ["…뭐.", "만지지 마.", "흥."][n % 5] } : { k: 0, happy: false, h: 1, blush: 1, say: n % 5 === 3 ? "…그래도 오늘 운동은 했지?" : "…잘했네. 흥." }; } }
+  ];
+  function frSvg(F) {
+    return BNY_SVG.replace('<svg class="b-all"', '<svg class="b-all frs-' + F.id + '"').replace(/#FFE8EE/g, F.fur).replace(/#B8325A/g, F.line).replace(/#D6204F/g, F.band).replace("</svg>", F.acc + "</svg>");
+  }
+  function frSeen() { try { return JSON.parse(localStorage.getItem("ptnote:" + RT_SLUG + ":fr") || "[]"); } catch (e) { return []; } }
+  function frDex() {
+    var seen = frSeen();
+    var body = '<p class="rts-note">날마다 다른 친구가 놀러 와요 · 만난 친구 ' + seen.length + '/' + FR.length + '</p><div class="frdex">' + FR.map(function (F) {
+      var ok = seen.indexOf(F.id) >= 0;
+      return '<div class="frd' + (ok ? '' : ' unk') + '"><div class="frd-pic">' + frSvg(F) + '</div><b>' + (ok ? esc(F.name) : '???') + '</b><small>' + (ok ? esc(F.desc) : '아직 못 만났어요') + '</small></div>';
+    }).join("") + '</div>';
+    rtSheet("토롱이 친구 도감", body, function () {}, false);
+  }
+  function frFound(F) {
+    var seen = frSeen(); if (seen.indexOf(F.id) >= 0) return;
+    if (document.querySelector(".frpop-bg, .rtsheet-bg, .bgpop-wrap, .npop")) { setTimeout(function () { frFound(F); }, 1200); return; }   /* 다른 창이 떠 있으면 닫힌 뒤에 */
+    seen.push(F.id); try { localStorage.setItem("ptnote:" + RT_SLUG + ":fr", JSON.stringify(seen)); } catch (e) {}
+    var bg = document.createElement("div"); bg.className = "frpop-bg";
+    bg.innerHTML = '<div class="frpop"><small>새 친구 발견!</small><div class="frpop-pic">' + frSvg(F) + '</div><b>' + esc(F.name) + '</b><p>' + esc(F.desc) + '</p>' +
+      '<div class="frpop-b"><button type="button" class="rtb" data-dex>친구 도감</button><button type="button" class="rtb fill" data-ok>반가워!</button></div></div>';
+    document.body.appendChild(bg);
+    bg.addEventListener("click", function (e) { if (e.target === bg || e.target.closest("[data-ok]")) bg.remove(); else if (e.target.closest("[data-dex]")) { bg.remove(); frDex(); } });
+  }
+  petSpawn(M.pet, null);
+  if (M.pet === "bunny") (function () {
+    var seed = 0, str = ymd(new Date()) + RT_SLUG;
+    for (var i = 0; i < str.length; i++) seed = (seed * 31 + str.charCodeAt(i)) >>> 0;
+    function rnd() { seed = (seed * 1103515245 + 12345) >>> 0; return (seed >>> 8) / 16777216; }
+    var cnt = Math.floor(rnd() * 3), pool = FR.slice(), today = [];
+    while (today.length < cnt) today.push(pool.splice(Math.floor(rnd() * pool.length), 1)[0]);
+    today.forEach(function (F, j) { setTimeout(function () { petSpawn("bunny", F); setTimeout(function () { frFound(F); }, 2500); }, 1200 + j * 900); });
   })();
   function skinDeco() {   /* 토롱이 그림을 정해진 칸에 하나씩 (이미 있으면 그대로) — 누르기·글자에는 영향 없음(pointer-events none) */
     if (!SKIN) return;

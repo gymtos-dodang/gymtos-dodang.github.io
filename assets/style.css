@@ -2800,3 +2800,32 @@ html[data-theme="dark"] .mm-fig img.mm-lt { display: none; }
 html[data-theme="dark"] .mm-fig img.mm-dk { display: block; }
 
 /* DARK-END */
+
+/* 2026-11-18 토롱이 친구들 (app.js FR·petSpawn·frDex·frFound) — 근육이·졸졸이·번개·냠냠이·수줍이·까칠이 */
+.petwalk .pet.hop.jump svg, .petwalk .pet.hop.jump .b-ears, .petwalk .pet.hop.jump .b-foot { animation-duration: var(--hop, .42s); }
+.pet .acc, .pet .zz { transform-box: fill-box; transform-origin: 50% 50%; }
+.fr-muscle.sit .acc { animation: frLift 1.6s ease-in-out infinite; }
+@keyframes frLift { 0%, 35%, 100% { transform: translateY(0); } 55%, 80% { transform: translateY(-10px); } }
+.pet .zz { opacity: 0; } .fr-sleepy.sit .zz { animation: frZ 2.4s ease-in-out infinite; }
+.fr-sleepy.sit .b-head { animation: frNod 2.4s ease-in-out infinite !important; }
+@keyframes frZ { 0% { opacity: 0; transform: translate(0, 4px) scale(.7); } 30% { opacity: 1; } 100% { opacity: 0; transform: translate(7px, -9px) scale(1.2); } }
+@keyframes frNod { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(9deg) translateY(1px); } }
+.gblush { opacity: 0; transition: opacity .3s; } .pet.blush .gblush { opacity: 1; }
+.petwalk .pet.shy svg { animation: frShy .45s ease both; }
+@keyframes frShy { 40% { transform: scale(.88, 1.08) rotate(-8deg); } 100% { transform: none; } }
+.frpop-bg { position: fixed; inset: 0; z-index: 60; background: rgba(20, 10, 18, .45); display: flex; align-items: center; justify-content: center; padding: 24px; animation: frBg .25s ease both; }
+.frpop { width: min(300px, 100%); background: #fff; border-radius: 24px; padding: 18px 18px 16px; text-align: center; box-shadow: 0 18px 50px rgba(60, 10, 40, .3); animation: frIn .45s cubic-bezier(.3, 1.5, .5, 1) both; }
+.frpop small { display: inline-block; font-size: 11.5px; font-weight: 900; letter-spacing: .04em; color: #fff; background: var(--seal, #D6204F); border-radius: 99px; padding: 3px 10px; }
+.frpop-pic { width: 120px; height: 128px; margin: 6px auto 0; } .frpop-pic svg { width: 100%; height: 100%; animation: frSpin .9s ease .2s both; }
+.frpop b { display: block; font-size: 22px; font-weight: 900; margin-top: 2px; } .frpop p { margin: 6px 0 14px; font-size: 13px; color: var(--sub, #6B6B76); line-height: 1.45; }
+.frpop-b { display: flex; gap: 8px; } .frpop-b .rtb { flex: 1; }
+@keyframes frBg { from { opacity: 0; } } @keyframes frIn { from { opacity: 0; transform: scale(.6) translateY(20px); } }
+@keyframes frSpin { 0% { transform: scale(.4) rotate(-20deg); opacity: 0; } 60% { transform: scale(1.12) rotate(6deg); opacity: 1; } 100% { transform: none; } }
+.frdex { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.frd { background: #fff; border-radius: 16px; padding: 8px 6px 10px; text-align: center; box-shadow: 0 0 0 1.5px var(--line, #E6E6EA); min-width: 0; }
+.frd-pic { width: 60px; height: 64px; margin: 0 auto 2px; } .frd-pic svg { width: 100%; height: 100%; }
+.frd b { display: block; font-size: 13.5px; font-weight: 900; } .frd small { display: block; font-size: 10.5px; color: var(--sub, #6B6B76); line-height: 1.35; margin-top: 2px; }
+.frd.unk .frd-pic svg { filter: brightness(0); opacity: .16; } .frd.unk b { color: #A0A0AA; }
+@media (prefers-reduced-motion: reduce) { .pet .acc, .pet .zz, .frpop, .frpop-pic svg { animation: none !important; } }
+.frs-sleepy .b-eyes { display: none; } .frs-sleepy .b-happy { display: inline; }
+.fr-sleepy.sit .z2 { animation-delay: .8s; }
