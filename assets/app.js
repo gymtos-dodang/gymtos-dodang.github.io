@@ -109,31 +109,25 @@
   }
   /* 2026-11-16 돌아다니는 고양이 (data.js pet: "cat" — 우유정님 "귀여운 고양이 돌아다니게"). 아래 탭 바로 위를 걸어다니다 앉아서 쉼.
      오리지널 그림(크림색 고양이 + 분홍 리본), 화면 위에 따로 떠 있는 칸(.petwalk)이라 본문(.view)엔 효과 없음 · pointer-events none · 폭 안 넓어짐(overflow hidden) */
+  function petNight() { var h = new Date().getHours(); return h < 6; }   /* 밤 12시~새벽 6시 = 자는 시간 (2026-11-18) */
   function petSpawn(PET, F) {   /* F = 토롱이 친구 설정(2026-11-18), 없으면 주인공 */
     if (!F && ((PET !== "cat" && PET !== "bunny") || document.querySelector(".petwalk"))) return;
     if (!F) document.documentElement.setAttribute("data-pet", PET);   /* bunny = 김지수님 토롱이가 깡충깡충(2026-11-16) — 테마 그림 base.svg 그대로, 탭 위 빼꼼 그림은 숨김 */
     var wrap = document.createElement("div"); wrap.className = "petwalk"; wrap.setAttribute("aria-hidden", "true");
-    if (F) wrap.innerHTML = '<div class="pet hop sit fr fr-' + F.id + '">' + frSvg(F) + '</div>';
+    if (F) wrap.innerHTML = '<div class="pet' + (PET === "bunny" ? " hop" : "") + ' sit fr fr-' + F.id + '">' + frSvg(F) + '</div>';
     else if (PET === "bunny") wrap.innerHTML = '<div class="pet hop sit">' + BNY_SVG + '</div>';
-    else wrap.innerHTML = '<div class="pet sit"><svg viewBox="0 0 64 48" width="52" height="39">'
-      + '<g class="p-walk"><path class="p-tail" d="M12 30 C4 28 3 18 8 14" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/>'
-      + '<g class="p-legs"><g class="lg a"><path d="M16 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="19.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M22 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="25.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M36 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="39.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg a"><path d="M42 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="45.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g></g>'
-      + '<ellipse cx="30" cy="30" rx="18" ry="9.5" fill="#FFF3E2"/><path d="M20 22.5c5-2.5 13-2.5 18 0" fill="none" stroke="#F3D9B8" stroke-width="3" stroke-linecap="round"/></g>'
-      + '<g class="p-sit"><path class="p-tail" d="M16 42 C6 42 4 34 9 30" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/><path d="M16 44c0-14 6-21 15-21s15 7 15 21z" fill="#FFF3E2"/><ellipse cx="36" cy="43.5" rx="4" ry="2.5" fill="#fff"/><ellipse cx="45" cy="43.5" rx="4" ry="2.5" fill="#fff"/></g>'
-      + '<g class="p-head"><path d="M35 11l2-9 7 5z" fill="#FFF3E2"/><path d="M50 7l7-5 1 9z" fill="#FFF3E2"/><path d="M37.5 8.5l1-4 3.2 2.3z" fill="#F7B6C6"/><path d="M52.5 6.8l3.2-2.3.5 4z" fill="#F7B6C6"/>'
-      + '<ellipse cx="46.5" cy="17" rx="12.5" ry="10.5" fill="#FFF3E2"/><path d="M40 7.5c2 2 4 2.5 6.500 2.500" fill="none" stroke="#F3D9B8" stroke-width="2.4" stroke-linecap="round"/>'
-      + '<g class="p-eyes"><ellipse cx="42" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/><ellipse cx="51.500" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/></g><g class="p-happy"><path d="M40 17.4q2-2.6 4 0M49.5 17.4q2-2.6 4 0" fill="none" stroke="#3A2E2E" stroke-width="1.3" stroke-linecap="round"/></g>'
-      + '<ellipse cx="38.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/><ellipse cx="54.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/>'
-      + '<path d="M46 19.300l.9 1 .9-1z" fill="#E98AA2"/><path d="M44.800 21.600q1.050 1.100 2.100 0q1.050 1.100 2.100 0" fill="none" stroke="#3A2E2E" stroke-width=".9" stroke-linecap="round"/>'
-      + '<path d="M40.500 26.200l-4-2.200v4.400zM42.500 26.200l4-2.200v4.400z" fill="#D6204F"/><circle cx="41.500" cy="26.200" r="1.500" fill="#B8173F"/></g>'
-      + '</svg></div>';
+    else wrap.innerHTML = '<div class="pet sit">' + CAT_SVG + '</div>';
     document.body.appendChild(wrap);
     var pet = wrap.firstChild, x = F ? 30 + Math.random() * 220 : 16, HMS = (F && F.hop) || 420, dir = 1, tm = 0, W = PET === "bunny" ? 48 : 52, HOP = PET === "bunny", FLIP = true;
+    pet.insertAdjacentHTML("beforeend", '<span class="pzz" aria-hidden="true"><i>z</i><i>z</i><i>Z</i></span>');
+    if (petNight()) { pet.classList.add("sleep"); }
     var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     function place(ms) { pet.style.transitionDuration = ms + "ms"; pet.style.transform = "translateX(" + x + "px) scaleX(" + (FLIP ? dir : 1) + ")"; }
     pet.style.setProperty("--hop", HMS / 1000 + "s");
     place(0);
     function next() {
+      if (petNight()) { if (!pet.classList.contains("sleep")) { pet.classList.remove("walk", "jump"); pet.classList.add("sit", "sleep"); dir = 1; place(0); } tm = setTimeout(next, 60000); return; }
+      pet.classList.remove("sleep");
       if (still || document.hidden) { tm = setTimeout(next, 4000); return; }
       var max = Math.max(20, wrap.clientWidth - W - 8), to = 8 + Math.random() * (max - 8);
       if (Math.abs(to - x) < 60) to = x < max / 2 ? max - Math.random() * 30 : 8 + Math.random() * 30;
@@ -148,10 +142,10 @@
         })();
         return;
       }
-      var ms = Math.abs(to - x) * 26; x = to;
+      var ms = Math.abs(to - x) * ((F && F.spd) || 26); x = to;
       pet.classList.remove("sit"); pet.classList.add("walk");
       requestAnimationFrame(function () { requestAnimationFrame(function () { place(ms); }); });
-      tm = setTimeout(function () { pet.classList.remove("walk"); pet.classList.add("sit"); tm = setTimeout(next, 3500 + Math.random() * 6000); }, ms + 80);
+      tm = setTimeout(function () { pet.classList.remove("walk"); pet.classList.add("sit"); tm = setTimeout(next, ((F && F.rest) || 3500) + Math.random() * 6000); }, ms + 80);
     }
     /* 2026-11-17 장동욱 "만지면 좋아하거나 밥을 먹는다던지" — 동물을 누르면 멈춰서 반응: 쓰담쓰담(하트·웃는 눈) → 밥 먹기(당근·생선 냠냠) → 한마디(말풍선) 순서로 돌아가며.
        반응 그림(.petfx)은 화면 위 따로 떠 있는 칸이라 본문엔 영향 없음, 동물 몸만 눌림(.pet pointer-events auto) */
@@ -178,6 +172,12 @@
       if (busy) { hearts(1); return; }
       busy = 1; freeze();
       var n = tapN++, R = F ? F.tap(n) : { k: n % 3 }, kind = R.k, end = 1800, cls = [];
+      if (pet.classList.contains("sleep")) {   /* 자는 중(밤 12시~6시): 깨면 잠꼬대·"얼른 자요" 하고 다시 쿨쿨 */
+        var SL = PET === "bunny" ? ["쿨쿨… zZ", "흐암… 지금 몇 시예요? 얼른 자요!", "음냐… 근육은 잘 때 자라요…", "쉿… 내일 운동하려면 자야 해요"]
+          : ["쿨쿨… zZ", "흐암… 지금 몇 시냥? 얼른 자라냥", "음냐… 생선… 냠…", "쉿… 내일 운동하려면 자야 한다냥"];
+        pet.classList.add("wake"); bubble(SL[n % SL.length], 2000);
+        setTimeout(function () { pet.classList.remove("wake"); busy = 0; }, 1600); return;
+      }
       if (kind === 0) {   /* 쓰담쓰담 → 웃는 눈 + 하트 */
         cls = R.happy === false ? ["pat"] : ["happy", "pat"]; if (R.h !== 0) hearts(R.h || 3);
         bubble(R.say || (PET === "bunny" ? "헤헤 좋아요!" : "골골골~ 좋아냥"));
@@ -230,17 +230,34 @@
       acc: '<path d="M29.4 27.6l7 2.6M50.6 27.6l-7 2.6" stroke="#2E3A6B" stroke-width="1.7" stroke-linecap="round"/><g class="gblush"><circle cx="28.6" cy="37.8" r="3.6" fill="#FF7A9A" opacity=".9"/><circle cx="51.2" cy="37.8" r="3.6" fill="#FF7A9A" opacity=".9"/></g>',
       tap: function (n) { return n % 5 < 3 ? { k: 2, say: ["…뭐.", "만지지 마.", "흥."][n % 5] } : { k: 0, happy: false, h: 1, blush: 1, say: n % 5 === 3 ? "…그래도 오늘 운동은 했지?" : "…잘했네. 흥." }; } }
   ];
+  var CAT_SVG = '<svg viewBox="0 0 64 48" width="52" height="39"><g class="p-walk"><path class="p-tail" d="M12 30 C4 28 3 18 8 14" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/><g class="p-legs"><g class="lg a"><path d="M16 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="19.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M22 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="25.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M36 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="39.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg a"><path d="M42 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="45.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g></g><ellipse cx="30" cy="30" rx="18" ry="9.5" fill="#FFF3E2"/><path d="M20 22.5c5-2.5 13-2.5 18 0" fill="none" stroke="#F3D9B8" stroke-width="3" stroke-linecap="round"/></g><g class="p-sit"><path class="p-tail" d="M16 42 C6 42 4 34 9 30" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/><path d="M16 44c0-14 6-21 15-21s15 7 15 21z" fill="#FFF3E2"/><ellipse cx="36" cy="43.5" rx="4" ry="2.5" fill="#fff"/><ellipse cx="45" cy="43.5" rx="4" ry="2.5" fill="#fff"/></g><g class="p-head"><path d="M35 11l2-9 7 5z" fill="#FFF3E2"/><path d="M50 7l7-5 1 9z" fill="#FFF3E2"/><path d="M37.5 8.5l1-4 3.2 2.3z" fill="#F7B6C6"/><path d="M52.5 6.8l3.2-2.3.5 4z" fill="#F7B6C6"/><ellipse cx="46.5" cy="17" rx="12.5" ry="10.5" fill="#FFF3E2"/><path d="M40 7.5c2 2 4 2.5 6.500 2.500" fill="none" stroke="#F3D9B8" stroke-width="2.4" stroke-linecap="round"/><g class="p-eyes"><ellipse cx="42" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/><ellipse cx="51.500" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/></g><g class="p-happy"><path d="M40 17.4q2-2.6 4 0M49.5 17.4q2-2.6 4 0" fill="none" stroke="#3A2E2E" stroke-width="1.3" stroke-linecap="round"/></g><ellipse cx="38.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/><ellipse cx="54.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/><path d="M46 19.300l.9 1 .9-1z" fill="#E98AA2"/><path d="M44.800 21.600q1.050 1.100 2.100 0q1.050 1.100 2.100 0" fill="none" stroke="#3A2E2E" stroke-width=".9" stroke-linecap="round"/><path d="M40.500 26.200l-4-2.200v4.400zM42.500 26.200l4-2.200v4.400z" fill="#D6204F"/><circle cx="41.500" cy="26.200" r="1.500" fill="#B8173F"/></g></svg>';
+  /* 2026-11-18 유정님 고양이 친구들 (pet:"cat") — 고양이 그림(CAT_SVG)을 색만 바꿈: 털 fur·무늬 stripe·다리 leg·리본 band·눈 eye */
+  FR.forEach(function (F) { F.pet = "bunny"; });
+  FR.push(
+    { pet: "cat", id: "c-cheese", name: "치즈", desc: "주황 줄무늬 먹보냥. 생선 냄새엔 못 참아.", fur: "#FFD9AE", stripe: "#EE9A4E", leg: "#EDB27A", band: "#2FA36B",
+      tap: function (n) { return n % 2 ? { k: 2, say: "단백질은 생선이 최고냥!" } : { k: 1, say: "생선 냠냠냥!" }; } },
+    { pet: "cat", id: "c-black", name: "까망이", desc: "시크한 검은 고양이. 툴툴대지만 사실 다정해.", fur: "#3B3B46", stripe: "#2B2B33", leg: "#30303A", band: "#C9A227", eye: "#FFD54A",
+      tap: function (n) { return n % 5 < 3 ? { k: 2, say: ["…냥.", "귀찮다냥.", "만지지 마라냥."][n % 5] } : { k: 0, happy: false, h: 1, say: n % 5 === 3 ? "…오늘 운동은 했냥?" : "…쓰다듬어도 된다냥. 잠깐만." }; } },
+    { pet: "cat", id: "c-gray", name: "회색이", desc: "늘 졸린 회색 고양이. 해바라기하며 꾸벅꾸벅.", fur: "#D3DBE6", stripe: "#AEBBCC", leg: "#B9C5D4", band: "#7FA8E0", spd: 46, rest: 7000,
+      tap: function (n) { return { k: 0, happy: false, h: 1, say: ["으냥… 5분만…", "졸리다냥… zZ", "어? 벌써 운동이냥?"][n % 3] }; } },
+    { pet: "cat", id: "c-calico", name: "삼색이", desc: "장난꾸러기 삼색 고양이. 우다다 달리기 선수!", fur: "#EFE6DA", stripe: "#F0A057", leg: "#4A4A52", band: "#FF5C8A", spd: 13, rest: 900,
+      tap: function (n) { return { k: 2, say: ["우다다다! 놀자냥!", "유산소 가자냥!", "잡아 봐라냥~"][n % 3] }; } },
+    { pet: "cat", id: "c-pink", name: "수줍냥", desc: "부끄럼 많은 분홍 고양이. 누르면 후다닥 숨어요.", fur: "#FBE3EC", stripe: "#F0B8CC", leg: "#EFC3D3", band: "#B98AE0",
+      tap: function (n) { return { k: 3, say: ["냐, 냥…!", "히익냥!", "…아, 안녕냥"][n % 3] }; } }
+  );
   function frSvg(F) {
+    if (F.pet === "cat") return CAT_SVG.replace("<svg ", '<svg class="frs-' + F.id + '" ').replace(/#FFF3E2/g, F.fur).replace(/#F3D9B8/g, F.stripe).replace(/#EBCBA4/g, F.leg)
+      .replace(/#D6204F/g, F.band).replace(/#B8173F/g, F.band).replace(/#3A2E2E/g, F.eye || "#3A2E2E");
     return BNY_SVG.replace('<svg class="b-all"', '<svg class="b-all frs-' + F.id + '"').replace(/#FFE8EE/g, F.fur).replace(/#B8325A/g, F.line).replace(/#D6204F/g, F.band).replace("</svg>", F.acc + "</svg>");
   }
   function frSeen() { try { return JSON.parse(localStorage.getItem("ptnote:" + RT_SLUG + ":fr") || "[]"); } catch (e) { return []; } }
   function frDex() {
-    var seen = frSeen();
-    var body = '<p class="rts-note">날마다 다른 친구가 놀러 와요 · 만난 친구 ' + seen.length + '/' + FR.length + '</p><div class="frdex">' + FR.map(function (F) {
+    var seen = frSeen(), L = FR.filter(function (F) { return F.pet === M.pet; }), got = L.filter(function (F) { return seen.indexOf(F.id) >= 0; }).length;
+    var body = '<p class="rts-note">날마다 다른 친구가 놀러 와요 · 만난 친구 ' + got + '/' + L.length + '</p><div class="frdex">' + L.map(function (F) {
       var ok = seen.indexOf(F.id) >= 0;
       return '<div class="frd' + (ok ? '' : ' unk') + '"><div class="frd-pic">' + frSvg(F) + '</div><b>' + (ok ? esc(F.name) : '???') + '</b><small>' + (ok ? esc(F.desc) : '아직 못 만났어요') + '</small></div>';
     }).join("") + '</div>';
-    rtSheet("토롱이 친구 도감", body, function () {}, false);
+    rtSheet(M.pet === "cat" ? "고양이 친구 도감" : "토롱이 친구 도감", body, function () {}, false);
   }
   function frFound(F) {
     var seen = frSeen(); if (seen.indexOf(F.id) >= 0) return;
@@ -253,13 +270,13 @@
     bg.addEventListener("click", function (e) { if (e.target === bg || e.target.closest("[data-ok]")) bg.remove(); else if (e.target.closest("[data-dex]")) { bg.remove(); frDex(); } });
   }
   petSpawn(M.pet, null);
-  if (M.pet === "bunny") (function () {
+  if (M.pet === "bunny" || M.pet === "cat") (function () {
     var seed = 0, str = ymd(new Date()) + RT_SLUG;
     for (var i = 0; i < str.length; i++) seed = (seed * 31 + str.charCodeAt(i)) >>> 0;
     function rnd() { seed = (seed * 1103515245 + 12345) >>> 0; return (seed >>> 8) / 16777216; }
-    var cnt = Math.floor(rnd() * 3), pool = FR.slice(), today = [];
+    var cnt = Math.floor(rnd() * 3), pool = FR.filter(function (F) { return F.pet === M.pet; }), today = [];
     while (today.length < cnt) today.push(pool.splice(Math.floor(rnd() * pool.length), 1)[0]);
-    today.forEach(function (F, j) { setTimeout(function () { petSpawn("bunny", F); setTimeout(function () { frFound(F); }, 2500); }, 1200 + j * 900); });
+    today.forEach(function (F, j) { setTimeout(function () { petSpawn(M.pet, F); setTimeout(function () { frFound(F); }, 2500); }, 1200 + j * 900); });
   })();
   function skinDeco() {   /* 토롱이 그림을 정해진 칸에 하나씩 (이미 있으면 그대로) — 누르기·글자에는 영향 없음(pointer-events none) */
     if (!SKIN) return;
