@@ -62,7 +62,7 @@ _docs/RULES-*.md        작업별 자세한 규칙(위 표)
 
 ## 기능 지도 (한 줄씩 — 자세한 건 HISTORY에서 그 이름으로 grep)
 - 아래 탭 = 홈 · 운동(#routine·#forms 전환 칸 wkSeg) · 식단 · 기록(#log) · 나(#goal·#notice). app.js TABS·tabOf·route.
-- 홈: 출석 도장(attCheckStrip·setupAttCheck) → 오늘 운동 카드(todayHero) → 출석률 위젯(homeWidgets) → 공지·최근 복습지·출석 순위 칸(homeInfo·rankHome, 2026-11-18 PT 여정 위로 옮김, 순위 칸은 글 대신 미니 막대 그래프 .rkh-ch(위 5명+나, 내 막대만 색) · #goal-rank로 · 계산은 rkCalc) → PT 여정 → 인바디 띠.
+- 홈: 출석 도장(attCheckStrip·setupAttCheck) → 오늘 운동 카드(todayHero) → 출석률 위젯(homeWidgets) → 공지·최근 복습지·출석 순위 칸(homeInfo·rankHome, 2026-11-18 PT 여정 위로 옮김, 순위 칸은 글 대신 미니 막대 그래프 .rkh-ch(위 5명+나, 내 막대만 색) · #goal-rank로 · 계산은 rkCalc · 최근 복습지 칸은 아이콘 대신 최신 영상 미리보기 .hi-vid(form.webp, 없으면 poster.jpg)) → PT 여정 → 인바디 띠.
 - 출석: 창고에 저장(attCall), 출석률·달력·게이지(attStats·attCalendar·attGauge). 종목 ✓하면 자동 출석(attAuto). 나 탭 02 출석 순위(rankSection, 선생님 페이지 rankPub가 pub:all:rank 저장, 이름 가운데 O).
 - 운동 탭: 한눈에 루틴(#day, .ex-list.cmp) · 종목 ✓(.exchk → lgToggle, 회원은 오늘만·선생님은 이번 주 지난 날도 chkDate) · 종목 자세히 창(exSheet) · 요일 꾹 눌러 옮기기(mvSheet·mvMap, 이번 주만 — 꾹 → 원하는 요일 칸 고르기 .mv-days: 쉬는 날이면 그리로, 운동 날이면 서로 바꿈 · 쉬는 날 꾹은 운동 가져오기 · 매주 월요일 초기화) · 복습지 부위 칩(formCats).
 - 기록 탭(renderLog): 오늘 한 운동 · 첫날 vs 오늘(grData·#growth 카드) · 근육 지도(muscleSection·MG_RULES) · 인바디(ibPanel·ibParse·#body) · 월간 리포트(#report).

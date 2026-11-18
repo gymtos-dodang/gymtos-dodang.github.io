@@ -769,8 +769,8 @@
       '<small>선생님 공지' + (n && /(\d{1,2})\D+(\d{1,2})\D*$/.test(n.date || "") ? ' · ' + String(n.date).replace(/^.*?(\d{1,2})\D+(\d{1,2})\D*$/, function (x, a, b) { return +a + "월 " + +b + "일"; }) : '') + '</small>' +
       '<b class="hi-t">' + (n ? esc(n.title) : '아직 공지가 없어요') + '</b></a>';
     if (f) {
-      var key = iconOf({ name: f.exercise }), ic = key !== "dumbbell" && window.EXI && EXI.has(key) ? img(key, "hi-ex", true) : '<img class="hi-ph" src="' + esc(f.dir) + 'poster.jpg" alt="" loading="lazy">';
-      h += '<a class="hw col hi" href="#form-' + esc(f.id) + '"><span class="hi-top"><span class="hi-ic" aria-hidden="true">' + ic + '</span>' + (formNew(f) ? '<i class="hi-new">NEW</i>' : '<i class="hi-go">›</i>') + '</span>' +
+      var ic = '<img class="hi-ph" src="' + esc(f.dir) + 'form.webp" alt="" loading="lazy" onerror="this.onerror=null;this.src=\'' + esc(f.dir) + 'poster.jpg\'">';   /* 2026-11-18 아이콘 대신 최신 영상 미리보기(움직이는 webp, 소리·재생 버튼 없음) */
+      h += '<a class="hw col hi" href="#form-' + esc(f.id) + '"><span class="hi-top"><span class="hi-ic hi-vid" aria-hidden="true">' + ic + '</span>' + (formNew(f) ? '<i class="hi-new">NEW</i>' : '<i class="hi-go">›</i>') + '</span>' +
         '<small>최근 자세 복습지 · ' + M.forms.length + '개</small><b class="hi-t">' + esc(f.exercise) + '</b></a>';
     } else {
       h += '<a class="hw col hi" href="#forms"><span class="hi-top"><span class="hi-ic bellc" aria-hidden="true">' + img("dumbbell", "hi-ex", true) + '</span><i class="hi-go">›</i></span><small>최근 자세 복습지</small><b class="hi-t">수업에서 배운 자세가 여기에 쌓여요</b></a>';
