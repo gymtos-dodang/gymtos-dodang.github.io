@@ -3004,6 +3004,7 @@
   var RT_STALE = null;  /* data.js 루틴이 새로 올라와서 꺼진 '폰에서 고친 루틴' */
   function rtKey() { try { return localStorage.getItem("ptkey") || ""; } catch (e) { return ""; } }
   function rtToday() { var d = new Date(); return d.getFullYear() + ". " + (d.getMonth() + 1) + ". " + d.getDate(); }
+  function vSig2() { try { return JSON.stringify([LG && LG.d, MV, RT_REC && RT_REC.at]); } catch (e) { return ""; } }   /* 탭으로 돌아올 때: 운동 ✓·요일 옮기기·루틴이 바뀌었으면 떼어 둔 화면을 버리고 새로 그림 */
   function vSig() { try { return attLoad().join(",") + JSON.stringify(attTimes); } catch (e) { return ""; } }
   function rerender() { VCACHE = {}; var y = window.scrollY; route(); window.scrollTo(0, y); }
   function rtServer(rec) {   /* 창고에서 받은 '폰에서 고친 루틴' (null = 없음) */
@@ -3796,7 +3797,7 @@
   /* 뒤로 가기 (2026-11-12 장동욱 "태블릿·PC에서 종목 보다가 자세 복습지 누르면 뒤로가기가 없어서 다시 루틴 들어가야 함")
      본문 속 링크(루틴 → 복습지, 홈 → 루틴 요일, 리포트·배지 등)로 넘어가면 화면 위에 "‹ 뒤로 · 루틴" 버튼이 붙어 다님.
      누르면 직전 화면 + 보던 위치(스크롤)로 돌아감. 아래 탭·위 막대·나 탭 전환 칸을 누르면 새 출발이라 기록을 비움. */
-  var NAVS = [], NAV_BACK = null, ZOOM = null, SOFT = 0, LINKAT = 0, SCR = {}, VCACHE = {};
+  var NAVS = [], NAV_BACK = null, ZOOM = null, SOFT = 0, LINKAT = 0, SCR = {}, VCACHE = {}, TABRET = null;
   /* 화면마다 보던 스크롤 위치 기억 — 뒤로 오면 그 자리 그대로.
      history.scrollRestoration = "manual"은 쓰지 않음: 아이폰에서 밀어서 뒤로 갈 때 이전 화면 그림 대신 백지가 보였음(2026-11-12) */
   window.addEventListener("scroll", function () { if (route.lastH && Date.now() - (route.at || 0) > 400) SCR[route.lastH] = window.scrollY; }, { passive: true });
@@ -3968,7 +3969,11 @@
     LINKAT = Date.now();
     var to = a.getAttribute("href"), cur = location.hash || "#home";
     if (to === "#" || to === cur) return;
-    if (a.closest(".tabs") || a.closest(".bar") || a.closest(".meseg")) { NAVS = []; return; }
+    if (a.closest(".tabs") || a.closest(".bar") || a.closest(".meseg")) {
+      /* 2026-11-18 "홈으로 돌아갈 때 새로고침": 아래 탭으로 아까 본 화면(3분 안)에 가면 다시 그리지 않고 떼어 둔 화면을 그대로 붙임 */
+      TABRET = a.closest(".tabs") && VCACHE[to] ? to : null;
+      NAVS = []; return;
+    }
     /* 루틴 안에서 요일 바꾸기(일주일 한눈에 칸·로테이션 고르기)는 뒤로 버튼·커지는 효과 없이 그날 칸만 은은하게 (2026-11-12 "요일별 눌러서 들어가는 칸은 별로 — 은은하게") */
     if (/^#routine/.test(cur) && /^#routine/.test(to)) { SOFT = Date.now(); return; }
     NAVS.push({ h: cur, y: window.scrollY });
@@ -4123,7 +4128,8 @@
     var navTop = NAVS[NAVS.length - 1];
     if (navTop && navTop.h === (location.hash || "#home")) NAV_BACK = NAVS.pop();
     /* 뒤로 가기(뒤로 버튼·아이폰 밀어서 뒤로·브라우저 뒤로)는 새로고침처럼 보이지 않게 차례 등장 없이 그대로 (2026-11-12 "눌렀을 때 어쩔 땐 새로고침") */
-    var goingBack = !!NAV_BACK || (route.lastH !== undefined && Date.now() - LINKAT > 1000);
+    var tabRet = TABRET && TABRET === (location.hash || "#home"); TABRET = null;
+    var goingBack = !!NAV_BACK || tabRet || (route.lastH !== undefined && Date.now() - LINKAT > 1000);
     /* 뒤로 갈 땐 다시 그리지 않고 아까 그 화면(DOM)을 그대로 다시 붙임 (2026-11-12 "특정 아이콘만 들어갔다 돌아오면 깜빡임")
        — 새로 그리면 아이폰이 그림·움직이는 아이콘을 처음부터 다시 칠하느라 한 순간 하얗게 비었음 */
     var curH0 = location.hash || "#home", prevH = route.lastH;
@@ -4132,10 +4138,11 @@
          → 떼어 둘 땐 영상을 멈추고, 다시 붙일 때 이어서 재생 */
       Array.prototype.forEach.call(view.querySelectorAll("video"), function (v) { try { v.setAttribute("data-was", v.paused ? "" : "1"); v.pause(); } catch (e) {} });
       var fr = document.createDocumentFragment(); while (view.firstChild) fr.appendChild(view.firstChild);
-      VCACHE[prevH] = { fr: fr, tab: view.getAttribute("data-tab"), day: view.getAttribute("data-day"), at: Date.now(), sig: vSig() };
+      VCACHE[prevH] = { fr: fr, tab: view.getAttribute("data-tab"), day: view.getAttribute("data-day"), at: Date.now(), sig: vSig(), sig2: vSig2() };
       Object.keys(VCACHE).forEach(function (k) { if (Date.now() - VCACHE[k].at > 180000) delete VCACHE[k]; });
     }
     var hit = goingBack && prevH !== undefined && prevH !== curH0 && VCACHE[curH0];
+    if (hit && tabRet && hit.sig2 !== vSig2()) { delete VCACHE[curH0]; hit = null; goingBack = false; }
     if (hit) {
       delete VCACHE[curH0];
       view.appendChild(hit.fr);
@@ -4151,7 +4158,7 @@
       });
       tabInd(); litApply(hit.tab); navBackDraw(view);
       if (hit.sig !== vSig()) attRefresh();   /* 그사이 출석 기록이 바뀌었으면 그 부분만 새로 */
-      var by0 = NAV_BACK ? NAV_BACK.y : SCR[curH0]; NAV_BACK = null; ZOOM = null;
+      var by0 = tabRet ? 0 : NAV_BACK ? NAV_BACK.y : SCR[curH0]; NAV_BACK = null; ZOOM = null;   /* 탭으로 돌아오면 맨 위부터 */
       if (by0 != null) window.scrollTo(0, by0);
       return;
     }
