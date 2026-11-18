@@ -1648,5 +1648,22 @@
 "ham_bf": "S",
 "ham_st": "S"
 }
+},
+"m/mikyung-7rq2vd/media/form-behind-neck-press/anatomy.png": {
+"sex": "F",
+"front": {
+"trap_up": "S",
+"pec_clav": "S",
+"delt_ant": "P",
+"delt_lat": "P",
+"triceps_long": "S"
+},
+"back": {
+"trap_up": "S",
+"delt_lat": "P",
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
 }
 }

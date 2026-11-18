@@ -793,6 +793,17 @@
    }
   ]
  },
+ "비하인드 넥프레스": {
+  "part": "어깨",
+  "en": "Behind Neck Press",
+  "shots": [
+   {
+    "member": "정미경",
+    "id": "behind-neck-press",
+    "img": "m/mikyung-7rq2vd/media/form-behind-neck-press/step1.jpg"
+   }
+  ]
+ },
  "와이드 풀다운": {
   "part": "등",
   "en": "Wide Pulldown",
