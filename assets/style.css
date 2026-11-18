@@ -2222,3 +2222,11 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .bxp.sp .bxa-halo { background: radial-gradient(circle, rgba(255, 255, 255, .6) 0%, rgba(255, 214, 102, .7) 16%, rgba(255, 190, 60, .28) 40%, rgba(255, 190, 60, 0) 70%); }
 .bxp-card { box-shadow: 0 0 0 1px rgba(var(--bgc), .5), 0 0 70px rgba(var(--bgc), .28), 0 24px 60px rgba(0, 0, 0, .55); }
 @media (prefers-reduced-motion: reduce) { .bxa > i, .bxa > svg { animation: none !important; } .bxa-ember, .bxa-bok, .bxa-rip, .bxa-beat { display: none !important; } .bxa-star { opacity: .8; } }
+
+/* 홈 출석 순위 칸 미니 막대 그래프 (2026-11-18) */
+.rkh .rkh-no { font-size: 28px; font-weight: 900; line-height: 1; color: var(--seal); }
+.rkh .rkh-no i { font-style: normal; font-size: 14px; margin-left: 1px; }
+.rkh-ch { display: flex; align-items: flex-end; gap: 5px; height: 44px; margin-top: 6px; }
+.rkh-ch span { flex: 1; max-width: 22px; border-radius: 5px 5px 2px 2px; background: var(--hw-track); position: relative; }
+.rkh-ch span.me { background: var(--seal); }
+.rkh-ch span em { position: absolute; left: 50%; top: -15px; transform: translateX(-50%); font-style: normal; font-size: 10px; font-weight: 900; color: var(--seal); white-space: nowrap; }
