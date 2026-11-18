@@ -3016,30 +3016,32 @@
   var DB_C = [
     { id: "rice_white", n: "흰쌀밥", c: 33, p: 2.5, f: .3, k: 150, h: [210, "공기"] }, { id: "rice_brown", n: "현미밥", c: 32, p: 3, f: 1, k: 152, h: [210, "공기"] },
     { id: "rice_mixed", n: "잡곡밥", c: 32, p: 3, f: .8, k: 150, h: [210, "공기"] },
-    { id: "sweet_potato", n: "고구마", c: 31, p: 1.5, f: .2, k: 130, h: [150, "개"], mx: 450 }, { id: "potato", n: "감자", c: 17, p: 2, f: .1, k: 77, h: [150, "개"], mx: 450 },
-    { id: "pumpkin", n: "단호박", c: 15, p: 1.7, f: .3, k: 66, h: [400, "통"], mx: 450 },
-    { id: "oatmeal", n: "오트밀", c: 66, p: 13, f: 7, k: 380, mx: 120 }, { id: "bagel", n: "베이글", c: 50, p: 10, f: 1.5, k: 260, u: [100, "개", 3, .5] },
+    { id: "sweet_potato", n: "고구마", c: 31, p: 1.5, f: .2, k: 130, mx: 450, h: [150, "개(주먹 크기)"] }, { id: "potato", n: "감자", c: 17, p: 2, f: .1, k: 77, mx: 450, h: [150, "개(주먹 크기)"] },
+    { id: "pumpkin", n: "단호박", c: 15, p: 1.7, f: .3, k: 66, mx: 450, h: [400, "통(미니 단호박)"] },
+    { id: "oatmeal", n: "오트밀", c: 66, p: 13, f: 7, k: 380, mx: 120, h: [60, "컵(종이컵)"] }, { id: "bagel", n: "베이글", c: 50, p: 10, f: 1.5, k: 260, u: [100, "개", 3, .5] },
     { id: "bread", n: "통밀식빵", c: 45, p: 10, f: 4, k: 250, u: [35, "장", 6, 1] }, { id: "banana", n: "바나나", c: 23, p: 1.1, f: .2, k: 93, u: [100, "개", 4, .5] },
-    { id: "pasta", n: "파스타(삶은 면)", c: 30, p: 5.5, f: 1, k: 150, mx: 450 }, { id: "tteok", n: "떡(가래떡)", c: 50, p: 4, f: .5, k: 225, mx: 300 }
+    { id: "pasta", n: "파스타(삶은 면)", c: 30, p: 5.5, f: 1, k: 150, mx: 450, h: [220, "인분"] }, { id: "tteok", n: "떡(가래떡)", c: 50, p: 4, f: .5, k: 225, mx: 300, h: [120, "줄"] }
   ];
   var DB_P = [
-    { id: "chicken", n: "닭가슴살", c: 0, p: 23, f: 1.5, k: 106 }, { id: "tender", n: "닭안심", c: 0, p: 23, f: 1, k: 105 },
-    { id: "thigh", n: "닭다리살(껍질 X)", c: 0, p: 19.5, f: 4.5, k: 120 }, { id: "beef", n: "소고기(살코기)", c: 0, p: 21, f: 5, k: 130 },
-    { id: "pork", n: "돼지 안심", c: 0, p: 22, f: 4, k: 125 }, { id: "fish", n: "흰살생선", c: 0, p: 20, f: 1, k: 90 },
-    { id: "salmon", n: "연어", c: 0, p: 20, f: 13, k: 200 }, { id: "mackerel", n: "고등어", c: 0, p: 20, f: 10, k: 180 },
-    { id: "shrimp", n: "새우", c: 0, p: 20, f: 1, k: 90 }, { id: "squid", n: "오징어", c: 3, p: 16, f: 1.4, k: 90 },
+    { id: "chicken", n: "닭가슴살", c: 0, p: 23, f: 1.5, k: 106, h: [100, "팩"] }, { id: "tender", n: "닭안심", c: 0, p: 23, f: 1, k: 105, h: [35, "쪽"] },
+    { id: "thigh", n: "닭다리살(정육)", c: 0, p: 19.5, f: 4.5, k: 120, h: [110, "장"] }, { id: "beef", n: "소 우둔살·홍두깨살", c: 0, p: 21, f: 5, k: 130, h: [100, "장(손바닥 크기)"] }, { id: "beef_fan", img: "beef", n: "소 부채살", c: 0, p: 20, f: 11, k: 180, h: [100, "장(손바닥 크기)"] },
+    { id: "pork", n: "돼지 안심", c: 0, p: 22, f: 4, k: 125, h: [100, "장(손바닥 크기)"] }, { id: "fish", n: "흰살생선", c: 0, p: 20, f: 1, k: 90, h: [100, "토막"] },
+    { id: "salmon", n: "연어", c: 0, p: 20, f: 13, k: 200, h: [100, "토막"] }, { id: "mackerel", n: "고등어", c: 0, p: 20, f: 10, k: 180, h: [240, "마리"] },
+    { id: "shrimp", n: "새우", c: 0, p: 20, f: 1, k: 90, h: [10, "마리(칵테일새우)"] }, { id: "squid", n: "오징어", c: 3, p: 16, f: 1.4, k: 90, h: [200, "마리"] },
     { id: "tofu", n: "두부", c: 2, p: 9, f: 5, k: 85, h: [300, "모"] },
     { id: "egg", n: "계란", c: 1, p: 12, f: 10, k: 140, u: [50, "개", 4, 1] }, { id: "egg_white", n: "계란 흰자", c: .7, p: 11, f: .2, k: 50, u: [33, "개", 10, 1] },
     { id: "shaker", n: "프로틴", c: 10, p: 80, f: 5, k: 400, u: [30, "스쿱", 2, .5] }
   ];
   var DB_F = [
-    { id: "almond", n: "아몬드", c: 20, p: 21, f: 50, k: 580, r: 5, h: [1.2, "알"], mx: 45 }, { id: "walnut", n: "호두", c: 14, p: 15, f: 65, k: 655, r: 5, h: [4, "알"], mx: 40 },
-    { id: "avocado", n: "아보카도", c: 9, p: 2, f: 15, k: 160, r: 10, h: [140, "개"], mx: 150 }, { id: "olive_oil", n: "올리브유·들기름", c: 0, p: 0, f: 100, k: 900, r: 1, h: [5, "작은술"], mx: 20 },
-    { id: "peanut_butter", n: "땅콩버터(무가당)", c: 20, p: 25, f: 50, k: 590, r: 5, h: [16, "큰술"], mx: 40 }
+    { id: "almond", n: "아몬드", c: 20, p: 21, f: 50, k: 580, r: 5, mx: 45, h: [1.2, "알"] }, { id: "walnut", n: "호두", c: 14, p: 15, f: 65, k: 655, r: 5, mx: 40, h: [4, "알(반쪽)"] },
+    { id: "avocado", n: "아보카도", c: 9, p: 2, f: 15, k: 160, r: 10, mx: 150, h: [140, "개"] }, { id: "olive_oil", n: "올리브유·들기름", c: 0, p: 0, f: 100, k: 900, r: 1, mx: 20, h: [5, "작은술"] },
+    { id: "peanut_butter", n: "땅콩버터(무가당)", c: 20, p: 25, f: 50, k: 590, r: 5, mx: 40, h: [16, "큰술"] }
   ];
-  function dbHint(f, a) {   /* "약 2.5공기" 같은 어림 + 한 끼에 너무 많으면 표시 */
-    var t = ""; if (f.h && a.g) { var n = a.g / f.h[0]; n = n >= 3 ? Math.round(n) : Math.round(n * 2) / 2; if (n >= .5) t = "약 " + n + f.h[1]; }
-    return { t: t, much: !!(f.mx && a.g > f.mx) };
+  function dbHint(f, a) {   /* t "약 2팩" · b "1팩 = 100g"(회원이 알기 쉬운 단위, 2026-11-19) + 한 끼에 너무 많으면 much */
+    var t = "", bs = "";
+    if (f.h) { bs = "1" + f.h[1].replace(/\(.*\)/, "") + " = " + f.h[0] + "g"; if (a.g) { var n = a.g / f.h[0]; n = n >= 3 ? Math.round(n) : Math.round(n * 2) / 2; if (n >= .5) t = "약 " + n + f.h[1]; } }
+    else if (f.u) bs = "1" + f.u[1] + " = " + f.u[0] + "g";
+    return { t: t, b: bs, much: !!(f.mx && a.g > f.mx) };
   }
   function dbFind(L, id) { for (var i = 0; i < L.length; i++) if (L[i].id === id) return L[i]; return null; }
   function dbGet() {
@@ -3096,7 +3098,7 @@
     fill(DB_F, 2, o.fn, "f", o.fs);
     return o;
   }
-  function dbIcon(id) { return '<img src="' + BASE + 'food/' + id + '.png" alt="" loading="lazy">'; }
+  function dbIcon(id) { var f = dbFind(DB_P, id); return '<img src="' + BASE + 'food/' + (f && f.img || id) + '.png" alt="" loading="lazy">'; }
   function dbBuilder() {
     if (IB_ON && !ibData && !DB_IBSYNC) { DB_IBSYNC = 1; try { ibData = JSON.parse(localStorage.getItem(IB_KEY) || "null"); } catch (e) {} ibSync(); }
     DB_IBDRAWN = dbIbSig();
@@ -3111,7 +3113,7 @@
     if (b && d.h) { var bmi = b.w / Math.pow(d.h / 100, 2), std = Math.pow(d.h / 100, 2) * (M.sex === "F" ? 21 : 22);
       h += '<div class="db-bmi"><span>키 <b>' + d.h + '</b>cm</span><span>체중 <b>' + b.w + '</b>kg</span><span>BMI <b>' + bmi.toFixed(1) + '</b></span><span>표준 체중 <b>' + std.toFixed(1) + '</b>kg</span></div>'; }
     if (IB_ON && ibReady !== false) h += '<div class="db-ib"><button type="button" class="db-ibbtn" data-db="ib:1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>' +
-      (b && b.src ? '새 인바디 결과지 올리기' : '인바디 결과지 사진 올리기') + '</button><a class="db-link" href="#body">몸변화 기록 보기</a></div><p class="db-tip">결과지 사진을 올리면 숫자를 읽어서 식단도 바로 다시 계산해요 · 기록 탭 인바디와 같은 기록이에요</p>';
+      (b && b.src ? '새 인바디 결과지 올리기' : '인바디 결과지 사진 올리기') + '</button><a class="db-link" href="#body">몸변화 기록 보기</a></div><p class="db-tip"><b>인바디 결과지로 계산하면 칼로리가 더 정확해요</b> — 체중만이 아니라 내 근육량·체지방량으로 계산하거든요</p><p class="db-tip">결과지 사진을 올리면 숫자를 읽어서 식단도 바로 다시 계산해요 · 기록 탭 인바디와 같은 기록이에요</p>';
     h += '<small class="db-l">운동 횟수</small><div class="db-chips">' + DB_ACT.map(function (a, i) { return '<button type="button" class="' + ((d.a || 0) === i ? "on" : "") + '" data-db="a:' + i + '">' + a[1] + '</button>'; }).join("") + '</div>';
     h += '<small class="db-l">하루 끼니</small><div class="db-chips">' + [2, 3, 4, 5].map(function (n) { return '<button type="button" class="' + ((d.n || 3) === n ? "on" : "") + '" data-db="n:' + n + '">' + n + '끼</button>'; }).join("") + '</div></div>';
     if (!R) return h + '<div class="panel empty"><h3>체중을 넣으면 계산해 드려요</h3><p>인바디 결과지를 올리거나 위에 체중을 적어 주세요</p></div></section>';
@@ -3120,7 +3122,7 @@
       var m = dbMeal(R, i); T.c += m.c; T.p += m.p; T.f += m.f; T.k += m.k;
       meals += '<div class="db-meal"><div class="db-mh"><b>' + (i + 1) + '끼</b><span>' + (m.k ? Math.round(m.k) + ' kcal' : '탄수 ' + Math.round(R.C / R.n) + 'g · 단백질 ' + Math.round(R.P / R.n) + 'g · 지방 ' + Math.round(R.F / R.n) + 'g') + '</span></div><div class="db-slots s3">' +
         [["c", m.cs, "탄수화물"], ["p", m.ps, "단백질"], ["f", m.fs, "지방"]].map(function (x) {
-          return '<button type="button" class="db-slot' + (x[1].length ? " on" : "") + (x[1].length > 1 ? " two" : "") + '" data-db="pick:' + i + ':' + x[0] + '">' + (x[1].length ? x[1].map(function (q) { return '<span class="db-it">' + dbIcon(q.f.id) + '<b>' + esc(q.f.n) + '</b><em>' + q.a.t + '</em></span>'; }).join("") +
+          return '<button type="button" class="db-slot' + (x[1].length ? " on" : "") + (x[1].length > 1 ? " two" : "") + '" data-db="pick:' + i + ':' + x[0] + '">' + (x[1].length ? x[1].map(function (q) { return '<span class="db-it">' + dbIcon(q.f.id) + '<b>' + esc(q.f.n) + '</b><em>' + q.a.t + '</em>' + (dbHint(q.f, q.a).t ? '<small class="db-hint">' + dbHint(q.f, q.a).t.replace(/\(.*\)/, "") + '</small>' : '') + '</span>'; }).join("") +
             '<span class="db-x" role="button" aria-label="' + x[2] + ' 빼기" data-db="rm:' + i + ':' + x[0] + '">×</span>' : '<span class="db-plus">＋</span><b>' + x[2] + '</b><small>고르기</small>') + '</button>';
         }).join("") + '</div></div>';
     }
@@ -3142,7 +3144,7 @@
       var much = 0, h = L.map(function (f) {
         var on = sel.indexOf(f.id) >= 0, a = dbAmt(f, need / (on ? sel.length : sel.length ? 2 : 1), key), hn = dbHint(f, a);
         if (hn.much) much = 1;
-        return '<button type="button" class="db-food' + (on ? " on" : "") + (hn.much ? " much" : "") + '" data-f="' + f.id + '">' + (on ? '<i class="db-ck">✓</i>' : '') + dbIcon(f.id) + '<b>' + esc(f.n) + '</b><em>' + a.t + '</em><small>' + Math.round(f.k * a.g / 100) + ' kcal' + (hn.t ? ' · ' + hn.t : '') + '</small>' + (hn.much ? '<i class="db-much">한 끼엔 많아요</i>' : '') + '</button>';
+        return '<button type="button" class="db-food' + (on ? " on" : "") + (hn.much ? " much" : "") + '" data-f="' + f.id + '">' + (on ? '<i class="db-ck">✓</i>' : '') + dbIcon(f.id) + '<b>' + esc(f.n) + '</b><em>' + a.t + '</em><small>' + Math.round(f.k * a.g / 100) + ' kcal</small>' + (hn.t || hn.b ? '<small class="db-hint">' + (hn.t ? '<u>' + hn.t + '</u>' : '') + (hn.b ? '<span>' + hn.b + '</span>' : '') + '</small>' : '') + (hn.much ? '<i class="db-much">한 끼엔 많아요</i>' : '') + '</button>';
       }).join("");
       return '<div class="db-foods">' + h + '</div>' + (much ? '<p class="db-tip">"한 끼엔 많아요" 음식은 다 먹기 힘든 양이에요 · 두 가지를 섞거나 끼니 수를 늘려 보세요</p>' : '');
     }
