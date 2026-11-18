@@ -65,7 +65,7 @@
   var RT_CARDIO = ["러닝머신", "경사 걷기", "사이클", "스텝밀", "천국의 계단", "마이마운틴", "일립티컬", "로잉머신", "인터벌 러닝"];
   function isCardio(n) { return RT_CARDIO.indexOf(String(n || "").replace(/\s*\(.*\)\s*$/, "")) >= 0; }
   var ICON_BY_NAME = {
-    "러닝머신": "treadmill", "인터벌 러닝": "treadmill", "경사 걷기": "walk", "스텝밀": "walk", "천국의 계단": "walk", "마이마운틴": "walk", "사이클": "bike", "일립티컬": "bike", "로잉머신": "bike",
+    "러닝머신": "treadmill", "인터벌 러닝": "treadmill", "경사 걷기": "incline_walk", "스텝밀": "stair_mill", "천국의 계단": "stair_mill", "마이마운틴": "my_mountain", "사이클": "bike", "일립티컬": "elliptical", "로잉머신": "rower",
     "플랫 덤벨프레스": "db_bench_press", "덤벨 벤치프레스": "db_bench_press", "바벨 벤치프레스": "bench_press", "벤치프레스": "bench_press",
     "인클라인 덤벨 프레스": "incline_db_press", "스미스 인클라인 프레스": "smith_incline_press", "인클라인 프레스 머신": "incline_machine_press", "머신 인클라인 프레스": "incline_machine_press",
     "체스트 프레스": "chest_press", "뉴텍 체스트 프레스 머신": "lying_chest_press", "뉴텍 체스트프레스 머신": "lying_chest_press", "펙덱 플라이": "pec_deck", "펙덱": "pec_deck", "케이블 푸쉬다운": "cable_pushdown",

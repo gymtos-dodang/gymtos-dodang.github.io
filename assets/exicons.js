@@ -449,6 +449,116 @@
     hl: function (P) { return [seg(P.sh, P.hip, .42, 1, 13)]; },
     back: function () { return [floor(6, 94)]; }, front: function () { return []; } };
 
+  /* ---------- 유산소 (2026-11-19 장동욱 "천국의 계단·마이마운틴·스텝밀·경사 걷기 아이콘이 기본 그림이다 → 이름에 맞게 + 움직이게") ----------
+     loop:1 = 한 방향으로 계속 도는 움직임(걷기·페달). ex.at(t)가 0~1 순간의 자세를 바로 돌려줌, dur = 한 바퀴 초 */
+  function ik(H, F, a, b, pick) {   /* 엉덩이(어깨) H → 발(손) F 까지 두 마디 길이 a·b 로 무릎(팔꿈치) 자리. pick(k1,k2) 가 고름 */
+    var dx = F[0] - H[0], dy = F[1] - H[1], D0 = Math.sqrt(dx * dx + dy * dy) || 1, ux = dx / D0, uy = dy / D0;
+    var d = Math.max(Math.abs(a - b) + .5, Math.min(a + b - .3, D0)), al = (a * a - b * b + d * d) / (2 * d), h = Math.sqrt(Math.max(0, a * a - al * al));
+    var k1 = [H[0] + ux * al - uy * h, H[1] + uy * al + ux * h], k2 = [H[0] + ux * al + uy * h, H[1] + uy * al - ux * h];
+    return { k: pick(k1, k2), f: [H[0] + ux * d, H[1] + uy * d] };
+  }
+  function kFwd(a, b) { return a[0] > b[0] ? a : b; }
+  function kUp(a, b) { return a[1] < b[1] ? a : b; }
+  function kDown(a, b) { return a[1] > b[1] ? a : b; }
+  function sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  var CB = [{ pts: ["hip", "kn2", "ft2", "toe2"], w: 9, o: 1 }, { pts: ["sh", "el2", "ha2"], w: 7.5, o: 1 },
+    { pts: ["hip", "kn", "ft", "toe"], w: 9 }, { pts: ["sh", "hip"], w: 13 }, { pts: ["sh", "el", "ha"], w: 7.5 }];
+  function legHl(P) { return [{ dot: off(P.hip, -2, 1), r: 5.6 }, seg(P.hip, P.kn, .12, .9, 9)]; }
+  /* 발 한 바퀴: 앞(F)에 딛고 뒤(B)로 밀려 갔다가(디딤) 들어 올려 앞으로(띄움) */
+  function footAt(o, ph) {
+    ph = ((ph % 1) + 1) % 1;
+    if (ph < .5) return mix(o.F, o.B, ph / .5);
+    var s = (ph - .5) / .5, p = mix(o.B, o.F, sm(s));
+    return [p[0], p[1] - o.lift * Math.sin(Math.PI * s)];
+  }
+  function gait(o) {
+    return { loop: 1, dur: o.dur, t: .15, bones: CB, hl: o.hl || legHl, back: o.back, front: o.front || function () { return []; },
+      at: function (t) {
+        var w = Math.PI * 2 * t, hip = [o.hip[0], o.hip[1] + (o.bob || 0) * Math.cos(2 * w)];
+        var sh = [hip[0] + o.lean, hip[1] - 27], head = [sh[0] + o.lean * .45 + 1.5, sh[1] - 14], P = { hip: hip, sh: sh, head: head };
+        [["", 0], ["2", .5]].forEach(function (L2) {
+          var r = ik(hip, footAt(o, t + L2[1]), 19, 16, kFwd), tv = o.toe || [7, 1.5];
+          P["kn" + L2[0]] = r.k; P["ft" + L2[0]] = r.f; P["toe" + L2[0]] = off(r.f, tv[0], tv[1]);
+          var hand = o.hand;
+          if (hand) { var e = ik(sh, hand, 16, 15, kDown); P["el" + L2[0]] = e.k; P["ha" + L2[0]] = e.f; }
+          else {   /* 팔 흔들기: 같은 쪽 다리와 반대로 */
+            var an = -o.arm * Math.cos(w + L2[1] * Math.PI * 2), an2 = an + o.bend;
+            var el = [sh[0] + 16 * Math.sin(an), sh[1] + 16 * Math.cos(an)];
+            P["el" + L2[0]] = el; P["ha" + L2[0]] = [el[0] + 15 * Math.sin(an2), el[1] + 15 * Math.cos(an2)];
+          }
+        });
+        P._t = t;
+        return P;
+      } };
+  }
+  /* 러닝머신 · 인터벌 러닝 */
+  EX.treadmill = gait({ dur: 1, hip: [40, 51], F: [52, 81.5], B: [27, 81.5], lift: 10, bob: 1.4, lean: 5, arm: .75, bend: 1.5,
+    back: function () { return [floor(8, 92), L("eq2", [[10, 86], [78, 86]], 5.5), D("eq", [11, 86], 3.4), D("eq", [77, 86], 3.4), L("eq", [[76, 86], [83, 34]], 3.6), L("eq", [[83, 37], [68, 41]], 3.2)]; } });
+  /* 경사 걷기: 오르막 러닝머신을 걸음 */
+  (function () {
+    function gy(x) { return 90 - .24 * (x - 10); }
+    EX.incline_walk = gait({ dur: 1.7, hip: [41, 50], F: [55, gy(55) - 3], B: [30, gy(30) - 3], lift: 5, bob: .8, lean: 3, arm: .45, bend: .35, toe: [7, -.2],
+      back: function () { return [floor(8, 92), L("eq2", [[10, gy(10) + 1.5], [84, gy(84) + 1.5]], 5.5), L("eq2", [[84, gy(84) + 3], [86, 93]], 3), D("eq", [11, gy(11) + 1.5], 3.4),
+        L("eq", [[82, gy(82)], [86, 28]], 3.6), L("eq", [[86, 31], [71, 35]], 3.2), { k: "eq2", poly: [[14, 93], [24, 93], [24, 88.5]], w: 1.4 }]; } });
+  })();
+  /* 천국의 계단 · 스텝밀: 돌아 내려오는 계단을 계속 오름 (계단 한 칸 = 오른쪽 13·위 11, 반 바퀴에 한 칸씩 내려옴) */
+  EX.stair_mill = gait({ dur: 1.7, hip: [39, 51], F: [51, 70.5], B: [38, 81.5], lift: 7, bob: .6, lean: 2, hand: [60, 43],
+    hl: function (P) { return [{ dot: off(P.hip, -2, 1), r: 6 }, seg(P.hip, P.kn, .12, .9, 9)]; },
+    back: function (P) {
+      var s = 2 * P._t, a = [];
+      for (var i = 1; i <= 6; i++) { var c = [8 + 13 * (i - s), 106 - 11 * (i - s)]; var x2 = Math.min(c[0] + 13, 96); a.push(L("eq", [c, [x2, c[1]], [x2, c[1] - 11]], 3.6)); }
+      return a.concat([{ k: "eq2", rect: [12, 96, 62, 5], r: 2 }, { k: "eq2", rect: [76, 16, 22, 68], r: 6 }, L("eq", [[76, 18], [76, 94]], 3.4), L("eq", [[26, 49.5], [77, 40.5]], 3.4)]);
+    } });
+  /* 마이마운틴(등산 머신): 아주 가파른 벨트를 손잡이 잡고 오름 + 작은 산 */
+  (function () {
+    function gy(x) { return 92 - .55 * (x - 12); }
+    EX.my_mountain = gait({ dur: 1.8, hip: [40, 50], F: [53, gy(53) - 3], B: [31, gy(31) - 3], lift: 5, bob: .5, lean: 13, hand: [69, 31], toe: [6.2, -2.4],
+      back: function () { return [{ k: "eq2", poly: [[7, 40], [16, 24], [21, 31], [25, 26], [33, 40]], w: 1.6 }, floor(8, 92), L("eq2", [[12, gy(12) + 1.5], [80, gy(80) + 1.5]], 5.5),
+        D("eq", [13, gy(13) + 1.5], 3.4), L("eq2", [[16, 93], [28, gy(28) + 3]], 3), L("eq", [[78, gy(78)], [84, 18]], 3.8), L("eq", [[84, 24], [68, 31]], 3.4)]; } });
+  })();
+  /* 사이클: 앉아서 페달이 한 방향으로 돎 */
+  EX.bike = { loop: 1, dur: 1.15, t: .1, bones: CB, hl: legHl,
+    at: function (t) {
+      var c = [55, 79], w = Math.PI * 2 * t, hip = [35, 51], sh = [49, 29], P = { hip: hip, sh: sh, head: [56, 17], _t: t };
+      [["", 0], ["2", Math.PI]].forEach(function (L2) {
+        var pd = [c[0] + 8 * Math.cos(w + L2[1]), c[1] + 8 * Math.sin(w + L2[1])], r = ik(hip, pd, 19, 17, kFwd);
+        P["kn" + L2[0]] = r.k; P["ft" + L2[0]] = r.f; P["toe" + L2[0]] = off(r.f, 6.5, 1);
+        var e = ik(sh, [68, 40], 16, 15, kDown); P["el" + L2[0]] = e.k; P["ha" + L2[0]] = e.f;
+      });
+      return P;
+    },
+    back: function (P) { var w = Math.PI * 2 * P._t, c = [55, 79], a = [c[0] + 8 * Math.cos(w), c[1] + 8 * Math.sin(w)], b = [2 * c[0] - a[0], 2 * c[1] - a[1]];
+      return [floor(14, 88), L("eq2", [[22, 92], [84, 92]], 4), R("eq2", [72, 75], 11, 3.2), L("eq", [[36, 55], [52, 80], [72, 75]], 3.6), L("eq", [[29, 51], [41, 51]], 4.4),
+        L("eq", [[52, 80], [64, 50], [70, 39]], 3.6), L("eq", [[66, 39], [74, 39]], 3.4), L("eq", [[52, 80], [40, 92]], 3.2), L("eq", [[72, 75], [80, 92]], 3.2), L("eq2", [b, a], 2.6)]; },
+    front: function (P) { var w = Math.PI * 2 * P._t; return [D("eq", [55, 79], 2.6), L("eq", [[55 + 8 * Math.cos(w) - 3, 79 + 8 * Math.sin(w) + 1.5], [55 + 8 * Math.cos(w) + 4, 79 + 8 * Math.sin(w) + 1.5]], 2.6)]; } };
+  /* 일립티컬: 서서 발은 타원으로, 손잡이는 반대로 앞뒤 */
+  EX.elliptical = { loop: 1, dur: 1.6, t: .1, bones: CB, hl: legHl,
+    at: function (t) {
+      var w = Math.PI * 2 * t, hip = [42, 49 + .8 * Math.cos(2 * w)], sh = [45, hip[1] - 27], P = { hip: hip, sh: sh, head: [47.5, hip[1] - 41], _t: t };
+      [["", 0], ["2", Math.PI]].forEach(function (L2) {
+        var pd = [45 + 12 * Math.cos(w + L2[1]), 80 + 3.5 * Math.sin(w + L2[1])], r = ik(hip, pd, 19, 16, kFwd);
+        P["kn" + L2[0]] = r.k; P["ft" + L2[0]] = r.f; P["toe" + L2[0]] = off(r.f, 7, 1.5);
+        var g = mix([72, 33], [62, 37], (1 + Math.cos(w + L2[1])) / 2), e = ik(sh, g, 16, 15, kDown);
+        P["el" + L2[0]] = e.k; P["ha" + L2[0]] = e.f; P["g" + L2[0]] = g;
+      });
+      return P;
+    },
+    back: function (P) { return [floor(10, 90), L("eq2", [[14, 92], [84, 92]], 4), L("eq2", [[33, 84], [72, 84], [80, 92]], 3), R("eq2", [80, 80], 7, 3), L("eq2", [P.g2, [76, 82]], 3.2), D("eq", [76, 82], 2.6)]; },
+    front: function (P) { return [L("eq", [P.g, [76, 82]], 3.4), L("eq", [off(P.ft, -4, 3), off(P.ft, 10, 3)], 3)]; } };
+  /* 로잉머신: 다리로 밀고 → 몸 젖히고 → 팔 당기기, 돌아올 땐 반대 순서 */
+  EX.rower = { loop: 1, dur: 2.6, t: .3, bones: CB, hl: function (P) { return [seg(P.sh, P.hip, .15, .7, 13), seg(P.hip, P.kn, .12, .9, 9)]; },
+    at: function (t) {
+      var leg = t < .4 ? sm(t / .3) : 1 - sm((t - .62) / .38), lean = t < .4 ? sm((t - .1) / .25) : 1 - sm((t - .5) / .18), arm = t < .4 ? sm((t - .22) / .18) : 1 - sm((t - .4) / .15);
+      var hip = [52 - 15 * leg, 75], a = .45 - .7 * lean, sh = [hip[0] + 27 * Math.sin(a), hip[1] - 27 * Math.cos(a)], P = { hip: hip, sh: sh, head: [sh[0] + 13 * Math.sin(a) + 1.5, sh[1] - 13 * Math.cos(a)], _t: t };
+      var r = ik(hip, [72, 78], 18, 16, kUp);
+      P.kn = P.kn2 = r.k; P.ft = P.ft2 = r.f; P.toe = P.toe2 = off(r.f, 4, -6);
+      var ext = [sh[0] + 30 * Math.cos(.32), sh[1] + 30 * Math.sin(.32)], pull = [hip[0] + 9, hip[1] - 17], ha = mix(ext, pull, arm), e = ik(sh, ha, 16, 15, kDown);
+      P.el = P.el2 = e.k; P.ha = P.ha2 = e.f;
+      return P;
+    },
+    back: function (P) { return [floor(8, 92), L("eq2", [[10, 85], [88, 85]], 4), L("eq2", [[14, 85], [12, 93]], 3), L("eq2", [[84, 85], [86, 93]], 3), R("eq2", [84, 73], 7.5, 3.2), L("eq", [[P.hip[0] - 7, 80.5], [P.hip[0] + 7, 80.5]], 4.4), L("eq", [[74, 70], [77, 84]], 4)]; },
+    front: function (P) { return [L("eq2", [P.ha, [80, 72]], 1.6), L("eq", [off(P.ha, 0, -4.5), off(P.ha, 0, 4.5)], 3.4)]; } };
+
   /* ---------- 그리기 ---------- */
   function defs(S) {
     function lg(id, a, b) { return '<linearGradient id="' + id + '~ID~" gradientUnits="userSpaceOnUse" x1="30" y1="10" x2="70" y2="95"><stop offset="0" stop-color="' + a + '"/><stop offset="1" stop-color="' + b + '"/></linearGradient>'; }
@@ -463,6 +573,7 @@
   };
   function pose(ex, t) {
     var P = {}, k;
+    if (ex.at) return ex.at(t);
     for (k in ex.p0) P[k] = ex.p1[k] ? mix(ex.p0[k], ex.p1[k], t) : ex.p0[k];
     for (k in (ex.arcs || {})) {   /* 관절을 축으로 도는 부위는 각도로 보간 (직선으로 보간하면 팔다리가 짧아 보임) */
       if (!ex.p1[k]) continue;
@@ -519,16 +630,20 @@
   for (i = 1; i <= N; i++) FR.push({ kt: .52 + .46 * i / N, t: 1 - ease(i / N) });
   FR.push({ kt: 1, t: 0 });
   var KT = FR.map(function (f) { return f1(f.kt * 100) / 100; }).join(";");
+  /* loop 종목(유산소): 쉬지 않고 같은 빠르기로 한 바퀴 (24장) */
+  var FRL = []; for (i = 0; i <= 24; i++) FRL.push({ kt: i / 24, t: i / 24 });
+  var KTL = FRL.map(function (f) { return String(Math.round(f.kt * 10000) / 10000); }).join(";");
   var cache = {};
   function svg(key, opt) {
     opt = opt || {};
     var ex = EX[key]; if (!ex) return "";
     var sex = opt.sex === "F" ? "F" : "M", still = !!opt.still, ck = key + sex + (still ? "s" : "a");
     if (!cache[ck]) {
-      var S = STY[sex], base = shapes(ex, S, still ? ex.t : 0), frames = still ? null : FR.map(function (f) { return shapes(ex, S, f.t); });
-      var base0 = ex.slow ? 3.6 : 2.8, hold = ex.hold || 0, dur = f1(base0 + hold) + "s";
+      var FRX = ex.loop ? FRL : FR;
+      var S = STY[sex], base = shapes(ex, S, still ? ex.t : 0), frames = still ? null : FRX.map(function (f) { return shapes(ex, S, f.t); });
+      var base0 = ex.slow ? 3.6 : ex.dur || 2.8, hold = ex.hold || 0, dur = f1(base0 + hold) + "s";
       /* ex.hold(초): 시작 자세에서 그만큼 더 멈춰 있다가 움직임 (2026-11-16 리버스 펙덱 "시작 준비 자세를 0.5초 느리게") */
-      var kt = !hold ? KT : FR.map(function (f, n) { return n ? Math.round((hold + f.kt * base0) / (base0 + hold) * 1000) / 1000 : 0; }).join(";");
+      var kt = ex.loop ? KTL : !hold ? KT : FR.map(function (f, n) { return n ? Math.round((hold + f.kt * base0) / (base0 + hold) * 1000) / 1000 : 0; }).join(";");
       var h = '<rect x=".75" y=".75" width="98.5" height="98.5" rx="23" fill="' + S.tile + '"/>';
       base.forEach(function (o, n) {
         var attrs = "", anim = "", k;
