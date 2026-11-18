@@ -4176,6 +4176,9 @@
       if (hit.day) view.setAttribute("data-day", hit.day); else view.removeAttribute("data-day");
       route.lastH = curH0; route.at = Date.now();
       view.classList.remove("enter"); view.classList.add("back");
+      /* 2026-11-18 장동욱 "하단 탭 누르다 보면 전환효과 없어짐": 아래 탭으로 3분 안에 본 화면에 가면(TABRET) 떼어 둔 화면을 붙이느라 D안 차례 등장이 빠졌음
+         → 아래 탭으로 돌아올 땐 붙인 화면에도 차례 등장을 다시 켬(그래프 그리기 같은 처음 움직임은 .back으로 계속 꺼 둠). 뒤로 버튼·밀어서 뒤로는 그대로 효과 없음 */
+      if (tabRet) { void view.offsetWidth; view.classList.add("enter"); clearTimeout(route.enterT); route.enterT = setTimeout(function () { view.classList.remove("enter"); }, 900); }
       var t0 = tabOf(hit.tab);
       Array.prototype.forEach.call(document.querySelectorAll(".tabs a"), function (a) {
         if (a.getAttribute("data-tab") === t0) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");

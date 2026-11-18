@@ -418,3 +418,5 @@ _tools/anatomy_v4.py  인체모형 v4 (자극 부위 그림, 2026-11-16 — v3 �
 - 만드는 법: `_tools/make_dark.py`가 style.css를 읽어 흰 바탕(#fff·rgba(255,255,255,≥.5))→var(--paper), 연회색→var(--card2), 연한 색→color-mix 16%, 연한 그라데이션→같은 그라데이션 어둡게(background-image라 background-size·움직임 유지), color-mix(…, #fff)→var(--paper), var(--primary) 바탕→var(--seal)(다크에선 --primary가 밝은 글자색), 짙은 글자색→var(--ink). 같은 선택자를 뒤에서 다시 정한 건 마지막 것만 봄(LAST). 자동 규칙은 :where()로 앞머리 점수 0 — .jb.cur처럼 더 자세한 원래 규칙을 덮지 않게(처음엔 '지금 여기' 배지가 회색으로 덮였음). 손 규칙은 _tools/dark_src.css(앞머리 D).
 - 두 번 씀: @media (prefers-color-scheme: dark) { html:not([data-theme="light"]) … } + html[data-theme="dark"] ….
 - 빼 둔 것(SKIP): .thero·.th-go·배지(.bgx·.bxp…)·움직이는 아이콘(.exi·.icn)·.rp-home 등 — 원래 색을 지킴. 근육 지도 그림·잠긴 배지는 밝은 그대로.
+
+- (2026-11-18) "하단 탭 누르다 보면 전환효과 없어짐" → 원인: 탭으로 3분 안에 본 화면에 가면 TABRET이 떼어 둔 화면(VCACHE)을 뒤로 가기처럼 붙여서 차례 등장(.enter)이 빠졌음. route()의 hit 처리에서 tabRet이면 .enter를 다시 붙임(.back은 그대로 → 여정 그래프 처음 그리기 움직임은 안 다시 함).
