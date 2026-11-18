@@ -519,10 +519,10 @@ def sprig(img, x, y, deg, n=6, L=.2, col=("#7cc260", "#2f7d32")):
 
 
 def tteok(img):
-    board(img)
+    shadow(img, .5, .86, .38, .045)
     def log(x0, y0, x1, y1, w):
         m = stroke([(x0, y0), (x1, y1)], w)
-        tint(img, ImageChops.offset(m, int(.012 * W), int(.02 * W)), "#3a2410", .28, .014)
+        tint(img, ImageChops.offset(m, int(.012 * W), int(.02 * W)), "#141826", .2, .014)
         paint(img, m, "#ffffff", "#f1e9da", rim=.3, hl=.1, edge=.45, dv=(-.15, 1))
         gloss(img, (x0 + x1) / 2 - .01, (y0 + y1) / 2 - w * .26, abs(x1 - x0) * .36, w * .07, np.degrees(np.arctan2(y0 - y1, x1 - x0)), .9, m, .006)
         cap = ell(x1, y1, w * .30, w * .47, np.degrees(np.arctan2(y0 - y1, x1 - x0)))
@@ -532,7 +532,7 @@ def tteok(img):
 
 
 def tender(img):
-    board(img)
+    shadow(img, .5, .86, .38, .045)
     def strip(cx, cy, L, wd, deg, sd):
         up, lo = [], []
         for i in range(81):
@@ -540,7 +540,7 @@ def tender(img):
             r = wd * (np.sin(np.pi * t ** .62) ** .55) * (1 + .06 * np.sin(7 * t + sd)) + .006
             up.append((x, cy - r)); lo.append((x, cy + r * .9))
         m = rot(smooth(poly(up + lo[::-1]), .01), deg, cx, cy)
-        tint(img, ImageChops.offset(m, int(.012 * W), int(.022 * W)), "#3a2410", .3, .014)
+        tint(img, ImageChops.offset(m, int(.012 * W), int(.022 * W)), "#141826", .2, .014)
         paint(img, slab(m, .022), "#e2b170", "#b07a3c", rim=.2, hl=0)
         paint(img, m, "#fde9c4", "#eab873", rim=.3, hl=.3, edge=.4)
         tint(img, rot(ell(cx - L * .05, cy, L * .34, wd * .55), deg, cx, cy), "#e9a24e", .42, .03, m)       # 노릇한 구움색
@@ -556,10 +556,10 @@ def tender(img):
 
 
 def beef(img):
-    board(img)
+    shadow(img, .5, .86, .38, .045)
     pts = [(.5 + np.cos(a) * (.34 + .035 * np.cos(2 * a + .6) + .02 * np.sin(3 * a)), .50 + np.sin(a) * (.20 + .03 * np.sin(2 * a + 1.1))) for a in np.linspace(0, 6.28, 180)]
     m = rot(smooth(poly(pts), .02), -10)
-    tint(img, ImageChops.offset(m, int(.014 * W), int(.05 * W)), "#3a2410", .35, .018)
+    tint(img, ImageChops.offset(m, int(.014 * W), int(.05 * W)), "#141826", .25, .018)
     paint(img, slab(m, .05), "#b53443", "#7a1522", rim=.25, hl=0)                       # 두께
     paint(img, m, "#fff3e2", "#ecd3b0", rim=.1, hl=.1, edge=.3)                         # 지방 테두리
     red = smooth(AND(shrink(m, .012), ImageChops.offset(shrink(m, .012), int(.012 * W), int(.016 * W))), .012)
@@ -577,34 +577,39 @@ def beef(img):
 
 
 def pork(img):
-    board(img)
-    # 통 안심(겉은 노릇하게 구운 색)
-    lg = stroke([(.22, .40), (.60, .33)], .20)
-    tint(img, ImageChops.offset(lg, int(.014 * W), int(.03 * W)), "#3a2410", .32, .016)
-    paint(img, lg, "#d99a5c", "#8f5524", rim=.42, hl=.3, dv=(-.1, 1))
-    tint(img, stroke([(.22, .36), (.58, .295)], .03), "#f2c088", .5, .02, lg)
-    dots(img, lg, 18, ["#6e3d16"], (.004, .008), 6, .4, (.14, .26, .68, .5))
-    dots(img, lg, 10, ["#3d7a34"], (.005, .008), 2, .8, (.14, .26, .68, .46), 1.6)
-    # 썰어 놓은 조각(속은 연한 분홍)
-    for i, (x, y) in enumerate([(.66, .40), (.55, .56), (.40, .70)]):
-        f = ell(x, y, .125, .152, -22 + i * 3)
-        tint(img, ImageChops.offset(f, int(.012 * W), int(.024 * W)), "#3a2410", .32, .014)
-        paint(img, ImageChops.offset(f, int(.03 * W), int(.008 * W)), "#d99a5c", "#8f5524", rim=.3, hl=0)   # 두께(구운 겉면)
-        paint(img, f, "#d99a5c", "#a66a30", rim=.1, hl=0, edge=.3)
-        inn = shrink(f, .011); paint(img, inn, "#fff0e6", "#f7c9bc", rim=.14, hl=.2, edge=.15)
-        tint(img, ell(x + .01, y + .01, .06, .075, -22), "#f9b9b0", .45, .035, inn)                        # 가운데 은은한 분홍
+    """생 돼지 안심: 한쪽이 가늘어지는 긴 통살 + 은빛 근막 결 + 썰어 놓은 두 조각 (2026-11-19 3차 "더 안심처럼")"""
+    shadow(img, .5, .86, .38, .045)
+    up, lo = [], []
+    for i in range(101):
+        t = i / 100; x = .10 + .80 * t
+        r = .118 * (1 - .50 * t ** 1.6) * min(1, (t / .06) ** .5) * min(1, ((1 - t) / .10) ** .5) * (1 + .03 * np.sin(9 * t))
+        up.append((x, .40 - r)); lo.append((x, .40 + r))
+    lg = rot(smooth(poly(up + lo[::-1]), .012), -12, .5, .40)
+    tint(img, ImageChops.offset(lg, int(.012 * W), int(.03 * W)), "#141826", .2, .016)
+    paint(img, lg, "#f7a9a6", "#c25a66", rim=.44, hl=.3, dv=(-.1, 1))
+    tint(img, rot(stroke([(.16, .37), (.50, .365), (.84, .385)], .05), -12, .5, .40), "#ffc6c0", .45, .025, lg)      # 윗면 밝은 띠
+    for dy, w, a in [(-.035, .016, .75), (.0, .008, .55), (.04, .006, .4)]:                                              # 은빛 근막·결
+        tint(img, rot(stroke([(.14, .40 + dy), (.36, .395 + dy * .9), (.60, .40 + dy * .6), (.84, .40 + dy * .2)], w), -12, .5, .40), "#fff2ee", a, .004, lg)
+    gloss(img, .34, .36, .16, .014, 12, .45, lg)
+    # 굵은 쪽에서 썬 두 조각(둥근 단면)
+    for x, y, r0 in [(.40, .68, .118), (.66, .66, .105)]:
+        f = ell(x, y, r0, r0 * .82, -8)
+        tint(img, ImageChops.offset(f, int(.012 * W), int(.026 * W)), "#141826", .2, .014)
+        paint(img, slab(f, .04), "#e98f90", "#b54e5b", rim=.25, hl=0)
+        paint(img, f, "#ffc4be", "#ee8f92", rim=.2, hl=.25, edge=.3)
+        tint(img, ell(x - .01, y - .008, r0 * .55, r0 * .42), "#ffdcd6", .5, .03, f)
         for k in (-1, 0, 1):
-            tint(img, rot(stroke([(x - .07, y + k * .05), (x, y + k * .05 + .012), (x + .07, y + k * .05)], .004), -22, x, y), "#ffffff", .5, .004, inn)
-        gloss(img, x - .035, y - .06, .045, .018, -22, .45, inn)
-    sprig(img, .12, .74, -30, 5, .2)
+            tint(img, stroke([(x - r0 * .6, y + k * r0 * .3), (x, y + k * r0 * .3 + .01), (x + r0 * .6, y + k * r0 * .3 - .004)], .004), "#fff4f0", .55, .004, f)
+        gloss(img, x - r0 * .3, y - r0 * .42, r0 * .32, r0 * .1, -8, .5, f)
+    sprig(img, .76, .84, -160, 5, .18)
 
 
 def salmon(img):
-    board(img)
+    shadow(img, .5, .86, .38, .045)
     q = [(.14, .52), (.22, .34), (.46, .26), (.74, .28), (.88, .40), (.84, .56), (.60, .62), (.30, .62)]
     m = rot(smooth(poly(q), .035), -6)
     side = slab(m, .085)
-    tint(img, ImageChops.offset(side, int(.014 * W), int(.02 * W)), "#3a2410", .32, .016)
+    tint(img, ImageChops.offset(side, int(.014 * W), int(.02 * W)), "#141826", .22, .016)
     paint(img, side, "#f58a5e", "#cf5530", rim=.25, hl=0)                               # 옆면(살 단면)
     for k in range(3):                                                                   # 단면의 층
         tint(img, SUB(ImageChops.offset(m, 0, int((.022 + k * .022) * W)), ImageChops.offset(m, 0, int((.016 + k * .022) * W))), "#ffd2bc", .5, .003, side)
@@ -619,7 +624,7 @@ def salmon(img):
     gloss(img, .40, .34, .17, .018, -8, .4, m)
     # 레몬 한 조각 + 딜
     lem = ell(.80, .70, .105, .09, -15)
-    tint(img, ImageChops.offset(lem, int(.01 * W), int(.018 * W)), "#3a2410", .3, .012)
+    tint(img, ImageChops.offset(lem, int(.01 * W), int(.018 * W)), "#141826", .2, .012)
     paint(img, lem, "#ffe45c", "#e9b81e", rim=.25)
     li = ell(.80, .70, .085, .072, -15); paint(img, li, "#fff8b8", "#ffe96e", rim=.08, hl=0, edge=.15)
     for a in range(0, 180, 30):
