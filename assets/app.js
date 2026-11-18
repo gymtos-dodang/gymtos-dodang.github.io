@@ -1450,7 +1450,7 @@
     lf1: ["T", "kettle", "shine", "circle", 1], lf3: ["B", "bell", "beat", "pent", 2], lf5: ["I", "barbell", "pulse shine", "hex", 3], lf10: ["D", "plate", "spin", "oct", 4],
     pc30: ["G", "trend", "shine", "diamond", 3], pc50: ["Y", "chev2", "float pulse", "star", 4], pw1: ["P", "up", "float", "shield", 2], pw4: ["K", "stairs", "shine pulse", "scallop", 3],
     fv3: ["B", "book", "shine", "circle", 1], fv5: ["B", "cap", "shine", "pent", 2], fv10: ["P", "award", "twinkle pulse", "oct", 3], ib1: ["T", "scale", "pulse", "hex", 1],
-    ibl1: ["G", "trendd", "shine", "circle", 1], ibl2: ["T", "trendd", "pulse", "hex", 2], ibl3: ["B", "trendd", "shine pulse", "diamond", 2], ibl4: ["I", "trendd", "float shine", "oct", 3], ibl5: ["R", "trendd", "rays twinkle", "star", 4],   /* 감량 배지 그림은 전부 내려가는 그래프로 통일 (2026-11-19) */
+    ibl1: ["G", "trendd", "shine", "circle", 1], ibl2: ["T", "trendd", "pulse", "hex", 2], ibl3: ["B", "trendd", "shine pulse", "oct", 2], ibl4: ["I", "trendd", "shine", "shield", 3], ibl5: ["R", "trendd", "rays twinkle", "scallop", 4],   /* 감량 배지 그림은 전부 내려가는 그래프로 통일 (2026-11-19) */
     day30: ["G", "sprout", "float", "circle", 1], day100: ["K", "heart", "beat pulse", "scallop", 2], day200: ["T", "tree", "shine", "pent", 3], day365: ["D", "gem", "spin twinkle rays", "star", 4]
   };
   BG_IC.camera = '<path d="M3.5 8h3.3L8.5 5.5h7L17.2 8h3.3v11.5h-17z"/><circle cx="12" cy="13.3" r="3.7"/><path d="M12 11.8l.5 1 1.1.2-.8.8.2 1.1-1-.5-1 .5.2-1.1-.8-.8 1.1-.2z"/>';
@@ -1655,7 +1655,7 @@
       }
       [[1, "지난 측정보다 1kg 빠졌어요. 변화가 숫자로 보이기 시작했어요!"], [2, "한 번에 2kg 감량! 식단과 운동이 제대로 맞물렸어요."], [3, "3kg이나 빠졌어요. 옷 입을 때부터 느껴지죠?"],
        [4, "4kg 감량! 이 정도면 주변에서 먼저 알아봐요."], [5, "지난 측정보다 5kg 감량. 정말 대단한 한 달이에요!"]].forEach(function (v) {
-        add("body", "ibl" + v[0], v[0] + "kg 감량", "down", v[0] + "kg", lossOn[v[0]] || null, Math.max(0, lossMax), v[0], "인바디를 지난 측정과 비교해 체중이 " + v[0] + "kg 빠지면 받아요", v[1], { unit: "kg", hint: "지난번보다 -1kg" });
+        add("body", "ibl" + v[0], v[0] + "kg 감량", "down", null, lossOn[v[0]] || null, Math.max(0, lossMax), v[0], "인바디를 지난 측정과 비교해 체중이 " + v[0] + "kg 빠지면 받아요", v[1], { unit: "kg", hint: "지난번보다 -1kg", art: "loss", artn: v[0] });
       });
       /* 최고급 누적 감량 10·15·20kg (2026-11-19 "10~20키로 감량 배지도, 최고급 배지처럼") — 첫 인바디 체중보다 n kg 이상 빠진 기록이 생긴 날
          sp(바프 완료처럼 금 월계수·금선) + 단계마다 다른 보석 색: 10kg 금 · 15kg 루비 · 20kg 블랙 다이아 */
@@ -1665,12 +1665,12 @@
         if (dc > cumMax) cumMax = dc;
         [10, 15, 20].forEach(function (n) { if (dc >= n && !cumOn[n]) cumOn[n] = ibr[lj].d; });
       }
-      [[10, "trendd", "star", "SP", "#F3C94F", "#17171C", "첫 인바디보다 10kg 감량! 완전히 다른 몸이 됐어요. 아무나 못 받는 배지예요."],
+      [[10, "trendd", "circle", "SPG", "#F3C94F", "#FFF3D6", "첫 인바디보다 10kg 감량! 완전히 다른 몸이 됐어요. 아무나 못 받는 배지예요."],
        [15, "trendd", "shield", "SPR", "#FF4D66", "#FFF3D6", "15kg 감량. 몸도 생활도 다 바꿔 낸 사람만 받는 루비 배지예요."],
        [20, "trendd", "oct", "SPD", "#7FDFFF", "#FFF3D6", "20kg 감량, 전설 달성. 이 배지를 가진 사람은 정말 드물어요."]].forEach(function (v) {
-        add("body", "iblc" + v[0], v[0] + "kg 감량", v[1], v[0] + "kg", cumOn[v[0]] || null, Math.max(0, cumMax), v[0],
+        add("body", "iblc" + v[0], v[0] + "kg 감량", v[1], null, cumOn[v[0]] || null, Math.max(0, cumMax), v[0],
           "첫 인바디보다 체중이 모두 합쳐 " + v[0] + "kg 빠지면 받아요", v[6],
-          { unit: "kg", sp: true, sh: v[2], lv: 4, enk: v[3], spc: v[4], ink: v[5], col: [v[4], v[4]], fx: v[0] === 20 ? "rays spin twinkle shine pulse" : v[0] === 15 ? "rays spin twinkle shine" : "rays twinkle shine" });
+          { unit: "kg", art: "loss", artn: v[0], sp: true, sh: v[2], lv: 4, enk: v[3], spc: v[4], ink: v[5], col: [v[4], v[4]], fx: v[0] === 20 ? "rays spin twinkle shine pulse" : v[0] === 15 ? "rays spin twinkle shine" : "rays twinkle shine" });
       });
     }
     var days = st0 ? Math.floor((new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) - st0) / 86400000) + 1 : 0;
@@ -1731,7 +1731,7 @@
   var BG_EN = { R: ["#E8263C", "#FF8FA3", "#FFD53D"], O: ["#FF8A1F", "#FFD53D", "#E8263C"], Y: ["#FFD53D", "#FF8A1F", "#17245C"], G: ["#1FA85A", "#C8F03C", "#2EC8F0"],
     T: ["#14B8A6", "#C8F03C", "#17245C"], B: ["#2E7BF0", "#2EC8F0", "#C8F03C"], I: ["#3B2FC9", "#2EC8F0", "#FF3D7F"], P: ["#6A2BD9", "#FF3D7F", "#FFD53D"],
     K: ["#FF3D7F", "#FFB3D1", "#6A2BD9"], N: ["#17245C", "#2E7BF0", "#FFD53D"], S: ["#FF8A1F", "#FF3D7F", "#FFD53D"], D: ["#17171C", "#E8263C", "#FFD53D"], SP: ["#F6CF58", "#17171C", "#FFF3B0"],
-    SPR: ["#A50E26", "#F6CF58", "#FF5E78"], SPD: ["#101016", "#F6CF58", "#7FDFFF"] };   /* 최고급 감량 배지(2026-11-19): SPR 루비+금, SPD 블랙 다이아+금 */
+    SPG: ["#17245C", "#F6CF58", "#FF8A1F"], SPR: ["#7A0A1E", "#E8263C", "#FF8FA3"], SPD: ["#101016", "#3B2FC9", "#7FDFFF"] };   /* 최고급 감량 배지(2026-11-19): SPR 루비+금, SPD 블랙 다이아+금 */
   var BG_OFF = ["#F4F2F2", "#E9E5E5", "#DEDADA"];
   function bgFields(pat, n, c, CY, R, wire) {   /* 금선으로 나눈 색 칸들 (배지 모양으로 잘라서 씀) */
     var W = ' stroke="' + wire + '" stroke-width="1.3"', X = 42, o = "";
@@ -1765,13 +1765,13 @@
         '<g transform="translate(0 3)">' + bgSh(sh, R, CY, "#7A4E00") + '</g>';
     } else s += '<g transform="translate(0 2.6)">' + bgSh(sh, R, CY, "#D2CCCC") + '</g>';
     s += bgSh(sh, R, CY, on ? wire : "#DAD5D5") + bgSh(sh, RI, CY, c[0]) +
-      '<g clip-path="url(#' + u + 'c)">' + bgFields(hsh % 6, Math.min(3, lv), c, CY, R, wire) +
+      '<g clip-path="url(#' + u + 'c)">' + (b.art === "loss" ? bgLoss(b, c, wire, on, sp) : bgFields(hsh % 6, Math.min(3, lv), c, CY, R, wire)) +
       (on ? '<ellipse cx="34" cy="' + (CY - 21) + '" rx="30" ry="17" fill="url(#' + u + 'g)"/>' : '') + '</g>' +
       (lv >= 3 ? bgSh(sh, RI * 0.9, CY, "none", ' stroke="' + wire + '" stroke-width="1.1" stroke-linejoin="round"') : '') +
       (on && lv >= 3 ? bgSh(sh, RI, CY, "url(#" + u + "o)", ' opacity="' + (lv === 4 ? .8 : .5) + '"') : '');
     var sc = sh === "circle" || sh === "scallop" ? 1.2 : 1.08, cy = CY + (b.sm != null ? -2 : 0) + (sh === "shield" ? -1.5 : sh === "pent" ? 1 : 0), ik = has("flame") ? " bdx-flame" : has("float") ? " bdx-float" : has("beat") ? " bdx-beat" : "";
     var IC = BG_IC[b.ic] || BG_IC.star, ink = !on ? "#F7F5F5" : sp ? (b.ink || "#17171C") : key === "Y" ? "#17171C" : "#FFF8E7";
-    s += '<g transform="translate(' + (42 - 12 * sc).toFixed(2) + ' ' + (cy - 12 * sc).toFixed(2) + ') scale(' + sc + ')"><g class="bdx-i' + ik + '" stroke-linecap="round" stroke-linejoin="round">' +
+    if (b.art !== "loss") s += '<g transform="translate(' + (42 - 12 * sc).toFixed(2) + ' ' + (cy - 12 * sc).toFixed(2) + ') scale(' + sc + ')"><g class="bdx-i' + ik + '" stroke-linecap="round" stroke-linejoin="round">' +
       '<g fill="none" stroke="' + (on ? wire : "#C4BEBE") + '" stroke-width="4.3">' + IC + '</g>' +
       '<g fill="' + ink + '" fill-opacity="' + (on ? .5 : .6) + '" stroke="' + ink + '" stroke-width="2.1">' + IC + '</g></g></g>';
     if (has("shine")) s += '<g clip-path="url(#' + u + 'c)"><g transform="rotate(22 42 32)"><rect class="bdx-sh" x="-16" y="-20" width="11" height="110" fill="#fff" opacity=".5"/></g></g>';
@@ -1781,6 +1781,19 @@
     var sm = b.sm != null ? '<span class="bdg-m' + (on ? '' : ' off') + '">' + b.sm + '</span>' : '';
     var ex = (has("pulse") ? '<span class="bdx-glow" aria-hidden="true"></span>' : '') + (has("spin") ? '<span class="bdx-ring" aria-hidden="true"></span>' : '');
     return '<span class="bdg bx' + (on ? ' on' : '') + '" style="--bgc:' + bgRgb(on ? (sp ? (b.spc || "#F3C94F") : c[key === "D" || key === "N" ? 1 : 0]) : "#BBBBBB") + '">' + ex + s + sm + '</span>';
+  }
+  /* 감량 배지 그림 (2026-11-19 장동욱이 보내 준 에나멜 핀 참고 사진 느낌 — 작은 아이콘 대신 배지 가득 금선 그림):
+     금선으로 나눈 내리막 언덕 두 칸 + 언덕을 따라 내려가는 굵은 금 화살표 + 금선 큰 숫자(kg). 명찰(bdg-m)은 안 씀 */
+  function bgLoss(b, c, wire, on, sp) {
+    var W = ' stroke="' + wire + '" stroke-width="1.5" stroke-linejoin="round"', n = String(b.artn), two = n.length > 1;
+    var ink = !on ? "#F7F5F5" : sp ? (b.ink || "#FFF3D6") : "#FFF8E7";
+    return '<path d="M8 15C24 15 30 31 44 36S66 42 78 43V70H8Z" fill="' + c[1] + '"' + W + '/>' +
+      '<path d="M8 35C22 35 30 47 46 50S68 53 78 53V70H8Z" fill="' + c[2] + '"' + W + '/>' +
+      '<text x="' + (two ? 53 : 55) + '" y="29" text-anchor="middle" font-family="Oswald, sans-serif" font-weight="700" font-size="' + (two ? 21 : 25) + '"' + (two ? ' letter-spacing="-.6"' : '') +
+        ' fill="' + ink + '" stroke="' + wire + '" stroke-width="1.5" paint-order="stroke" stroke-linejoin="round">' + n + '</text>' +
+      '<g class="bdx-i" fill="none" stroke-linecap="round" stroke-linejoin="round">' +
+      '<g stroke="' + wire + '" stroke-width="5"><path d="M17 23C28 24 32 37 44 42L57 46"/><path d="M49.5 49.5L58.5 46.5L55 38"/></g>' +
+      '<g stroke="' + ink + '" stroke-width="2"><path d="M17 23C28 24 32 37 44 42L57 46"/><path d="M49.5 49.5L58.5 46.5L55 38"/></g></g>';
   }
   function bpBadge() {   /* 전설 배지 "바프 완료": 바프 회원(journey.mode bodyprofile)만 보임. 선생님이 data.js journey.bpDone: "촬영 날짜" 넣으면 획득. 45개 수에는 안 셈 */
     var J = M.journey || {};
