@@ -775,7 +775,7 @@
     } else {
       h += '<a class="hw col hi" href="#forms"><span class="hi-top"><span class="hi-ic bellc" aria-hidden="true">' + img("dumbbell", "hi-ex", true) + '</span><i class="hi-go">›</i></span><small>최근 자세 복습지</small><b class="hi-t">수업에서 배운 자세가 여기에 쌓여요</b></a>';
     }
-    return h + '</div>';
+    return h + rankHome() + '</div>';
   }
   document.addEventListener("click", function (e) {   /* 홈 공지 칸 → 그 공지로 바로 (반짝 표시) */
     var a = e.target.closest && e.target.closest("a.hi[data-nk]");
@@ -2118,17 +2118,27 @@
     RK = v; try { localStorage.setItem(RK_LS, JSON.stringify(v)); } catch (e) {}
     rkRefresh();
   }
-  function rkRefresh() { var r = document.getElementById("rank"); if (r) { r.outerHTML = rankSection(r.getAttribute("data-num")); setupFold(view.getAttribute("data-tab") || "goal"); } }
+  function rkRefresh() { var hr = document.getElementById("rkHome"); if (hr) hr.outerHTML = rankHome(); var r = document.getElementById("rank"); if (r) { r.outerHTML = rankSection(r.getAttribute("data-num")); setupFold(view.getAttribute("data-tab") || "goal"); } }
   function rkMask(n) {
     return String(n || "").split("·").map(function (p) { p = p.trim(); return p.length <= 1 ? p : p.length === 2 ? p.charAt(0) + "O" : p.charAt(0) + new Array(p.length - 1).join("O") + p.charAt(p.length - 1); }).join(" · ");
   }
-  function rankSection(num) {
-    var now = new Date(), ym = ymd(now).slice(0, 7), mine = attLoad().filter(function (k) { return k.slice(0, 7) === ym; }).length;
+  function rkCalc() {   /* 이번 달 순위표 {L, my, mine} — 나 탭 순위 칸·홈 순위 칸이 같이 씀 */
+    var ym = ymd(new Date()).slice(0, 7), mine = attLoad().filter(function (k) { return k.slice(0, 7) === ym; }).length;
     var L = (RK && RK.ym === ym && Array.isArray(RK.list) ? RK.list : []).filter(function (x) { return x.s !== SLUG; }).map(function (x) { return { n: x.n, c: +x.c || 0 }; });
     L.push({ n: rkMask(M._real || M.name), c: mine, me: 1 });
     L = L.filter(function (x) { return x.c > 0 || x.me; }).sort(function (a, b) { return b.c - a.c || (b.me ? 1 : 0) - (a.me ? 1 : 0); });
-    var rank = 0, prev = -1, my = 0, max = Math.max(1, L[0].c);
+    var rank = 0, prev = -1, my = 0;
     L.forEach(function (x, i) { if (x.c !== prev) { rank = i + 1; prev = x.c; } x.r = rank; if (x.me) my = rank; });
+    return { L: L, my: my, mine: mine };
+  }
+  function rankHome() {   /* 홈 출석 순위 칸 (2026-11-18 "홈에도 작게 사각으로, 선생님 공지 칸 크기에 맞게") → 나 탭 순위 칸으로 */
+    var R = rkCalc(), now = new Date(), solo = R.L.length < 2;
+    var cup = '<span class="hi-ic bellc" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8.5 20h7M10 17h4"/></svg></span>';
+    var t = !R.mine ? '도장 찍고 순위에 올라가요' : solo ? R.mine + '회 출석 · 순위는 곧 보여요' : (R.my === 1 ? '이번 달 1등! 👑' : R.my + '등') + ' · ' + R.mine + '회';
+    return '<a class="hw col hi" id="rkHome" href="#goal-rank"><span class="hi-top">' + cup + '<i class="hi-go">›</i></span><small>' + (now.getMonth() + 1) + '월 출석 순위</small><b class="hi-t">' + t + '</b></a>';
+  }
+  function rankSection(num) {
+    var now = new Date(), R = rkCalc(), L = R.L, my = R.my, mine = R.mine, max = Math.max(1, L[0].c);
     var show = L.filter(function (x, i) { return i < 5 || x.me; });
     var sub = mine ? (my === 1 ? "이번 달 1등이에요! 👑" : "지금 " + my + "등" + (function () { var up = L.filter(function (x) { return x.c > mine; }), t = up[up.length - 1]; return t ? " · " + (t.c - mine) + "번 더 오면 " + t.r + "등" : ""; })()) : "출석 도장을 찍으면 순위에 올라가요";
     var h = '<section id="rank" data-num="' + num + '">' + head(num, (now.getMonth() + 1) + "월 출석 순위", sub) + '<div class="panel rklist">';
@@ -2375,6 +2385,7 @@
     h += homeWidgets();
     h += instHomeCard();
     h += reportHomeCard();
+    h += homeInfo();   /* 2026-11-18 공지·복습지·출석 순위 칸을 PT 여정 위로 */
     h += journeyHome();
     if (IB_ON) h += ibHomeStrip() || '<span class="ibstrip-slot"></span>';
 
@@ -2383,7 +2394,6 @@
         '<div><small style="font-size:12px;color:var(--faint);font-weight:700">다음 PT 수업</small><b>' + esc(M.next_class) + '</b></div></div>';
     }
 
-    h += homeInfo();
     return h + remember();
   }
 
@@ -4146,6 +4156,7 @@
     else if (hsh === "notice") { html = renderNotice(); tab = "notice"; }
     else if (hsh === "goal" || hsh === "journey") { html = renderGoal(); tab = "goal"; }
     else if (hsh === "goal-badges" || hsh === "badges") { html = renderGoal(); tab = "goal"; jumpTo = "badges"; }
+    else if (hsh === "goal-rank") { html = renderGoal(); tab = "goal"; jumpTo = "rank"; }
     else if (hsh === "log") { html = renderLog(); tab = "log"; }
     else if (hsh === "muscle") { html = renderLog(); tab = "log"; jumpTo = "muscle"; }
     else if (hsh === "growth") { html = renderGrowth(); tab = "log"; after = setupGrowth; }
