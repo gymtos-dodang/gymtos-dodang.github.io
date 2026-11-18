@@ -2431,6 +2431,18 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .fvline { margin: 2px 0 10px; }
 .fvline .fvs { margin-left: 0; font-size: 12.5px; padding: 6px 11px; white-space: normal; }
 
+/* 2026-11-19 홈 인바디·식단 2칸 (장동욱 "인바디 아이콘도 상단 4개처럼, 식단과 연결") — ibHomeStrip .hib */
+.hi-ic.ibc { background: linear-gradient(150deg, #FF5A5F, #C8102E); }
+.hi-ic.dbc { background: linear-gradient(150deg, #FFB547, #F06A12); }
+.hib .hi-t em { font-style: normal; font-variant-numeric: tabular-nums; }
+.hib .hi-t em.up { color: #1F9D57; }
+.hib .hi-t em.dn { color: #E1141E; }
+.hib-m { display: flex; gap: 2px; height: 6px; border-radius: 99px; overflow: hidden; margin-top: 7px; }
+.hib-m i { display: block; min-width: 4px; }
+.hib-m .c { background: #F5A524; } .hib-m .p { background: #E1141E; } .hib-m .f { background: #3B82F6; }
+.hib-l { display: flex; justify-content: space-between; gap: 4px; margin-top: 4px; font-size: 11px; color: var(--sub); white-space: nowrap; }
+.hib-l span { font-weight: 700; font-variant-numeric: tabular-nums; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }

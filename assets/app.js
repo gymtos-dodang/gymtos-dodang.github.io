@@ -1102,20 +1102,40 @@
     return '<div class="panel ibpanel">' + head2 + rows + btn +
       '<details class="ib-hist"><summary>지난 기록 ' + ibData.length + '개 보기</summary><ul>' + hist + '</ul></details></div>';
   }
+  /* 홈 인바디·식단 2칸 (2026-11-19 장동욱 "인바디 아이콘도 상단 4개 아이콘처럼 리메이크, 식단과 연결"):
+     예전 가로 띠(.ibstrip)를 공지·복습지 칸과 같은 정사각 위젯(.hwid.hinfo.hib) 두 칸으로 — 왼쪽 인바디(#body: 지난달 대비 골격근·체지방),
+     오른쪽 내 식단(#diet: 최근 인바디로 계산한 하루 kcal + 탄단지 막대 dbCalc, 인바디가 없으면 "결과지 올리면 자동 계산"). 공지·복습지 칸 바로 아래 */
+  var IB_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.5" width="16" height="17" rx="4"/><path d="M8.3 10a3.7 3.7 0 0 1 7.4 0"/><path d="M12 10l1.7-1.7"/><path d="M9 15.5h6"/></svg>';
+  var DBI_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11.5h17a8.5 8.5 0 0 1-17 0z"/><path d="M8.5 20.5h7"/><path d="M9 8c0-1.5 1.2-1.5 1.2-3M13.5 8c0-1.5 1.2-1.5 1.2-3"/></svg>';
   function ibHomeStrip() {
-    if (!IB_ON || !ibData || ibReady === false) return "";
-    var p = ibPair();
-    var txt = !p ? "인바디 결과지 올리고 지난달과 비교해 봐요" :
-      !p.prev ? "첫 인바디 기록 완료! 다음 달에 비교해 드려요" :
-      "지난달보다 골격근 " + (p.cur.smm - p.prev.smm >= 0 ? "+" : "−") + ibFmt(Math.abs(p.cur.smm - p.prev.smm)) + "kg · 체지방 " +
-        (p.cur.bfm - p.prev.bfm >= 0 ? "+" : "−") + ibFmt(Math.abs(p.cur.bfm - p.prev.bfm)) + "kg";
-    return '<a class="ibstrip" href="#body"><span class="ibs-tag">InBody</span><span class="ibs-t">' + txt + '</span><span class="ibs-go" aria-hidden="true">›</span></a>';
+    if (!IB_ON || ibReady === false) return "";
+    var p = ibData ? ibPair() : null, c = p && p.cur, pv = p && p.prev;
+    function sg(n) { return (n >= 0 ? "+" : "−") + ibFmt(Math.abs(n)); }
+    function dmd(s) { var m = String(s || "").match(/\d{4}-(\d{1,2})-(\d{1,2})/); return m ? (+m[1]) + "월 " + (+m[2]) + "일" : ""; }
+    var t1 = !c ? "결과지 올리고 지난달과 비교해요" : !pv ? "체중 " + ibFmt(c.w) + "kg · 첫 기록 완료" :
+      '골격근 <em class="' + (c.smm - pv.smm >= 0 ? "up" : "dn") + '">' + sg(c.smm - pv.smm) + 'kg</em><br>체지방 <em class="' + (c.bfm - pv.bfm <= 0 ? "up" : "dn") + '">' + sg(c.bfm - pv.bfm) + 'kg</em>';
+    var h = '<div class="hwid hinfo hib">';
+    h += '<a class="hw col hi" href="#body"><span class="hi-top"><span class="hi-ic bellc ibc" aria-hidden="true">' + IB_SVG + '</span><i class="hi-go">›</i></span>' +
+      '<small>인바디' + (c ? ' · ' + dmd(c.d) : '') + '</small><b class="hi-t">' + t1 + '</b></a>';
+    var R = null; try { R = dbCalc(); } catch (e) {}
+    var dg = DB_GOAL[dbGet().g] || DB_GOAL.keep;
+    if (R) {
+      var tot = R.C * 4 + R.P * 4 + R.F * 9 || 1;
+      h += '<a class="hw col hi" href="#diet"><span class="hi-top"><span class="hi-ic bellc dbc" aria-hidden="true">' + DBI_SVG + '</span><i class="hi-go">›</i></span>' +
+        '<small>내 식단 · ' + esc(dg.n) + '</small><b class="hi-t">하루 ' + R.kcal.toLocaleString() + 'kcal</b>' +
+        '<span class="hib-m" aria-label="탄수 ' + R.C + 'g 단백질 ' + R.P + 'g 지방 ' + R.F + 'g"><i class="c" style="flex:' + R.C * 4 / tot + '"></i><i class="p" style="flex:' + R.P * 4 / tot + '"></i><i class="f" style="flex:' + R.F * 9 / tot + '"></i></span>' +
+        '<span class="hib-l"><span>탄 ' + R.C + 'g</span><span>단 ' + R.P + 'g</span><span>지 ' + R.F + 'g</span></span></a>';
+    } else {
+      h += '<a class="hw col hi" href="#diet"><span class="hi-top"><span class="hi-ic bellc dbc" aria-hidden="true">' + DBI_SVG + '</span><i class="hi-go">›</i></span>' +
+        '<small>내 식단 · ' + esc(dg.n) + '</small><b class="hi-t">인바디 올리면 식단이 자동 계산돼요</b></a>';
+    }
+    return h + '</div>';
   }
   function ibRefresh() {
     var b = document.querySelector(".ibpanel"); if (b) { b.outerHTML = ibPanel(); setupIb(); }
     if (document.querySelector(".db-set") && dbIbSig() !== DB_IBDRAWN) { DB_IBDRAWN = dbIbSig(); rerender(); }   /* 식단 짜기: 인바디가 도착하면 한 번 다시 계산 */
     var tr = document.querySelector(".ibtrend"); if (tr) tr.outerHTML = ibTrend();
-    var s = document.querySelector(".ibstrip, .ibstrip-slot");
+    var s = document.querySelector(".hib, .ibstrip-slot");
     if (s) { var h = ibHomeStrip(); s.outerHTML = h || '<span class="ibstrip-slot"></span>'; }
     alignText(document);
   }
@@ -2625,8 +2645,8 @@
     h += instHomeCard();
     h += reportHomeCard();
     h += homeInfo();   /* 2026-11-18 공지·복습지·출석 순위 칸을 PT 여정 위로 */
+    if (IB_ON) h += ibHomeStrip() || '<span class="ibstrip-slot"></span>';   /* 2026-11-19 인바디·식단 2칸 — 공지·복습지 칸 바로 아래 */
     h += journeyHome();
-    if (IB_ON) h += ibHomeStrip() || '<span class="ibstrip-slot"></span>';
 
     if (M.next_class) {
       h += '<div class="panel next"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="7" width="32" height="29" rx="6" fill="var(--primary)"/><rect x="4" y="7" width="32" height="9" rx="4" fill="var(--side)"/><rect x="11" y="3" width="4" height="9" rx="2" fill="var(--key)"/><rect x="25" y="3" width="4" height="9" rx="2" fill="var(--key)"/></svg>' +
