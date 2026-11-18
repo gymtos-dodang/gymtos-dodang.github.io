@@ -2251,3 +2251,5 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .tapwave { position: fixed; inset: 0; pointer-events: none; z-index: 15; overflow: hidden; }
 .tapwave i { position: absolute; border-radius: 50%; background: var(--seal); opacity: 0; transform: scale(.02); animation: tapwave .62s cubic-bezier(.2, .7, .2, 1) forwards; }
 @keyframes tapwave { 0% { transform: scale(.02); opacity: .26; } 55% { transform: scale(1); opacity: .14; } 100% { transform: scale(1); opacity: 0; } }
+/* 남성은 빨강을 옅게 깔면 분홍으로 보여서 블랙 원으로 (2026-11-18) */
+:root:not([data-sex="F"]) .tapwave i { background: #1A1A1E; }
