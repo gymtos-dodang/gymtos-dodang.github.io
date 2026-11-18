@@ -2134,9 +2134,9 @@
   function rankHome() {   /* 홈 출석 순위 칸 (2026-11-18 "홈에도 작게 사각으로, 선생님 공지 칸 크기에 맞게") → 나 탭 순위 칸으로 */
     var R = rkCalc(), now = new Date(), solo = R.L.length < 2;
     var cup = '<span class="hi-ic bellc" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8.5 20h7M10 17h4"/></svg></span>';
-    /* 글 대신 미니 막대 그래프 (2026-11-18 "글보단 미니 그래프"): 위 5명(+나), 내 막대만 색, 나머지는 옅게 */
-    var L = R.L.filter(function (x, i) { return i < 5 || x.me; }).slice(0, 6), mx = Math.max(1, R.L[0].c);
-    var bars = L.map(function (x) { return '<span class="' + (x.me ? 'me' : '') + '" style="height:' + Math.max(8, Math.round(x.c / mx * 100)) + '%">' + (x.me ? '<em>나</em>' : '') + '</span>'; }).join("");
+    /* 미니 가로 막대 (2026-11-18 "누군지 써줘야 라이벌 의식"): 위 3명 + 나, 가린 이름·막대·횟수, 내 줄만 색 */
+    var L = R.L.filter(function (x, i) { return i < 3 || x.me; }).slice(0, 4), mx = Math.max(1, R.L[0].c);
+    var bars = L.map(function (x) { return '<span class="' + (x.me ? 'me' : '') + '"><b>' + (x.me ? '나' : esc(String(x.n).split('·')[0].trim())) + '</b><i><u style="width:' + Math.max(6, Math.round(x.c / mx * 100)) + '%"></u></i><em>' + x.c + '</em></span>'; }).join("");
     var no = R.mine && !solo ? '<b class="rkh-no">' + R.my + '<i>등</i></b>' : '<i class="hi-go">›</i>';
     return '<a class="hw col hi rkh" id="rkHome" href="#goal-rank" aria-label="' + (now.getMonth() + 1) + '월 출석 순위' + (R.mine ? ' ' + R.my + '등, ' + R.mine + '회' : '') + '"><span class="hi-top">' + cup + no + '</span><small>' + (now.getMonth() + 1) + '월 출석 순위 · ' + R.mine + '회</small><span class="rkh-ch" aria-hidden="true">' + bars + '</span></a>';
   }
