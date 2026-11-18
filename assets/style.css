@@ -2581,6 +2581,13 @@ html:not([data-theme="light"]) .gmenu a:active { background: rgba(255, 255, 255,
 html:not([data-theme="light"]) .mm-fig img.mm-lt { display: none; }
 html:not([data-theme="light"]) .mm-fig img.mm-dk { display: block; }
 
+/* 운동 탭 ✓ 끝낸 종목 카드: 원래 CSS가 !important라 자동 규칙이 안 먹어 연두 바탕+흰 글씨로 종목 이름이 안 보임 → 짙은 초록으로 — 2026-11-18 */
+html:not([data-theme="light"]) .ex-list.cmp .ex.done { background: linear-gradient(110deg, #10241A, #163626 30%, #112A1D 55%, #163626 80%, #10241A) !important; background-size: 200% 100% !important; box-shadow: 0 0 0 1.5px #2F7A50, 0 6px 16px -10px rgba(30, 158, 85, .5) !important; }
+html:not([data-theme="light"]) .ex-list.cmp .ex.done h3 { color: #7FE0A6; }
+html:not([data-theme="light"]) .ex-list.cmp .ex.done .set { background: rgba(0, 0, 0, .45); }
+/* ✓ 누를 때 뜨는 알림(atttoast): 바탕이 var(--ink)라 다크에선 흰 바탕+흰 글씨 → 짙은 바탕 — 2026-11-18 */
+html:not([data-theme="light"]) .atttoast { background: #2A2A30; color: var(--ink); box-shadow: 0 0 0 1px rgba(255, 255, 255, .1), 0 6px 18px rgba(0, 0, 0, .5); }
+
 }
 :where(html[data-theme="dark"]) .num { background: var(--seal); }
 :where(html[data-theme="dark"]) .btn.fill { background: var(--seal); }
@@ -2849,5 +2856,12 @@ html[data-theme="dark"] .gmenu a:active { background: rgba(255, 255, 255, .06); 
 /* 근육 지도: 하얀 바탕 그림 대신 다크용 그림(base-dark.png) — 2026-11-18 */
 html[data-theme="dark"] .mm-fig img.mm-lt { display: none; }
 html[data-theme="dark"] .mm-fig img.mm-dk { display: block; }
+
+/* 운동 탭 ✓ 끝낸 종목 카드: 원래 CSS가 !important라 자동 규칙이 안 먹어 연두 바탕+흰 글씨로 종목 이름이 안 보임 → 짙은 초록으로 — 2026-11-18 */
+html[data-theme="dark"] .ex-list.cmp .ex.done { background: linear-gradient(110deg, #10241A, #163626 30%, #112A1D 55%, #163626 80%, #10241A) !important; background-size: 200% 100% !important; box-shadow: 0 0 0 1.5px #2F7A50, 0 6px 16px -10px rgba(30, 158, 85, .5) !important; }
+html[data-theme="dark"] .ex-list.cmp .ex.done h3 { color: #7FE0A6; }
+html[data-theme="dark"] .ex-list.cmp .ex.done .set { background: rgba(0, 0, 0, .45); }
+/* ✓ 누를 때 뜨는 알림(atttoast): 바탕이 var(--ink)라 다크에선 흰 바탕+흰 글씨 → 짙은 바탕 — 2026-11-18 */
+html[data-theme="dark"] .atttoast { background: #2A2A30; color: var(--ink); box-shadow: 0 0 0 1px rgba(255, 255, 255, .1), 0 6px 18px rgba(0, 0, 0, .5); }
 
 /* DARK-END */
