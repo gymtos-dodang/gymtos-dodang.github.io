@@ -1450,7 +1450,7 @@
     lf1: ["T", "kettle", "shine", "circle", 1], lf3: ["B", "bell", "beat", "pent", 2], lf5: ["I", "barbell", "pulse shine", "hex", 3], lf10: ["D", "plate", "spin", "oct", 4],
     pc30: ["G", "trend", "shine", "diamond", 3], pc50: ["Y", "chev2", "float pulse", "star", 4], pw1: ["P", "up", "float", "shield", 2], pw4: ["K", "stairs", "shine pulse", "scallop", 3],
     fv3: ["B", "book", "shine", "circle", 1], fv5: ["B", "cap", "shine", "pent", 2], fv10: ["P", "award", "twinkle pulse", "oct", 3], ib1: ["T", "scale", "pulse", "hex", 1],
-    ibl1: ["G", "down", "shine", "circle", 1], ibl2: ["T", "trendd", "pulse", "hex", 2], ibl3: ["B", "scaled", "shine pulse", "diamond", 2], ibl4: ["I", "trendd", "float shine", "oct", 3], ibl5: ["R", "down", "rays twinkle", "star", 4],
+    ibl1: ["G", "trendd", "shine", "circle", 1], ibl2: ["T", "trendd", "pulse", "hex", 2], ibl3: ["B", "trendd", "shine pulse", "diamond", 2], ibl4: ["I", "trendd", "float shine", "oct", 3], ibl5: ["R", "trendd", "rays twinkle", "star", 4],   /* 감량 배지 그림은 전부 내려가는 그래프로 통일 (2026-11-19) */
     day30: ["G", "sprout", "float", "circle", 1], day100: ["K", "heart", "beat pulse", "scallop", 2], day200: ["T", "tree", "shine", "pent", 3], day365: ["D", "gem", "spin twinkle rays", "star", 4]
   };
   BG_IC.camera = '<path d="M3.5 8h3.3L8.5 5.5h7L17.2 8h3.3v11.5h-17z"/><circle cx="12" cy="13.3" r="3.7"/><path d="M12 11.8l.5 1 1.1.2-.8.8.2 1.1-1-.5-1 .5.2-1.1-.8-.8 1.1-.2z"/>';
@@ -1665,9 +1665,9 @@
         if (dc > cumMax) cumMax = dc;
         [10, 15, 20].forEach(function (n) { if (dc >= n && !cumOn[n]) cumOn[n] = ibr[lj].d; });
       }
-      [[10, "trophy", "star", "SP", "#F3C94F", "#17171C", "첫 인바디보다 10kg 감량! 완전히 다른 몸이 됐어요. 아무나 못 받는 배지예요."],
-       [15, "crown", "shield", "SPR", "#FF4D66", "#FFF3D6", "15kg 감량. 몸도 생활도 다 바꿔 낸 사람만 받는 루비 배지예요."],
-       [20, "gem", "oct", "SPD", "#7FDFFF", "#FFF3D6", "20kg 감량, 전설 달성. 이 배지를 가진 사람은 정말 드물어요."]].forEach(function (v) {
+      [[10, "trendd", "star", "SP", "#F3C94F", "#17171C", "첫 인바디보다 10kg 감량! 완전히 다른 몸이 됐어요. 아무나 못 받는 배지예요."],
+       [15, "trendd", "shield", "SPR", "#FF4D66", "#FFF3D6", "15kg 감량. 몸도 생활도 다 바꿔 낸 사람만 받는 루비 배지예요."],
+       [20, "trendd", "oct", "SPD", "#7FDFFF", "#FFF3D6", "20kg 감량, 전설 달성. 이 배지를 가진 사람은 정말 드물어요."]].forEach(function (v) {
         add("body", "iblc" + v[0], v[0] + "kg 감량", v[1], v[0] + "kg", cumOn[v[0]] || null, Math.max(0, cumMax), v[0],
           "첫 인바디보다 체중이 모두 합쳐 " + v[0] + "kg 빠지면 받아요", v[6],
           { unit: "kg", sp: true, sh: v[2], lv: 4, enk: v[3], spc: v[4], ink: v[5], col: [v[4], v[4]], fx: v[0] === 20 ? "rays spin twinkle shine pulse" : v[0] === 15 ? "rays spin twinkle shine" : "rays twinkle shine" });
