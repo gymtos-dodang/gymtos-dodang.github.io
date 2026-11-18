@@ -1144,6 +1144,18 @@
       var dd = new Date(+dm[1], +dm[2] - 1, +dm[3]), now = new Date();
       if (dd <= now && now - dd < 400 * 86400000) r.d = ymd(dd);
     }
+    /* 2026-11-19 식단 계산용: 결과지에 찍힌 기초대사량(kcal)·키(cm)도 읽음 — 시트에는 안 넣고 식단 저장(mw:<주소>:diet)에만 */
+    var raw = String(text || "").replace(/[\u00a0\t]/g, " "), bm = /기\s*초\s*대\s*사\s*량|basal\s*metabolic|BMR/gi, mm;
+    r.bmr = null; r.h = null;
+    while (r.bmr === null && (mm = bm.exec(raw))) {
+      var seg = raw.slice(mm.index + mm[0].length, mm.index + mm[0].length + 80), nx = /(\d{1,2},\d{3}|\d{3,4})(?![\d.])/g, q;
+      while ((q = nx.exec(seg))) {
+        if (/[~～\-]\s*$/.test(seg.slice(Math.max(0, q.index - 3), q.index)) || /^\s*[~～\-]\s*\d/.test(seg.slice(q.index + q[0].length, q.index + q[0].length + 4))) continue;   /* 표준 범위는 건너뜀 */
+        var bv = +q[0].replace(",", ""); if (bv >= 800 && bv <= 3500) { r.bmr = bv; break; }
+      }
+    }
+    var hm = raw.match(/(?:신\s*장|키|height)[^\d]{0,12}(\d{3}(?:\.\d)?)\s*(?:cm|㎝)?/i) || raw.match(/(\d{3}(?:\.\d)?)\s*(?:cm|㎝)/i);
+    if (hm && +hm[1] >= 120 && +hm[1] <= 220) r.h = +hm[1];
     return r;
   }
   function ibShrink(file, max) {   /* 사진을 긴 변 max(기본 1400)px JPEG로 줄여 base64 (글자만) */
@@ -1200,7 +1212,7 @@
           .then(function (j) {
             if (my !== ocrRun || !wrap.isConnected) return;
             if (!j || !j.ok) throw new Error(j && j.error || "ocr");
-            var r = ibParse(j.text), got = 0;
+            var r = ibParse(j.text), got = 0; wrap._x = { bmr: r.bmr, h: r.h };
             [["#ibW", "w"], ["#ibS", "smm"], ["#ibB", "bfm"], ["#ibP", "pbf"]].forEach(function (x) {
               var inp = wrap.querySelector(x[0]);
               if (r[x[1]] !== null && r[x[1]] !== undefined && !inp.value) { inp.value = ibFmt(r[x[1]]); inp.classList.add("auto"); got++; }
@@ -1236,7 +1248,7 @@
         .then(function (r) { return r.json(); })
         .then(function (j) {
           if (!j || !j.ok) throw new Error(j && j.error || "save");
-          ibSet(j.inbody); close(); ibRefresh(); attToast("인바디 기록을 저장했어요");
+          dbFromIb(d, wrap._x); ibSet(j.inbody); close(); ibRefresh(); attToast("인바디 기록을 저장했어요");
           setTimeout(badgeCheck, 2800);
         })
         .catch(function () { busy = false; form.classList.remove("saving"); msg.className = "ibs-msg"; msg.textContent = "저장 못 했어요. 인터넷 연결을 확인하고 다시 눌러 주세요"; });
@@ -3065,6 +3077,13 @@
     if (/^#diet/.test(location.hash)) rerender();
   }
   function dbIbSig() { return ibData && ibData.length ? JSON.stringify(ibData[ibData.length - 1]) : ""; }   /* 인바디가 새로 올라오거나 지워지면 식단도 다시 계산 */
+  function dbFromIb(date, x) {   /* 인바디를 올릴 때 결과지에서 읽은 기초대사량·키를 식단 쪽에 적어 둠 */
+    if (!x || (!x.bmr && !x.h)) return; var d = dbGet();
+    if (x.h) d.h = x.h; if (x.bmr) d.ib = { d: date, bmr: x.bmr };
+    d.at = Date.now(); try { localStorage.setItem(DB_LS, JSON.stringify(d)); } catch (e) {}
+    if (ATT_API && !DEMO) rtPost({ a: "kv_set", k: "mw:" + SLUG + ":diet", v: d }).catch(function () {});
+  }
+  function dbBmr(b) { var d = dbGet(), k = b && b.src || "m"; return d.ib && d.ib.d === k && d.ib.bmr >= 800 && d.ib.bmr <= 3500 ? d.ib.bmr : null; }   /* 결과지(또는 직접 적은) 기초대사량 */
   function dbBody() {   /* 가장 최근 인바디 → 없으면 직접 넣은 값 */
     var d = dbGet(), p = IB_ON && !d.manual ? ibPair() : null, c = p && p.cur;
     if (c && c.w) return { w: c.w, pbf: c.pbf != null ? c.pbf : (c.bfm != null ? c.bfm / c.w * 100 : null), smm: c.smm, src: c.d };
@@ -3073,10 +3092,10 @@
   function dbCalc() {
     var d = dbGet(), b = dbBody(); if (!b) return null;
     var G = DB_GOAL[d.g] || DB_GOAL.keep, lbm = b.pbf ? b.w * (1 - b.pbf / 100) : null;
-    var bmr = lbm ? 370 + 21.6 * lbm : b.w * (M.sex === "F" ? 22 : 24), tdee = bmr * DB_ACT[d.a || 0][0];
+    var real = dbBmr(b), bmr = real || (lbm ? 370 + 21.6 * lbm : b.w * (M.sex === "F" ? 22 : 24)), tdee = bmr * DB_ACT[d.a || 0][0];
     var kcal = Math.round(Math.max(bmr, tdee * G.k) / 10) * 10;
     var P = Math.round(lbm ? lbm * G.p : b.w * G.pw), F = Math.round(kcal * .25 / 9), C = Math.max(50, Math.round((kcal - P * 4 - F * 9) / 4));
-    return { b: b, lbm: lbm, bmr: Math.round(bmr), tdee: Math.round(tdee), kcal: kcal, P: P, F: F, C: C, n: d.n || 3, G: G };
+    return { b: b, lbm: lbm, bmr: Math.round(bmr), real: !!real, tdee: Math.round(tdee), kcal: kcal, P: P, F: F, C: C, n: d.n || 3, G: G };
   }
   function dbAmt(f, need, key) {   /* 필요한 탄수(또는 단백질) g → 그 음식 양 */
     var g = Math.max(0, need) / f[key] * 100;
@@ -3112,6 +3131,7 @@
       '<button type="button" class="db-ok" data-db="body:1">계산</button></div><p class="db-tip">' + (IB_ON ? (d.manual ? '<button type="button" class="db-link" data-db="manual:0">인바디 기록으로 계산하기</button>' : '아래에서 인바디 결과지를 올리면 자동으로 채워져요') : '체지방률을 넣으면 더 정확해요') + '</p>';
     if (b && d.h) { var bmi = b.w / Math.pow(d.h / 100, 2), std = Math.pow(d.h / 100, 2) * (M.sex === "F" ? 21 : 22);
       h += '<div class="db-bmi"><span>키 <b>' + d.h + '</b>cm</span><span>체중 <b>' + b.w + '</b>kg</span><span>BMI <b>' + bmi.toFixed(1) + '</b></span><span>표준 체중 <b>' + std.toFixed(1) + '</b>kg</span></div>'; }
+    if (b) h += '<label class="db-hl db-bl">기초대사량<input type="number" inputmode="numeric" class="db-in db-bmr" value="' + (dbBmr(b) || "") + '" placeholder="결과지 숫자"><i>kcal</i></label><p class="db-tip">' + (dbBmr(b) ? '결과지의 기초대사량으로 계산하고 있어요' : '인바디 결과지에 적힌 기초대사량을 넣으면 더 정확해요 · 비워 두면 체중·체지방률로 계산해요') + '</p>';
     if (IB_ON && ibReady !== false) h += '<div class="db-ib"><button type="button" class="db-ibbtn" data-db="ib:1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>' +
       (b && b.src ? '새 인바디 결과지 올리기' : '인바디 결과지 사진 올리기') + '</button><a class="db-link" href="#body">몸변화 기록 보기</a></div><p class="db-tip"><b>인바디 결과지로 계산하면 칼로리가 더 정확해요</b> — 체중만이 아니라 내 근육량·체지방량으로 계산하거든요</p><p class="db-tip">결과지 사진을 올리면 숫자를 읽어서 식단도 바로 다시 계산해요 · 기록 탭 인바디와 같은 기록이에요</p>';
     h += '<small class="db-l">운동 횟수</small><div class="db-chips">' + DB_ACT.map(function (a, i) { return '<button type="button" class="' + ((d.a || 0) === i ? "on" : "") + '" data-db="a:' + i + '">' + a[1] + '</button>'; }).join("") + '</div>';
@@ -3128,7 +3148,7 @@
     }
     function bar(l, v, t, u) { var pc = Math.min(100, Math.round(v / t * 100)); return '<div class="db-bar"><span>' + l + '</span><div class="db-track"><i style="width:' + pc + '%"' + (v > t * 1.08 ? ' class="over"' : '') + '></i></div><b>' + Math.round(v) + '<i>/' + t + u + '</i></b></div>'; }
     var leftF = Math.max(0, Math.round(R.F - T.f));
-    h += '<div class="panel db-res"><div class="db-kcal"><small>' + R.G.n + ' · 하루 목표</small><b>' + R.kcal.toLocaleString() + '<i>kcal</i></b><p>기초대사량 ' + R.bmr.toLocaleString() + ' · 하루 쓰는 열량 ' + R.tdee.toLocaleString() + ' kcal</p></div>' +
+    h += '<div class="panel db-res"><div class="db-kcal"><small>' + R.G.n + ' · 하루 목표</small><b>' + R.kcal.toLocaleString() + '<i>kcal</i></b><p>기초대사량 ' + R.bmr.toLocaleString() + (R.real ? '(결과지)' : '(계산)') + ' · 하루 쓰는 열량 ' + R.tdee.toLocaleString() + ' kcal</p></div>' +
       '<div class="dt-stats db-mac"><div><small>탄수화물</small><b>' + R.C + '</b><i>g</i></div><div><small>단백질</small><b>' + R.P + '</b><i>g</i></div><div><small>지방</small><b>' + R.F + '</b><i>g</i></div></div></div>';
     h += head("", "끼니마다 골라 담기", "칸을 누르면 음식과 먹을 양이 나와요") + '<div class="db-meals">' + meals + '</div>';
     h += '<div class="panel db-sum"><h3>오늘 담은 식단</h3>' + bar("칼로리", T.k, R.kcal, "") + bar("탄수화물", T.c, R.C, "g") + bar("단백질", T.p, R.P, "g") + bar("지방", T.f, R.F, "g") +
@@ -3191,6 +3211,9 @@
     dbSave();
   });
   document.addEventListener("change", function (e) {   /* 인바디 기준일 때 키만 따로 적기 */
+    if (e.target.classList && e.target.classList.contains("db-bmr")) { var bv = parseFloat(e.target.value), dd = dbGet(), bb = dbBody();
+      if (e.target.value && !(bv >= 800 && bv <= 3500)) { attToast("기초대사량은 800~3500 사이로 적어 주세요"); return; }
+      dd.ib = bv ? { d: bb && bb.src || "m", bmr: Math.round(bv) } : null; dbSave(); return; }
     if (!e.target.classList || !e.target.classList.contains("db-h")) return;
     var v = parseFloat(e.target.value), d = dbGet(); d.h = v >= 120 && v <= 220 ? v : null; dbSave();
   });
