@@ -2335,7 +2335,7 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .db-kcal b i { font-style: normal; font-size: 15px; color: var(--sub); margin-left: 4px; } .db-kcal p { margin: 2px 0 0; font-size: 11.5px; color: var(--sub); }
 .dt-stats.db-mac { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .db-meals { display: flex; flex-direction: column; gap: 8px; }
-.db-meal { background: var(--card, #fff); border-radius: 18px; padding: 12px; box-shadow: 0 0 0 1px var(--line); }
+.db-meal { background: #fff; border-radius: 18px; padding: 12px; box-shadow: 0 0 0 1px var(--line); }
 .db-mh { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; } .db-mh b { font-size: 15px; font-weight: 900; } .db-mh span { font-size: 12px; color: var(--sub); font-weight: 700; }
 .db-slots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .db-slot { border: 1.5px dashed var(--line); background: none; border-radius: 14px; min-height: 92px; padding: 8px 4px; font: inherit; color: var(--sub); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; min-width: 0; }
@@ -2362,6 +2362,15 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .db-ib { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
 .db-ibbtn { display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid var(--primary); background: none; color: var(--primary); font: inherit; font-size: 13.5px; font-weight: 900; border-radius: 12px; padding: 9px 13px; cursor: pointer; }
 .db-ibbtn svg { width: 18px; height: 18px; }
+
+/* 2026-11-19 식단 짜기: 지방 칸(3칸)·양 어림·"한 끼엔 많아요"·끼니 카드 다크 */
+.db-meal { color: var(--ink); }
+.db-slots.s3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.db-slot small { font-size: 10.5px; font-weight: 700; color: var(--sub); }
+.db-slots.s3 .db-slot b { font-size: 12.5px; } .db-slots.s3 .db-slot em { font-size: 14px; }
+.db-slot img, .db-food img { width: 52px; height: 52px; }
+.db-food small { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.db-food.much em { color: var(--sub); } .db-much { font-style: normal; font-size: 10px; font-weight: 800; color: #E1141E; }
 
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
@@ -2550,6 +2559,7 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .db-chips button.on { background: var(--seal); }
 :where(html:not([data-theme="light"])) .db-in { background: var(--paper); }
 :where(html:not([data-theme="light"])) .db-ok { background: var(--seal); }
+:where(html:not([data-theme="light"])) .db-meal { background: var(--paper); }
 :where(html:not([data-theme="light"])) .db-track i { background: var(--seal); }
 :where(html:not([data-theme="light"])) .db-food { background: var(--paper); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
@@ -2833,6 +2843,7 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .db-chips button.on { background: var(--seal); }
 :where(html[data-theme="dark"]) .db-in { background: var(--paper); }
 :where(html[data-theme="dark"]) .db-ok { background: var(--seal); }
+:where(html[data-theme="dark"]) .db-meal { background: var(--paper); }
 :where(html[data-theme="dark"]) .db-track i { background: var(--seal); }
 :where(html[data-theme="dark"]) .db-food { background: var(--paper); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
