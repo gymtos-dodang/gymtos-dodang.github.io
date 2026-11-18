@@ -409,3 +409,12 @@ _tools/anatomy_v4.py  인체모형 v4 (자극 부위 그림, 2026-11-16 — v3 �
 
 ## 아래 탭으로 홈에 돌아갈 때 새로고침 (2026-11-18)
 장동욱 "홈으로 뒤돌아갈 때 새로고침 현상" → 뒤로 버튼·밀어서 뒤로는 이미 VCACHE로 그대로였는데, 아래 탭 '홈'을 누르면 새 링크로 쳐서(LINKAT) 매번 새로 그렸음. 탭 클릭 때 VCACHE에 그 주소가 있으면 TABRET에 적어 두고 route()가 뒤로처럼 떼어 둔 화면을 붙임(스크롤은 맨 위). 단 운동 ✓(LG.d)·요일 옮기기(MV)·폰에서 고친 루틴(RT_REC.at)이 그사이 바뀌었으면 vSig2가 달라져 새로 그림(오늘 운동 카드가 옛날 것으로 남지 않게). 출석만 바뀐 건 예전처럼 attRefresh.
+
+
+## 다크모드 (2026-11-18 장동욱 "PT노트 다크모드(자동) — 홈 화면 시안부터")
+- 시안 1: 흰 카드 → 짙은 회색, 바탕 거의 검정(남 #0B0B0D / 여 와인빛 #120A0D), 오늘 운동 카드에 붉은 빛 테두리, 스킨(토롱이·몽글이)도 어둡게.
+- "어둡게 하는 대신 색상 반전, 여성버전은 안 해도 될 듯" → 처음엔 화면 전체 반전으로 잘못 알아들음 → "플랜카드 색 말고 종목 아이콘 말한 것" → **남자만 운동 아이콘(.icn)을 invert(1) hue-rotate(180deg)로 반전**, 여자 아이콘은 연핑크 그대로. 반전하면 자극 부위 레드가 코랄빛으로 조금 흐려짐(쨍한 레드 원하면 exicons.js에 다크용 색을 따로 넣어야 함).
+- "ㅇㅋ ㄱㄱ 설정에서 다크모드 풀고 킬 수 있게" → ⚙️ 메뉴에 자동·켜기·끄기(.gm-theme, 메뉴 안 닫히고 바로 바뀜). 자동이면 data-theme 없음, 켜기/끄기면 html[data-theme="dark"/"light"]. theme-color meta도 같이 바꿈.
+- 만드는 법: `_tools/make_dark.py`가 style.css를 읽어 흰 바탕(#fff·rgba(255,255,255,≥.5))→var(--paper), 연회색→var(--card2), 연한 색→color-mix 16%, 연한 그라데이션→같은 그라데이션 어둡게(background-image라 background-size·움직임 유지), color-mix(…, #fff)→var(--paper), var(--primary) 바탕→var(--seal)(다크에선 --primary가 밝은 글자색), 짙은 글자색→var(--ink). 같은 선택자를 뒤에서 다시 정한 건 마지막 것만 봄(LAST). 자동 규칙은 :where()로 앞머리 점수 0 — .jb.cur처럼 더 자세한 원래 규칙을 덮지 않게(처음엔 '지금 여기' 배지가 회색으로 덮였음). 손 규칙은 _tools/dark_src.css(앞머리 D).
+- 두 번 씀: @media (prefers-color-scheme: dark) { html:not([data-theme="light"]) … } + html[data-theme="dark"] ….
+- 빼 둔 것(SKIP): .thero·.th-go·배지(.bgx·.bxp…)·움직이는 아이콘(.exi·.icn)·.rp-home 등 — 원래 색을 지킴. 근육 지도 그림·잠긴 배지는 밝은 그대로.

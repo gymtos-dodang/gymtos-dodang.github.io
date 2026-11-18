@@ -2253,3 +2253,539 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 @keyframes tapwave { 0% { transform: scale(.02); opacity: .26; } 55% { transform: scale(1); opacity: .14; } 100% { transform: scale(1); opacity: 0; } }
 /* 남성은 빨강을 옅게 깔면 분홍으로 보여서 블랙 원으로 (2026-11-18) */
 :root:not([data-sex="F"]) .tapwave i { background: #1A1A1E; }
+
+/* ⚙️ 설정 — 다크 모드 자동·켜기·끄기 (2026-11-18 장동욱 "설정에서 다크모드 풀고 킬 수 있게") */
+.gm-theme { display: flex; align-items: center; gap: 10px; padding: 12px; border-top: 1px solid #F0F0F3; color: #1A1A1E; }
+.gm-theme b { flex: 1; min-width: 0; white-space: nowrap; }
+.gm-theme i { font-style: normal; display: flex; gap: 2px; padding: 3px; border-radius: 10px; background: #F2F2F4; flex: none; }
+.gm-theme button { border: 0; background: none; padding: 5px 9px; border-radius: 8px; font-size: 12.5px; font-weight: 700; color: #8A8A94; cursor: pointer; }
+.gm-theme button[aria-pressed="true"] { background: var(--seal); color: #fff; }
+
+/* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
+@media (prefers-color-scheme: dark) {
+:where(html:not([data-theme="light"])) .num { background: var(--seal); }
+:where(html:not([data-theme="light"])) .btn.fill { background: var(--seal); }
+:where(html:not([data-theme="light"])) .btn[aria-pressed="true"] { background: var(--seal); }
+:where(html:not([data-theme="light"])) .tagc.warm { background: var(--paper); }
+:where(html:not([data-theme="light"])) .today-day { background: var(--seal); }
+:where(html:not([data-theme="light"])) .today-day.rest { background: color-mix(in srgb, #C9CED8 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .card-link .thumb::after { background: var(--paper); }
+:where(html:not([data-theme="light"])) .loop { background: var(--paper); }
+:where(html:not([data-theme="light"])) .day-tile.rest { background: var(--paper); }
+:where(html:not([data-theme="light"])) .day-tile[aria-current="true"] { background: var(--seal); }
+:where(html:not([data-theme="light"])) .ex-no { background: var(--seal); }
+:where(html:not([data-theme="light"])) .ex.main .set { background: var(--paper); }
+:where(html:not([data-theme="light"])) .rest-card { background: var(--paper); }
+:where(html:not([data-theme="light"])) .today-ic > span { background: var(--seal); }
+:where(html:not([data-theme="light"])) .jno { background: var(--seal); }
+:where(html:not([data-theme="light"])) .jcard.next .jno { background: color-mix(in srgb, #C9CED8 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .jb { background: var(--paper); }
+:where(html:not([data-theme="light"])) .bp-strip b { background-image: linear-gradient(90deg, var(--gold-line), color-mix(in srgb, #FFF3C4 16%, var(--paper)), var(--gold-line), color-mix(in srgb, #FFF3C4 16%, var(--paper)), var(--gold-line)) 0 0 / 200% 100%; }
+:where(html:not([data-theme="light"])) .bp-tag { color: var(--ink); }
+:where(html:not([data-theme="light"])) .jpanel.bp .jcard { background: var(--paper); }
+:where(html:not([data-theme="light"])) .cd.on { background: var(--seal); }
+:where(html:not([data-theme="light"])) .lg.on { background: var(--seal); }
+:where(html:not([data-theme="light"])) .lg.rest { background: var(--card2); }
+:where(html:not([data-theme="light"])) .attq .qbox { border-color: var(--line); }
+:where(html:not([data-theme="light"])) .npop { background: var(--paper); }
+:where(html:not([data-theme="light"])) .npop .nic { background: var(--seal); }
+:where(html:not([data-theme="light"])) .npop .nbar { background: var(--seal); }
+:where(html:not([data-theme="light"])) .coachback { background: var(--seal); }
+:where(html:not([data-theme="light"])) .fm.res { background: var(--seal); }
+:where(html:not([data-theme="light"])) .pill { background: var(--seal); }
+:where(html:not([data-theme="light"])) .meal-ic { background: var(--paper); }
+:where(html:not([data-theme="light"])) .mp-no { background: var(--seal); }
+:where(html:not([data-theme="light"])) .mp-tag { background: var(--paper); }
+:where(html:not([data-theme="light"])) .dchip { background: var(--seal); }
+:where(html:not([data-theme="light"])) .ib-empty-ic span { background: var(--seal); }
+:where(html:not([data-theme="light"])) .ibs-tag { background: var(--seal); }
+:where(html:not([data-theme="light"])) .ibs-f input.auto { background: var(--paper); }
+:where(html:not([data-theme="light"])) .bgn-bar { background: var(--card2); }
+:where(html:not([data-theme="light"])) .bdg-p { border-color: var(--line); }
+:where(html:not([data-theme="light"])) .bgpop { background: var(--paper); }
+:where(html:not([data-theme="light"])) .bgpop-chip { background: color-mix(in srgb, #FCE4EC 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .bgpop-bar div b { color: var(--ink); }
+:where(html:not([data-theme="light"])) .bgpop-bar i { background: var(--card2); }
+:where(html:not([data-theme="light"])) .mm-seg { background: var(--card2); }
+:where(html:not([data-theme="light"])) .mm-seg button[aria-pressed="true"] { background: var(--paper); }
+:where(html:not([data-theme="light"])) .mm-empty { background: var(--paper); }
+:where(html:not([data-theme="light"])) .mm-leg .l0 { background: var(--paper); border-color: var(--line); }
+:where(html:not([data-theme="light"])) .mm-leg .l1 { background: color-mix(in srgb, #F1B7D1 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .mm-top span { background: var(--paper); }
+:where(html:not([data-theme="light"])) .mm-top span.first { background: color-mix(in srgb, #FCE4EC 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .mm-top small { color: var(--ink); }
+:where(html:not([data-theme="light"])) .mm-tip > span { color: var(--ink); }
+:where(html:not([data-theme="light"])) .rp-title em { color: var(--ink); }
+:where(html:not([data-theme="light"])) .rp-map { background: var(--paper); }
+:where(html:not([data-theme="light"])) .rp-map h4 { color: var(--ink); }
+:where(html:not([data-theme="light"])) .rp-quote { background: var(--paper); color: var(--ink); }
+:where(html:not([data-theme="light"])) .rp-quote small { color: var(--sub); }
+:where(html:not([data-theme="light"])) .attcard > .cal { border-top-color: var(--line); }
+:where(html:not([data-theme="light"])) .rtbar { background: color-mix(in srgb, #FFF8E6 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .rtb { background: var(--paper); }
+:where(html:not([data-theme="light"])) .rtb.fill { background: var(--seal); }
+:where(html:not([data-theme="light"])) .rtctl button { background: var(--paper); }
+:where(html:not([data-theme="light"])) .rts-body input:not([type=checkbox]), :where(html:not([data-theme="light"])) .rts-body textarea, :where(html:not([data-theme="light"])) .rts-body select { background: var(--paper); }
+:where(html:not([data-theme="light"])) .rts-chips button { background: var(--paper); }
+:where(html:not([data-theme="light"])) .rts-chips button[aria-pressed="true"] { background: var(--seal); }
+:where(html:not([data-theme="light"])) .rtp-t { background: var(--paper); }
+:where(html:not([data-theme="light"])) .rts-pg button[data-p] { background: var(--paper); }
+:where(html:not([data-theme="light"])) .rts-seg button { background: var(--paper); }
+:where(html:not([data-theme="light"])) .rts-seg button[aria-pressed="true"] { background: var(--seal); }
+:where(html:not([data-theme="light"])) .rtcp { background: var(--paper); }
+:where(html:not([data-theme="light"])) .bell { background: var(--paper); }
+:where(html:not([data-theme="light"])) .ava { background: var(--seal); }
+:where(html:not([data-theme="light"])) section[data-fold] > .head .fold-btn { background: var(--paper); }
+:where(html:not([data-theme="light"])) .th-tile { background: var(--paper); }
+:where(html:not([data-theme="light"])) .hw { background: var(--paper); }
+:where(html:not([data-theme="light"])) .meseg a[aria-current] { background: var(--paper); }
+:where(html:not([data-theme="light"])) .stamp { background-image: radial-gradient(70% 140% at 12% 50%, color-mix(in srgb, var(--seal) 8%, var(--paper)) 0%, var(--paper) 60%); }
+:where(html:not([data-theme="light"])) .memob { background: color-mix(in srgb, #FFFAEF 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .memob.pin { background: color-mix(in srgb, #FBEFD3 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .ex { background-image: linear-gradient(150deg, var(--paper) 0%, var(--paper) 45%, var(--paper) 100%); }
+:where(html:not([data-theme="light"])) .ex.main { background-image: linear-gradient(120deg, color-mix(in srgb, #FFF9EA 16%, var(--paper)) 0%, color-mix(in srgb, #FCEBC2 16%, var(--paper)) 32%, color-mix(in srgb, #FFF7E3 16%, var(--paper)) 55%, color-mix(in srgb, #F8E2AE 16%, var(--paper)) 80%, color-mix(in srgb, #FFF4D9 16%, var(--paper)) 100%); }
+:where(html:not([data-theme="light"])) .ex.t-warm { background-image: linear-gradient(140deg, var(--paper) 0%, color-mix(in srgb, #F3F8FF 16%, var(--paper)) 30%, color-mix(in srgb, #E4EFFD 16%, var(--paper)) 70%, color-mix(in srgb, #F1F7FF 16%, var(--paper)) 100%); }
+:where(html:not([data-theme="light"])) .ex.t-pre { background-image: linear-gradient(140deg, var(--paper) 0%, color-mix(in srgb, var(--seal) 5%, var(--paper)) 30%, color-mix(in srgb, var(--seal) 12%, var(--paper)) 70%, color-mix(in srgb, var(--seal) 6%, var(--paper)) 100%); }
+:where(html:not([data-theme="light"])) .ex.cardio { background-image: linear-gradient(140deg, var(--paper) 0%, var(--paper) 30%, color-mix(in srgb, #DFF2E7 16%, var(--paper)) 70%, var(--paper) 100%); }
+:where(html:not([data-theme="light"])) .gr-l i { color: var(--sub); }
+:where(html:not([data-theme="light"])) .gr-l em { color: var(--sub); }
+:where(html:not([data-theme="light"])) .gr-l u { color: var(--ink); }
+:where(html:not([data-theme="light"])) .btn.gr-edit { background: color-mix(in srgb, #FFF9EC 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .ins-hero { background: var(--paper); }
+:where(html:not([data-theme="light"])) .ins-hero p { color: var(--sub); }
+:where(html:not([data-theme="light"])) .ins-done { background: color-mix(in srgb, #E9F8EF 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .ins-done p { color: var(--ink); }
+:where(html:not([data-theme="light"])) .ins-warn { background: color-mix(in srgb, #FFF4E5 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .ins-alt { color: var(--sub); }
+:where(html:not([data-theme="light"])) .ins-seg { background: var(--card2); }
+:where(html:not([data-theme="light"])) .ins-seg button { color: var(--sub); }
+:where(html:not([data-theme="light"])) .ins-seg button[aria-selected="true"] { background: var(--paper); color: var(--ink); }
+:where(html:not([data-theme="light"])) .ist { background: var(--paper); }
+:where(html:not([data-theme="light"])) .ist-t p { color: var(--sub); }
+:where(html:not([data-theme="light"])) .imk-scr { background: var(--paper); }
+:where(html:not([data-theme="light"])) .imk-page i { background: var(--paper); }
+:where(html:not([data-theme="light"])) .imk-bar { background: var(--paper); color: var(--sub); border-top-color: var(--line); }
+:where(html:not([data-theme="light"])) .imk-bar.t { border-bottom-color: var(--line); }
+:where(html:not([data-theme="light"])) .imk-bar .url { background: var(--paper); }
+:where(html:not([data-theme="light"])) .imk-list { background: var(--paper); }
+:where(html:not([data-theme="light"])) .imk-list div { color: var(--ink); border-bottom-color: var(--line); }
+:where(html:not([data-theme="light"])) .imk-list div.on { background: color-mix(in srgb, #FFF0F1 14%, var(--paper)); color: var(--ink); }
+:where(html:not([data-theme="light"])) .imk-dlg { background: var(--paper); }
+:where(html:not([data-theme="light"])) .imk-dlg em { color: var(--sub); }
+:where(html:not([data-theme="light"])) .ins-tip { background: var(--paper); color: var(--ink); }
+:where(html:not([data-theme="light"])) .ins-card a { background: var(--paper); }
+:where(html:not([data-theme="light"])) .ins-card em { color: var(--sub); }
+:where(html:not([data-theme="light"])) .fcat button { background: var(--paper); color: var(--sub); }
+:where(html:not([data-theme="light"])) .fcat button[aria-selected="true"] { background: var(--seal); }
+:where(html:not([data-theme="light"])) .tour-card { background: var(--paper); }
+:where(html:not([data-theme="light"])) .tour-skip { color: var(--sub); }
+:where(html:not([data-theme="light"])) .tour-dots i { background: var(--card2); }
+:where(html:not([data-theme="light"])) .tour-t { color: var(--ink); }
+:where(html:not([data-theme="light"])) .tour-b { color: var(--sub); }
+:where(html:not([data-theme="light"])) .tb-next { background: var(--seal); }
+:where(html:not([data-theme="light"])) .tb-prev { background: var(--paper); color: var(--ink); }
+:where(html:not([data-theme="light"])) .tb-app { background: var(--paper); color: var(--ink); }
+:where(html:not([data-theme="light"])) .opts { background: var(--paper); }
+:where(html:not([data-theme="light"])) .opt + .opt { border-top-color: var(--line); }
+:where(html:not([data-theme="light"])) .opt .oi { background: var(--paper); }
+:where(html:not([data-theme="light"])) .opt em { color: var(--sub); }
+:where(html:not([data-theme="light"])) .gear { background: var(--paper); }
+:where(html:not([data-theme="light"])) .gmenu a { color: var(--ink); }
+:where(html:not([data-theme="light"])) .gmenu a:active { background: var(--paper); }
+:where(html:not([data-theme="light"])) .gmenu a + a { border-top-color: var(--line); }
+:where(html:not([data-theme="light"])) .gmenu span { background: var(--paper); }
+:where(html:not([data-theme="light"])) .js-n i { background: var(--paper); }
+:where(html:not([data-theme="light"])) .jmerge.bp .js-n.done i { background: var(--paper); }
+:where(html:not([data-theme="light"])) .jmerge.bp .js-n.cur i { color: var(--ink); }
+:where(html:not([data-theme="light"])) .gr-link .rh-ic { color: var(--ink); }
+html:where(:not([data-theme="light"]))[data-skin] body { background: var(--paper); }
+html:where(:not([data-theme="light"]))[data-skin] .view .panel:not(.panel .panel), html:where(:not([data-theme="light"]))[data-skin] .view .hw, html:where(:not([data-theme="light"]))[data-skin] .view .hinfo > *, html:where(:not([data-theme="light"]))[data-skin] .view .ex, html:where(:not([data-theme="light"]))[data-skin] .view .card-link { border-color: var(--line); }
+html:where(:not([data-theme="light"]))[data-skin] .stamp::after { background: color-mix(in srgb, #FFD3DE 14%, var(--paper)); }
+html:where(:not([data-theme="light"]))[data-skin="sheep"] body { background: color-mix(in srgb, #FFF8F1 14%, var(--paper)); }
+html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { background: color-mix(in srgb, #FFE3C7 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .ex-list.cmp .formlink { background: color-mix(in srgb, var(--key) 10%, var(--paper)); }
+:where(html:not([data-theme="light"])) .xs-grab { background: color-mix(in srgb, #CFCFD6 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .xs-x { background: var(--paper); }
+:where(html:not([data-theme="light"])) .xs-ic { background: var(--paper); }
+:where(html:not([data-theme="light"])) .xs-set { background: var(--paper); }
+:where(html:not([data-theme="light"])) .xs-tip { background: var(--paper); }
+:where(html:not([data-theme="light"])) .xs-form { background: var(--paper); }
+:where(html:not([data-theme="light"])) .xs-ox .o { background: var(--card2); }
+:where(html:not([data-theme="light"])) .xs-ox .x { background: color-mix(in srgb, #FDECEC 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .ex-list.cmp .exchk { background: var(--paper); border-color: var(--line); }
+:where(html:not([data-theme="light"])) .ex-list.cmp .ex.done { background-image: linear-gradient(110deg, var(--paper), color-mix(in srgb, #DDF4E6 16%, var(--paper)) 30%, var(--paper) 55%, color-mix(in srgb, #DDF4E6 16%, var(--paper)) 80%, var(--paper)); }
+:where(html:not([data-theme="light"])) .ex-list.cmp .ex.done h3 { color: var(--ink); }
+:where(html:not([data-theme="light"])) .ex-list.cmp .ex.done .set { background: var(--paper); }
+:where(html:not([data-theme="light"])) .lg-today li + li { border-top-color: var(--line); }
+:where(html:not([data-theme="light"])) .lg-past { border-top-color: var(--line); }
+:where(html:not([data-theme="light"])) .lg-g + .lg-g { border-top-color: var(--line); }
+:where(html:not([data-theme="light"])) .mv-hint { background: color-mix(in srgb, var(--seal, #E1141E) 7%, var(--paper)); }
+:where(html:not([data-theme="light"])) .mv-opt { background: var(--paper); }
+:where(html:not([data-theme="light"])) .rklist .rk .no { color: var(--sub); }
+:where(html:not([data-theme="light"])) .rklist .rk-note { color: var(--sub); }
+:where(html:not([data-theme="light"])) .tabs { background: var(--paper); }
+:where(html:not([data-theme="light"])) .navback { background: var(--paper); }
+:where(html:not([data-theme="light"])) .gmenu { background: var(--paper); }
+:where(html:not([data-theme="light"])) .mv-day { background: var(--paper); }
+:where(html:not([data-theme="light"])) .mv-day:active { background: color-mix(in srgb, var(--seal, #E1141E) 10%, var(--paper)); }
+:where(html:not([data-theme="light"])) .bdg-m.off { background: var(--paper); border-color: var(--line); }
+:where(html:not([data-theme="light"])) .bxd-when { background: var(--paper); color: var(--sub); }
+:where(html:not([data-theme="light"])) .bxd-how { background: var(--paper); }
+:where(html:not([data-theme="light"])) .bxd-how small { color: var(--sub); }
+:where(html:not([data-theme="light"])) .bxd-how b { color: var(--ink); }
+:where(html:not([data-theme="light"])) .hbdg { background: var(--paper); }
+:where(html:not([data-theme="light"])) .rtw { background: var(--paper); }
+:where(html:not([data-theme="light"])) .rtw em { background: var(--seal); }
+:where(html:not([data-theme="light"])) .rtt { background: var(--paper); }
+:where(html:not([data-theme="light"])) .bxa-orb b { background: var(--paper); }
+:where(html:not([data-theme="light"])) .gm-theme { color: var(--ink); border-top-color: var(--line); }
+:where(html:not([data-theme="light"])) .gm-theme i { background: var(--paper); }
+:where(html:not([data-theme="light"])) .gm-theme button { color: var(--sub); }
+/* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
+/* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
+html:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0B0B0D; --paper: #17171B; --card2: #202026; --line: #2A2A31; --rule: #2A2A31;
+    --ink: #F2F2F5; --sub: #A9A9B3; --faint: #75757F;
+    --tint: #1F1A1B; --tint2: #2A2123; --muted: #8E8487;
+    --primary: #F2F2F5; --seal: #FF2A35; --key: #FF2A35;
+    --hero: #141417; --hero-sh: rgba(225, 20, 30, .45);
+    --hw-track: #2A2A31; --seg: #24242A;
+    --barbg: rgba(11, 11, 13, .72); --glass: rgba(28, 28, 33, .86);
+    --gold: #F0C24B; --gold-bg: #3A2E10;
+    --good: #4CC983; --good-tint: #12291D; --good-head: #17382A; --bad: #FF6B6B; --bad-tint: #2E1517; --bad-head: #3E1C1F;
+    --gold-line: #8A6A1E; --pink-l: #5A2A2E;
+  }
+  html:not([data-theme="light"])[data-sex="F"] {
+    --page: #120A0D; --paper: #1F1418; --card2: #2A1B21; --line: #36242B; --rule: #36242B;
+    --tint: #2A1820; --tint2: #36202A; --muted: #C99AA9;
+    --primary: #FF5C86; --seal: #FF4D7A; --key: #FF4D7A;
+    --hero: #D6204F; --hero-sh: rgba(214, 32, 79, .5);
+    --hw-track: #36242B; --seg: #2E1D24;
+    --barbg: rgba(18, 10, 13, .72); --glass: rgba(36, 22, 28, .86);
+  }
+  html:not([data-theme="light"]) body { background: var(--page); color: var(--ink); }
+
+  /* 위 막대 · 종 · 설정 */
+  html:not([data-theme="light"]) .bar { box-shadow: 0 1px 0 rgba(255, 255, 255, .06); }
+  html:not([data-theme="light"]) .bar img { filter: drop-shadow(0 0 10px rgba(255, 40, 50, .25)); }
+  html:not([data-theme="light"]) .bell, html:not([data-theme="light"]) .gear { background: var(--card2); color: var(--ink); }
+  html:not([data-theme="light"]) .bell.has-new::after { box-shadow: 0 0 0 2px var(--card2); }
+
+  /* 흰 카드 → 어두운 카드 (위에 얇은 빛 테두리로 구분) */
+  html:not([data-theme="light"]) .stamp, html:not([data-theme="light"]) .hw, html:not([data-theme="light"]) .th-tile, html:not([data-theme="light"]) .panel, html:not([data-theme="light"]) .jprog, html:not([data-theme="light"]) .hi, html:not([data-theme="light"]) .hcard, html:not([data-theme="light"]) a.hw, html:not([data-theme="light"]) .panel li {
+    background: var(--paper); color: var(--ink);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 0 0 1px rgba(255, 255, 255, .04);
+  }
+  html:not([data-theme="light"]) .stamp.on { background: linear-gradient(120deg, var(--paper) 52%, color-mix(in srgb, var(--seal) 18%, var(--paper))); }
+  html:not([data-theme="light"]) .remember, html:not([data-theme="light"]) .jpanel .jcard { background: var(--card2); }
+  html:not([data-theme="light"]) .jcard.next .jno { background: #3A3A42; }
+  html:not([data-theme="light"]) .rkh-ch span i u { background: #4A4A52; }
+  html:not([data-theme="light"]) .hi-go { color: #5A5A64; }
+  html:not([data-theme="light"]) .hi-ic.bellc.new::after { box-shadow: 0 0 0 2px var(--paper); }
+
+  /* 오늘 운동 카드: 검은 바탕 위에서도 떠 보이게 붉은 빛 */
+  html:not([data-theme="light"]) .thero { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .10), 0 0 0 1px rgba(255, 60, 70, .22), 0 18px 40px -18px var(--hero-sh); }
+  html:not([data-theme="light"]) .th-tile { background: var(--card2); }
+
+  /* 아래 탭(유리) */
+  html:not([data-theme="light"]) .tabs { background: rgba(30, 30, 36, .66); box-shadow: 0 12px 32px -10px rgba(0, 0, 0, .7), inset 0 0 0 1px rgba(255, 255, 255, .08); }
+  html:not([data-theme="light"])[data-sex="F"] .tabs { background: rgba(40, 24, 31, .66); }
+  html:not([data-theme="light"]) .navback, html:not([data-theme="light"]) .gmenu { background: rgba(30, 30, 36, .78); }
+  html:not([data-theme="light"]) .tabs a { color: #7C7C86; }
+  html:not([data-theme="light"]) .xsheet, html:not([data-theme="light"]) .rtsheet, html:not([data-theme="light"]) .ibs-card { box-shadow: 0 -14px 44px -12px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .08); }
+
+  /* 빠진 곳 */
+  html:not([data-theme="light"]) .remember svg [fill="var(--primary)"], html:not([data-theme="light"]) .remember svg circle:first-child { fill: var(--seal); }
+  html:not([data-theme="light"]) .remember small { color: var(--seal); }
+  html:not([data-theme="light"]) .ava { background: var(--seal); color: #fff; }
+  html:not([data-theme="light"]) .jno { background: var(--seal); color: #fff; }
+  html:not([data-theme="light"]) .ins-card a { background: var(--paper); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 0 0 1px rgba(255, 255, 255, .04); }
+  html:not([data-theme="light"])[data-sex="F"] { --hero-go: #fff; --hero-go-ink: #B0173F; }
+
+  /* 회원 테마 스킨(토롱이·몽글이)도 어둡게 — 테두리만 은은하게 남김 */
+  html:not([data-theme="light"])[data-skin] { --page: #140B0F; --barbg: rgba(20, 11, 15, .72); --glass: rgba(38, 22, 29, .86); }
+  html:not([data-theme="light"])[data-skin] body { background: #140B0F; }
+  html:not([data-theme="light"])[data-skin="sheep"] { --page: #13100C; --paper: #1E1914; --card2: #29221B; --barbg: rgba(19, 16, 12, .72); }
+  html:not([data-theme="light"])[data-skin="sheep"] body { background: #13100C; }
+  html:not([data-theme="light"])[data-skin] .view .panel:not(.panel .panel), html:not([data-theme="light"])[data-skin] .view .hw, html:not([data-theme="light"])[data-skin] .view .hinfo > *,
+  html:not([data-theme="light"])[data-skin] .view .ex, html:not([data-theme="light"])[data-skin] .view .card-link { border-color: rgba(255, 140, 170, .16); box-shadow: none; }
+  html:not([data-theme="light"])[data-skin="sheep"] .view .panel:not(.panel .panel), html:not([data-theme="light"])[data-skin="sheep"] .view .hw, html:not([data-theme="light"])[data-skin="sheep"] .view .hinfo > *,
+  html:not([data-theme="light"])[data-skin="sheep"] .view .ex, html:not([data-theme="light"])[data-skin="sheep"] .view .card-link { border-color: rgba(240, 200, 160, .16); }
+  html:not([data-theme="light"])[data-skin] .stamp { border-color: rgba(255, 140, 170, .35); }
+  html:not([data-theme="light"])[data-skin="sheep"] .stamp { border-color: rgba(240, 200, 160, .35); }
+
+  /* 운동 아이콘: 남자는 색 반전(흰 바탕 → 검정, 레드는 그대로), 여자는 그대로 — 2026-11-18 장동욱 */
+  html:not([data-theme="light"])[data-sex="M"] .icn { filter: invert(1) hue-rotate(180deg) saturate(1.8) brightness(.95); }
+  html:not([data-theme="light"])[data-sex="M"] .th-tile { background: var(--paper); }
+
+/* 설정 메뉴 */
+html:not([data-theme="light"]) .gmenu a, html:not([data-theme="light"]) .gm-theme { color: var(--ink); }
+html:not([data-theme="light"]) .gmenu a + a, html:not([data-theme="light"]) .gm-theme { border-top-color: rgba(255, 255, 255, .07); }
+html:not([data-theme="light"]) .gmenu span, html:not([data-theme="light"]) .gm-theme i { background: rgba(255, 255, 255, .08); }
+html:not([data-theme="light"]) .gmenu a:active { background: rgba(255, 255, 255, .06); }
+
+}
+:where(html[data-theme="dark"]) .num { background: var(--seal); }
+:where(html[data-theme="dark"]) .btn.fill { background: var(--seal); }
+:where(html[data-theme="dark"]) .btn[aria-pressed="true"] { background: var(--seal); }
+:where(html[data-theme="dark"]) .tagc.warm { background: var(--paper); }
+:where(html[data-theme="dark"]) .today-day { background: var(--seal); }
+:where(html[data-theme="dark"]) .today-day.rest { background: color-mix(in srgb, #C9CED8 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .card-link .thumb::after { background: var(--paper); }
+:where(html[data-theme="dark"]) .loop { background: var(--paper); }
+:where(html[data-theme="dark"]) .day-tile.rest { background: var(--paper); }
+:where(html[data-theme="dark"]) .day-tile[aria-current="true"] { background: var(--seal); }
+:where(html[data-theme="dark"]) .ex-no { background: var(--seal); }
+:where(html[data-theme="dark"]) .ex.main .set { background: var(--paper); }
+:where(html[data-theme="dark"]) .rest-card { background: var(--paper); }
+:where(html[data-theme="dark"]) .today-ic > span { background: var(--seal); }
+:where(html[data-theme="dark"]) .jno { background: var(--seal); }
+:where(html[data-theme="dark"]) .jcard.next .jno { background: color-mix(in srgb, #C9CED8 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .jb { background: var(--paper); }
+:where(html[data-theme="dark"]) .bp-strip b { background-image: linear-gradient(90deg, var(--gold-line), color-mix(in srgb, #FFF3C4 16%, var(--paper)), var(--gold-line), color-mix(in srgb, #FFF3C4 16%, var(--paper)), var(--gold-line)) 0 0 / 200% 100%; }
+:where(html[data-theme="dark"]) .bp-tag { color: var(--ink); }
+:where(html[data-theme="dark"]) .jpanel.bp .jcard { background: var(--paper); }
+:where(html[data-theme="dark"]) .cd.on { background: var(--seal); }
+:where(html[data-theme="dark"]) .lg.on { background: var(--seal); }
+:where(html[data-theme="dark"]) .lg.rest { background: var(--card2); }
+:where(html[data-theme="dark"]) .attq .qbox { border-color: var(--line); }
+:where(html[data-theme="dark"]) .npop { background: var(--paper); }
+:where(html[data-theme="dark"]) .npop .nic { background: var(--seal); }
+:where(html[data-theme="dark"]) .npop .nbar { background: var(--seal); }
+:where(html[data-theme="dark"]) .coachback { background: var(--seal); }
+:where(html[data-theme="dark"]) .fm.res { background: var(--seal); }
+:where(html[data-theme="dark"]) .pill { background: var(--seal); }
+:where(html[data-theme="dark"]) .meal-ic { background: var(--paper); }
+:where(html[data-theme="dark"]) .mp-no { background: var(--seal); }
+:where(html[data-theme="dark"]) .mp-tag { background: var(--paper); }
+:where(html[data-theme="dark"]) .dchip { background: var(--seal); }
+:where(html[data-theme="dark"]) .ib-empty-ic span { background: var(--seal); }
+:where(html[data-theme="dark"]) .ibs-tag { background: var(--seal); }
+:where(html[data-theme="dark"]) .ibs-f input.auto { background: var(--paper); }
+:where(html[data-theme="dark"]) .bgn-bar { background: var(--card2); }
+:where(html[data-theme="dark"]) .bdg-p { border-color: var(--line); }
+:where(html[data-theme="dark"]) .bgpop { background: var(--paper); }
+:where(html[data-theme="dark"]) .bgpop-chip { background: color-mix(in srgb, #FCE4EC 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .bgpop-bar div b { color: var(--ink); }
+:where(html[data-theme="dark"]) .bgpop-bar i { background: var(--card2); }
+:where(html[data-theme="dark"]) .mm-seg { background: var(--card2); }
+:where(html[data-theme="dark"]) .mm-seg button[aria-pressed="true"] { background: var(--paper); }
+:where(html[data-theme="dark"]) .mm-empty { background: var(--paper); }
+:where(html[data-theme="dark"]) .mm-leg .l0 { background: var(--paper); border-color: var(--line); }
+:where(html[data-theme="dark"]) .mm-leg .l1 { background: color-mix(in srgb, #F1B7D1 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .mm-top span { background: var(--paper); }
+:where(html[data-theme="dark"]) .mm-top span.first { background: color-mix(in srgb, #FCE4EC 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .mm-top small { color: var(--ink); }
+:where(html[data-theme="dark"]) .mm-tip > span { color: var(--ink); }
+:where(html[data-theme="dark"]) .rp-title em { color: var(--ink); }
+:where(html[data-theme="dark"]) .rp-map { background: var(--paper); }
+:where(html[data-theme="dark"]) .rp-map h4 { color: var(--ink); }
+:where(html[data-theme="dark"]) .rp-quote { background: var(--paper); color: var(--ink); }
+:where(html[data-theme="dark"]) .rp-quote small { color: var(--sub); }
+:where(html[data-theme="dark"]) .attcard > .cal { border-top-color: var(--line); }
+:where(html[data-theme="dark"]) .rtbar { background: color-mix(in srgb, #FFF8E6 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .rtb { background: var(--paper); }
+:where(html[data-theme="dark"]) .rtb.fill { background: var(--seal); }
+:where(html[data-theme="dark"]) .rtctl button { background: var(--paper); }
+:where(html[data-theme="dark"]) .rts-body input:not([type=checkbox]), :where(html[data-theme="dark"]) .rts-body textarea, :where(html[data-theme="dark"]) .rts-body select { background: var(--paper); }
+:where(html[data-theme="dark"]) .rts-chips button { background: var(--paper); }
+:where(html[data-theme="dark"]) .rts-chips button[aria-pressed="true"] { background: var(--seal); }
+:where(html[data-theme="dark"]) .rtp-t { background: var(--paper); }
+:where(html[data-theme="dark"]) .rts-pg button[data-p] { background: var(--paper); }
+:where(html[data-theme="dark"]) .rts-seg button { background: var(--paper); }
+:where(html[data-theme="dark"]) .rts-seg button[aria-pressed="true"] { background: var(--seal); }
+:where(html[data-theme="dark"]) .rtcp { background: var(--paper); }
+:where(html[data-theme="dark"]) .bell { background: var(--paper); }
+:where(html[data-theme="dark"]) .ava { background: var(--seal); }
+:where(html[data-theme="dark"]) section[data-fold] > .head .fold-btn { background: var(--paper); }
+:where(html[data-theme="dark"]) .th-tile { background: var(--paper); }
+:where(html[data-theme="dark"]) .hw { background: var(--paper); }
+:where(html[data-theme="dark"]) .meseg a[aria-current] { background: var(--paper); }
+:where(html[data-theme="dark"]) .stamp { background-image: radial-gradient(70% 140% at 12% 50%, color-mix(in srgb, var(--seal) 8%, var(--paper)) 0%, var(--paper) 60%); }
+:where(html[data-theme="dark"]) .memob { background: color-mix(in srgb, #FFFAEF 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .memob.pin { background: color-mix(in srgb, #FBEFD3 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .ex { background-image: linear-gradient(150deg, var(--paper) 0%, var(--paper) 45%, var(--paper) 100%); }
+:where(html[data-theme="dark"]) .ex.main { background-image: linear-gradient(120deg, color-mix(in srgb, #FFF9EA 16%, var(--paper)) 0%, color-mix(in srgb, #FCEBC2 16%, var(--paper)) 32%, color-mix(in srgb, #FFF7E3 16%, var(--paper)) 55%, color-mix(in srgb, #F8E2AE 16%, var(--paper)) 80%, color-mix(in srgb, #FFF4D9 16%, var(--paper)) 100%); }
+:where(html[data-theme="dark"]) .ex.t-warm { background-image: linear-gradient(140deg, var(--paper) 0%, color-mix(in srgb, #F3F8FF 16%, var(--paper)) 30%, color-mix(in srgb, #E4EFFD 16%, var(--paper)) 70%, color-mix(in srgb, #F1F7FF 16%, var(--paper)) 100%); }
+:where(html[data-theme="dark"]) .ex.t-pre { background-image: linear-gradient(140deg, var(--paper) 0%, color-mix(in srgb, var(--seal) 5%, var(--paper)) 30%, color-mix(in srgb, var(--seal) 12%, var(--paper)) 70%, color-mix(in srgb, var(--seal) 6%, var(--paper)) 100%); }
+:where(html[data-theme="dark"]) .ex.cardio { background-image: linear-gradient(140deg, var(--paper) 0%, var(--paper) 30%, color-mix(in srgb, #DFF2E7 16%, var(--paper)) 70%, var(--paper) 100%); }
+:where(html[data-theme="dark"]) .gr-l i { color: var(--sub); }
+:where(html[data-theme="dark"]) .gr-l em { color: var(--sub); }
+:where(html[data-theme="dark"]) .gr-l u { color: var(--ink); }
+:where(html[data-theme="dark"]) .btn.gr-edit { background: color-mix(in srgb, #FFF9EC 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .ins-hero { background: var(--paper); }
+:where(html[data-theme="dark"]) .ins-hero p { color: var(--sub); }
+:where(html[data-theme="dark"]) .ins-done { background: color-mix(in srgb, #E9F8EF 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .ins-done p { color: var(--ink); }
+:where(html[data-theme="dark"]) .ins-warn { background: color-mix(in srgb, #FFF4E5 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .ins-alt { color: var(--sub); }
+:where(html[data-theme="dark"]) .ins-seg { background: var(--card2); }
+:where(html[data-theme="dark"]) .ins-seg button { color: var(--sub); }
+:where(html[data-theme="dark"]) .ins-seg button[aria-selected="true"] { background: var(--paper); color: var(--ink); }
+:where(html[data-theme="dark"]) .ist { background: var(--paper); }
+:where(html[data-theme="dark"]) .ist-t p { color: var(--sub); }
+:where(html[data-theme="dark"]) .imk-scr { background: var(--paper); }
+:where(html[data-theme="dark"]) .imk-page i { background: var(--paper); }
+:where(html[data-theme="dark"]) .imk-bar { background: var(--paper); color: var(--sub); border-top-color: var(--line); }
+:where(html[data-theme="dark"]) .imk-bar.t { border-bottom-color: var(--line); }
+:where(html[data-theme="dark"]) .imk-bar .url { background: var(--paper); }
+:where(html[data-theme="dark"]) .imk-list { background: var(--paper); }
+:where(html[data-theme="dark"]) .imk-list div { color: var(--ink); border-bottom-color: var(--line); }
+:where(html[data-theme="dark"]) .imk-list div.on { background: color-mix(in srgb, #FFF0F1 14%, var(--paper)); color: var(--ink); }
+:where(html[data-theme="dark"]) .imk-dlg { background: var(--paper); }
+:where(html[data-theme="dark"]) .imk-dlg em { color: var(--sub); }
+:where(html[data-theme="dark"]) .ins-tip { background: var(--paper); color: var(--ink); }
+:where(html[data-theme="dark"]) .ins-card a { background: var(--paper); }
+:where(html[data-theme="dark"]) .ins-card em { color: var(--sub); }
+:where(html[data-theme="dark"]) .fcat button { background: var(--paper); color: var(--sub); }
+:where(html[data-theme="dark"]) .fcat button[aria-selected="true"] { background: var(--seal); }
+:where(html[data-theme="dark"]) .tour-card { background: var(--paper); }
+:where(html[data-theme="dark"]) .tour-skip { color: var(--sub); }
+:where(html[data-theme="dark"]) .tour-dots i { background: var(--card2); }
+:where(html[data-theme="dark"]) .tour-t { color: var(--ink); }
+:where(html[data-theme="dark"]) .tour-b { color: var(--sub); }
+:where(html[data-theme="dark"]) .tb-next { background: var(--seal); }
+:where(html[data-theme="dark"]) .tb-prev { background: var(--paper); color: var(--ink); }
+:where(html[data-theme="dark"]) .tb-app { background: var(--paper); color: var(--ink); }
+:where(html[data-theme="dark"]) .opts { background: var(--paper); }
+:where(html[data-theme="dark"]) .opt + .opt { border-top-color: var(--line); }
+:where(html[data-theme="dark"]) .opt .oi { background: var(--paper); }
+:where(html[data-theme="dark"]) .opt em { color: var(--sub); }
+:where(html[data-theme="dark"]) .gear { background: var(--paper); }
+:where(html[data-theme="dark"]) .gmenu a { color: var(--ink); }
+:where(html[data-theme="dark"]) .gmenu a:active { background: var(--paper); }
+:where(html[data-theme="dark"]) .gmenu a + a { border-top-color: var(--line); }
+:where(html[data-theme="dark"]) .gmenu span { background: var(--paper); }
+:where(html[data-theme="dark"]) .js-n i { background: var(--paper); }
+:where(html[data-theme="dark"]) .jmerge.bp .js-n.done i { background: var(--paper); }
+:where(html[data-theme="dark"]) .jmerge.bp .js-n.cur i { color: var(--ink); }
+:where(html[data-theme="dark"]) .gr-link .rh-ic { color: var(--ink); }
+html:where([data-theme="dark"])[data-skin] body { background: var(--paper); }
+html:where([data-theme="dark"])[data-skin] .view .panel:not(.panel .panel), html:where([data-theme="dark"])[data-skin] .view .hw, html:where([data-theme="dark"])[data-skin] .view .hinfo > *, html:where([data-theme="dark"])[data-skin] .view .ex, html:where([data-theme="dark"])[data-skin] .view .card-link { border-color: var(--line); }
+html:where([data-theme="dark"])[data-skin] .stamp::after { background: color-mix(in srgb, #FFD3DE 14%, var(--paper)); }
+html:where([data-theme="dark"])[data-skin="sheep"] body { background: color-mix(in srgb, #FFF8F1 14%, var(--paper)); }
+html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: color-mix(in srgb, #FFE3C7 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .ex-list.cmp .formlink { background: color-mix(in srgb, var(--key) 10%, var(--paper)); }
+:where(html[data-theme="dark"]) .xs-grab { background: color-mix(in srgb, #CFCFD6 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .xs-x { background: var(--paper); }
+:where(html[data-theme="dark"]) .xs-ic { background: var(--paper); }
+:where(html[data-theme="dark"]) .xs-set { background: var(--paper); }
+:where(html[data-theme="dark"]) .xs-tip { background: var(--paper); }
+:where(html[data-theme="dark"]) .xs-form { background: var(--paper); }
+:where(html[data-theme="dark"]) .xs-ox .o { background: var(--card2); }
+:where(html[data-theme="dark"]) .xs-ox .x { background: color-mix(in srgb, #FDECEC 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .ex-list.cmp .exchk { background: var(--paper); border-color: var(--line); }
+:where(html[data-theme="dark"]) .ex-list.cmp .ex.done { background-image: linear-gradient(110deg, var(--paper), color-mix(in srgb, #DDF4E6 16%, var(--paper)) 30%, var(--paper) 55%, color-mix(in srgb, #DDF4E6 16%, var(--paper)) 80%, var(--paper)); }
+:where(html[data-theme="dark"]) .ex-list.cmp .ex.done h3 { color: var(--ink); }
+:where(html[data-theme="dark"]) .ex-list.cmp .ex.done .set { background: var(--paper); }
+:where(html[data-theme="dark"]) .lg-today li + li { border-top-color: var(--line); }
+:where(html[data-theme="dark"]) .lg-past { border-top-color: var(--line); }
+:where(html[data-theme="dark"]) .lg-g + .lg-g { border-top-color: var(--line); }
+:where(html[data-theme="dark"]) .mv-hint { background: color-mix(in srgb, var(--seal, #E1141E) 7%, var(--paper)); }
+:where(html[data-theme="dark"]) .mv-opt { background: var(--paper); }
+:where(html[data-theme="dark"]) .rklist .rk .no { color: var(--sub); }
+:where(html[data-theme="dark"]) .rklist .rk-note { color: var(--sub); }
+:where(html[data-theme="dark"]) .tabs { background: var(--paper); }
+:where(html[data-theme="dark"]) .navback { background: var(--paper); }
+:where(html[data-theme="dark"]) .gmenu { background: var(--paper); }
+:where(html[data-theme="dark"]) .mv-day { background: var(--paper); }
+:where(html[data-theme="dark"]) .mv-day:active { background: color-mix(in srgb, var(--seal, #E1141E) 10%, var(--paper)); }
+:where(html[data-theme="dark"]) .bdg-m.off { background: var(--paper); border-color: var(--line); }
+:where(html[data-theme="dark"]) .bxd-when { background: var(--paper); color: var(--sub); }
+:where(html[data-theme="dark"]) .bxd-how { background: var(--paper); }
+:where(html[data-theme="dark"]) .bxd-how small { color: var(--sub); }
+:where(html[data-theme="dark"]) .bxd-how b { color: var(--ink); }
+:where(html[data-theme="dark"]) .hbdg { background: var(--paper); }
+:where(html[data-theme="dark"]) .rtw { background: var(--paper); }
+:where(html[data-theme="dark"]) .rtw em { background: var(--seal); }
+:where(html[data-theme="dark"]) .rtt { background: var(--paper); }
+:where(html[data-theme="dark"]) .bxa-orb b { background: var(--paper); }
+:where(html[data-theme="dark"]) .gm-theme { color: var(--ink); border-top-color: var(--line); }
+:where(html[data-theme="dark"]) .gm-theme i { background: var(--paper); }
+:where(html[data-theme="dark"]) .gm-theme button { color: var(--sub); }
+/* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
+/* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0B0B0D; --paper: #17171B; --card2: #202026; --line: #2A2A31; --rule: #2A2A31;
+    --ink: #F2F2F5; --sub: #A9A9B3; --faint: #75757F;
+    --tint: #1F1A1B; --tint2: #2A2123; --muted: #8E8487;
+    --primary: #F2F2F5; --seal: #FF2A35; --key: #FF2A35;
+    --hero: #141417; --hero-sh: rgba(225, 20, 30, .45);
+    --hw-track: #2A2A31; --seg: #24242A;
+    --barbg: rgba(11, 11, 13, .72); --glass: rgba(28, 28, 33, .86);
+    --gold: #F0C24B; --gold-bg: #3A2E10;
+    --good: #4CC983; --good-tint: #12291D; --good-head: #17382A; --bad: #FF6B6B; --bad-tint: #2E1517; --bad-head: #3E1C1F;
+    --gold-line: #8A6A1E; --pink-l: #5A2A2E;
+  }
+  html[data-theme="dark"][data-sex="F"] {
+    --page: #120A0D; --paper: #1F1418; --card2: #2A1B21; --line: #36242B; --rule: #36242B;
+    --tint: #2A1820; --tint2: #36202A; --muted: #C99AA9;
+    --primary: #FF5C86; --seal: #FF4D7A; --key: #FF4D7A;
+    --hero: #D6204F; --hero-sh: rgba(214, 32, 79, .5);
+    --hw-track: #36242B; --seg: #2E1D24;
+    --barbg: rgba(18, 10, 13, .72); --glass: rgba(36, 22, 28, .86);
+  }
+  html[data-theme="dark"] body { background: var(--page); color: var(--ink); }
+
+  /* 위 막대 · 종 · 설정 */
+  html[data-theme="dark"] .bar { box-shadow: 0 1px 0 rgba(255, 255, 255, .06); }
+  html[data-theme="dark"] .bar img { filter: drop-shadow(0 0 10px rgba(255, 40, 50, .25)); }
+  html[data-theme="dark"] .bell, html[data-theme="dark"] .gear { background: var(--card2); color: var(--ink); }
+  html[data-theme="dark"] .bell.has-new::after { box-shadow: 0 0 0 2px var(--card2); }
+
+  /* 흰 카드 → 어두운 카드 (위에 얇은 빛 테두리로 구분) */
+  html[data-theme="dark"] .stamp, html[data-theme="dark"] .hw, html[data-theme="dark"] .th-tile, html[data-theme="dark"] .panel, html[data-theme="dark"] .jprog, html[data-theme="dark"] .hi, html[data-theme="dark"] .hcard, html[data-theme="dark"] a.hw, html[data-theme="dark"] .panel li {
+    background: var(--paper); color: var(--ink);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 0 0 1px rgba(255, 255, 255, .04);
+  }
+  html[data-theme="dark"] .stamp.on { background: linear-gradient(120deg, var(--paper) 52%, color-mix(in srgb, var(--seal) 18%, var(--paper))); }
+  html[data-theme="dark"] .remember, html[data-theme="dark"] .jpanel .jcard { background: var(--card2); }
+  html[data-theme="dark"] .jcard.next .jno { background: #3A3A42; }
+  html[data-theme="dark"] .rkh-ch span i u { background: #4A4A52; }
+  html[data-theme="dark"] .hi-go { color: #5A5A64; }
+  html[data-theme="dark"] .hi-ic.bellc.new::after { box-shadow: 0 0 0 2px var(--paper); }
+
+  /* 오늘 운동 카드: 검은 바탕 위에서도 떠 보이게 붉은 빛 */
+  html[data-theme="dark"] .thero { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .10), 0 0 0 1px rgba(255, 60, 70, .22), 0 18px 40px -18px var(--hero-sh); }
+  html[data-theme="dark"] .th-tile { background: var(--card2); }
+
+  /* 아래 탭(유리) */
+  html[data-theme="dark"] .tabs { background: rgba(30, 30, 36, .66); box-shadow: 0 12px 32px -10px rgba(0, 0, 0, .7), inset 0 0 0 1px rgba(255, 255, 255, .08); }
+  html[data-theme="dark"][data-sex="F"] .tabs { background: rgba(40, 24, 31, .66); }
+  html[data-theme="dark"] .navback, html[data-theme="dark"] .gmenu { background: rgba(30, 30, 36, .78); }
+  html[data-theme="dark"] .tabs a { color: #7C7C86; }
+  html[data-theme="dark"] .xsheet, html[data-theme="dark"] .rtsheet, html[data-theme="dark"] .ibs-card { box-shadow: 0 -14px 44px -12px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .08); }
+
+  /* 빠진 곳 */
+  html[data-theme="dark"] .remember svg [fill="var(--primary)"], html[data-theme="dark"] .remember svg circle:first-child { fill: var(--seal); }
+  html[data-theme="dark"] .remember small { color: var(--seal); }
+  html[data-theme="dark"] .ava { background: var(--seal); color: #fff; }
+  html[data-theme="dark"] .jno { background: var(--seal); color: #fff; }
+  html[data-theme="dark"] .ins-card a { background: var(--paper); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 0 0 1px rgba(255, 255, 255, .04); }
+  html[data-theme="dark"][data-sex="F"] { --hero-go: #fff; --hero-go-ink: #B0173F; }
+
+  /* 회원 테마 스킨(토롱이·몽글이)도 어둡게 — 테두리만 은은하게 남김 */
+  html[data-theme="dark"][data-skin] { --page: #140B0F; --barbg: rgba(20, 11, 15, .72); --glass: rgba(38, 22, 29, .86); }
+  html[data-theme="dark"][data-skin] body { background: #140B0F; }
+  html[data-theme="dark"][data-skin="sheep"] { --page: #13100C; --paper: #1E1914; --card2: #29221B; --barbg: rgba(19, 16, 12, .72); }
+  html[data-theme="dark"][data-skin="sheep"] body { background: #13100C; }
+  html[data-theme="dark"][data-skin] .view .panel:not(.panel .panel), html[data-theme="dark"][data-skin] .view .hw, html[data-theme="dark"][data-skin] .view .hinfo > *,
+  html[data-theme="dark"][data-skin] .view .ex, html[data-theme="dark"][data-skin] .view .card-link { border-color: rgba(255, 140, 170, .16); box-shadow: none; }
+  html[data-theme="dark"][data-skin="sheep"] .view .panel:not(.panel .panel), html[data-theme="dark"][data-skin="sheep"] .view .hw, html[data-theme="dark"][data-skin="sheep"] .view .hinfo > *,
+  html[data-theme="dark"][data-skin="sheep"] .view .ex, html[data-theme="dark"][data-skin="sheep"] .view .card-link { border-color: rgba(240, 200, 160, .16); }
+  html[data-theme="dark"][data-skin] .stamp { border-color: rgba(255, 140, 170, .35); }
+  html[data-theme="dark"][data-skin="sheep"] .stamp { border-color: rgba(240, 200, 160, .35); }
+
+  /* 운동 아이콘: 남자는 색 반전(흰 바탕 → 검정, 레드는 그대로), 여자는 그대로 — 2026-11-18 장동욱 */
+  html[data-theme="dark"][data-sex="M"] .icn { filter: invert(1) hue-rotate(180deg) saturate(1.8) brightness(.95); }
+  html[data-theme="dark"][data-sex="M"] .th-tile { background: var(--paper); }
+
+/* 설정 메뉴 */
+html[data-theme="dark"] .gmenu a, html[data-theme="dark"] .gm-theme { color: var(--ink); }
+html[data-theme="dark"] .gmenu a + a, html[data-theme="dark"] .gm-theme { border-top-color: rgba(255, 255, 255, .07); }
+html[data-theme="dark"] .gmenu span, html[data-theme="dark"] .gm-theme i { background: rgba(255, 255, 255, .08); }
+html[data-theme="dark"] .gmenu a:active { background: rgba(255, 255, 255, .06); }
+
+/* DARK-END */

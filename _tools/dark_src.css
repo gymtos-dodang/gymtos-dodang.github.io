@@ -1,0 +1,82 @@
+/* 다크모드 손으로 쓴 규칙 — 앞머리 D 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
+D {
+    color-scheme: dark;
+    --page: #0B0B0D; --paper: #17171B; --card2: #202026; --line: #2A2A31; --rule: #2A2A31;
+    --ink: #F2F2F5; --sub: #A9A9B3; --faint: #75757F;
+    --tint: #1F1A1B; --tint2: #2A2123; --muted: #8E8487;
+    --primary: #F2F2F5; --seal: #FF2A35; --key: #FF2A35;
+    --hero: #141417; --hero-sh: rgba(225, 20, 30, .45);
+    --hw-track: #2A2A31; --seg: #24242A;
+    --barbg: rgba(11, 11, 13, .72); --glass: rgba(28, 28, 33, .86);
+    --gold: #F0C24B; --gold-bg: #3A2E10;
+    --good: #4CC983; --good-tint: #12291D; --good-head: #17382A; --bad: #FF6B6B; --bad-tint: #2E1517; --bad-head: #3E1C1F;
+    --gold-line: #8A6A1E; --pink-l: #5A2A2E;
+  }
+  D[data-sex="F"] {
+    --page: #120A0D; --paper: #1F1418; --card2: #2A1B21; --line: #36242B; --rule: #36242B;
+    --tint: #2A1820; --tint2: #36202A; --muted: #C99AA9;
+    --primary: #FF5C86; --seal: #FF4D7A; --key: #FF4D7A;
+    --hero: #D6204F; --hero-sh: rgba(214, 32, 79, .5);
+    --hw-track: #36242B; --seg: #2E1D24;
+    --barbg: rgba(18, 10, 13, .72); --glass: rgba(36, 22, 28, .86);
+  }
+  D body { background: var(--page); color: var(--ink); }
+
+  /* 위 막대 · 종 · 설정 */
+  D .bar { box-shadow: 0 1px 0 rgba(255, 255, 255, .06); }
+  D .bar img { filter: drop-shadow(0 0 10px rgba(255, 40, 50, .25)); }
+  D .bell, D .gear { background: var(--card2); color: var(--ink); }
+  D .bell.has-new::after { box-shadow: 0 0 0 2px var(--card2); }
+
+  /* 흰 카드 → 어두운 카드 (위에 얇은 빛 테두리로 구분) */
+  D .stamp, D .hw, D .th-tile, D .panel, D .jprog, D .hi, D .hcard, D a.hw, D .panel li {
+    background: var(--paper); color: var(--ink);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 0 0 1px rgba(255, 255, 255, .04);
+  }
+  D .stamp.on { background: linear-gradient(120deg, var(--paper) 52%, color-mix(in srgb, var(--seal) 18%, var(--paper))); }
+  D .remember, D .jpanel .jcard { background: var(--card2); }
+  D .jcard.next .jno { background: #3A3A42; }
+  D .rkh-ch span i u { background: #4A4A52; }
+  D .hi-go { color: #5A5A64; }
+  D .hi-ic.bellc.new::after { box-shadow: 0 0 0 2px var(--paper); }
+
+  /* 오늘 운동 카드: 검은 바탕 위에서도 떠 보이게 붉은 빛 */
+  D .thero { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .10), 0 0 0 1px rgba(255, 60, 70, .22), 0 18px 40px -18px var(--hero-sh); }
+  D .th-tile { background: var(--card2); }
+
+  /* 아래 탭(유리) */
+  D .tabs { background: rgba(30, 30, 36, .66); box-shadow: 0 12px 32px -10px rgba(0, 0, 0, .7), inset 0 0 0 1px rgba(255, 255, 255, .08); }
+  D[data-sex="F"] .tabs { background: rgba(40, 24, 31, .66); }
+  D .navback, D .gmenu { background: rgba(30, 30, 36, .78); }
+  D .tabs a { color: #7C7C86; }
+  D .xsheet, D .rtsheet, D .ibs-card { box-shadow: 0 -14px 44px -12px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .08); }
+
+  /* 빠진 곳 */
+  D .remember svg [fill="var(--primary)"], D .remember svg circle:first-child { fill: var(--seal); }
+  D .remember small { color: var(--seal); }
+  D .ava { background: var(--seal); color: #fff; }
+  D .jno { background: var(--seal); color: #fff; }
+  D .ins-card a { background: var(--paper); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 0 0 1px rgba(255, 255, 255, .04); }
+  D[data-sex="F"] { --hero-go: #fff; --hero-go-ink: #B0173F; }
+
+  /* 회원 테마 스킨(토롱이·몽글이)도 어둡게 — 테두리만 은은하게 남김 */
+  D[data-skin] { --page: #140B0F; --barbg: rgba(20, 11, 15, .72); --glass: rgba(38, 22, 29, .86); }
+  D[data-skin] body { background: #140B0F; }
+  D[data-skin="sheep"] { --page: #13100C; --paper: #1E1914; --card2: #29221B; --barbg: rgba(19, 16, 12, .72); }
+  D[data-skin="sheep"] body { background: #13100C; }
+  D[data-skin] .view .panel:not(.panel .panel), D[data-skin] .view .hw, D[data-skin] .view .hinfo > *,
+  D[data-skin] .view .ex, D[data-skin] .view .card-link { border-color: rgba(255, 140, 170, .16); box-shadow: none; }
+  D[data-skin="sheep"] .view .panel:not(.panel .panel), D[data-skin="sheep"] .view .hw, D[data-skin="sheep"] .view .hinfo > *,
+  D[data-skin="sheep"] .view .ex, D[data-skin="sheep"] .view .card-link { border-color: rgba(240, 200, 160, .16); }
+  D[data-skin] .stamp { border-color: rgba(255, 140, 170, .35); }
+  D[data-skin="sheep"] .stamp { border-color: rgba(240, 200, 160, .35); }
+
+  /* 운동 아이콘: 남자는 색 반전(흰 바탕 → 검정, 레드는 그대로), 여자는 그대로 — 2026-11-18 장동욱 */
+  D[data-sex="M"] .icn { filter: invert(1) hue-rotate(180deg) saturate(1.8) brightness(.95); }
+  D[data-sex="M"] .th-tile { background: var(--paper); }
+
+/* 설정 메뉴 */
+D .gmenu a, D .gm-theme { color: var(--ink); }
+D .gmenu a + a, D .gm-theme { border-top-color: rgba(255, 255, 255, .07); }
+D .gmenu span, D .gm-theme i { background: rgba(255, 255, 255, .08); }
+D .gmenu a:active { background: rgba(255, 255, 255, .06); }

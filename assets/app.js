@@ -82,6 +82,22 @@
     return '<img class="' + (cls || "icn") + '" src="' + iconSrc(key) + '" alt="" loading="lazy">';
   }
   document.documentElement.setAttribute("data-sex", M.sex === "F" ? "F" : "M");
+  /* 2026-11-18 장동욱 "PT노트 다크모드(자동) + 설정에서 풀고 킬 수 있게": 자동(폰 설정 따라) · 켜기 · 끄기
+     → html[data-theme] (없으면 자동). CSS는 style.css DARK 블록(_tools/make_dark.py로 만듦) */
+  var THEME_KEY = "ptnote:theme";
+  function themeGet() { try { var v = localStorage.getItem(THEME_KEY); return v === "dark" || v === "light" ? v : "auto"; } catch (e) { return "auto"; } }
+  function themeIsDark() { var v = themeGet(); if (v !== "auto") return v === "dark"; try { return matchMedia("(prefers-color-scheme: dark)").matches; } catch (e) { return false; } }
+  function themeApply() {
+    var v = themeGet(), h = document.documentElement;
+    if (v === "auto") h.removeAttribute("data-theme"); else h.setAttribute("data-theme", v);
+    var d = themeIsDark();
+    Array.prototype.forEach.call(document.querySelectorAll('meta[name="theme-color"]'), function (mt) {
+      if (!mt.hasAttribute("data-light")) mt.setAttribute("data-light", mt.getAttribute("content") || "");
+      mt.setAttribute("content", d ? (h.getAttribute("data-sex") === "F" ? "#120A0D" : "#0B0B0D") : mt.getAttribute("data-light"));
+    });
+  }
+  themeApply();
+  try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", themeApply); } catch (e) {}
   /* 2026-11-13 회원별 테마 스킨 (data.js skin: "bunny" — 김지수님 토롱이). 기능은 그대로, 글꼴·색·꾸밈 그림만 얹음 */
   var SKIN = String(M.skin || "");
   if (SKIN) {
@@ -4099,13 +4115,21 @@
     var E = typeof instEnv === "function" ? instEnv() : { standalone: true }, g = document.getElementById("gearBtn");
     var m = document.createElement("div"); m.id = "gearMenu"; m.className = "gmenu"; m.setAttribute("role", "menu");
     m.innerHTML = '<a href="#home" role="menuitem" data-tour="1"><span>🧭</span><b>앱 사용법 다시 보기</b></a>' +
-      '<a href="#app" role="menuitem"><span>📲</span><b>' + (E.standalone ? '홈 화면 앱 설치 안내' : '홈 화면에 앱으로 추가하기') + '</b></a>';   /* 2026-11-13 "앱아이콘 설치 옵션 왜 뺐냐" — 앱으로 열었어도 항상 보이게 */
+      '<a href="#app" role="menuitem"><span>📲</span><b>' + (E.standalone ? '홈 화면 앱 설치 안내' : '홈 화면에 앱으로 추가하기') + '</b></a>' +
+      '<div class="gm-theme" role="group" aria-label="다크 모드"><span>🌙</span><b>다크 모드</b><i>' +
+      [["auto", "자동"], ["dark", "켜기"], ["light", "끄기"]].map(function (o) { return '<button type="button" data-th="' + o[0] + '"' + (themeGet() === o[0] ? ' aria-pressed="true"' : '') + '>' + o[1] + '</button>'; }).join("") + '</i></div>';   /* 2026-11-13 "앱아이콘 설치 옵션 왜 뺐냐" — 앱으로 열었어도 항상 보이게 */
     document.body.appendChild(m);
     var r = g.getBoundingClientRect();
     m.style.top = (r.bottom + 8) + "px"; m.style.right = Math.max(10, window.innerWidth - r.right - 40) + "px";
     requestAnimationFrame(function () { m.classList.add("on"); });
     setTimeout(function () {
-      document.addEventListener("click", function cl(e) { if (!e.target.closest("#gearMenu a")) { m.remove(); } else setTimeout(function () { m.remove(); }, 50); document.removeEventListener("click", cl, true); }, true);
+      m.addEventListener("click", function (e) {   /* 다크 모드 자동·켜기·끄기 — 메뉴는 열어 둔 채 바로 바뀜 */
+        var b = e.target.closest("[data-th]"); if (!b) return;
+        try { if (b.getAttribute("data-th") === "auto") localStorage.removeItem(THEME_KEY); else localStorage.setItem(THEME_KEY, b.getAttribute("data-th")); } catch (er) {}
+        themeApply();
+        Array.prototype.forEach.call(m.querySelectorAll("[data-th]"), function (x) { if (x === b) x.setAttribute("aria-pressed", "true"); else x.removeAttribute("aria-pressed"); });
+      });
+      document.addEventListener("click", function cl(e) { if (e.target.closest("#gearMenu .gm-theme")) return; if (!e.target.closest("#gearMenu a")) { m.remove(); } else setTimeout(function () { m.remove(); }, 50); document.removeEventListener("click", cl, true); }, true);
     }, 0);
   }
   (function () { var g = document.getElementById("gearBtn"); if (g) g.addEventListener("click", function (e) { e.stopPropagation(); gearMenu(); }); })();
