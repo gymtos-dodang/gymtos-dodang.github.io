@@ -2311,6 +2311,48 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .frs-sleepy .b-eyes { display: none; } .frs-sleepy .b-slit { display: inline; }
 .fr-sleepy.sit .z2 { animation-delay: .8s; }
 
+/* 2026-11-18 내 식단 짜기 (app.js dbBuilder·dbPick) */
+.db-tabs { display: flex; gap: 6px; background: var(--hw-track, #F2F2F4); border-radius: 14px; padding: 4px; margin-bottom: 14px; }
+.db-tabs button { flex: 1; border: 0; background: none; font: inherit; font-weight: 800; font-size: 14px; color: var(--sub); padding: 9px 4px; border-radius: 11px; cursor: pointer; }
+.db-tabs button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 4px rgba(0, 0, 0, .1); }
+.db-l { display: block; font-size: 12px; font-weight: 800; color: var(--sub); margin: 14px 0 6px; } .db-set .db-l:first-child { margin-top: 0; }
+.db-seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.db-seg button { border: 0; font: inherit; background: var(--tint); border-radius: 14px; padding: 10px 4px 9px; cursor: pointer; color: var(--ink); min-width: 0; }
+.db-seg button b { display: block; font-size: 15px; font-weight: 900; } .db-seg button i { display: block; font-style: normal; font-size: 10.5px; color: var(--sub); margin-top: 2px; line-height: 1.3; }
+.db-seg button.on { background: var(--primary); color: #fff; } .db-seg button.on i { color: rgba(255, 255, 255, .85); }
+.db-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.db-chips button { border: 0; font: inherit; font-size: 13px; font-weight: 800; background: var(--tint); color: var(--ink); border-radius: 99px; padding: 7px 12px; cursor: pointer; }
+.db-chips button.on { background: var(--primary); color: #fff; }
+.db-body { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; } .db-body > b { font-size: 17px; font-weight: 900; } .db-body > b i { font-style: normal; font-size: 12px; color: var(--sub); margin-left: 2px; }
+.db-chip { font-size: 11px; font-weight: 800; color: var(--primary); background: var(--tint); border-radius: 99px; padding: 3px 9px; }
+.db-body.in label { flex: 1; min-width: 0; font-size: 11.5px; font-weight: 700; color: var(--sub); display: flex; flex-direction: column; gap: 3px; }
+.db-in { width: 100%; box-sizing: border-box; border: 1.5px solid var(--line); border-radius: 11px; padding: 9px 10px; font: inherit; font-size: 16px; font-weight: 800; background: #fff; color: var(--ink); }
+.db-ok { border: 0; font: inherit; font-weight: 900; color: #fff; background: var(--primary); border-radius: 11px; padding: 10px 14px; align-self: flex-end; cursor: pointer; }
+.db-link { border: 0; background: none; font: inherit; font-size: 12px; font-weight: 700; color: var(--sub); text-decoration: underline; padding: 4px 0; cursor: pointer; }
+.db-tip { margin: 8px 0 0; font-size: 12px; color: var(--sub); line-height: 1.45; }
+.db-res { margin-top: 10px; } .db-kcal { text-align: center; margin-bottom: 10px; }
+.db-kcal small { font-size: 12px; font-weight: 800; color: var(--sub); } .db-kcal b { display: block; font-size: 40px; font-weight: 900; color: var(--primary); line-height: 1.15; font-variant-numeric: tabular-nums; }
+.db-kcal b i { font-style: normal; font-size: 15px; color: var(--sub); margin-left: 4px; } .db-kcal p { margin: 2px 0 0; font-size: 11.5px; color: var(--sub); }
+.dt-stats.db-mac { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.db-meals { display: flex; flex-direction: column; gap: 8px; }
+.db-meal { background: var(--card, #fff); border-radius: 18px; padding: 12px; box-shadow: 0 0 0 1px var(--line); }
+.db-mh { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; } .db-mh b { font-size: 15px; font-weight: 900; } .db-mh span { font-size: 12px; color: var(--sub); font-weight: 700; }
+.db-slots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.db-slot { border: 1.5px dashed var(--line); background: none; border-radius: 14px; min-height: 92px; padding: 8px 4px; font: inherit; color: var(--sub); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; min-width: 0; }
+.db-slot b { font-size: 13px; font-weight: 800; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .db-plus { font-size: 20px; font-weight: 900; color: var(--primary); line-height: 1; }
+.db-slot.on { border-style: solid; border-color: transparent; background: var(--tint); color: var(--ink); }
+.db-slot img, .db-food img { width: 44px; height: 44px; object-fit: contain; }
+.db-slot em, .db-food em { font-style: normal; font-size: 15px; font-weight: 900; color: var(--primary); }
+.db-sum { margin-top: 12px; } .db-sum h3 { margin: 0 0 8px; font-size: 15px; }
+.db-bar { display: flex; align-items: center; gap: 8px; margin: 7px 0; } .db-bar > span { width: 56px; flex: none; font-size: 12px; font-weight: 800; color: var(--sub); }
+.db-track { flex: 1; height: 8px; border-radius: 99px; background: rgba(0, 0, 0, .07); overflow: hidden; } .db-track i { display: block; height: 100%; border-radius: 99px; background: var(--primary); transition: width .4s; } .db-track i.over { background: #E8A13A; }
+.db-bar > b { width: 92px; flex: none; text-align: right; font-size: 13px; font-weight: 900; font-variant-numeric: tabular-nums; } .db-bar > b i { font-style: normal; font-weight: 700; font-size: 11px; color: var(--sub); }
+.db-foods { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 8px; }
+.db-food { border: 0; font: inherit; background: #fff; border-radius: 14px; padding: 9px 4px 8px; display: flex; flex-direction: column; align-items: center; gap: 1px; box-shadow: 0 0 0 1.5px var(--line); cursor: pointer; color: var(--ink); min-width: 0; }
+.db-food b { font-size: 12.5px; font-weight: 800; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .db-food small { font-size: 10.5px; color: var(--sub); }
+.db-food.on { box-shadow: 0 0 0 2px var(--primary); }
+.db-all { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; margin-top: 8px; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -2493,6 +2535,13 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .gm-theme button { color: var(--sub); }
 :where(html:not([data-theme="light"])) .frpop { background: var(--paper); }
 :where(html:not([data-theme="light"])) .frd { background: var(--paper); }
+:where(html:not([data-theme="light"])) .db-tabs button.on { background: var(--paper); }
+:where(html:not([data-theme="light"])) .db-seg button.on { background: var(--seal); }
+:where(html:not([data-theme="light"])) .db-chips button.on { background: var(--seal); }
+:where(html:not([data-theme="light"])) .db-in { background: var(--paper); }
+:where(html:not([data-theme="light"])) .db-ok { background: var(--seal); }
+:where(html:not([data-theme="light"])) .db-track i { background: var(--seal); }
+:where(html:not([data-theme="light"])) .db-food { background: var(--paper); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -2769,6 +2818,13 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .gm-theme button { color: var(--sub); }
 :where(html[data-theme="dark"]) .frpop { background: var(--paper); }
 :where(html[data-theme="dark"]) .frd { background: var(--paper); }
+:where(html[data-theme="dark"]) .db-tabs button.on { background: var(--paper); }
+:where(html[data-theme="dark"]) .db-seg button.on { background: var(--seal); }
+:where(html[data-theme="dark"]) .db-chips button.on { background: var(--seal); }
+:where(html[data-theme="dark"]) .db-in { background: var(--paper); }
+:where(html[data-theme="dark"]) .db-ok { background: var(--seal); }
+:where(html[data-theme="dark"]) .db-track i { background: var(--seal); }
+:where(html[data-theme="dark"]) .db-food { background: var(--paper); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {
