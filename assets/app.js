@@ -42,7 +42,11 @@
   nBuild();
   try { var rtc = JSON.parse(localStorage.getItem(RT_LS) || "null"); if (rtc) rtUse(rtc); } catch (e) {}
   /* 종목 이름 → 루틴일지 아이콘 (data.js에서 icon을 따로 주면 그게 우선) */
+  /* 2026-11-18 장동욱 "유산소도 종목 추가 형태로, 유산소 칸 만들어서 일반 종목처럼" — 유산소 종목(세트 = ["20분", null], 무게 칸엔 "맨몸" 대신 "유산소") */
+  var RT_CARDIO = ["러닝머신", "경사 걷기", "사이클", "스텝밀", "일립티컬", "로잉머신", "인터벌 러닝"];
+  function isCardio(n) { return RT_CARDIO.indexOf(String(n || "").replace(/\s*\(.*\)\s*$/, "")) >= 0; }
   var ICON_BY_NAME = {
+    "러닝머신": "treadmill", "인터벌 러닝": "treadmill", "경사 걷기": "walk", "스텝밀": "walk", "사이클": "bike", "일립티컬": "bike", "로잉머신": "bike",
     "플랫 덤벨프레스": "db_bench_press", "덤벨 벤치프레스": "db_bench_press", "바벨 벤치프레스": "bench_press", "벤치프레스": "bench_press",
     "인클라인 덤벨 프레스": "incline_db_press", "스미스 인클라인 프레스": "smith_incline_press", "인클라인 프레스 머신": "incline_machine_press", "머신 인클라인 프레스": "incline_machine_press",
     "체스트 프레스": "chest_press", "뉴텍 체스트 프레스 머신": "lying_chest_press", "뉴텍 체스트프레스 머신": "lying_chest_press", "펙덱 플라이": "pec_deck", "펙덱": "pec_deck", "케이블 푸쉬다운": "cable_pushdown",
@@ -2917,7 +2921,7 @@
         var main = it.tag === "메인";
         var sets = it.sets.map(function (s, j) {
           var reps = typeof s[0] === "string" ? esc(s[0]) : s[0] + '<i>회</i>';   /* "30초" 같은 글자도 됨 */
-          var kg = s[1] == null ? '맨몸' : s[1] + 'kg';                              /* null = 맨몸 */
+          var kg = s[1] == null ? (isCardio(it.name) ? '유산소' : '맨몸') : s[1] + 'kg';                              /* null = 맨몸 */
           return '<div class="set"><small>' + (j + 1) + '세트</small><b>' + reps + '</b><i>' + kg + '</i></div>';
         }).join("");
         var dn = !!ckD && lgDone(it.name, ckD);
@@ -2946,7 +2950,7 @@
     var f = itemForm(it), D = f ? f.dir : "";
     var sets = it.sets.map(function (s, j) {
       var reps = typeof s[0] === "string" ? esc(s[0]) : s[0] + '<small>회</small>';
-      return '<div class="xs-set"><span>' + (j + 1) + '세트</span><b>' + reps + '</b><em>' + (s[1] == null ? '맨몸' : s[1] + '<small>kg</small>') + '</em></div>';
+      return '<div class="xs-set"><span>' + (j + 1) + '세트</span><b>' + reps + '</b><em>' + (s[1] == null ? (isCardio(it.name) ? '유산소' : '맨몸') : s[1] + '<small>kg</small>') + '</em></div>';
     }).join("");
     var h = '<div class="xs-grab" aria-hidden="true"></div><button type="button" class="xs-x" data-xclose aria-label="닫기">×</button>' +
       '<div class="xs-head"><span class="xs-ic' + (it.tag === "메인" ? ' main' : '') + '">' + img(iconOf(it)) + '</span><div>' +
@@ -3362,9 +3366,10 @@
     ["팔", ["덤벨 컬", "해머 컬", "인클라인 덤벨 컬", "스파이더 컬", "프리처 컬 머신", "케이블 푸쉬다운", "오버헤드 익스텐션", "덤벨 오버헤드 익스텐션"]],
     ["하체", ["레그 익스텐션", "이너타이", "아웃타이 머신", "플레이트 아웃타이", "레그프레스", "핵프레스", "핵스쿼트", "스미스 스쿼트", "고블릿 스쿼트", "라잉 레그컬", "덤벨 RDL"]],
     ["엉덩이", ["힙쓰러스트 머신", "케이블 힙 킥백", "힙 익스텐션"]],
-    ["복근", ["플랭크"]]
+    ["복근", ["플랭크"]],
+    ["유산소", RT_CARDIO]
   ];
-  var RT_CAT_EN = { "스미스 벤트오버 로우": "Smith Bent-over Row", "뉴텍 버티컬 풀다운": "Vertical Pulldown", "시티드 레터럴 레이즈": "Seated Lateral Raise", "백 익스텐션": "Back Extension", "스미스 벤치프레스": "Smith Bench Press" };
+  var RT_CAT_EN = { "러닝머신": "Treadmill", "경사 걷기": "Incline Walk", "사이클": "Cycle", "스텝밀": "Stair Climber", "일립티컬": "Elliptical", "로잉머신": "Rowing Machine", "인터벌 러닝": "Interval Run", "스미스 벤트오버 로우": "Smith Bent-over Row", "뉴텍 버티컬 풀다운": "Vertical Pulldown", "시티드 레터럴 레이즈": "Seated Lateral Raise", "백 익스텐션": "Back Extension", "스미스 벤치프레스": "Smith Bench Press" };
   function rtEnOf(n) { return RT_EN[n] || RT_CAT_EN[n] || ""; }
   function rtMine() {   /* 이 회원님 루틴에 이미 있는 종목 (이름별 첫 번째) */
     var seen = {}, out = [];
@@ -3439,7 +3444,7 @@
   };
   function rtItemSheet(dk, i, pre) {
     var d = dayByKey(dk), isNew = i < 0;
-    var it = isNew ? { name: pre ? pre.name : "", en: pre ? pre.en : "", tip: pre ? pre.tip : "", sets: pre && pre.sets && pre.sets.length ? pre.sets : [[15, null], [12, null], [10, null]] } : clone(d.items[i]);
+    var it = isNew ? { name: pre ? pre.name : "", en: pre ? pre.en : "", tip: pre ? pre.tip : "", sets: pre && pre.sets && pre.sets.length ? pre.sets : pre && isCardio(pre.name) ? [["20분", null]] : [[15, null], [12, null], [10, null]] } : clone(d.items[i]);
     var sets = (it.sets || []).map(function (s) { return [s[0], s[1]]; });
     var body = '<div class="rts-name"><button type="button" class="rts-ic" id="fIc" aria-label="그림 눌러서 종목 바꾸기">' + img(iconOf(it), "", true) + '<i>바꾸기</i></button>' +
       '<label>종목 이름<input id="fName" list="rtNames" autocomplete="off" value="' + esc(it.name) + '" placeholder="예: 랫풀다운"></label></div>' +
@@ -3450,7 +3455,7 @@
         return '<button type="button" data-v="' + t[0] + '" aria-pressed="' + ((it.tag || "") === t[0]) + '">' + t[1] + '</button>';
       }).join("") + '</div>' +
       '<label>팁<textarea id="fTip" rows="3">' + esc(it.tip) + '</textarea></label>' +
-      '<div class="rts-l">세트 <small>횟수에 "30초"처럼 글자도 돼요 · 무게를 비우면 맨몸</small></div><div class="rts-sets" id="fSets"></div>' +
+      '<div class="rts-l">세트 <small>' + (isCardio(it.name) ? '유산소는 횟수 칸에 "20분"처럼 시간을 적고 무게는 비워요' : '횟수에 "30초"처럼 글자도 돼요 · 무게를 비우면 맨몸') + '</small></div><div class="rts-sets" id="fSets"></div>' +
       '<div class="rts-row"><button type="button" class="rtb" id="fAdd">+ 세트 추가</button></div>' +
       '<div class="rts-pre" id="fPre"><div class="rts-l">빠르게 넣기 <small>누르면 세트가 이 모양으로 바뀌어요</small></div>' +
       '<div class="rts-pg"><b>피라미드</b>' + RT_PRESETS.pyr.map(function (p, j) { return '<button type="button" data-p="pyr" data-j="' + j + '">' + p.label + '<small>' + p.reps.join("·") + '</small></button>'; }).join("") + '</div>' +
