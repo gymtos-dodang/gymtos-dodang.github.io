@@ -1856,7 +1856,8 @@
   function mgLevel(n) { return n >= 5 ? 3 : n >= 3 ? 2 : n >= 1 ? 1 : 0; }
   function mmFigure(cnt, alt) {
     var sx = M.sex === "F" ? "F" : "M", src = BASE + "muscle/" + sx + "/";
-    return '<div class="mm-fig"><img src="' + src + 'base.png" alt="' + esc(alt) + '">' +
+    /* 2026-11-18 다크모드: 하얀 바탕 그림(base.png) + 다크용(base-dark.png, _tools/make_musclemap_dark.py) 둘 다 넣고 CSS가 하나만 보여 줌 */
+    return '<div class="mm-fig"><img class="mm-lt" src="' + src + 'base.png" alt="' + esc(alt) + '"><img class="mm-dk" src="' + src + 'base-dark.png" alt="" loading="lazy">' +
       MG.map(function (g) {
         var lv = mgLevel(cnt[g[0]]);
         return lv ? '<img class="mm-l" src="' + src + g[0] + '.png" alt="" style="opacity:' + [0, 0.4, 0.72, 1][lv] + '">' : '';

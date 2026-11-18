@@ -2261,6 +2261,9 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .gm-theme button { border: 0; background: none; padding: 5px 9px; border-radius: 8px; font-size: 12.5px; font-weight: 700; color: #8A8A94; cursor: pointer; }
 .gm-theme button[aria-pressed="true"] { background: var(--seal); color: #fff; }
 
+/* 근육 지도 다크용 바탕 그림 — 밝을 땐 숨김 (2026-11-18) */
+.mm-fig img.mm-dk { display: none; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -2525,6 +2528,10 @@ html:not([data-theme="light"]) .gmenu a + a, html:not([data-theme="light"]) .gm-
 html:not([data-theme="light"]) .gmenu span, html:not([data-theme="light"]) .gm-theme i { background: rgba(255, 255, 255, .08); }
 html:not([data-theme="light"]) .gmenu a:active { background: rgba(255, 255, 255, .06); }
 
+/* 근육 지도: 하얀 바탕 그림 대신 다크용 그림(base-dark.png) — 2026-11-18 */
+html:not([data-theme="light"]) .mm-fig img.mm-lt { display: none; }
+html:not([data-theme="light"]) .mm-fig img.mm-dk { display: block; }
+
 }
 :where(html[data-theme="dark"]) .num { background: var(--seal); }
 :where(html[data-theme="dark"]) .btn.fill { background: var(--seal); }
@@ -2787,5 +2794,9 @@ html[data-theme="dark"] .gmenu a, html[data-theme="dark"] .gm-theme { color: var
 html[data-theme="dark"] .gmenu a + a, html[data-theme="dark"] .gm-theme { border-top-color: rgba(255, 255, 255, .07); }
 html[data-theme="dark"] .gmenu span, html[data-theme="dark"] .gm-theme i { background: rgba(255, 255, 255, .08); }
 html[data-theme="dark"] .gmenu a:active { background: rgba(255, 255, 255, .06); }
+
+/* 근육 지도: 하얀 바탕 그림 대신 다크용 그림(base-dark.png) — 2026-11-18 */
+html[data-theme="dark"] .mm-fig img.mm-lt { display: none; }
+html[data-theme="dark"] .mm-fig img.mm-dk { display: block; }
 
 /* DARK-END */

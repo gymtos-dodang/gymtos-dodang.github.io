@@ -80,3 +80,7 @@ D .gmenu a, D .gm-theme { color: var(--ink); }
 D .gmenu a + a, D .gm-theme { border-top-color: rgba(255, 255, 255, .07); }
 D .gmenu span, D .gm-theme i { background: rgba(255, 255, 255, .08); }
 D .gmenu a:active { background: rgba(255, 255, 255, .06); }
+
+/* 근육 지도: 하얀 바탕 그림 대신 다크용 그림(base-dark.png) — 2026-11-18 */
+D .mm-fig img.mm-lt { display: none; }
+D .mm-fig img.mm-dk { display: block; }
