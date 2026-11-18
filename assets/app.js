@@ -3073,10 +3073,12 @@
     h += '<div class="panel db-set"><small class="db-l">목적</small><div class="db-seg">' + ["cut", "keep", "bulk"].map(function (g) {
       return '<button type="button" class="' + (d.g === g ? "on" : "") + '" data-db="g:' + g + '"><b>' + DB_GOAL[g].n + '</b><i>' + DB_GOAL[g].d + '</i></button>'; }).join("") + '</div>';
     h += '<small class="db-l">내 몸</small>';
-    if (b && b.src) h += '<div class="db-body"><span class="db-chip">인바디 ' + esc(b.src.slice(5).replace("-", "/")) + ' 기준</span><b>' + b.w + '<i>kg</i></b>' + (b.pbf ? '<b>체지방 ' + (Math.round(b.pbf * 10) / 10) + '<i>%</i></b>' : '') +
+    if (b && b.src) h += '<div class="db-body"><span class="db-chip">인바디 ' + esc(b.src.slice(5).replace("-", "/")) + ' 기준</span><label class="db-hl">키<input type="number" inputmode="decimal" class="db-in db-h" value="' + (d.h || "") + '" placeholder="cm"></label><b><small>체중</small> ' + b.w + '<i>kg</i></b>' + (b.pbf ? '<b><small>체지방</small> ' + (Math.round(b.pbf * 10) / 10) + '<i>%</i></b>' : '') +
       '<button type="button" class="db-link" data-db="manual:1">직접 입력</button></div>';
-    else h += '<div class="db-body in"><label>체중<input type="number" inputmode="decimal" class="db-in" data-k="w" value="' + (d.w || "") + '" placeholder="kg"></label><label>체지방률<input type="number" inputmode="decimal" class="db-in" data-k="pbf" value="' + (d.pbf || "") + '" placeholder="% (몰라도 돼요)"></label>' +
+    else h += '<div class="db-body in"><label>키<input type="number" inputmode="decimal" class="db-in" data-k="h" value="' + (d.h || "") + '" placeholder="cm"></label><label>체중<input type="number" inputmode="decimal" class="db-in" data-k="w" value="' + (d.w || "") + '" placeholder="kg"></label><label>체지방률<input type="number" inputmode="decimal" class="db-in" data-k="pbf" value="' + (d.pbf || "") + '" placeholder="%"></label>' +
       '<button type="button" class="db-ok" data-db="body:1">계산</button></div><p class="db-tip">' + (IB_ON ? (d.manual ? '<button type="button" class="db-link" data-db="manual:0">인바디 기록으로 계산하기</button>' : '기록 탭에 인바디 결과지를 올리면 자동으로 채워져요') : '체지방률을 넣으면 더 정확해요') + '</p>';
+    if (b && d.h) { var bmi = b.w / Math.pow(d.h / 100, 2), std = Math.pow(d.h / 100, 2) * (M.sex === "F" ? 21 : 22);
+      h += '<div class="db-bmi"><span>키 <b>' + d.h + '</b>cm</span><span>체중 <b>' + b.w + '</b>kg</span><span>BMI <b>' + bmi.toFixed(1) + '</b></span><span>표준 체중 <b>' + std.toFixed(1) + '</b>kg</span></div>'; }
     h += '<small class="db-l">운동 횟수</small><div class="db-chips">' + DB_ACT.map(function (a, i) { return '<button type="button" class="' + ((d.a || 0) === i ? "on" : "") + '" data-db="a:' + i + '">' + a[1] + '</button>'; }).join("") + '</div>';
     h += '<small class="db-l">하루 끼니</small><div class="db-chips">' + [2, 3, 4, 5].map(function (n) { return '<button type="button" class="' + ((d.n || 3) === n ? "on" : "") + '" data-db="n:' + n + '">' + n + '끼</button>'; }).join("") + '</div></div>';
     if (!R) return h + '<div class="panel empty"><h3>체중을 넣으면 계산해 드려요</h3><p>인바디 결과지를 올리거나 위에 체중을 적어 주세요</p></div></section>';
@@ -3122,11 +3124,16 @@
     else if (a[0] === "manual") d.manual = a[1] === "1" ? 1 : 0;
     else if (a[0] === "clear") d.p = [];
     else if (a[0] === "body") { var box = t.closest(".db-body"), w = parseFloat(box.querySelector('[data-k="w"]').value), f = parseFloat(box.querySelector('[data-k="pbf"]').value);
-      if (!(w >= 30 && w <= 250)) { attToast("체중을 kg으로 적어 주세요"); return; } d.w = w; d.pbf = f >= 3 && f <= 60 ? f : null; }
+      var hh = parseFloat(box.querySelector('[data-k="h"]').value);
+      if (!(w >= 30 && w <= 250)) { attToast("체중을 kg으로 적어 주세요"); return; } d.w = w; d.h = hh >= 120 && hh <= 220 ? hh : null; d.pbf = f >= 3 && f <= 60 ? f : null; }
     else if (a[0] === "pick") { dbPick(+a[1], a[2]); return; }
     else if (a[0] === "tab") { DB_TAB = a[1]; rerender(); return; }
     else return;
     dbSave();
+  });
+  document.addEventListener("change", function (e) {   /* 인바디 기준일 때 키만 따로 적기 */
+    if (!e.target.classList || !e.target.classList.contains("db-h")) return;
+    var v = parseFloat(e.target.value), d = dbGet(); d.h = v >= 120 && v <= 220 ? v : null; dbSave();
   });
   function renderDiet() {
     var D = M.diet, has = D && typeof D === "object";

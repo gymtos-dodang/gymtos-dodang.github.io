@@ -2353,6 +2353,12 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .db-food.on { box-shadow: 0 0 0 2px var(--primary); }
 .db-all { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; margin-top: 8px; }
 
+.db-hl { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800; color: var(--sub); } .db-hl .db-in { width: 74px; padding: 6px 8px; font-size: 15px; }
+.db-body > b small { font-size: 11.5px; font-weight: 800; color: var(--sub); }
+.db-body.in { align-items: flex-end; gap: 6px; } .db-body.in .db-in { padding: 9px 6px; } .db-body.in .db-ok { padding: 10px 11px; }
+.db-bmi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 10px; }
+.db-bmi span { background: var(--tint); border-radius: 11px; padding: 7px 2px; text-align: center; font-size: 10.5px; font-weight: 700; color: var(--sub); } .db-bmi b { display: block; font-size: 15px; font-weight: 900; color: var(--ink); }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
