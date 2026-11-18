@@ -1759,9 +1759,9 @@
         '<animateTransform attributeName="gradientTransform" type="rotate" from="0 42 30" to="360 42 30" dur="' + (lv === 4 ? 7 : 10) + 's" repeatCount="indefinite"/></linearGradient>' : '') +
       '<clipPath id="' + u + 'c">' + bgSh(sh, RI, CY, "#000") + '</clipPath></defs>';
     if (on) {
-      if (has("rays") && b.art === "loss") s += bgRaysFine(u, sp ? (b.spc || "#F3C94F") : c[1], CY);
+      if (has("rays")) s += bgRaysFine(u, sp ? (b.spc || "#F3C94F") : c[1], CY);
       else if (has("rays")) s += '<polygon class="bdx-rays" points="' + bgPts(14, 38, 0, CY, 30.5) + '" fill="' + (sp ? (b.spc || "#F3C94F") : c[1]) + '" opacity=".9"/>';
-      if (sp && b.art === "loss") s += bgWreath(wire, CY);
+      if (sp) s += bgWreath(wire, CY);
       else if (sp) s += '<g fill="' + wire + '" transform="translate(0 -2)">' + BG_LAU + '</g>';
       s += '<ellipse cx="42" cy="66.5" rx="19" ry="2.8" fill="#000" opacity="' + (sp ? .3 : .16) + '"/>' +
         '<g transform="translate(0 3)">' + bgSh(sh, R, CY, "#7A4E00") + '</g>';
@@ -1782,7 +1782,7 @@
     s += '</svg>';
     var sm = b.sm != null ? '<span class="bdg-m' + (on ? '' : ' off') + '">' + b.sm + '</span>' : '';
     var ex = (has("pulse") ? '<span class="bdx-glow" aria-hidden="true"></span>' : '') + (has("spin") ? '<span class="bdx-ring" aria-hidden="true"></span>' : '');
-    return '<span class="bdg bx' + (b.art === "loss" ? ' bxl' : '') + (on ? ' on' : '') + '" style="--bgc:' + bgRgb(on ? (sp ? (b.spc || "#F3C94F") : c[key === "D" || key === "N" ? 1 : 0]) : "#BBBBBB") + '">' + ex + s + sm + '</span>';
+    return '<span class="bdg bx' + ' bxl' + (on ? ' on' : '') + '" style="--bgc:' + bgRgb(on ? (sp ? (b.spc || "#F3C94F") : c[key === "D" || key === "N" ? 1 : 0]) : "#BBBBBB") + '">' + ex + s + sm + '</span>';
   }
   /* 감량 배지 그림 (2026-11-19 장동욱이 보내 준 에나멜 핀 참고 사진 느낌 — 작은 아이콘 대신 배지 가득 금선 그림):
      금선으로 나눈 내리막 언덕 두 칸 + 언덕을 따라 내려가는 굵은 금 화살표 + 금선 큰 숫자(kg). 명찰(bdg-m)은 안 씀 */
