@@ -1657,6 +1657,21 @@
        [4, "4kg 감량! 이 정도면 주변에서 먼저 알아봐요."], [5, "지난 측정보다 5kg 감량. 정말 대단한 한 달이에요!"]].forEach(function (v) {
         add("body", "ibl" + v[0], v[0] + "kg 감량", "down", v[0] + "kg", lossOn[v[0]] || null, Math.max(0, lossMax), v[0], "인바디를 지난 측정과 비교해 체중이 " + v[0] + "kg 빠지면 받아요", v[1], { unit: "kg", hint: "지난번보다 -1kg" });
       });
+      /* 최고급 누적 감량 10·15·20kg (2026-11-19 "10~20키로 감량 배지도, 최고급 배지처럼") — 첫 인바디 체중보다 n kg 이상 빠진 기록이 생긴 날
+         sp(바프 완료처럼 금 월계수·금선) + 단계마다 다른 보석 색: 10kg 금 · 15kg 루비 · 20kg 블랙 다이아 */
+      var cumMax = 0, cumOn = {};
+      for (var lj = 1; lj < ibr.length; lj++) {
+        var dc = Math.round((+ibr[0].w - +ibr[lj].w) * 10) / 10;
+        if (dc > cumMax) cumMax = dc;
+        [10, 15, 20].forEach(function (n) { if (dc >= n && !cumOn[n]) cumOn[n] = ibr[lj].d; });
+      }
+      [[10, "trophy", "star", "SP", "#F3C94F", "#17171C", "첫 인바디보다 10kg 감량! 완전히 다른 몸이 됐어요. 아무나 못 받는 배지예요."],
+       [15, "crown", "shield", "SPR", "#FF4D66", "#FFF3D6", "15kg 감량. 몸도 생활도 다 바꿔 낸 사람만 받는 루비 배지예요."],
+       [20, "gem", "oct", "SPD", "#7FDFFF", "#FFF3D6", "20kg 감량, 전설 달성. 이 배지를 가진 사람은 정말 드물어요."]].forEach(function (v) {
+        add("body", "iblc" + v[0], v[0] + "kg 감량", v[1], v[0] + "kg", cumOn[v[0]] || null, Math.max(0, cumMax), v[0],
+          "첫 인바디보다 체중이 모두 합쳐 " + v[0] + "kg 빠지면 받아요", v[6],
+          { unit: "kg", sp: true, sh: v[2], lv: 4, enk: v[3], spc: v[4], ink: v[5], col: [v[4], v[4]], fx: v[0] === 20 ? "rays spin twinkle shine pulse" : v[0] === 15 ? "rays spin twinkle shine" : "rays twinkle shine" });
+      });
     }
     var days = st0 ? Math.floor((new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) - st0) / 86400000) + 1 : 0;
     function dayOn(n) { if (!st0 || days < n) return null; var d = new Date(st0); d.setDate(d.getDate() + n - 1); return ymd(d); }
@@ -1715,7 +1730,8 @@
      · 색 3가지(BG_EN: 바탕·둘째·셋째) + 무늬 6가지(배지 id로 고름) · 높은 단계일수록 칸이 많아짐 · 그림은 금선 테두리 + 크림색 선 */
   var BG_EN = { R: ["#E8263C", "#FF8FA3", "#FFD53D"], O: ["#FF8A1F", "#FFD53D", "#E8263C"], Y: ["#FFD53D", "#FF8A1F", "#17245C"], G: ["#1FA85A", "#C8F03C", "#2EC8F0"],
     T: ["#14B8A6", "#C8F03C", "#17245C"], B: ["#2E7BF0", "#2EC8F0", "#C8F03C"], I: ["#3B2FC9", "#2EC8F0", "#FF3D7F"], P: ["#6A2BD9", "#FF3D7F", "#FFD53D"],
-    K: ["#FF3D7F", "#FFB3D1", "#6A2BD9"], N: ["#17245C", "#2E7BF0", "#FFD53D"], S: ["#FF8A1F", "#FF3D7F", "#FFD53D"], D: ["#17171C", "#E8263C", "#FFD53D"], SP: ["#F6CF58", "#17171C", "#FFF3B0"] };
+    K: ["#FF3D7F", "#FFB3D1", "#6A2BD9"], N: ["#17245C", "#2E7BF0", "#FFD53D"], S: ["#FF8A1F", "#FF3D7F", "#FFD53D"], D: ["#17171C", "#E8263C", "#FFD53D"], SP: ["#F6CF58", "#17171C", "#FFF3B0"],
+    SPR: ["#A50E26", "#F6CF58", "#FF5E78"], SPD: ["#101016", "#F6CF58", "#7FDFFF"] };   /* 최고급 감량 배지(2026-11-19): SPR 루비+금, SPD 블랙 다이아+금 */
   var BG_OFF = ["#F4F2F2", "#E9E5E5", "#DEDADA"];
   function bgFields(pat, n, c, CY, R, wire) {   /* 금선으로 나눈 색 칸들 (배지 모양으로 잘라서 씀) */
     var W = ' stroke="' + wire + '" stroke-width="1.3"', X = 42, o = "";
@@ -1733,7 +1749,7 @@
     var on = !!b.on, u = "bx" + (++bgUid), sh = b.sh || "circle", lv = b.lv || 1, sp = !!b.sp, fx = on ? " " + (b.fx || "") + " " : " ", CY = 30;
     function has(k) { return fx.indexOf(" " + k + " ") >= 0; }
     var key = "D"; if (!sp && b.col) for (var k in BG_PAL) if (BG_PAL[k] === b.col) key = k;
-    var c = on ? (sp ? BG_EN.SP : BG_EN[key]) : BG_OFF, hsh = 0; for (var i = 0; i < b.id.length; i++) hsh = (hsh * 31 + b.id.charCodeAt(i)) % 997;
+    var c = on ? (sp ? (BG_EN[b.enk] || BG_EN.SP) : BG_EN[key]) : BG_OFF, hsh = 0; for (var i = 0; i < b.id.length; i++) hsh = (hsh * 31 + b.id.charCodeAt(i)) % 997;
     var R = sh === "circle" || sh === "scallop" ? 29 : 27.6, RI = R * 0.925, wire = on ? "url(#" + u + "w)" : "#CBC6C6";
     var s = '<svg class="bdg-s" viewBox="0 0 84 72" width="84" height="72" aria-hidden="true"><defs>' +
       '<linearGradient id="' + u + 'w" x1=".1" y1="0" x2=".9" y2="1"><stop offset="0" stop-color="#FFF6C8"/><stop offset=".35" stop-color="#EFC452"/><stop offset=".6" stop-color="#B8860B"/><stop offset=".8" stop-color="#F7D774"/><stop offset="1" stop-color="#8A5A00"/></linearGradient>' +
@@ -1743,7 +1759,7 @@
         '<animateTransform attributeName="gradientTransform" type="rotate" from="0 42 30" to="360 42 30" dur="' + (lv === 4 ? 7 : 10) + 's" repeatCount="indefinite"/></linearGradient>' : '') +
       '<clipPath id="' + u + 'c">' + bgSh(sh, RI, CY, "#000") + '</clipPath></defs>';
     if (on) {
-      if (has("rays")) s += '<polygon class="bdx-rays" points="' + bgPts(14, 38, 0, CY, 30.5) + '" fill="' + (sp ? "#F3C94F" : c[1]) + '" opacity=".9"/>';
+      if (has("rays")) s += '<polygon class="bdx-rays" points="' + bgPts(14, 38, 0, CY, 30.5) + '" fill="' + (sp ? (b.spc || "#F3C94F") : c[1]) + '" opacity=".9"/>';
       if (sp) s += '<g fill="' + wire + '" transform="translate(0 -2)">' + BG_LAU + '</g>';
       s += '<ellipse cx="42" cy="66.5" rx="19" ry="2.8" fill="#000" opacity="' + (sp ? .3 : .16) + '"/>' +
         '<g transform="translate(0 3)">' + bgSh(sh, R, CY, "#7A4E00") + '</g>';
@@ -1754,7 +1770,7 @@
       (lv >= 3 ? bgSh(sh, RI * 0.9, CY, "none", ' stroke="' + wire + '" stroke-width="1.1" stroke-linejoin="round"') : '') +
       (on && lv >= 3 ? bgSh(sh, RI, CY, "url(#" + u + "o)", ' opacity="' + (lv === 4 ? .8 : .5) + '"') : '');
     var sc = sh === "circle" || sh === "scallop" ? 1.2 : 1.08, cy = CY + (b.sm != null ? -2 : 0) + (sh === "shield" ? -1.5 : sh === "pent" ? 1 : 0), ik = has("flame") ? " bdx-flame" : has("float") ? " bdx-float" : has("beat") ? " bdx-beat" : "";
-    var IC = BG_IC[b.ic] || BG_IC.star, ink = !on ? "#F7F5F5" : sp || key === "Y" ? "#17171C" : "#FFF8E7";
+    var IC = BG_IC[b.ic] || BG_IC.star, ink = !on ? "#F7F5F5" : sp ? (b.ink || "#17171C") : key === "Y" ? "#17171C" : "#FFF8E7";
     s += '<g transform="translate(' + (42 - 12 * sc).toFixed(2) + ' ' + (cy - 12 * sc).toFixed(2) + ') scale(' + sc + ')"><g class="bdx-i' + ik + '" stroke-linecap="round" stroke-linejoin="round">' +
       '<g fill="none" stroke="' + (on ? wire : "#C4BEBE") + '" stroke-width="4.3">' + IC + '</g>' +
       '<g fill="' + ink + '" fill-opacity="' + (on ? .5 : .6) + '" stroke="' + ink + '" stroke-width="2.1">' + IC + '</g></g></g>';
@@ -1764,7 +1780,7 @@
     s += '</svg>';
     var sm = b.sm != null ? '<span class="bdg-m' + (on ? '' : ' off') + '">' + b.sm + '</span>' : '';
     var ex = (has("pulse") ? '<span class="bdx-glow" aria-hidden="true"></span>' : '') + (has("spin") ? '<span class="bdx-ring" aria-hidden="true"></span>' : '');
-    return '<span class="bdg bx' + (on ? ' on' : '') + '" style="--bgc:' + bgRgb(on ? (sp ? "#F3C94F" : c[key === "D" || key === "N" ? 1 : 0]) : "#BBBBBB") + '">' + ex + s + sm + '</span>';
+    return '<span class="bdg bx' + (on ? ' on' : '') + '" style="--bgc:' + bgRgb(on ? (sp ? (b.spc || "#F3C94F") : c[key === "D" || key === "N" ? 1 : 0]) : "#BBBBBB") + '">' + ex + s + sm + '</span>';
   }
   function bpBadge() {   /* 전설 배지 "바프 완료": 바프 회원(journey.mode bodyprofile)만 보임. 선생님이 data.js journey.bpDone: "촬영 날짜" 넣으면 획득. 45개 수에는 안 셈 */
     var J = M.journey || {};
