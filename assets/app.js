@@ -1443,7 +1443,7 @@
   var BG_ST = {   /* 배지 id: [색, 그림, 효과, 모양, 높은 단계(1~4 — 높을수록 그라데이션이 깊고 은은한 빛이 돎)] · 효과(shine 빛 지나감·pulse 빛 숨쉬기·spin 빛 링·rays 햇살·twinkle 별·flame 일렁·float 둥실·beat 두근)] */
     att1: ["R", "check", "shine", "circle", 1], att10: ["O", "flag", "pulse", "hex", 1], att30: ["K", "stamp", "shine", "scallop", 2], att50: ["P", "medal", "pulse shine", "oct", 2], att100: ["Y", "trophy", "rays shine", "shield", 3], att200: ["D", "crown", "spin twinkle", "star", 4],
     stk3: ["O", "flame", "flame", "diamond", 1], stk7: ["R", "flame2", "flame pulse", "scallop", 2], stk14: ["Y", "bolt", "beat pulse", "star", 3], stk30: ["I", "rocket", "float spin", "shield", 4],
-    dawn: ["S", "sun", "rays", "oct", 2], night: ["N", "moon", "twinkle float", "circle", 2], wkend: ["T", "calw", "shine", "diamond", 2], mon20: ["G", "calc", "pulse", "hex", 3], perf: ["P", "star", "spin twinkle", "star", 4],
+    dawn: ["S", "sun", "rays", "oct", 2], night: ["N", "moon", "twinkle float", "circle", 2], wkend: ["T", "calw", "shine", "diamond", 2], mon20: ["G", "calc", "pulse", "hex", 3], perf: ["P", "star", "spin twinkle", "star", 4], king: ["Y", "crownk", "rays twinkle spin", "shield", 4],
     log1: ["B", "pen", "shine", "circle", 1], logd10: ["T", "clip", "pulse", "diamond", 1], logd30: ["I", "book", "shine", "hex", 2], logd50: ["P", "bookmark", "pulse shine", "oct", 3], logd100: ["D", "shield", "spin twinkle", "shield", 4],
     chk100: ["G", "ccheck", "shine", "scallop", 1], chk300: ["T", "dcheck", "pulse", "circle", 2], chk500: ["B", "list", "shine pulse", "pent", 3], chk1000: ["R", "target", "spin", "star", 4],
     day5: ["O", "layers", "float", "hex", 1], day7: ["G", "mount", "shine", "pent", 2], var15: ["K", "grid", "pulse", "diamond", 2], var30: ["N", "compass", "twinkle shine", "oct", 3], body6: ["G", "body", "beat", "shield", 3], body8: ["Y", "ring8", "rays twinkle", "scallop", 4],
@@ -1453,6 +1453,7 @@
     ibl1: ["G", "trendd", "shine", "circle", 1], ibl2: ["T", "trendd", "pulse", "hex", 2], ibl3: ["B", "trendd", "shine pulse", "oct", 2], ibl4: ["I", "trendd", "shine", "shield", 3], ibl5: ["R", "trendd", "rays twinkle", "scallop", 4],   /* 감량 배지 그림은 전부 내려가는 그래프로 통일 (2026-11-19) */
     day30: ["G", "sprout", "float", "circle", 1], day100: ["K", "heart", "beat pulse", "scallop", 2], day200: ["T", "tree", "shine", "pent", 3], day365: ["D", "gem", "spin twinkle rays", "star", 4]
   };
+  BG_IC.crownk = '<path d="M4 18L2.5 9l5 3.6L12 6l4.5 6.6 5-3.6L20 18z"/><path d="M4.5 21h15"/><circle cx="12" cy="3" r="1.3"/><path d="M12 11.6l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2-1.45-1.4 2-.3z"/>';
   BG_IC.camera = '<path d="M3.5 8h3.3L8.5 5.5h7L17.2 8h3.3v11.5h-17z"/><circle cx="12" cy="13.3" r="3.7"/><path d="M12 11.8l.5 1 1.1.2-.8.8.2 1.1-1-.5-1 .5.2-1.1-.8-.8 1.1-.2z"/>';
   var BG_LAU = '<g transform="translate(16 55) rotate(45)"><ellipse rx="3" ry="6.5"/></g><g transform="translate(7.5 42) rotate(20)"><ellipse rx="3" ry="6.5"/></g>' +
     '<g transform="translate(5.5 27) rotate(-5)"><ellipse rx="3" ry="6.5"/></g><g transform="translate(10 13) rotate(-30)"><ellipse rx="3" ry="6"/></g>' +
@@ -1587,6 +1588,9 @@
       }
     }
     add("att", "perf", "한 달 개근", "star", null, perf, perf ? 1 : 0, 0, "한 달 동안 운동하는 날을 하나도 안 빠지면 받아요", "한 달 출석률 100%! 이건 진짜 아무나 못 해요.", { hint: "한 달 100%" });
+    var kw = rkWins();   /* 이달의 출석왕: 받은 날 = 처음 1등 한 달의 다음 달 1일, 여러 번이면 그림 아래 숫자 */
+    add("att", "king", "이달의 출석왕", "crownk", kw.length > 1 ? kw.length : null, kw.length ? ymAdd(kw[0], 1) + "-01" : null, kw.length, 0, "한 달 동안 출석 순위 1등이면 받아요",
+      kw.length ? kw.map(function (m) { return (+m.slice(5)) + "월"; }).join("·") + " 출석 순위 1등! 모두를 이긴 이달의 출석왕이에요." : "한 달 동안 출석 순위 1등! 모두를 이긴 이달의 출석왕이에요.", { hint: "한 달 출석 1등" });
 
     /* 기록 12 */
     function lgNth(n) { return lgKeys[n - 1] || q(T.days >= n); }
@@ -2338,7 +2342,13 @@
      회원 노트는 그걸 받아서 내 횟수만 지금 폰 기록으로 바꿔 순위를 다시 셈. 이름은 가운데 글자 O */
   var RK_LS = "ptnote:rank", RK = null;
   try { RK = JSON.parse(localStorage.getItem(RK_LS) || "null"); } catch (e) {}
+  /* 이달의 출석왕 (2026-11-19 "한 달 동안 1등인 사람이 받는 배지"): 선생님 페이지가 끝난 달마다 1등(동점이면 모두)을 pub:all:rankwin = {at, w:{"YYYY-MM":[주소]}} 로 올림 → 배지 king */
+  var RKW_LS = "ptnote:rankwin", RKW = null;
+  try { RKW = JSON.parse(localStorage.getItem(RKW_LS) || "null"); } catch (e) {}
+  function rkWins() { var w = (RKW && RKW.w) || {}; return Object.keys(w).filter(function (m) { return Array.isArray(w[m]) && w[m].indexOf(SLUG) >= 0; }).sort(); }
   function rkServer(kv) {
+    var wv = kv && kv["pub:all:rankwin"];
+    if (wv && wv.w && typeof wv.w === "object") { RKW = wv; try { localStorage.setItem(RKW_LS, JSON.stringify(wv)); } catch (e) {} }
     var v = kv && kv["pub:all:rank"] || null;
     if (!v || JSON.stringify(v) === JSON.stringify(RK)) return;
     RK = v; try { localStorage.setItem(RK_LS, JSON.stringify(v)); } catch (e) {}
