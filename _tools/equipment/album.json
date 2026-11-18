@@ -51,6 +51,11 @@
     "img": "m/aeran-bsq16i/media/form-goblet-squat/step1.jpg"
    },
    {
+    "member": "이지환",
+    "id": "goblet-squat",
+    "img": "m/jihwan-t7m4qe/media/form-goblet-squat/step1.jpg"
+   },
+   {
     "member": "정미경",
     "id": "goblet-squat",
     "img": "m/mikyung-7rq2vd/media/form-goblet-squat/step1.jpg"
@@ -639,6 +644,22 @@
    }
   ]
  },
+ "핵프레스": {
+  "part": "하체",
+  "en": "Hack Press",
+  "shots": [
+   {
+    "member": "이지환",
+    "id": "hack-press",
+    "img": "m/jihwan-t7m4qe/media/form-hack-press/step1.jpg"
+   },
+   {
+    "member": "서경진",
+    "id": "hack-press",
+    "img": "m/kyeongjin-bkwzy9/media/form-hack-press/step1.jpg"
+   }
+  ]
+ },
  "뉴텍 엠토처 시티드 로우": {
   "part": "등",
   "en": "Seated Row Machine",
@@ -825,17 +846,6 @@
     "member": "정미경",
     "id": "hip-thrust",
     "img": "m/mikyung-7rq2vd/media/form-hip-thrust/step1.jpg"
-   }
-  ]
- },
- "핵프레스": {
-  "part": "하체",
-  "en": "Hack Press",
-  "shots": [
-   {
-    "member": "서경진",
-    "id": "hack-press",
-    "img": "m/kyeongjin-bkwzy9/media/form-hack-press/step1.jpg"
    }
   ]
  },

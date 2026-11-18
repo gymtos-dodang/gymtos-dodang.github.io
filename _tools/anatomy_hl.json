@@ -1767,5 +1767,42 @@
 "glute_med": "P",
 "glute_max": "S"
 }
+},
+"m/jihwan-t7m4qe/media/form-goblet-squat/anatomy.png": {
+"sex": "M",
+"front": {
+"abs": "S",
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P",
+"add_long": "S",
+"add_mag": "S"
+},
+"back": {
+"erector": "S",
+"glute_max": "P",
+"ham_bf": "S",
+"ham_st": "S",
+"erector_thoracic": "S",
+"add_mag": "S"
+}
+},
+"m/jihwan-t7m4qe/media/form-hack-press/anatomy.png": {
+"sex": "M",
+"front": {
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P",
+"pectineus": "S",
+"add_long": "S",
+"add_mag": "S",
+"gracilis": "S"
+},
+"back": {
+"glute_med": "S",
+"glute_max": "S",
+"ham_bf": "S",
+"ham_st": "S"
+}
 }
 }
