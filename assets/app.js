@@ -3,6 +3,25 @@
   "use strict";
   var M = window.MEMBER;
   if (!M) return;
+  /* 2026-11-19 PT 안내서 "체험 폰"(?demo&try — 안내서 안 iframe): 상담 손님이 실제 화면을 눌러 봐도
+     회원님 기록이 바뀌지 않게 — 이 기기 저장은 메모리에만, 창고에는 읽기만 (쓰기·올리기는 막고 ok로 대답) */
+  var TRY = /[?&]demo\b/.test(location.search) && /[?&]try\b/.test(location.search);
+  var localStorage = window.localStorage, fetch = function () { return window.fetch.apply(window, arguments); };
+  if (TRY) {
+    var trMem = { "ptnote:theme": "light", "ptnote:tour": "done" };
+    localStorage = {
+      getItem: function (k) { return Object.prototype.hasOwnProperty.call(trMem, k) ? trMem[k] : null; },
+      setItem: function (k, v) { trMem[k] = String(v); },
+      removeItem: function (k) { delete trMem[k]; },
+      key: function (i) { return Object.keys(trMem)[i] || null; },
+      clear: function () { trMem = {}; }
+    };
+    fetch = function (u, o) {
+      var q = String(u), w = (o && o.method && o.method !== "GET") || (/[?&]a=/.test(q) && !/[?&]a=(inbody|inbody_img)(&|$)/.test(q));
+      if (w) return Promise.resolve({ ok: true, json: function () { return Promise.resolve({ ok: true }); }, text: function () { return Promise.resolve("{}"); } });
+      return window.fetch.apply(window, arguments);
+    };
+  }
   var SCRIPT = document.currentScript;
   var BASE = SCRIPT ? SCRIPT.src.replace(/app\.js(\?.*)?$/, "") : "../../assets/";
   var THEME = M.sex === "F" ? "F" : "M";
@@ -406,7 +425,7 @@
   /* 선생님 페이지에서 들어왔으면 위 막대에 "← 회원 목록" 버튼 (선생님 휴대폰에만 보임) */
   try {
     var coachPath = sessionStorage.getItem("ptcoach") || localStorage.getItem("ptcoach");
-    if (coachPath) COACH_MODE = true;
+    if (coachPath && !TRY) COACH_MODE = true;
     var barIn = document.querySelector(".bar-in");
     if (DEMO_BACK && barIn) {
       var gb = document.createElement("a");
@@ -943,7 +962,7 @@
       attRefresh();
       var nb = document.getElementById("attBtn");
       if (nb && turnOn) { nb.classList.add("pop"); try { navigator.vibrate && navigator.vibrate([18, 40, 26]); } catch (e) {} }
-      if (!ATT_API) return;
+      if (!ATT_API || TRY) return;
       if (nb) nb.classList.add("saving");
       attCall("&a=" + (turnOn ? "check" : "uncheck") + "&d=" + key + "&t=" + encodeURIComponent(tm) + "&n=" + encodeURIComponent(M._real || M.name))
         .then(function () { attRefresh(); badgeCheck(); })

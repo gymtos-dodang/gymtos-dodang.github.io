@@ -102,6 +102,13 @@ body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; touch-act
 .tbtn, .cnt { background: #fff; box-shadow: 0 2px 10px rgba(0, 0, 0, .25); }
 .dots button.on { background: #E1141E; }
 .nav { background: #fff; }
+/* 2026-11-19 2쪽 체험 폰 */
+.tprow{display:flex;align-items:center;gap:12px;transition:box-shadow .2s, transform .2s}
+.tprow .tpt{flex:1}
+.tprow .tpgo{margin-left:auto;flex:none;font-size:20px;font-weight:700;opacity:.75;white-space:nowrap}
+.tprow.on{background:#121214!important;box-shadow:0 10px 24px rgba(18,18,20,.25)}
+.tprow.on .tpgo{opacity:1;color:#FF4F57}
+.tprow:focus-visible{outline:4px solid #121214;outline-offset:3px}
 </style>
 </head>
 <body>
@@ -139,23 +146,17 @@ body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; touch-act
 <p style="font-family:Oswald, 'Noto Sans KR', sans-serif;font-size:26px;font-weight:600;letter-spacing:5px;color:#D6204F">SOUND FAMILIAR? → PT 노트로 해결</p>
 <h2 style="font-size:72px;font-weight:900;line-height:1.15;letter-spacing:-1px;color:#121214">혹시 이런 고민 있으세요?</h2>
 </div>
-<div style="display:flex;gap:48px;align-items:start">
+<div style="display:flex;gap:40px;align-items:center">
 <div style="flex:1;display:flex;flex-direction:column;gap:16px">
-<div style="display:flex;gap:16px;align-items:center"><p style="width:440px;font-size:28px;line-height:1.35;color:#1E2330;background:#FFFFFF;border-radius:28px 28px 28px 6px;padding:12px 24px">“뭘 해야 할지 모르겠어요”</p><p style="flex:1;font-size:28px;line-height:1.35;color:#FFF6FA;background:#D6204F;border-radius:28px 28px 6px 28px;padding:12px 24px">요일별 <b>루틴일지</b>에 무게까지 · <a class="demo" href="/m/jihun-g9kgdo/?demo#routine">보기 →</a></p></div>
-<div style="display:flex;gap:16px;align-items:center"><p style="width:440px;font-size:28px;line-height:1.35;color:#1E2330;background:#FFFFFF;border-radius:28px 28px 28px 6px;padding:12px 24px">“자세가 맞는지 헷갈려요”</p><p style="flex:1;font-size:28px;line-height:1.35;color:#FFF6FA;background:#D6204F;border-radius:28px 28px 6px 28px;padding:12px 24px">수업 영상으로 <b>자세 복습지</b> · <a class="demo" href="/m/jihun-g9kgdo/?demo#form-seated-face-pull">보기 →</a></p></div>
-<div style="display:flex;gap:16px;align-items:center"><p style="width:440px;font-size:28px;line-height:1.35;color:#1E2330;background:#FFFFFF;border-radius:28px 28px 28px 6px;padding:12px 24px">“뭘 먹어야 할지 모르겠어요”</p><p style="flex:1;font-size:28px;line-height:1.35;color:#FFF6FA;background:#D6204F;border-radius:28px 28px 6px 28px;padding:12px 24px">끼니별 <b>맞춤 식단</b>을 그림으로 · <a class="demo" href="/m/jihwan-t7m4qe/?demo#diet">보기 →</a></p></div>
-<div style="display:flex;gap:16px;align-items:center"><p style="width:440px;font-size:28px;line-height:1.35;color:#1E2330;background:#FFFFFF;border-radius:28px 28px 28px 6px;padding:12px 24px">“혼자 하면 작심삼일이에요”</p><p style="flex:1;font-size:28px;line-height:1.35;color:#FFF6FA;background:#D6204F;border-radius:28px 28px 6px 28px;padding:12px 24px"><b>출석 도장·배지</b>로 매일 확인 · <a class="demo" href="/m/jihun-g9kgdo/?demo#goal">보기 →</a></p></div>
-<div style="display:flex;gap:16px;align-items:center"><p style="width:440px;font-size:28px;line-height:1.35;color:#1E2330;background:#FFFFFF;border-radius:28px 28px 28px 6px;padding:12px 24px">“변화가 안 보여요”</p><p style="flex:1;font-size:28px;line-height:1.35;color:#FFF6FA;background:#D6204F;border-radius:28px 28px 6px 28px;padding:12px 24px"><b>인바디</b>로 지난달과 비교 · <a class="demo" href="/m/jihun-g9kgdo/?demo#body">보기 →</a></p></div>
-<div style="display:flex;gap:16px;align-items:center"><p style="width:440px;font-size:28px;line-height:1.35;color:#1E2330;background:#FFFFFF;border-radius:28px 28px 28px 6px;padding:12px 24px">“허리·무릎이 아파요”</p><p style="flex:1;font-size:28px;line-height:1.35;color:#FFF6FA;background:#D6204F;border-radius:28px 28px 6px 28px;padding:12px 24px"><b>재활 트레이닝</b>으로 안 아픈 동작부터</p></div>
+<div style="display:flex;gap:16px;align-items:center"><p style="width:440px;font-size:28px;line-height:1.35;color:#1E2330;background:#FFFFFF;border-radius:28px 28px 28px 6px;padding:12px 24px">“뭘 해야 할지 모르겠어요”</p><button type="button" class="tprow" data-try="routine" style="flex:1;text-align:left;border:0;cursor:pointer;font-family:inherit;font-size:28px;line-height:1.35;color:#FFF6FA;background:#D6204F;border-radius:28px 28px 6px 28px;padding:12px 24px"><span class="tpt">요일별 <b>루틴일지</b>에 무게까지</span><span class="tpgo" aria-hidden="true">눌러 보기 ›</span></button></div>
+<div style="display:flex;gap:16px;align-items:center"><p style="width:440px;font-size:28px;line-height:1.35;color:#1E2330;background:#FFFFFF;border-radius:28px 28px 28px 6px;padding:12px 24px">“자세가 맞는지 헷갈려요”</p><button type="button" class="tprow" data-try="form" style="flex:1;text-align:left;border:0;cursor:pointer;font-family:inherit;font-size:28px;line-height:1.35;color:#FFF6FA;background:#D6204F;border-radius:28px 28px 6px 28px;padding:12px 24px"><span class="tpt">수업 영상으로 <b>자세 복습지</b></span><span class="tpgo" aria-hidden="true">눌러 보기 ›</span></button></div>
+<div style="display:flex;gap:16px;align-items:center"><p style="width:440px;font-size:28px;line-height:1.35;color:#1E2330;background:#FFFFFF;border-radius:28px 28px 28px 6px;padding:12px 24px">“뭘 먹어야 할지 모르겠어요”</p><button type="button" class="tprow" data-try="diet" style="flex:1;text-align:left;border:0;cursor:pointer;font-family:inherit;font-size:28px;line-height:1.35;color:#FFF6FA;background:#D6204F;border-radius:28px 28px 6px 28px;padding:12px 24px"><span class="tpt">회원님 <b>맞춤 선택 식단</b></span><span class="tpgo" aria-hidden="true">눌러 보기 ›</span></button></div>
+<div style="display:flex;gap:16px;align-items:center"><p style="width:440px;font-size:28px;line-height:1.35;color:#1E2330;background:#FFFFFF;border-radius:28px 28px 28px 6px;padding:12px 24px">“혼자 하면 작심삼일이에요”</p><button type="button" class="tprow" data-try="goal" style="flex:1;text-align:left;border:0;cursor:pointer;font-family:inherit;font-size:28px;line-height:1.35;color:#FFF6FA;background:#D6204F;border-radius:28px 28px 6px 28px;padding:12px 24px"><span class="tpt"><b>출석 도장·배지</b>로 매일 확인</span><span class="tpgo" aria-hidden="true">눌러 보기 ›</span></button></div>
+<div style="display:flex;gap:16px;align-items:center"><p style="width:440px;font-size:28px;line-height:1.35;color:#1E2330;background:#FFFFFF;border-radius:28px 28px 28px 6px;padding:12px 24px">“변화가 안 보여요”</p><button type="button" class="tprow" data-try="body" style="flex:1;text-align:left;border:0;cursor:pointer;font-family:inherit;font-size:28px;line-height:1.35;color:#FFF6FA;background:#D6204F;border-radius:28px 28px 6px 28px;padding:12px 24px"><span class="tpt"><b>인바디</b>로 지난달과 비교</span><span class="tpgo" aria-hidden="true">눌러 보기 ›</span></button></div>
+<div style="display:flex;gap:16px;align-items:center"><p style="width:440px;font-size:28px;line-height:1.35;color:#1E2330;background:#FFFFFF;border-radius:28px 28px 28px 6px;padding:12px 24px">“허리·무릎이 아파요”</p><button type="button" class="tprow" data-try="rehab" style="flex:1;text-align:left;border:0;cursor:pointer;font-family:inherit;font-size:28px;line-height:1.35;color:#FFF6FA;background:#D6204F;border-radius:28px 28px 6px 28px;padding:12px 24px"><span class="tpt"><b>재활 트레이닝</b>으로 안 아픈 동작부터</span><span class="tpgo" aria-hidden="true">눌러 보기 ›</span></button></div>
 <p style="font-size:28px;line-height:1.4;font-weight:700;color:#F5F3F3;background:#121214;border-radius:20px;padding:16px 28px">이 모든 게 회원님 폰 하나에 <span style="color:#FF4F57">나만의 PT 노트</span>로 · 앱 설치 없이 카톡 링크 하나</p>
 </div>
-<div style="display:flex;flex-direction:column;align-items:center;gap:12px">
-<div style="display:flex;gap:24px">
-<img src="guide/note-routine.jpg?v=1119" alt="PT 노트 루틴 화면: 요일별 운동 아이콘과 이번 주 계획" style="width:230px;height:497px;object-fit:cover;border-radius:28px;border:4px solid #121214;box-shadow:0px 18px 36px rgba(18, 18, 20,0.25)">
-<img src="guide/note-diet.jpg?v=1119" alt="PT 노트 식단 화면: 하루 4끼 메뉴" style="width:230px;height:497px;object-fit:cover;border-radius:28px;border:4px solid #121214;box-shadow:0px 18px 36px rgba(18, 18, 20,0.25)">
-</div>
-<p style="font-size:24px;color:#6A7180">실제 회원님 PT 노트 · 이름은 가렸어요</p>
-</div>
+<div id="tpPad" style="flex:none"></div>
 </div>
 </section>
 <section class="slide" data-id="journey" aria-label="3쪽" style="background:#F5F3F3">
@@ -366,6 +367,7 @@ body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; touch-act
   <button class="nav" type="button" id="next" aria-label="다음 쪽">→</button>
 </div>
 <script src="members.js"></script>
+<script src="guide/try.js?v=1119"></script>
 <script>
 (function () {
   try { sessionStorage.removeItem("ptdemo"); } catch (e) {}
@@ -403,6 +405,17 @@ body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; touch-act
     if (sx === null) return; var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy; sx = null;
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) go(cur + (dx < 0 ? 1 : -1));
   }, { passive: true });
+  /* 2026-11-19 2쪽 체험 폰: 왼쪽 빨간 칸을 누르면 오른쪽 실제 폰 화면이 그 기능으로 바뀜 (화면은 직접 눌러 볼 수 있음, guide/try.js) */
+  var tp = null, tpRows = Array.prototype.slice.call(document.querySelectorAll(".tprow"));
+  function tpSet(k) {
+    if (!window.PTTry) return;
+    if (!tp) tp = PTTry.mount(document.getElementById("tpPad"), 330);
+    tpRows.forEach(function (r) { r.classList.toggle("on", r.getAttribute("data-try") === k); });
+    tp.set(k);
+  }
+  tpRows.forEach(function (r) { r.addEventListener("click", function () { tpSet(r.getAttribute("data-try")); }); });
+  var tpGo = go; go = function (i) { tpGo(i); if (slides[cur] && slides[cur].getAttribute("data-id") === "howto" && !tp) tpSet("routine"); };
+  if (slides[cur] && slides[cur].getAttribute("data-id") === "howto") tpSet("routine");
   /* "보기 →": 실제 회원 PT 노트(이름 가림), 위 "← PT 안내서"로 이 쪽에 돌아옴 */
   Array.prototype.forEach.call(document.querySelectorAll("a.demo"), function (a) {
     a.addEventListener("click", function () { try { sessionStorage.setItem("ptdemo", location.pathname + "#p" + (cur + 1)); } catch (e) {} });

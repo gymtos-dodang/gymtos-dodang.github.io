@@ -464,10 +464,10 @@ html, body { background: #141416; }
     <div class="wq">
       <button type="button" class="go" data-go="routine"><img class="th" src="guide/t3-routine.jpg?v=1119" alt="루틴일지 화면: 요일별 운동 아이콘"><q>“뭘 해야 할지 모르겠어요”</q><b>요일별 루틴일지에 무게까지 <i>보기 →</i></b></button>
       <button type="button" class="go" data-go="form"><img class="th" src="guide/t3-form.jpg?v=1119" alt="자세 복습지 화면: 오늘 수업 영상"><q>“자세가 맞는지 헷갈려요”</q><b>수업 영상으로 자세 복습지 <i>보기 →</i></b></button>
-      <button type="button" class="go" data-go="diet"><img class="th" src="guide/t3-diet.jpg?v=1119" alt="식단 화면: 끼니별 음식 그림"><q>“뭘 먹어야 할지 모르겠어요”</q><b>끼니별 맞춤 식단을 그림으로 <i>보기 →</i></b></button>
+      <button type="button" class="go" data-go="diet"><img class="th" src="guide/t3-diet.jpg?v=1119b" alt="식단 화면: 목적에 맞춰 음식을 골라 짜는 내 식단"><q>“뭘 먹어야 할지 모르겠어요”</q><b>회원님 맞춤 선택 식단 <i>보기 →</i></b></button>
       <button type="button" class="go" data-go="goal"><img class="th" src="guide/t3-goal.jpg?v=1119" alt="PT 노트 홈 화면: 오늘 출석 버튼"><q>“혼자 하면 작심삼일이에요”</q><b>출석 도장·배지로 매일 확인 <i>보기 →</i></b></button>
       <button type="button" class="go" data-go="body"><img class="th" src="guide/t3-body.jpg?v=1119" alt="인바디 체지방률 기록 그래프"><q>“변화가 안 보여요”</q><b>인바디로 지난달과 비교 <i>보기 →</i></b></button>
-      <div><img class="th" src="guide/t3-rehab.jpg?v=1119" alt="자극 부위 근육 그림"><q>“허리·무릎이 아파요”</q><b>재활 트레이닝으로 안 아픈 동작부터</b></div>
+      <button type="button" class="go" data-go="rehab"><img class="th" src="guide/t3-rehab.jpg?v=1119" alt="자극 부위 근육 그림"><q>“허리·무릎이 아파요”</q><b>재활 트레이닝으로 안 아픈 동작부터 <i>보기 →</i></b></button>
     </div>
     <div class="cta slim"><b>이 모든 게 회원님 폰 하나에 <em>나만의 PT 노트</em>로</b><span>앱 설치 없이 카톡 링크 하나</span></div>
   </div></section>
@@ -567,6 +567,7 @@ html, body { background: #141416; }
 </div>
 
 <script src="members.js"></script>
+<script src="guide/try.js?v=1119"></script>
 <script>
 (function () {
   "use strict";
@@ -751,6 +752,8 @@ html, body { background: #141416; }
   }
   Array.prototype.forEach.call(document.querySelectorAll(".go"), function (b) {
     b.addEventListener("click", function () {
+      /* 2026-11-19: 다른 화면으로 넘어가지 않고, 아래에서 올라오는 창에 실제 폰 화면(눌러 볼 수 있음) + 짧은 설명 */
+      if (window.PTTry) { PTTry.sheet(b.getAttribute("data-go")); return; }
       var url = pickFor(b.getAttribute("data-go"));
       if (!url) { b.classList.add("wait"); setTimeout(function () { b.classList.remove("wait"); }, 1200); return; }
       try { sessionStorage.setItem("ptdemo", location.pathname + "#p" + (cur + 1)); } catch (e) {}
