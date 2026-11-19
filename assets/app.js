@@ -73,7 +73,7 @@
     "스트레이트 암 풀다운": "straight_arm_pulldown", "뉴텍 시티드 로우 머신": "seated_row_machine", "뉴텍 엠토처 시티드 로우": "mtorture_row", "엠토처 시티드 로우": "mtorture_row", "시티드 로우 머신": "seated_row_machine", "시티드 로우": "seated_row_machine",
     "케이블 시티드 로우": "cable_seated_row", "언더그립 시티드 로우": "underhand_seated_row", "원암 덤벨 로우": "one_arm_row",
     "해머스트렝스 로우로우": "low_row", "로우로우": "low_row", "하이 로우": "high_row", "뉴텍 버티컬 풀다운": "vertical_pulldown", "버티컬 풀다운 머신": "vertical_pulldown", "버티컬 풀다운": "vertical_pulldown",
-    "케이블 풀오버": "cable_pullover", "시티드 페이스풀": "face_pull", "페이스풀": "standing_face_pull", "티바로우 머신": "tbar_row", "프론트 로우 머신": "front_row", "리버스 펙덱": "reverse_pec_deck", "리버스 펙덱 플라이": "reverse_pec_deck", "케이블 체스트 프레스": "cable_chest_press",
+    "케이블 풀오버": "cable_pullover", "시티드 페이스풀": "face_pull", "페이스풀": "standing_face_pull", "스탠딩 페이스풀": "standing_face_pull", "티바로우 머신": "tbar_row", "프론트 로우 머신": "front_row", "리버스 펙덱": "reverse_pec_deck", "리버스 펙덱 플라이": "reverse_pec_deck", "케이블 체스트 프레스": "cable_chest_press",
     "어시스트 친업": "assisted_chin_up", "어시스티드 친업": "assisted_chin_up", "어시스트 풀업": "assisted_chin_up", "해머 로우로우": "low_row",
     "레그 익스텐션": "leg_extension", "이너타이": "inner_thigh", "아웃타이 머신": "outer_thigh_pin", "플레이트 아웃타이": "outer_thigh_plate",
     "아웃타이": "outer_thigh", "고블릿 스쿼트": "goblet_squat", "핵스쿼트": "hack_squat", "스미스 스쿼트": "smith_squat",
@@ -2875,6 +2875,9 @@
       '<div class="keypoint"><small>KEY POINT</small><p>' + esc(f.key_point) + '</p></div></div>';
 
     h += '<section>' + head("01", "오늘 내 자세", "영상으로 확인해요") +
+      /* 2026-11-19 "영상 측면 추가" — data.js 복습지에 views:[{label:"정면",file:"form"},{label:"측면",file:"side"}] 넣으면 영상 위에 바꾸기 버튼(.vw-seg). 파일은 <file>.mp4·<file>.webp·<file>-poster.jpg(form은 poster.jpg) */
+      (f.views && f.views.length > 1 ? '<div class="vw-seg" role="group" aria-label="영상 방향">' + f.views.map(function (w, i) {
+        return '<button type="button" class="vw-b" data-vf="' + esc(w.file) + '" aria-pressed="' + (i ? "false" : "true") + '">' + esc(w.label) + '</button>'; }).join("") + '</div>' : '') +
       '<div class="player"><video id="main" poster="' + esc(D) + 'poster.jpg" autoplay muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback x-webkit-airplay="deny" preload="auto" data-src="' + esc(D) + 'form.mp4" data-gif="' + esc(D) + 'form.webp"></video>' +
       '<img id="gifFallback" alt="오늘 수업 영상 (반복 재생)" hidden>' +
       '<span class="chip">▶ 오늘 수업 영상</span><button class="tapper" id="tap" type="button" aria-label="영상 재생 / 멈춤"></button>' +
@@ -2952,6 +2955,18 @@
       document.getElementById("hint").textContent = "영상이 계속 반복돼요";
     }
     v.addEventListener("error", function () { if (!started) swapToGif(); });
+    /* 2026-11-19 정면/측면 바꾸기 */
+    var vwB = document.querySelectorAll(".vw-b");
+    Array.prototype.forEach.call(vwB, function (b) {
+      b.addEventListener("click", function () {
+        if (b.getAttribute("aria-pressed") === "true") return;
+        var fl = b.getAttribute("data-vf"), base = v.getAttribute("data-src").replace(/[^\/]*$/, ""), rate = v.playbackRate || 1;
+        Array.prototype.forEach.call(vwB, function (o) { o.setAttribute("aria-pressed", String(o === b)); });
+        v.setAttribute("poster", base + (fl === "form" ? "poster" : fl + "-poster") + ".jpg");
+        if (swapped) { var g = document.getElementById("gifFallback"); g.src = base + fl + ".webp"; return; }
+        v.src = base + fl + ".mp4"; v.playbackRate = rate; tryPlay();
+      });
+    });
     var src = v.getAttribute("data-src");
     if (window.fetch && window.URL && URL.createObjectURL) {
       fetch(src).then(function (r) { if (!r.ok) throw new Error("load"); return r.blob(); })
@@ -3522,7 +3537,7 @@
      선생님 보기(COACH_MODE)에서 루틴 탭 위 "✎ 루틴 고치기" → 종목·세트·팁·순서·부위 이름을 고치고
      "저장 · 바로 반영" → 출석 창고(POST routine_save, 선생님 열쇠 확인) → 회원님이 노트를 열면 바로 바뀜.
      열쇠는 선생님 페이지 주소 끝 #key=… 로 한 번 열면 그 휴대폰에 저장(localStorage ptkey). */
-  var RT_EN = {"고블릿 스쿼트":"Goblet Squat","이너타이":"Inner Thigh","아웃타이 머신":"Outer Thigh","레그프레스":"Leg Press","시티드 페이스풀":"Seated Face Pull","랫풀다운":"Lat Pulldown","뉴텍 시티드 로우 머신":"Seated Row","펙덱 플라이":"Pec Deck Fly","체스트 프레스 머신":"Chest Press","인클라인 덤벨 프레스":"Incline DB Press","케이블 푸쉬다운":"Cable Pushdown","플레이트 아웃타이":"Outer Thigh · Plate","힙쓰러스트 머신":"Hip Thrust","레그프레스 (발 높게)":"Leg Press · High","사이드 레터럴 레이즈 머신":"Standing Machine","숄더 프레스 머신":"Shoulder Press","사이드 레터럴 레이즈":"Lateral Raise","리버스 펙덱":"Reverse Pec Deck","케이블 시티드 로우":"Cable Seated Row","덤벨 컬":"Dumbbell Curl","오버헤드 익스텐션":"Overhead Ext.","벤치프레스":"Bench Press","체스트 프레스":"Chest Press","인클라인 프레스 머신":"Incline Machine Press","레그 익스텐션":"Leg Extension","스미스 스쿼트":"Smith Squat","라잉 레그컬":"Lying Leg Curl","스트레이트 암 풀다운":"Straight Arm Pulldown","원암 덤벨 로우":"One Arm DB Row","케이블 풀오버":"Cable Pullover","덤벨 슈러그":"DB Shrug","스미스 인클라인 프레스":"Smith Incline Press","덤벨 RDL":"Dumbbell RDL","힙 익스텐션":"Hip Extension","케이블 힙 킥백":"Cable Kickback","플랫 덤벨프레스":"Flat DB Press","핵스쿼트":"Hack Squat","해머 컬":"Hammer Curl","해머스트렝스 로우로우":"Low Row","언더그립 시티드 로우":"Underhand Seated Row","덤벨 숄더 프레스":"DB Shoulder Press","사이드 레터럴 레이즈 (덤벨)":"Lateral Raise","언더그립 랫풀다운":"Underhand Pulldown","뉴텍 체스트 프레스 머신":"Lying Chest Press","시티드 로우":"Seated Row","숄더 프레스":"Shoulder Press","플랭크":"Plank","스미스 슈러그":"Smith Shrug","스미스 숄더 프레스":"Smith Shoulder Press","인클라인 덤벨 컬":"Incline DB Curl","덤벨 오버헤드 익스텐션":"DB Overhead Ext","스미스 벤치프레스":"Smith Bench Press","랙 밴드 푸쉬업":"Rack Band Push-up","어시스트 친업":"Assisted Chin-up","리버스 펙덱 플라이":"Reverse Pec Deck Fly","케이블 체스트 프레스":"Cable Chest Press","뉴텍 엠토처 시티드 로우":"Seated Row Machine","핵프레스":"Hack Press","스파이더 컬":"Spider Curl","클로즈그립 랫풀다운":"Close-grip Pulldown","티바로우 머신":"T-bar Row Machine","페이스풀":"Face Pull","와이드 풀다운":"Wide Pulldown","프론트 로우 머신":"Front Row Machine","프리처 컬 머신":"Preacher Curl Machine","비하인드 넥프레스":"Behind Neck Press"};
+  var RT_EN = {"고블릿 스쿼트":"Goblet Squat","이너타이":"Inner Thigh","아웃타이 머신":"Outer Thigh","레그프레스":"Leg Press","시티드 페이스풀":"Seated Face Pull","랫풀다운":"Lat Pulldown","뉴텍 시티드 로우 머신":"Seated Row","펙덱 플라이":"Pec Deck Fly","체스트 프레스 머신":"Chest Press","인클라인 덤벨 프레스":"Incline DB Press","케이블 푸쉬다운":"Cable Pushdown","플레이트 아웃타이":"Outer Thigh · Plate","힙쓰러스트 머신":"Hip Thrust","레그프레스 (발 높게)":"Leg Press · High","사이드 레터럴 레이즈 머신":"Standing Machine","숄더 프레스 머신":"Shoulder Press","사이드 레터럴 레이즈":"Lateral Raise","리버스 펙덱":"Reverse Pec Deck","케이블 시티드 로우":"Cable Seated Row","덤벨 컬":"Dumbbell Curl","오버헤드 익스텐션":"Overhead Ext.","벤치프레스":"Bench Press","체스트 프레스":"Chest Press","인클라인 프레스 머신":"Incline Machine Press","레그 익스텐션":"Leg Extension","스미스 스쿼트":"Smith Squat","라잉 레그컬":"Lying Leg Curl","스트레이트 암 풀다운":"Straight Arm Pulldown","원암 덤벨 로우":"One Arm DB Row","케이블 풀오버":"Cable Pullover","덤벨 슈러그":"DB Shrug","스미스 인클라인 프레스":"Smith Incline Press","덤벨 RDL":"Dumbbell RDL","힙 익스텐션":"Hip Extension","케이블 힙 킥백":"Cable Kickback","플랫 덤벨프레스":"Flat DB Press","핵스쿼트":"Hack Squat","해머 컬":"Hammer Curl","해머스트렝스 로우로우":"Low Row","언더그립 시티드 로우":"Underhand Seated Row","덤벨 숄더 프레스":"DB Shoulder Press","사이드 레터럴 레이즈 (덤벨)":"Lateral Raise","언더그립 랫풀다운":"Underhand Pulldown","뉴텍 체스트 프레스 머신":"Lying Chest Press","시티드 로우":"Seated Row","숄더 프레스":"Shoulder Press","플랭크":"Plank","스미스 슈러그":"Smith Shrug","스미스 숄더 프레스":"Smith Shoulder Press","인클라인 덤벨 컬":"Incline DB Curl","덤벨 오버헤드 익스텐션":"DB Overhead Ext","스미스 벤치프레스":"Smith Bench Press","랙 밴드 푸쉬업":"Rack Band Push-up","어시스트 친업":"Assisted Chin-up","리버스 펙덱 플라이":"Reverse Pec Deck Fly","케이블 체스트 프레스":"Cable Chest Press","뉴텍 엠토처 시티드 로우":"Seated Row Machine","핵프레스":"Hack Press","스파이더 컬":"Spider Curl","클로즈그립 랫풀다운":"Close-grip Pulldown","티바로우 머신":"T-bar Row Machine","페이스풀":"Face Pull","스탠딩 페이스풀":"Standing Face Pull","와이드 풀다운":"Wide Pulldown","프론트 로우 머신":"Front Row Machine","프리처 컬 머신":"Preacher Curl Machine","비하인드 넥프레스":"Behind Neck Press"};
   var RT_PART_EN = {"하체":"Legs","등":"Back","가슴":"Chest","엉덩이":"Glute","어깨":"Shoulder","등 · 팔":"Back & Arms","가슴 · 팔":"Chest & Arms","로테이션":"Free Pick","휴식":"Rest","힙 A":"Glute A","가슴·어깨":"Chest · Shoulder","힙 B":"Glute B","힙 C":"Glute C","어깨·팔":"Shoulder · Arm","가슴·등":"Chest · Back","하체 B":"Legs B","등 A":"Back A","하체 A":"Legs A","등 B":"Back B","어깨 · 팔":"Shoulder & Arms","유산소":"Cardio","등·팔":"Back · Arms","팔":"Arm","가슴·삼두":"Chest · Triceps"};
   var CAN_EDIT = COACH_MODE && !DEMO;
   var RT_EDIT = null;   /* 고치는 중이면 { saved: 고치기 전 루틴, dirty: 고친 횟수 } */
@@ -3628,7 +3643,7 @@
   var RT_CAT = [
     ["가슴", ["벤치프레스", "플랫 덤벨프레스", "인클라인 덤벨 프레스", "스미스 벤치프레스", "스미스 인클라인 프레스", "인클라인 프레스 머신", "체스트 프레스 머신", "뉴텍 체스트 프레스 머신", "펙덱 플라이", "케이블 체스트 프레스", "랙 밴드 푸쉬업"]],
     ["등", ["랫풀다운", "와이드 풀다운", "클로즈그립 랫풀다운", "언더그립 랫풀다운", "어시스트 친업", "뉴텍 버티컬 풀다운", "뉴텍 시티드 로우 머신", "뉴텍 엠토처 시티드 로우", "케이블 시티드 로우", "언더그립 시티드 로우", "해머스트렝스 로우로우", "프론트 로우 머신", "티바로우 머신", "원암 덤벨 로우", "스미스 벤트오버 로우", "스트레이트 암 풀다운", "케이블 풀오버", "덤벨 슈러그", "스미스 슈러그", "백 익스텐션"]],
-    ["어깨", ["숄더 프레스 머신", "비하인드 넥프레스", "덤벨 숄더 프레스", "스미스 숄더 프레스", "사이드 레터럴 레이즈 머신", "사이드 레터럴 레이즈", "시티드 레터럴 레이즈", "시티드 페이스풀", "페이스풀", "리버스 펙덱"]],
+    ["어깨", ["숄더 프레스 머신", "비하인드 넥프레스", "덤벨 숄더 프레스", "스미스 숄더 프레스", "사이드 레터럴 레이즈 머신", "사이드 레터럴 레이즈", "시티드 레터럴 레이즈", "시티드 페이스풀", "페이스풀", "스탠딩 페이스풀", "리버스 펙덱"]],
     ["팔", ["덤벨 컬", "해머 컬", "인클라인 덤벨 컬", "스파이더 컬", "프리처 컬 머신", "케이블 푸쉬다운", "오버헤드 익스텐션", "덤벨 오버헤드 익스텐션"]],
     ["하체", ["레그 익스텐션", "이너타이", "아웃타이 머신", "플레이트 아웃타이", "레그프레스", "핵프레스", "핵스쿼트", "스미스 스쿼트", "고블릿 스쿼트", "라잉 레그컬", "덤벨 RDL"]],
     ["엉덩이", ["힙쓰러스트 머신", "케이블 힙 킥백", "힙 익스텐션"]],

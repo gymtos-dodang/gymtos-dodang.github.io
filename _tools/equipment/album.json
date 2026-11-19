@@ -472,6 +472,11 @@
     "img": "m/jihwan-t7m4qe/media/form-smith-incline-press/step1.jpg"
    },
    {
+    "member": "김지수",
+    "id": "smith-incline-press",
+    "img": "m/jisu-480xne/media/form-smith-incline-press/step1.jpg"
+   },
+   {
     "member": "최용민 · 고은성",
     "id": "smith-incline-press",
     "img": "m/yongmin-eunseong-1mwau5/media/form-smith-incline-press/step1.jpg"
@@ -527,6 +532,38 @@
     "member": "어순래",
     "id": "chest-press-machine",
     "img": "m/sunrae-c7yvid/media/form-chest-press-machine/step1.jpg"
+   },
+   {
+    "member": "한동현",
+    "id": "nutek-chest-press",
+    "img": "m/dyn/donghyun/media/form-nutek-chest-press/step1.jpg"
+   }
+  ]
+ },
+ "숄더 프레스 머신": {
+  "part": "어깨",
+  "en": "Shoulder Press Machine",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "shoulder-press-machine",
+    "img": "m/jihun-g9kgdo/media/form-shoulder-press-machine/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "shoulder-press-machine",
+    "img": "m/jisu-480xne/media/form-shoulder-press-machine/step1.jpg"
+   }
+  ]
+ },
+ "스탠딩 페이스풀": {
+  "part": "등",
+  "en": "Standing Face Pull",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "standing-face-pull",
+    "img": "m/jihun-g9kgdo/media/form-standing-face-pull/step1.jpg"
    }
   ]
  },
@@ -767,9 +804,25 @@
     "img": "m/jinyoung-n73rzx/media/form-incline-press-machine/step1.jpg"
    },
    {
+    "member": "한동현",
+    "id": "incline-press-machine",
+    "img": "m/dyn/donghyun/media/form-incline-press-machine/step1.jpg"
+   },
+   {
     "member": "염승완",
     "id": "incline-press-machine",
     "img": "m/dyn/seungwan/media/form-incline-press-machine/step1.jpg"
+   }
+  ]
+ },
+ "스미스 벤치프레스": {
+  "part": "가슴",
+  "en": "Smith Bench Press",
+  "shots": [
+   {
+    "member": "김지수",
+    "id": "smith-bench-press",
+    "img": "m/jisu-480xne/media/form-smith-bench-press/step1.jpg"
    }
   ]
  },
@@ -813,17 +866,6 @@
     "member": "김지수",
     "id": "cable-chest-press",
     "img": "m/jisu-480xne/media/form-cable-chest-press/step1.jpg"
-   }
-  ]
- },
- "숄더 프레스 머신": {
-  "part": "어깨",
-  "en": "Shoulder Press Machine",
-  "shots": [
-   {
-    "member": "김지수",
-    "id": "shoulder-press-machine",
-    "img": "m/jisu-480xne/media/form-shoulder-press-machine/step1.jpg"
    }
   ]
  },

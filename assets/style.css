@@ -2443,6 +2443,11 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .hib-l { display: flex; justify-content: space-between; gap: 4px; margin-top: 4px; font-size: 11px; color: var(--sub); white-space: nowrap; }
 .hib-l span { font-weight: 700; font-variant-numeric: tabular-nums; }
 
+/* 2026-11-19 복습지 영상 정면/측면 바꾸기 */
+.vw-seg { display: flex; width: 100%; box-sizing: border-box; gap: 6px; max-width: 420px; margin: 0 auto 10px; padding: 4px; border-radius: 999px; background: rgba(0,0,0,.06); }
+.vw-b { flex: 1 1 0; min-width: 0; width: auto; border: 0; border-radius: 999px; padding: 9px 0; font: inherit; font-weight: 700; font-size: 14px; background: transparent; color: var(--ink, #1A1A1E); cursor: pointer; }
+.vw-b[aria-pressed="true"] { background: var(--primary, #E1141E); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -2637,6 +2642,7 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .db-out { background: var(--paper); }
 :where(html:not([data-theme="light"])) .db-seg button { background-image: linear-gradient(160deg, var(--paper), var(--tint)); }
 :where(html:not([data-theme="light"])) .fvs.no { color: var(--sub); }
+:where(html:not([data-theme="light"])) .vw-b[aria-pressed="true"] { background: var(--seal); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -2925,6 +2931,7 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .db-out { background: var(--paper); }
 :where(html[data-theme="dark"]) .db-seg button { background-image: linear-gradient(160deg, var(--paper), var(--tint)); }
 :where(html[data-theme="dark"]) .fvs.no { color: var(--sub); }
+:where(html[data-theme="dark"]) .vw-b[aria-pressed="true"] { background: var(--seal); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {
