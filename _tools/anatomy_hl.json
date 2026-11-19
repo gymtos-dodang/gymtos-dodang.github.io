@@ -1881,19 +1881,15 @@
 "teres_minor": "S"
 }
 },
-"m/dyn/donghyun/media/form-nutek-chest-press/anatomy.png": {
+"m/dyn/donghyun/media/form-pec-deck-fly/anatomy.png": {
 "sex": "M",
 "front": {
 "pec_clav": "P",
 "pec_stern": "P",
 "delt_ant": "S",
-"triceps_long": "S"
+"biceps_short": "S"
 },
-"back": {
-"triceps_long": "S",
-"triceps_med": "S",
-"triceps_lat": "S"
-}
+"back": {}
 },
 "m/dyn/donghyun/media/form-incline-press-machine/anatomy.png": {
 "sex": "M",
