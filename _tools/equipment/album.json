@@ -128,6 +128,11 @@
     "img": "m/sunrae-c7yvid/media/form-pec-deck-fly/step1.jpg"
    },
    {
+    "member": "한동현",
+    "id": "pec-deck-fly",
+    "img": "m/dyn/donghyun/media/form-pec-deck-fly/step1.jpg"
+   },
+   {
     "member": "염승완",
     "id": "pec-deck-fly",
     "img": "m/dyn/seungwan/media/form-pec-deck-fly/step1.jpg"
@@ -322,6 +327,11 @@
     "img": "m/chanyoung-dvrara/media/form-db-shoulder-press/step1.jpg"
    },
    {
+    "member": "서인석",
+    "id": "db-shoulder-press",
+    "img": "m/inseok-02j3ia/media/form-db-shoulder-press/step1.jpg"
+   },
+   {
     "member": "최지훈",
     "id": "db-shoulder-press",
     "img": "m/jihun-g9kgdo/media/form-db-shoulder-press/step1.jpg"
@@ -483,6 +493,38 @@
    }
   ]
  },
+ "사이드 레터럴 레이즈": {
+  "part": "어깨",
+  "en": "DB Lateral Raise",
+  "shots": [
+   {
+    "member": "서인석",
+    "id": "db-lateral-raise",
+    "img": "m/inseok-02j3ia/media/form-db-lateral-raise/step1.jpg"
+   },
+   {
+    "member": "최지훈",
+    "id": "db-lateral-raise",
+    "img": "m/jihun-g9kgdo/media/form-db-lateral-raise/step1.jpg"
+   }
+  ]
+ },
+ "스탠딩 페이스풀": {
+  "part": "등",
+  "en": "Standing Face Pull",
+  "shots": [
+   {
+    "member": "서인석",
+    "id": "standing-face-pull",
+    "img": "m/inseok-02j3ia/media/form-standing-face-pull/step1.jpg"
+   },
+   {
+    "member": "최지훈",
+    "id": "standing-face-pull",
+    "img": "m/jihun-g9kgdo/media/form-standing-face-pull/step1.jpg"
+   }
+  ]
+ },
  "이너타이": {
   "part": "하체",
   "en": "Inner Thigh (Adduction)",
@@ -532,11 +574,6 @@
     "member": "어순래",
     "id": "chest-press-machine",
     "img": "m/sunrae-c7yvid/media/form-chest-press-machine/step1.jpg"
-   },
-   {
-    "member": "한동현",
-    "id": "nutek-chest-press",
-    "img": "m/dyn/donghyun/media/form-nutek-chest-press/step1.jpg"
    }
   ]
  },
@@ -553,17 +590,6 @@
     "member": "김지수",
     "id": "shoulder-press-machine",
     "img": "m/jisu-480xne/media/form-shoulder-press-machine/step1.jpg"
-   }
-  ]
- },
- "스탠딩 페이스풀": {
-  "part": "등",
-  "en": "Standing Face Pull",
-  "shots": [
-   {
-    "member": "최지훈",
-    "id": "standing-face-pull",
-    "img": "m/jihun-g9kgdo/media/form-standing-face-pull/step1.jpg"
    }
   ]
  },
@@ -596,17 +622,6 @@
     "member": "김지수",
     "id": "leg-press",
     "img": "m/jisu-480xne/media/form-leg-press/step1.jpg"
-   }
-  ]
- },
- "사이드 레터럴 레이즈": {
-  "part": "어깨",
-  "en": "DB Lateral Raise",
-  "shots": [
-   {
-    "member": "최지훈",
-    "id": "db-lateral-raise",
-    "img": "m/jihun-g9kgdo/media/form-db-lateral-raise/step1.jpg"
    }
   ]
  },

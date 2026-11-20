@@ -1902,5 +1902,48 @@
 "triceps_long": "S",
 "triceps_lat": "S"
 }
+},
+"m/inseok-02j3ia/media/form-db-lateral-raise/anatomy.png": {
+"sex": "M",
+"front": {
+"trap_up": "S",
+"delt_ant": "S",
+"delt_lat": "P"
+},
+"back": {
+"trap_up": "S",
+"delt_lat": "P",
+"supraspinatus": "S"
+}
+},
+"m/inseok-02j3ia/media/form-db-shoulder-press/anatomy.png": {
+"sex": "M",
+"front": {
+"trap_up": "S",
+"pec_clav": "S",
+"delt_ant": "P",
+"delt_lat": "P",
+"triceps_long": "S"
+},
+"back": {
+"trap_up": "S",
+"delt_post": "S",
+"delt_lat": "P",
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/inseok-02j3ia/media/form-standing-face-pull/anatomy.png": {
+"sex": "M",
+"front": {},
+"back": {
+"trap_mid": "P",
+"trap_low": "S",
+"infraspinatus": "S",
+"delt_post": "P",
+"rhomboid": "P",
+"teres_minor": "S"
+}
 }
 }
