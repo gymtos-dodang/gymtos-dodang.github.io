@@ -5250,7 +5250,7 @@
     L.forEach(function (w) { items = items.concat(w.items || []); steps = steps.concat(w.steps || []); });
     return [{ c: 1, h: "#home", t: "새 기능이 생겼어요 🎉", b: tourName() + "님, PT노트가 업데이트됐어요!", l: items, ok: "보러 가기" }]
       .concat(steps)
-      .concat([{ c: 1, h: "#home", t: "업데이트 둘러보기 끝! 💪", b: "다시 보고 싶으면\n🔔 공지에서 '새 기능 둘러보기'를 누르면 돼요.", ok: "확인" }]);
+      .concat([{ c: 1, h: "#home", t: "업데이트 둘러보기 끝! 💪", b: "다시 보고 싶으면 오른쪽 위 ⚙️ 설정이나\n🔔 공지에서 '새 기능 둘러보기'를 누르면 돼요.", ok: "확인" }]);
   }
   function wnStart(force) {   /* force: true = 최신 소식, "날짜 id" = 그 소식(공지의 '새 기능 둘러보기') */
     var L = force === true ? WN.slice(0, 1) : force ? WN.filter(function (w) { return w.id === force; }) : wnList(); if (!L.length || TOUR_ON) return;
@@ -5272,6 +5272,7 @@
     var E = typeof instEnv === "function" ? instEnv() : { standalone: true }, g = document.getElementById("gearBtn");
     var m = document.createElement("div"); m.id = "gearMenu"; m.className = "gmenu"; m.setAttribute("role", "menu");
     m.innerHTML = '<a href="#home" role="menuitem" data-tour="1"><span>🧭</span><b>앱 사용법 다시 보기</b></a>' +
+      (WN.length ? '<a href="#home" role="menuitem" data-wn="1"><span>🆕</span><b>새 기능 둘러보기</b></a>' : '') +   /* 2026-11-20 "상단 설정 아이콘에도 새 기능 둘러보기" — 최신 업데이트 소식 */
       '<a href="#app" role="menuitem"><span>📲</span><b>' + (E.standalone ? '홈 화면 앱 설치 안내' : '홈 화면에 앱으로 추가하기') + '</b></a>' +
       '<div class="gm-theme" role="group" aria-label="다크 모드"><span>🌙</span><b>다크 모드</b><i>' +
       [["auto", "자동"], ["dark", "켜기"], ["light", "끄기"]].map(function (o) { return '<button type="button" data-th="' + o[0] + '"' + (themeGet() === o[0] ? ' aria-pressed="true"' : '') + '>' + o[1] + '</button>'; }).join("") + '</i></div>';   /* 2026-11-13 "앱아이콘 설치 옵션 왜 뺐냐" — 앱으로 열었어도 항상 보이게 */
