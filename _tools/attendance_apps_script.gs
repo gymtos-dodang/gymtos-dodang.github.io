@@ -18,7 +18,7 @@ const IB_SHEET = '인바디';
 const IB_FOLDER = 'PT노트 인바디 사진';
 // 2026-11-20 먹은 기록(식단 사진): 시트 "식단기록" 탭 + 드라이브 "PT노트 식단 사진" 폴더.
 //   사진 자동 분석(meal_ai)은 프로젝트 설정 → 스크립트 속성 AI_KEY가 있어야 동작. 열쇠는 코드에 넣지 말 것.
-//   AI_KEY: gsk_… = Groq(무료) / cf:<계정ID>:<토큰> = Cloudflare(무료) / sk-ant… = Claude / AIza… = Gemini. 쉼표로 여러 개 넣으면 앞에서부터 쓰고, 막히면 다음 것으로 (2026-11-20).
+//   AI_KEY: mi:<키> = Mistral(무료, Pixtral Large) / gsk_… = Groq(무료) / cf:<계정ID>:<토큰> = Cloudflare(무료) / sk-ant… = Claude / AIza… = Gemini. 쉼표로 여러 개 넣으면 앞에서부터 쓰고, 막히면 다음 것으로 (2026-11-20).
 const ML_SHEET = '식단기록';
 const ML_FOLDER = 'PT노트 식단 사진';
 
@@ -149,7 +149,9 @@ function mealAiAll_(keys, model, img, hint) {   // 열쇠 여러 개면 차례�
 function mealAi_(key, model, img, hint) {
   const prompt = ML_PROMPT + (hint ? ' 먹은 사람이 적은 메모: ' + hint.slice(0, 120) : '');
   let text = '';
-  if (/^gsk_/.test(key)) {
+  if (/^mi:/.test(key)) {
+    text = mlOpenAi_('https://api.mistral.ai/v1/chat/completions', key.slice(3), model || 'pixtral-large-latest', img, prompt);
+  } else if (/^gsk_/.test(key)) {
     text = mlOpenAi_('https://api.groq.com/openai/v1/chat/completions', key, model || 'meta-llama/llama-4-scout-17b-16e-instruct', img, prompt);
   } else if (/^cf:/.test(key)) {
     const c = key.split(':');

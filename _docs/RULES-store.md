@@ -16,4 +16,4 @@
 - 지금 쓰는 저장소 키: `mw:<주소>:log`(운동 기록) · `mw:<주소>:mv`(요일 옮기기) · `mw:<주소>:diet`(내 식단 짜기) · `pub:m:<주소>:growth`(처음 무게) · `pub:m:<주소>:member`(폰에서 만든 회원) · `pub:m:roster-list:members`(공개 회원 목록) · `pub:all:rank`(출석 순위) · `coach:members` · `coach:memo:<주소>`.
 
 
-- 먹은 기록(2026-11-20): 시트 "식단기록" 탭(회원주소·이름·날짜·끼니·음식 JSON·kcal·사진ID·작은사진·기록ID·기록시각·쓴사람·메모·선생님한마디) + 드라이브 "PT노트 식단 사진". 사진 자동 분석 meal_ai는 스크립트 속성 `AI_KEY`(gsk_… = Groq 무료 · cf:<계정ID>:<토큰> = Cloudflare 무료 · sk-ant… = Claude · AIza… = Gemini, 쉼표로 여러 개 = 앞에서부터, 막히면 다음 것), `AI_MODEL`(선택)로 동작, 회원 한 명 6시간에 20장까지. 열쇠는 Apps Script 프로젝트 설정에만.
+- 먹은 기록(2026-11-20): 시트 "식단기록" 탭(회원주소·이름·날짜·끼니·음식 JSON·kcal·사진ID·작은사진·기록ID·기록시각·쓴사람·메모·선생님한마디) + 드라이브 "PT노트 식단 사진". 사진 자동 분석 meal_ai는 스크립트 속성 `AI_KEY`(mi:<키> = Mistral 무료·Pixtral Large · gsk_… = Groq 무료 · cf:<계정ID>:<토큰> = Cloudflare 무료 · sk-ant… = Claude · AIza… = Gemini, 쉼표로 여러 개 = 앞에서부터, 막히면 다음 것), `AI_MODEL`(선택)로 동작, 회원 한 명 6시간에 20장까지. 열쇠는 Apps Script 프로젝트 설정에만.
