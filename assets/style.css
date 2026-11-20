@@ -2548,6 +2548,21 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .dg-sub { display: flex; gap: 8px; margin: -4px 0 14px; }
 .dg-sub button { flex: 1; font: inherit; font-size: 13.5px; font-weight: 900; padding: 10px 4px; border-radius: 99px; border: 1.5px solid var(--line); background: var(--paper); color: var(--sub); cursor: pointer; }
 .dg-sub button.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+/* 식단 가이드 05 치팅 (2026-11-20) */
+.dg-cv { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.dg-cv > div { background: var(--paper); border-radius: 16px; padding: 13px 13px 12px; border-top: 5px solid #22A06B; min-width: 0; }
+.dg-cv > .no { border-top-color: #8A90A0; }
+.dg-cv small { font-size: 11px; font-weight: 900; color: #1C8A5B; }
+.dg-cv .no small { color: var(--sub); }
+.dg-cv b { display: block; margin-top: 2px; font-size: 17px; font-weight: 900; color: var(--ink); }
+.dg-cv i { font-style: normal; font-size: 12px; font-weight: 800; color: var(--faint); }
+.dg-cv p { margin: 6px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--ink); }
+.dg-cv .no b { text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--sub) 60%, transparent); }
+.dg-scale { display: grid; grid-template-columns: 38px 1fr; gap: 10px; background: var(--paper); border-radius: 16px; padding: 13px 14px; border: 1.5px dashed var(--primary); }
+.dg-scale > span { width: 38px; height: 38px; border-radius: 12px; background: var(--tint); display: grid; place-items: center; font-size: 19px; }
+.dg-scale b { font-size: 14.5px; font-weight: 900; color: var(--ink); line-height: 1.4; }
+.dg-scale p { margin: 4px 0 0; font-size: 13px; line-height: 1.55; color: var(--sub); }
+.dg-scale p b { font-size: inherit; color: var(--primary); }
 .sp-hero { background: linear-gradient(135deg, #2E8B6A, #1F5F86); }
 .sp-pyr { background: var(--paper); border-radius: 18px; padding: 14px; display: grid; justify-items: center; gap: 4px; }
 .sp-pyr small { font-size: 11.5px; font-weight: 900; color: var(--faint); margin-bottom: 4px; }
@@ -2868,6 +2883,7 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .dg-skip li::before { background: var(--seal); }
 :where(html:not([data-theme="light"])) .dg-go { background: var(--seal); }
 :where(html:not([data-theme="light"])) .dg-sub button.on { background: var(--seal); }
+:where(html:not([data-theme="light"])) .dg-cv > .no { color: var(--sub); }
 :where(html:not([data-theme="light"])) .sp-pyr .l1 { background: var(--seal); }
 :where(html:not([data-theme="light"])) .tour-ul { background: var(--paper); }
 :where(html:not([data-theme="light"])) .tour-ul li { color: var(--ink); }
@@ -3173,6 +3189,7 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .dg-skip li::before { background: var(--seal); }
 :where(html[data-theme="dark"]) .dg-go { background: var(--seal); }
 :where(html[data-theme="dark"]) .dg-sub button.on { background: var(--seal); }
+:where(html[data-theme="dark"]) .dg-cv > .no { color: var(--sub); }
 :where(html[data-theme="dark"]) .sp-pyr .l1 { background: var(--seal); }
 :where(html[data-theme="dark"]) .tour-ul { background: var(--paper); }
 :where(html[data-theme="dark"]) .tour-ul li { color: var(--ink); }
