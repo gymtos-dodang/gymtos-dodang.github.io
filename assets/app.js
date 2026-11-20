@@ -1542,6 +1542,8 @@
     if (!v || typeof v !== "object") { if (BGS && Object.keys(BGS.on || {}).length) bgsSave(true); return; }
     var o = bgsObj(), ch = false, more = false, k;
     if ((v.rs || 0) > (o.rs || 0)) { o.on = {}; o.rs = v.rs; ch = true; }   /* 선생님이 배지 초기화 */
+    if (Array.isArray(v.show) && (v.sst || 0) > (o.sst || 0)) { o.show = v.show; o.sst = v.sst; ch = true; }   /* 배지 케이스 둘레 칸 (2026-11-20) */
+    else if ((o.sst || 0) > (v.sst || 0)) more = true;
     else if ((o.rs || 0) > (v.rs || 0)) more = true;
     for (k in (v.on || {})) if (!o.on[k] || v.on[k] < o.on[k]) { o.on[k] = v.on[k]; ch = true; }
     for (k in o.on) if (!(v.on || {})[k]) more = true;
@@ -2010,11 +2012,89 @@
     L.sort(function (x, y) { return (y.sp ? 1 : 0) - (x.sp ? 1 : 0) || (y.lv || 0) - (x.lv || 0) || (y.on > x.on ? 1 : y.on < x.on ? -1 : 0) || (y.goal || 0) - (x.goal || 0); });
     return L.slice(0, n || 1);
   }
-  function bgHomeChip() {   /* 2026-11-17 "설명 없애고 3개": 글자 없이 배지 3개 — 첫 번째(제일 높은 것)만 조금 크게 */
-    var L = bgBest(3); if (!L.length) return "";
-    return '<a class="hbdg3" href="#goal-badges" aria-label="내 대표 배지 ' + esc(L.map(function (b) { return b.label; }).join(", ")) + '">' +
-      L.map(function (b, i) { return '<span class="hb' + (i ? ' s' : '') + '">' + bgIcon(b) + '</span>'; }).join("") + '</a>';
+  /* ===== 배지 케이스 (2026-11-20 장동욱 "홈 뱃지 3개 시스템 리메이크 — 작은 6각형 뱃지 케이스, 누르면 확대, 중앙은 무조건 제일 높은 등급, 나머지는 빼고 넣고")
+     홈 맨 위 오른쪽 작은 6각형 케이스(.hbcase) = 가운데 1칸(bgBest 1등 고정) + 둘레 6칸(BGS.show, 회원님이 고름 — 정한 적 없으면 그다음 높은 배지로 채움)
+     누르면 크게(bcOpen) → 둘레 칸 누르고 아래 받은 배지에서 골라 넣기 / "빼기". 저장 BGS.show·BGS.sst(바꾼 시각) → 창고 mw:<주소>:bg 같이 */
+  function bcData() {
+    var L; try { L = badgeList().filter(function (b) { return b.on; }); } catch (e) { L = []; }
+    L.sort(function (x, y) { return (y.sp ? 1 : 0) - (x.sp ? 1 : 0) || (y.lv || 0) - (x.lv || 0) || (y.on > x.on ? 1 : y.on < x.on ? -1 : 0) || (y.goal || 0) - (x.goal || 0); });
+    var c = L[0] || null, by = {}, o = bgsObj(), used = {}, slots = [];
+    L.forEach(function (b) { by[b.id] = b; });
+    var src = Array.isArray(o.show) ? o.show : L.slice(1, 7).map(function (b) { return b.id; });
+    for (var i = 0; i < 6; i++) {
+      var id = src[i], b = id && by[id];
+      if (b && b !== c && !used[id]) { used[id] = 1; slots.push(b); } else slots.push(null);
+    }
+    return { c: c, s: slots, all: L };
   }
+  function bcSave(slots) {
+    var o = bgsObj(); o.show = slots.map(function (b) { return b ? b.id : null; }); o.sst = Date.now();
+    bgsSave(!COACH_MODE);
+  }
+  var BC_POS = [[-.5, -1], [.5, -1], [1, 0], [.5, 1], [-.5, 1], [-1, 0]];   /* 둘레 6칸: 왼위·오위·오른쪽·오아래·왼아래·왼쪽 (세로 뾰족 육각형 벌집) */
+  function bcHtml(d, W, big, sel) {
+    var H = W * 1.1547, g = W * .1, Wd = W + g, Hd = H * .75 + g * .87, CW = W * 4.3, CH = W * 3.72, cx = CW / 2, cy = CH / 2, sc = (W * .86 / 84).toFixed(3);
+    function cell(b, k, dx, dy) {
+      var tag = big ? "button" : "span", x = (cx + dx * Wd - W / 2).toFixed(1), y = (cy + dy * Hd - H / 2).toFixed(1);
+      return '<' + tag + (big ? ' type="button" data-bc="' + k + '"' : '') + ' class="bc-cell' + (k === "c" ? " c" : "") + (b ? "" : " e") + (sel === k ? " sel" : "") + (b && b.sp ? " sp" : "") +
+        '" style="left:' + x + 'px;top:' + y + 'px;width:' + W.toFixed(1) + 'px;height:' + H.toFixed(1) + 'px"' + (big && b ? ' aria-label="' + esc(b.label) + '"' : big ? ' aria-label="빈 칸 — 눌러서 배지 넣기"' : '') + '>' +
+        (b ? '<span class="bc-ic" style="transform:scale(' + sc + ')">' + bgIcon(b) + '</span>' : (big ? '<i>+</i>' : '')) + '</' + tag + '>';
+    }
+    var h = '<div class="bcase' + (big ? ' big' : '') + '" style="width:' + CW.toFixed(1) + 'px;height:' + CH.toFixed(1) + 'px">';
+    h += cell(d.c, "c", 0, 0);
+    BC_POS.forEach(function (p, i) { h += cell(d.s[i], String(i), p[0], p[1]); });
+    return h + '</div>';
+  }
+  function bgHomeChip() {   /* 홈 맨 위 오른쪽 작은 케이스 */
+    var d = bcData();
+    return '<button type="button" class="hbcase" data-bcopen aria-label="내 배지 케이스 열기' + (d.c ? ' — 대표 ' + esc(d.c.label) : '') + '">' + bcHtml(d, 19, false) + '</button>';
+  }
+  function bcOpen() {
+    if (document.querySelector(".bcwrap")) return;
+    var box = document.createElement("div"), sel = null;
+    box.className = "bcwrap";
+    function draw() {
+      var d = bcData(), h = '<div class="bc-card" role="dialog" aria-modal="true" aria-label="내 배지 케이스">' +
+        '<div class="bc-top"><div><small>MY BADGE CASE</small><b>내 배지 케이스</b></div><button type="button" class="bc-x" data-bcx aria-label="닫기">×</button></div>' +
+        '<div class="bc-stage">' + bcHtml(d, 66, true, sel) + '</div>';
+      if (sel === null) {
+        h += '<p class="bc-help">' + (d.c ? '<b>가운데는 제일 높은 배지</b>가 자동으로 들어가요.<br>둘레 칸을 눌러 자랑하고 싶은 배지를 넣고 빼요.' : '아직 받은 배지가 없어요.<br>배지를 받으면 여기에 모아 둘 수 있어요.') + '</p>';
+        if (d.c) h += '<div class="bc-cname"><span>👑 대표</span><b>' + esc(d.c.label) + '</b></div>';
+      } else if (sel === "c") {
+        h += '<p class="bc-help"><b>👑 ' + esc(d.c ? d.c.label : "") + '</b><br>가운데는 받은 배지 중 제일 높은 등급이 자동으로 들어가요. 더 높은 배지를 받으면 바뀌어요.</p>';
+      } else {
+        var cur = d.s[+sel], pick = d.all.filter(function (b) { return b !== d.c; });
+        h += '<div class="bc-pick"><div class="bc-ph"><b>' + (+sel + 1) + '번 칸' + (cur ? ' · ' + esc(cur.label) : ' · 비어 있어요') + '</b>' +
+          (cur ? '<button type="button" class="bc-out" data-bcout>빼기</button>' : '') + '</div>';
+        if (!pick.length) h += '<p class="bc-help">넣을 수 있는 배지가 아직 없어요. 배지를 더 모아 봐요!</p>';
+        else h += '<div class="bc-grid">' + pick.map(function (b) {
+          var at = d.s.indexOf(b);
+          return '<button type="button" class="bc-pb' + (b === cur ? ' on' : '') + '" data-bcput="' + b.id + '"><span class="bc-pi">' + bgIcon(b) + '</span><i>' + esc(b.label) + '</i>' +
+            (at >= 0 && b !== cur ? '<em>' + (at + 1) + '번 칸</em>' : '') + '</button>';
+        }).join("") + '</div>';
+        h += '</div>';
+      }
+      h += '<a class="bc-all" href="#goal-badges" data-bcx>배지 전체 보기 ›</a></div>';
+      box.innerHTML = h;
+    }
+    function close() { box.classList.remove("in"); setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 220); if (/^#?(home)?$/.test(location.hash)) rerender(); }
+    box.addEventListener("click", function (e) {
+      if (e.target === box) { close(); return; }
+      if (e.target.closest("[data-bcx]")) { close(); return; }
+      var d = bcData(), t;
+      if ((t = e.target.closest("[data-bc]"))) { var k = t.getAttribute("data-bc"); sel = sel === k ? null : k; draw(); return; }
+      if (e.target.closest("[data-bcout]") && sel !== null && sel !== "c") { d.s[+sel] = null; bcSave(d.s); sel = null; draw(); attToast("배지를 뺐어요"); return; }
+      if ((t = e.target.closest("[data-bcput]")) && sel !== null && sel !== "c") {
+        var id = t.getAttribute("data-bcput"), b = d.all.filter(function (x) { return x.id === id; })[0]; if (!b) return;
+        var at = d.s.indexOf(b), cur = d.s[+sel];
+        if (at >= 0) d.s[at] = cur || null;   /* 다른 칸에 있던 배지면 자리 바꾸기 */
+        d.s[+sel] = b; bcSave(d.s); sel = null; draw(); attToast("배지를 넣었어요");
+      }
+    });
+    draw(); document.body.appendChild(box);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { box.classList.add("in"); }); });
+  }
+  document.addEventListener("click", function (e) { var t = e.target.closest("[data-bcopen]"); if (!t) return; e.preventDefault(); bcOpen(); });
   var bgReady = false;
   function badgeCheck() {   /* 새로 받은 배지가 있으면 팝업 한 번 */
     bgReady = true;

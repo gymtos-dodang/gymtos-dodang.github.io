@@ -91,3 +91,6 @@ D .ex-list.cmp .ex.done h3 { color: #7FE0A6; }
 D .ex-list.cmp .ex.done .set { background: rgba(0, 0, 0, .45); }
 /* ✓ 누를 때 뜨는 알림(atttoast): 바탕이 var(--ink)라 다크에선 흰 바탕+흰 글씨 → 짙은 바탕 — 2026-11-18 */
 D .atttoast { background: #2A2A30; color: var(--ink); box-shadow: 0 0 0 1px rgba(255, 255, 255, .1), 0 6px 18px rgba(0, 0, 0, .5); }
+
+/* 배지 케이스 금색 칩 글씨는 어두운 채로 (2026-11-20) */
+D .bc-cname span, D .bc-pb em { color: #1C170C; }
