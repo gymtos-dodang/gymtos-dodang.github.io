@@ -17,7 +17,8 @@ const RT_KEY_HASH = '4756ec53d712de9927d43e17e7efda99bb0a8312a08e1b82be440c1f2cf
 const IB_SHEET = '인바디';
 const IB_FOLDER = 'PT노트 인바디 사진';
 // 2026-11-20 먹은 기록(식단 사진): 시트 "식단기록" 탭 + 드라이브 "PT노트 식단 사진" 폴더.
-//   사진 자동 분석(meal_ai)은 프로젝트 설정 → 스크립트 속성 AI_KEY(sk-ant… = Claude / AIza… = Gemini)가 있어야 동작. AI_MODEL로 모델 바꾸기. 열쇠는 코드에 넣지 말 것.
+//   사진 자동 분석(meal_ai)은 프로젝트 설정 → 스크립트 속성 AI_KEY가 있어야 동작. 열쇠는 코드에 넣지 말 것.
+//   AI_KEY: gsk_… = Groq(무료) / cf:<계정ID>:<토큰> = Cloudflare(무료) / sk-ant… = Claude / AIza… = Gemini. 쉼표로 여러 개 넣으면 앞에서부터 쓰고, 막히면 다음 것으로 (2026-11-20).
 const ML_SHEET = '식단기록';
 const ML_FOLDER = 'PT노트 식단 사진';
 
@@ -129,10 +130,31 @@ const ML_PROMPT = '이 사진은 한 끼 식사입니다. 보이는 음식을 �
   '순탄수 = 탄수화물 - 식이섬유. 조리에 쓴 기름·양념도 넣으세요. 다른 말 없이 JSON만 답하세요: ' +
   '{"items":[{"n":"음식 이름","g":먹는 양(g 숫자),"u":"알기 쉬운 양(예: 1공기, 손바닥 1장)","c":순탄수 g,"p":단백질 g,"f":지방 g,"k":칼로리 kcal}],"note":"한 줄 평(30자 안)"} ' +
   '음식 사진이 아니면 {"items":[],"note":"음식이 안 보여요"}';
+function mlOpenAi_(url, token, model, img, prompt) {   // Groq·Cloudflare (OpenAI 방식)
+  const r = UrlFetchApp.fetch(url, {
+    method: 'post', contentType: 'application/json', muteHttpExceptions: true, headers: { Authorization: 'Bearer ' + token },
+    payload: JSON.stringify({ model: model, temperature: 0.2, max_tokens: 900,
+      messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,' + img } }] }] }) });
+  const j = JSON.parse(r.getContentText());
+  if (!j.choices) throw new Error('openai ' + r.getResponseCode());
+  return String(j.choices[0].message.content || '');
+}
+function mealAiAll_(keys, model, img, hint) {   // 열쇠 여러 개면 차례로 (무료 한도가 막히면 다음 것)
+  let last = null;
+  for (let i = 0; i < keys.length; i++) {
+    try { return mealAi_(keys[i], i === 0 ? model : '', img, hint); } catch (err) { last = err; }
+  }
+  throw last || new Error('nokey');
+}
 function mealAi_(key, model, img, hint) {
   const prompt = ML_PROMPT + (hint ? ' 먹은 사람이 적은 메모: ' + hint.slice(0, 120) : '');
   let text = '';
-  if (/^AIza/.test(key)) {
+  if (/^gsk_/.test(key)) {
+    text = mlOpenAi_('https://api.groq.com/openai/v1/chat/completions', key, model || 'meta-llama/llama-4-scout-17b-16e-instruct', img, prompt);
+  } else if (/^cf:/.test(key)) {
+    const c = key.split(':');
+    text = mlOpenAi_('https://api.cloudflare.com/client/v4/accounts/' + c[1] + '/ai/v1/chat/completions', c.slice(2).join(':'), model || '@cf/meta/llama-4-scout-17b-16e-instruct', img, prompt);
+  } else if (/^AIza/.test(key)) {
     const r = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + (model || 'gemini-2.5-flash') + ':generateContent?key=' + encodeURIComponent(key), {
       method: 'post', contentType: 'application/json', muteHttpExceptions: true,
       payload: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: img } }, { text: prompt }] }], generationConfig: { temperature: 0.2 } }) });
@@ -383,7 +405,7 @@ function doPost(e) {
     const c = CacheService.getScriptCache(), ck = 'mlai:' + m, n = Number(c.get(ck) || 0);
     if (n >= 20) return json_({ ok: false, error: 'limit' });   // 회원 한 명이 6시간에 20장까지
     c.put(ck, String(n + 1), 21600);
-    try { return json_({ ok: true, ai: mealAi_(key, P.getProperty('AI_MODEL'), String(b.img), String(b.hint || '')) }); }
+    try { return json_({ ok: true, ai: mealAiAll_(key.split(',').map(function (x) { return x.trim(); }).filter(String), P.getProperty('AI_MODEL'), String(b.img), String(b.hint || '')) }); }
     catch (err) { return json_({ ok: false, error: 'ai', msg: String(err) }); }
   }
   if (b.a === 'meal_add') {   // 새 기록 또는 고치기(id) — 회원·선생님 모두. 선생님 열쇠가 맞으면 쓴사람 c, 한마디(cm)도 저장
