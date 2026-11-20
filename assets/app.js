@@ -5137,15 +5137,25 @@
       w.classList.remove("on"); setTimeout(function () { w.remove(); }, 260);
       TOUR_ON = false; setTimeout(function () { if (!DEMO) showNoticePop(); }, 600);
     }
-    function place() {
-      var x = S[i], vw = window.innerWidth, vh = window.innerHeight;
-      if (x.c) { hole.style.cssText = "left:" + vw / 2 + "px;top:" + vh / 2 + "px;width:0;height:0;border-radius:50%"; card.style.top = Math.max(80, vh / 2 - card.offsetHeight / 2) + "px"; card.classList.add("mid"); return; }
+    /* 2026-11-20 "약간 느리고 부드럽지 않아": 구멍은 transform(translate3d)으로 움직여 GPU로 부드럽게, 카드·구멍 같은 시간·같은 곡선(.5s ease-out-quint).
+       칸 자리는 '도착할 자리'로 한 번에 계산 — 화면이 차례로 올라오는 중(D안 vIn transform)·스크롤할 거리(dy)까지 빼서, 여러 번 고쳐 잡는 흔들림 없음 */
+    function rectOf(el) {
+      var r = el.getBoundingClientRect(), dx = 0, dy = 0, a = el;
+      while (a && a !== document.body) {
+        if (a.getAnimations && a.getAnimations().length) { var t = getComputedStyle(a).transform; if (t && t !== "none") { try { var m = new DOMMatrixReadOnly(t); dx += m.m41; dy += m.m42; } catch (e) {} } }
+        a = a.parentElement;
+      }
+      return { left: r.left - dx, top: r.top - dy, width: r.width, height: r.height, bottom: r.bottom - dy };
+    }
+    function place(sy) {
+      var x = S[i], vw = window.innerWidth, vh = window.innerHeight; sy = sy || 0;
+      if (x.c) { hole.style.cssText = "transform:translate3d(" + vw / 2 + "px," + vh / 2 + "px,0);width:0;height:0;border-radius:50%"; card.style.top = Math.max(80, vh / 2 - card.offsetHeight / 2) + "px"; card.classList.add("mid"); return; }
       var el = document.querySelector(x.s); if (!el) return;
-      var r = el.getBoundingClientRect(), pad = el.closest(".tabs") ? 4 : 8, rad = getComputedStyle(el).borderRadius;
-      hole.style.cssText = "left:" + (r.left - pad) + "px;top:" + (r.top - pad) + "px;width:" + (r.width + pad * 2) + "px;height:" + (r.height + pad * 2) + "px;border-radius:" + (el.closest(".tabs") ? "18px" : (parseFloat(rad) ? (parseFloat(rad) + pad) + "px" : "18px"));
+      var r = rectOf(el), pad = el.closest(".tabs") ? 4 : 8, rad = getComputedStyle(el).borderRadius, top = r.top - sy;
+      hole.style.cssText = "transform:translate3d(" + (r.left - pad) + "px," + (top - pad) + "px,0);width:" + (r.width + pad * 2) + "px;height:" + (r.height + pad * 2) + "px;border-radius:" + (el.closest(".tabs") ? "18px" : (parseFloat(rad) ? (parseFloat(rad) + pad) + "px" : "18px"));
       card.classList.remove("mid");
-      var ch = card.offsetHeight, below = r.bottom + pad + 14;
-      card.style.top = (below + ch < vh - 12 ? below : Math.max(12, r.top - pad - 14 - ch)) + "px";
+      var ch = card.offsetHeight, below = top + r.height + pad + 14;
+      card.style.top = (below + ch < vh - 12 ? below : Math.max(12, top - pad - 14 - ch)) + "px";
     }
     function goH(x) {   /* 업데이트 소식: 그 단계 화면(x.h)으로 먼저 이동 — x.pre는 전환 칸 고르기 등 */
       var cur = location.hash || "#home"; if (!x.h || (cur === x.h && !x.pre)) return false;
@@ -5154,34 +5164,8 @@
       if (cur === x.h) rerender(); else location.hash = x.h;
       window.scrollTo(0, 0); return true;
     }
-    /* 2026-11-20 장동욱 "다음으로 넘어가면 한 템포 끊김"(화면 녹화): 카드가 사라졌다 다시 뜨고 구멍이 멈춰 있던 게 끊김으로 보였음
-       → 카드는 그대로 둔 채 글자만 살짝 바뀌고(.swap), 카드 자리와 비추는 구멍은 다음 칸으로 바로 미끄러져 감.
-       다음 화면은 그 칸이 그려지는 즉시(최소 0.12초) 비추고, 화면이 차례로 올라오는 동안 두 번 더 자리를 맞춤(place 0.35·0.7초) */
-    function settle(fn) {
-      var t0 = Date.now(), x = S[i];
-      (function poll() {
-        var el = x.s && document.querySelector(x.s), dt = Date.now() - t0;
-        if ((!x.s || (el && el.getBoundingClientRect().width)) && dt >= 120) return fn();
-        if (dt > 1200) return fn();
-        requestAnimationFrame(poll);
-      })();
-    }
-    function show() {
-      var x = S[i];
-      if (goH(x)) { card.classList.add("swap"); settle(show2); return; }
-      if (card.classList.contains("on1")) { card.classList.add("swap"); setTimeout(show2, 140); return; }   /* 같은 화면: 글자만 살짝 바꿈 */
-      show2();
-    }
-    function reveal() {
-      place();
-      if (!card.classList.contains("on1")) { card.classList.add("on1"); card.classList.remove("in"); void card.offsetWidth; card.classList.add("in"); }
-      requestAnimationFrame(function () { card.classList.remove("swap"); });
-      var me = i;
-      [350, 720].forEach(function (t) { setTimeout(function () { if (me === i && w.isConnected) place(); }, t); });
-    }
-    function show2() {
-      var x = S[i];
-      if (x.s) { var el0 = document.querySelector(x.s); if (!el0 || !el0.getBoundingClientRect().width) { i += dir; if (i < 0) { i = 0; dir = 1; } if (i >= S.length) return end(); return show(); } }
+    /* 넘어가기: 글자는 누르자마자 새 단계로(살짝 떠오르며 .fx), 다른 화면이면 그 칸이 생기는 즉시 구멍·카드가 도착 자리로 한 번에 미끄러짐 */
+    function fill(x) {
       card.querySelector(".tour-dots").innerHTML = S.map(function (_, k) { return '<i' + (k === i ? ' class="on"' : '') + '></i>'; }).join("");
       card.querySelector(".tour-t").textContent = x.t;
       card.querySelector(".tour-b").textContent = x.b;
@@ -5192,19 +5176,45 @@
       card.querySelector(".tour-btns").innerHTML = (x.app ? '<a class="tb-app" href="#app">📲 홈 화면에 앱으로 추가하기</a>' : '') +
         (i > 0 && !x.c ? '<button type="button" class="tb-prev">이전</button>' : '') +
         '<button type="button" class="tb-next">' + (x.ok || (i === S.length - 2 ? "마지막" : "다음") + ' <small>' + i + '/' + (S.length - 2) + '</small>') + '</button>';
+      if (card.classList.contains("on1")) { card.classList.remove("fx"); void card.offsetWidth; card.classList.add("fx"); }
+      else { card.classList.add("on1"); card.classList.remove("in"); void card.offsetWidth; card.classList.add("in"); }
+    }
+    function settle(fn) {
+      var t0 = Date.now(), x = S[i];
+      (function poll() {
+        var el = x.s && document.querySelector(x.s);
+        if (!x.s || (el && el.getBoundingClientRect().width) || Date.now() - t0 > 1200) return fn();
+        requestAnimationFrame(poll);
+      })();
+    }
+    function position() {
+      var x = S[i];
+      if (x.s) {
+        var el0 = document.querySelector(x.s);
+        if (!el0 || !el0.getBoundingClientRect().width) { i += dir; if (i < 0) { i = 0; dir = 1; } if (i >= S.length) return end(); return show(); }
+      }
+      var sy = 0;
       if (x.s) {
         var el = document.querySelector(x.s);
-        if (el && !el.closest(".tabs, .bar")) {
-          var r = el.getBoundingClientRect();
-          if (r.top < 70 || r.bottom > window.innerHeight - 220) { window.scrollTo({ top: window.scrollY + r.top - 110, behavior: "smooth" }); reveal(); return; }   /* 스크롤하는 동안에도 place가 따라감 */
+        if (!el.closest(".tabs, .bar")) {
+          var r = rectOf(el);
+          if (r.top < 70 || r.bottom > window.innerHeight - 220) { sy = Math.round(Math.min(r.top - 110, document.documentElement.scrollHeight - window.innerHeight - window.scrollY)); window.scrollTo({ top: window.scrollY + sy, behavior: "smooth" }); }
         }
       }
-      reveal();
+      place(sy);
+      var me = i; setTimeout(function () { if (me === i && w.isConnected) place(); }, 800);   /* 끝난 뒤 한 번만 확인(보통 그대로) */
     }
+    function show() {
+      var x = S[i];
+      fill(x);
+      if (goH(x)) { busy = true; settle(function () { busy = false; position(); }); return; }
+      position();
+    }
+    var busy = false;
     w.addEventListener("click", function (e) {
       if (e.target.closest(".tour-skip")) return end();
       if (e.target.closest(".tb-app")) return end();
-      if (card.classList.contains("swap")) return;
+      if (busy) return;
       if (e.target.closest(".tb-prev")) { i = Math.max(0, i - 1); dir = -1; return show(); }
       if (e.target.closest(".tb-next") || e.target === hole || e.target === w) { if (i >= S.length - 1) return end(); i++; dir = 1; show(); }
     });

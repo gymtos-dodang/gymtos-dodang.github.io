@@ -2651,11 +2651,14 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 
 /* 2026-11-20 업데이트 소식(새 기능 튜토리얼) — 화면 넘어가는 동안 카드 흐리게 */
 .tour-card { transition: top .38s cubic-bezier(.2, .8, .2, 1), opacity .2s; }
-/* 2026-11-20 "한 템포 끊김": 카드는 안 사라지고 글자만 바뀜(.swap), 구멍·카드 자리는 다음 칸으로 바로 미끄러짐 */
-.tour-card > * { transition: opacity .14s; }
-.tour-card.swap > * { opacity: 0; }
-.tour-hole { transition: left .42s cubic-bezier(.2, .8, .2, 1), top .42s cubic-bezier(.2, .8, .2, 1), width .42s cubic-bezier(.2, .8, .2, 1), height .42s cubic-bezier(.2, .8, .2, 1), border-radius .42s; }
-@media (prefers-reduced-motion: reduce) { .tour-hole, .tour-card > * { transition: none; } }
+/* 2026-11-20 "약간 느리고 부드럽지 않아": 구멍은 left/top 대신 transform으로(GPU), 카드 자리와 같은 시간·곡선. 글자는 바뀔 때 살짝 떠오름(.fx) */
+.tour-hole { left: 0; top: 0; will-change: transform; transition: transform .5s cubic-bezier(.22, 1, .36, 1), width .5s cubic-bezier(.22, 1, .36, 1), height .5s cubic-bezier(.22, 1, .36, 1), border-radius .5s cubic-bezier(.22, 1, .36, 1); }
+.tour-card { transition: top .5s cubic-bezier(.22, 1, .36, 1); }
+.tour-card.fx > :not(.tour-skip) { animation: tourFx .34s cubic-bezier(.22, 1, .36, 1) both; }
+.tour-card.fx > .tour-b, .tour-card.fx > .tour-ul { animation-delay: .03s; }
+.tour-card.fx > .tour-btns { animation-delay: .06s; }
+@keyframes tourFx { from { opacity: 0; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { .tour-hole, .tour-card { transition: none; } .tour-card.fx > * { animation: none; } }
 .tour-ul { list-style: none; margin: -4px 0 16px; padding: 12px 14px; border-radius: 14px; background: #F4F5F8; text-align: left; display: grid; gap: 7px; }
 .tour-ul li { font-size: 13.5px; font-weight: 700; line-height: 1.45; color: #2A2E38; }
 /* 2026-11-20 업데이트 소식을 공지에 합침 — 업데이트 공지 표시 */
