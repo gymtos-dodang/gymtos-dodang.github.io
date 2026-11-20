@@ -3719,6 +3719,103 @@
       '<button type="button" class="dg-go" data-db="tab:my">내 식단 짜러 가기 ›</button></section></div>';
     return h;
   }
+  /* ===== 영양제 가이드 (2026-11-20 장동욱 "영양제 가이드도 — 먹어야 하는 이유·중요 영양제 설명 및 추천·남성 여성별 추천 조합, 알기 쉽게")
+     '식단 가이드' 칸 안 작은 전환 칸 [식단 기본 | 영양제] (DG_SUB "supp", 바로 여는 주소 #diet-supp). 남녀 조합은 회원 성별로 먼저 열림(SP_SEX). CSS .sp-* */
+  var DG_SUB = null, SP_SEX = null;
+  function dgSubSeg() {
+    var s = DG_SUB || "food";
+    function b(id, l) { return '<button type="button" class="' + (s === id ? "on" : "") + '" data-dg="sub:' + id + '">' + l + '</button>'; }
+    return '<div class="dg-sub">' + b("food", "🍚 식단 기본") + b("supp", "💊 영양제") + '</div>';
+  }
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-dg]"); if (!t) return;
+    var a = t.getAttribute("data-dg").split(":");
+    if (a[0] === "sub") { DG_SUB = a[1]; rerender(); window.scrollTo(0, 0); }
+    else if (a[0] === "sex") { SP_SEX = a[1]; rerender(); }
+  });
+  function spView() {
+    function li(a) { return a.map(function (x) { return '<li>' + x + '</li>'; }).join(""); }
+    function card(ic, nm, tag, what, who, when, amt, warn) {
+      return '<div class="sp-card"><div class="sp-h"><span class="sp-ic">' + ic + '</span><div><b>' + nm + '</b><em>' + tag + '</em></div></div>' +
+        '<p class="sp-what">' + what + '</p><dl class="sp-dl">' +
+        '<dt>이런 분</dt><dd>' + who + '</dd><dt>언제</dt><dd>' + when + '</dd><dt>하루 양</dt><dd>' + amt + '</dd></dl>' +
+        (warn ? '<p class="sp-warn">⚠️ ' + warn + '</p>' : '') + '</div>';
+    }
+    var sx = SP_SEX || (M.sex === "F" ? "F" : "M");
+    var h = '<div class="dg">' +
+      '<div class="dg-hero sp-hero"><small>SUPPLEMENT GUIDE · 영양제 가이드</small><h2>영양제는 식단의<br>빈칸을 채우는 것</h2>' +
+      '<p>밥 대신 먹는 게 아니라, 식단으로 채우기 힘든 부분만 보충해요. 꼭 필요한 것만 쉽게 정리했어요.</p></div>';
+
+    h += '<section>' + head("01", "영양제, 왜 먹을까?", "") +
+      '<div class="dg-why">' +
+      '<div><span>☀️</span><b>햇빛을 잘 못 봐요</b><p>실내 생활이 많으면 비타민D가 거의 다 부족해요. 음식만으로는 채우기 어려워요.</p></div>' +
+      '<div><span>🐟</span><b>생선을 자주 못 먹어요</b><p>오메가3는 등푸른 생선을 주 2~3번 먹어야 채워져요.</p></div>' +
+      '<div><span>💦</span><b>운동하면 더 필요해요</b><p>땀으로 미네랄이 빠지고, 근육 회복에 쓰이는 영양소가 늘어나요.</p></div>' +
+      '<div><span>🥗</span><b>다이어트 중엔 모자라요</b><p>먹는 양을 줄이면 비타민·미네랄도 같이 줄어요.</p></div>' +
+      '</div><div class="sp-pyr"><small>순서가 중요해요</small>' +
+      '<div class="l1">① 식단</div><div class="l2">② 잠</div><div class="l3">③ 운동</div><div class="l4">④ 영양제</div>' +
+      '<p>밑이 튼튼해야 위가 효과 있어요. 영양제는 맨 마지막 한 칸!</p></div></section>';
+
+    h += '<section>' + head("02", "꼭 알아둘 영양제", "기본 4 + 운동용 2") + '<div class="sp-cards">' +
+      '<div class="sp-grp">기본 — 누구나</div>' +
+      card("🌈", "종합비타민", "몸 전체 기본기", "여러 비타민·미네랄을 한 번에. 식단 빈칸을 넓게 메워요.",
+        "식단이 들쭉날쭉하거나 다이어트 중인 분", "아침 식사 직후", "제품에 적힌 1회 양 (보통 1~2알)", "다른 영양제와 같은 성분이 겹치지 않는지 확인") +
+      card("☀️", "비타민D", "뼈·근육·면역", "뼈를 튼튼하게 하고 근력과 면역에 도움. 한국인 대부분이 부족해요.",
+        "실내 생활이 많은 분 거의 모두", "식사와 함께 (기름 있는 음식과 흡수 ↑)", "1,000~2,000IU", "많이 먹는다고 좋지 않아요 — 하루 4,000IU 넘기지 않기") +
+      card("🐟", "오메가3", "혈관·염증 관리", "혈관 건강을 돕고 운동 후 뻐근함·염증 관리에 도움.",
+        "생선을 주 2번 이상 못 먹는 분", "식사와 함께 (비린 트림이 줄어요)", "EPA+DHA 합쳐서 500~1,000mg", "피를 묽게 하는 약을 먹고 있다면 먼저 의사·약사와 상의") +
+      card("🌙", "마그네슘", "근육 이완·잠", "근육 경련·쥐 나는 것을 줄이고 긴장을 풀어 잠에 도움.",
+        "운동량 많은 분, 잠을 설치거나 눈 떨림이 있는 분", "자기 전", "200~350mg", "많이 먹으면 설사할 수 있어요") +
+      '<div class="sp-grp">운동용 — 몸 만들 때</div>' +
+      card("🥤", "단백질 보충제", "근육 재료", "끼니로 단백질이 모자랄 때 간편하게 채워요. 음식의 일종이에요.",
+        "식사로 단백질을 다 못 채우는 분", "운동 후 또는 단백질이 부족한 끼니", "1스쿱 (단백질 약 20~25g)", "하루 단백질은 식사가 먼저, 보충제는 모자란 만큼만") +
+      card("⚡", "크레아틴", "힘·근력 UP", "짧고 강한 힘을 내는 연료. 운동 영양제 중 효과가 가장 잘 알려진 편이에요.",
+        "무게를 올리고 싶은 분 (남녀 모두)", "아무 때나 매일 (운동 후 단백질과 같이 편하게)", "3~5g", "물을 평소보다 더 마시기 · 신장 질환이 있으면 먹지 않기") +
+      '<div class="sp-grp">필요할 때만</div>' +
+      '<div class="sp-mini">' +
+      '<div><b>🦠 유산균</b><p>변비·장이 예민할 때. 아침 공복 또는 제품 안내대로.</p></div>' +
+      '<div><b>🩸 철분</b><p>여성 빈혈·생리 때 피로. <u>검사로 부족할 때만</u>, 칼슘과 떨어뜨려 먹기.</p></div>' +
+      '<div><b>🦴 칼슘</b><p>우유·멸치를 잘 안 먹을 때. 비타민D와 같이, 철분과는 따로.</p></div>' +
+      '<div><b>🍊 비타민C</b><p>과일·채소를 적게 먹을 때. 철분 흡수도 도와요.</p></div>' +
+      '</div></div></section>';
+
+    function combo(nm, desc, items) {
+      return '<div class="sp-combo"><b>' + nm + '</b><p>' + desc + '</p><div class="sp-pills">' + items.map(function (x) { return '<span>' + x + '</span>'; }).join('<i>+</i>') + '</div></div>';
+    }
+    h += '<section>' + head("03", "남녀별 추천 조합", "") +
+      '<div class="sp-sex"><button type="button" class="' + (sx === "M" ? "on" : "") + '" data-dg="sex:M">🙋‍♂️ 남성</button><button type="button" class="' + (sx === "F" ? "on" : "") + '" data-dg="sex:F">🙋‍♀️ 여성</button></div>' +
+      '<div class="sp-combos">' + (sx === "M" ?
+        combo("⭐ 기본 조합", "처음이라면 이것부터", ["종합비타민", "비타민D", "오메가3"]) +
+        combo("💪 근육 키우기", "기본 조합에 더해서", ["단백질 보충제", "크레아틴"]) +
+        combo("🔥 다이어트 중", "적게 먹는 동안 빈칸 채우기", ["종합비타민", "비타민D", "단백질 보충제"]) +
+        combo("😴 피로·잠·근육 뭉침", "운동량이 많을 때", ["마그네슘", "오메가3"])
+      :
+        combo("⭐ 기본 조합", "처음이라면 이것부터", ["종합비타민", "비타민D", "오메가3"]) +
+        combo("🍑 탄력·근력 키우기", "기본 조합에 더해서 — 크레아틴은 여성도 OK", ["단백질 보충제", "크레아틴"]) +
+        combo("🔥 다이어트 중", "적게 먹는 동안 빈칸 채우기 + 장 관리", ["종합비타민", "유산균", "단백질 보충제"]) +
+        combo("🩸 생리 때 피로·어지러움", "검사로 부족하다고 나왔을 때", ["철분", "비타민C"]) +
+        combo("🦴 뼈 건강", "유제품을 잘 안 먹는다면", ["칼슘", "비타민D", "마그네슘"])
+      ) + '</div></section>';
+
+    h += '<section>' + head("04", "하루에 이렇게 먹어요", "") + '<div class="sp-time">' +
+      '<div><span>🌅</span><b>아침 식사 후</b><p>종합비타민 · 비타민D · 오메가3' + (sx === "F" ? ' · (유산균은 공복)' : '') + '</p></div>' +
+      '<div><span>🏋️</span><b>운동 후</b><p>단백질 보충제 + 크레아틴</p></div>' +
+      '<div><span>🌙</span><b>자기 전</b><p>마그네슘' + (sx === "F" ? ' · 칼슘 (철분과는 시간 띄우기)' : '') + '</p></div>' +
+      '</div><div class="dg-tip"><b>잘 맞는 짝 · 떨어뜨릴 짝</b><ul class="dg-ul">' + li([
+        "비타민D·오메가3는 <b>밥과 함께</b> — 기름이 있어야 흡수돼요",
+        "철분 + 비타민C는 <b>같이</b>, 철분 + 칼슘·커피·차는 <b>2시간 떨어뜨리기</b>",
+        "잊지 않는 게 제일 중요 — <b>매일 같은 시간</b>에"]) + '</ul></div></section>';
+
+    h += '<section>' + head("05", "꼭 지킬 것", "") + '<ul class="dg-check sp-check">' + li([
+      "<b>많이 먹는다고 더 좋지 않아요</b> — 비타민 A·D·E·K는 몸에 쌓여요",
+      "여러 제품을 먹을 땐 <b>같은 성분이 겹치는지</b> 라벨 확인",
+      "<b>약을 먹는 중이거나 질환·임신·수유 중</b>이면 먼저 의사·약사와 상의",
+      "철분은 <b>검사 후에</b> — 모자라지 않은데 먹으면 오히려 탈이 나요",
+      "식약처 <b>'건강기능식품'</b> 마크 있는 제품 고르기",
+      "영양제보다 <b>식단·잠·운동</b>이 먼저예요"]) + '</ul>' +
+      '<p class="sp-note">이 내용은 일반적인 안내예요. 몸 상태에 맞는 정확한 양은 의사·약사와 상의하세요.</p></section></div>';
+    return h;
+  }
   function renderDiet() {
     var D = M.diet, has = D && typeof D === "object";
     var tab = DB_TAB || (has ? "coach" : "my");
@@ -3726,7 +3823,7 @@
     function sb(id, l) { return '<button type="button" class="' + (tab === id ? "on" : "") + '" data-db="tab:' + id + '">' + l + '</button>'; }
     var nb = 2 + (has ? 1 : 0) + (ML_ON ? 1 : 0);
     var seg = '<div class="db-tabs' + (nb > 3 ? ' n4' : '') + '">' + (has ? sb("coach", nb > 3 ? "선생님 식단" : "선생님 식단표") : "") + sb("my", "내 식단 짜기") + (ML_ON ? sb("log", "먹은 기록") : "") + sb("guide", "식단 가이드") + '</div>';
-    return seg + (tab === "guide" ? dgView() + remember() : tab === "log" ? mlView() + remember() : tab === "my" ? dbBuilder() + remember() : renderDietCoach());
+    return seg + (tab === "guide" ? dgSubSeg() + (DG_SUB === "supp" ? spView() : dgView()) + remember() : tab === "log" ? mlView() + remember() : tab === "my" ? dbBuilder() + remember() : renderDietCoach());
   }
   function renderDietCoach() {
     var D = M.diet;
@@ -4802,7 +4899,7 @@
   function navName(h) {
     h = String(h || "").replace(/^#/, "") || "home";
     if (/^routine/.test(h)) return "루틴"; if (/^form-/.test(h)) return "자세 복습지"; if (h === "forms") return "복습지";
-    if (h === "diet" || h === "diet-guide") return "식단"; if (/^goal/.test(h)) return "목표"; if (h === "body") return "몸변화"; if (h === "notice") return "공지";
+    if (h === "diet" || h === "diet-guide" || h === "diet-supp") return "식단"; if (/^goal/.test(h)) return "목표"; if (h === "body") return "몸변화"; if (h === "notice") return "공지";
     if (/^report/.test(h)) return "리포트"; if (h === "growth") return "성장 기록"; if (h === "app") return "앱으로 쓰기"; if (h === "muscle") return "근육 지도"; return "홈";
   }
   document.addEventListener("touchstart", function () {}, { passive: true });   /* 아이폰에서 :active(살짝 눌림)가 먹게 */
@@ -5028,7 +5125,8 @@
     else if (hsh === "routine") { html = renderRoutine(); tab = "routine"; }
     else if (hsh.indexOf("routine-") === 0 && (DAY_KO[hsh.slice(8)] || isRotKey(hsh.slice(8)))) { html = renderRoutine(hsh.slice(8)); tab = "routine"; scrollDay = true; }
     else if (hsh === "diet") { html = renderDiet(); tab = "diet"; }
-    else if (hsh === "diet-guide") { DB_TAB = "guide"; html = renderDiet(); tab = "diet"; }   /* 식단 가이드 바로 열기 (2026-11-20) */
+    else if (hsh === "diet-guide") { DB_TAB = "guide"; DG_SUB = "food"; html = renderDiet(); tab = "diet"; }
+    else if (hsh === "diet-supp") { DB_TAB = "guide"; DG_SUB = "supp"; html = renderDiet(); tab = "diet"; }   /* 영양제 가이드 바로 열기 */   /* 식단 가이드 바로 열기 (2026-11-20) */
     else if (hsh === "notice") { html = renderNotice(); tab = "notice"; }
     else if (hsh === "goal" || hsh === "journey") { html = renderGoal(); tab = "goal"; }
     else if (hsh === "goal-badges" || hsh === "badges") { html = renderGoal(); tab = "goal"; jumpTo = "badges"; }

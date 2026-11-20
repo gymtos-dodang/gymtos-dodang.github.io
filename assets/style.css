@@ -2544,6 +2544,52 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .dg-lead { margin: 0; font-size: 13.5px; font-weight: 800; color: var(--primary); }
 .dg-go { border: 0; font: inherit; font-size: 15px; font-weight: 900; color: #fff; background: var(--primary); border-radius: 14px; padding: 14px; cursor: pointer; }
 
+/* 영양제 가이드 (2026-11-20, app.js spView — 식단 가이드 안 [식단 기본 | 영양제]) */
+.dg-sub { display: flex; gap: 8px; margin: -4px 0 14px; }
+.dg-sub button { flex: 1; font: inherit; font-size: 13.5px; font-weight: 900; padding: 10px 4px; border-radius: 99px; border: 1.5px solid var(--line); background: var(--paper); color: var(--sub); cursor: pointer; }
+.dg-sub button.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+.sp-hero { background: linear-gradient(135deg, #2E8B6A, #1F5F86); }
+.sp-pyr { background: var(--paper); border-radius: 18px; padding: 14px; display: grid; justify-items: center; gap: 4px; }
+.sp-pyr small { font-size: 11.5px; font-weight: 900; color: var(--faint); margin-bottom: 4px; }
+.sp-pyr div { border-radius: 10px; padding: 7px 0; text-align: center; font-size: 13px; font-weight: 900; }
+.sp-pyr .l4 { order: 1; width: 34%; background: #2E8B6A; color: #fff; }
+.sp-pyr .l3 { order: 2; width: 54%; background: color-mix(in srgb, var(--primary) 35%, var(--paper)); color: var(--ink); }
+.sp-pyr .l2 { order: 3; width: 74%; background: color-mix(in srgb, var(--primary) 60%, var(--paper)); color: #fff; }
+.sp-pyr .l1 { order: 4; width: 94%; background: var(--primary); color: #fff; }
+.sp-pyr p { order: 5; margin: 6px 0 0; font-size: 12.5px; color: var(--sub); text-align: center; }
+.sp-cards { display: grid; gap: 10px; }
+.sp-grp { font-size: 12.5px; font-weight: 900; color: var(--primary); margin-top: 4px; }
+.sp-card { background: var(--paper); border-radius: 18px; padding: 14px; display: grid; gap: 9px; }
+.sp-h { display: flex; align-items: center; gap: 10px; }
+.sp-ic { width: 42px; height: 42px; border-radius: 13px; background: var(--tint); display: grid; place-items: center; font-size: 21px; flex: none; }
+.sp-h b { display: block; font-size: 17px; font-weight: 900; color: var(--ink); }
+.sp-h em { font-style: normal; font-size: 12px; font-weight: 800; color: #2E8B6A; }
+.sp-what { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--ink); }
+.sp-dl { margin: 0; display: grid; grid-template-columns: 52px 1fr; gap: 6px 8px; background: var(--tint); border-radius: 12px; padding: 10px 12px; }
+.sp-dl dt { font-size: 11.5px; font-weight: 900; color: var(--primary); padding-top: 1px; }
+.sp-dl dd { margin: 0; font-size: 13px; line-height: 1.45; color: var(--ink); }
+.sp-warn { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--sub); }
+.sp-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sp-mini > div { background: var(--paper); border-radius: 14px; padding: 11px 12px; }
+.sp-mini b { font-size: 14px; font-weight: 900; color: var(--ink); }
+.sp-mini p { margin: 4px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--sub); }
+.sp-sex { display: flex; gap: 6px; background: var(--hw-track, #F2F2F4); border-radius: 14px; padding: 4px; }
+.sp-sex button { flex: 1; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 900; color: var(--sub); padding: 9px 4px; border-radius: 11px; cursor: pointer; }
+.sp-sex button.on { background: var(--paper); color: var(--ink); box-shadow: 0 1px 4px rgba(0, 0, 0, .1); }
+.sp-combos { display: grid; gap: 8px; }
+.sp-combo { background: var(--paper); border-radius: 16px; padding: 13px 14px; border-left: 5px solid var(--primary); }
+.sp-combo > b { font-size: 15px; font-weight: 900; color: var(--ink); }
+.sp-combo > p { margin: 2px 0 8px; font-size: 12.5px; color: var(--sub); }
+.sp-pills { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.sp-pills span { font-size: 13px; font-weight: 800; padding: 5px 11px; border-radius: 99px; background: var(--tint); color: var(--primary); }
+.sp-pills i { font-style: normal; font-weight: 900; color: var(--faint); }
+.sp-time { display: grid; gap: 8px; }
+.sp-time > div { display: grid; grid-template-columns: 38px 1fr; column-gap: 10px; background: var(--paper); border-radius: 16px; padding: 12px 14px; }
+.sp-time span { grid-row: span 2; width: 38px; height: 38px; border-radius: 12px; background: var(--tint); display: grid; place-items: center; font-size: 19px; }
+.sp-time b { font-size: 14.5px; font-weight: 900; color: var(--ink); }
+.sp-time p { margin: 2px 0 0; font-size: 13px; color: var(--sub); }
+.sp-note { margin: 0; font-size: 11.5px; line-height: 1.5; color: var(--faint); text-align: center; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -2745,6 +2791,8 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .dg-ratio .b { background: var(--seal); }
 :where(html:not([data-theme="light"])) .dg-skip li::before { background: var(--seal); }
 :where(html:not([data-theme="light"])) .dg-go { background: var(--seal); }
+:where(html:not([data-theme="light"])) .dg-sub button.on { background: var(--seal); }
+:where(html:not([data-theme="light"])) .sp-pyr .l1 { background: var(--seal); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -3040,6 +3088,8 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .dg-ratio .b { background: var(--seal); }
 :where(html[data-theme="dark"]) .dg-skip li::before { background: var(--seal); }
 :where(html[data-theme="dark"]) .dg-go { background: var(--seal); }
+:where(html[data-theme="dark"]) .dg-sub button.on { background: var(--seal); }
+:where(html[data-theme="dark"]) .sp-pyr .l1 { background: var(--seal); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {
