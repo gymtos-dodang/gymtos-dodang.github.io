@@ -145,6 +145,9 @@
   }
   /* 2026-11-16 돌아다니는 고양이 (data.js pet: "cat" — 우유정님 "귀여운 고양이 돌아다니게"). 아래 탭 바로 위를 걸어다니다 앉아서 쉼.
      오리지널 그림(크림색 고양이 + 분홍 리본), 화면 위에 따로 떠 있는 칸(.petwalk)이라 본문(.view)엔 효과 없음 · pointer-events none · 폭 안 넓어짐(overflow hidden) */
+  /* 먹이주머니 상태(2026-11-20) — 아래 '먹이주머니 · 동물 레벨업' 참고 */
+  var PETS = [], PF = null, PF_LS = "ptnote:" + RT_SLUG + ":pet", PF_T = 0, PF_ON = false, PF_SV = false, PF_LV = [120, 500];
+  try { PF = JSON.parse(localStorage.getItem(PF_LS) || "null"); } catch (e) {}
   function petNight() { var h = new Date().getHours(); return h < 6; }   /* 밤 12시~새벽 6시 = 자는 시간 (2026-11-18) */
   function petSpawn(PET, F) {   /* F = 토롱이 친구 설정(2026-11-18), 없으면 주인공 */
     if (!F && ((PET !== "cat" && PET !== "bunny") || document.querySelector(".petwalk"))) return;
@@ -239,13 +242,62 @@
       ["pointerup", "pointercancel", "pointerleave"].forEach(function (ev) { pet.addEventListener(ev, function () { if (lt > 0) clearTimeout(lt); }); });
       pet.addEventListener("click", function (e) { if (lt === -1) { lt = 0; e.stopImmediatePropagation(); e.preventDefault(); } }, true); })();
     pet.addEventListener("click", function (e) { e.preventDefault(); e.stopPropagation(); react(); });
+    /* 먹이주머니(2026-11-20): 동물 목록에 올림 — 레벨 치장(dress)·먹이 보고 달려가 먹기(goEat) */
+    pet.insertAdjacentHTML("beforeend", '<span class="plv" aria-hidden="true"><i>✦</i><i>✦</i><i>✧</i></span>');
+    var Q = { id: F ? F.id : "main", name: F ? F.name : (PET === "bunny" ? "토롱이" : "냥이"), el: pet, wrap: wrap,
+      svg: function () { return F ? frSvg(F) : PET === "bunny" ? BNY_SVG : CAT_SVG; },
+      busy: function () { return !!busy; },
+      dress: function () { var lv = pfLv(Q.id); pet.classList.remove("lv2", "lv3"); if (lv > 1) pet.classList.add("lv" + lv); },
+      goEat: function (gx, n, pile) {
+        busy = 1; freeze(); pet.classList.remove("sleep", "wake", "happy", "pat", "hi", "shy");
+        var mx = Math.max(20, wrap.clientWidth - W - 8);
+        dir = gx > x + W / 2 ? 1 : -1;
+        var tx = Math.max(0, Math.min(mx, dir > 0 ? gx - W * .8 : gx - W * .2));
+        bubble(PET === "bunny" ? "당근이다!" : "생선이다냥!", 1000);
+        function eat() {
+          dir = gx > x + W / 2 ? 1 : -1; place(0);
+          pet.classList.remove("walk", "jump", "run"); pet.classList.add("sit", "eat", "pfeat");
+          var T = Math.min(5200, 1500 + n * 130), sp = pile.querySelectorAll("span"), lab = pile.querySelector("b"), left = n;
+          var bite = setInterval(function () {
+            left = Math.max(0, left - Math.max(1, Math.round(n / 8)));
+            if (lab) lab.textContent = left > 1 ? "×" + left : "";
+            var keep = Math.ceil(sp.length * left / n); for (var i = keep; i < sp.length; i++) sp[i].classList.add("gone");
+          }, T / 8);
+          tm = setTimeout(function () {
+            clearInterval(bite); pile.classList.add("bye"); setTimeout(function () { pile.remove(); }, 400);
+            pet.classList.remove("eat", "pfeat"); pet.classList.add("happy"); hearts(3);
+            var old = pfLv(Q.id); PF.xp = PF.xp || {}; PF.xp[Q.id] = (PF.xp[Q.id] || 0) + n; pfSave(true);
+            var lv = pfLv(Q.id), xp = PF.xp[Q.id];
+            if (lv > old) { Q.dress(); fx("pflvfx", "LEVEL UP!", 0, -16, 1800); setTimeout(function () { pfLevelUp(Q, lv); }, 900); }
+            else bubble(lv < 3 ? "냠냠! 레벨업까지 " + (PF_LV[lv - 1] - xp) + "개" : (PET === "bunny" ? "배불러요! ♡" : "배부르다냥 ♡"), 2000);
+            try { navigator.vibrate && navigator.vibrate(15); } catch (e) {}
+            tm = setTimeout(function () { pet.classList.remove("happy"); pet.style.setProperty("--hop", HMS / 1000 + "s"); busy = 0; tm = setTimeout(next, 2500); }, 1800);
+          }, T);
+        }
+        if (Math.abs(tx - x) < 4) { tm = setTimeout(eat, 200); return; }
+        if (HOP) {   /* 토끼는 빠르게 폴짝폴짝 */
+          var hn = Math.max(1, Math.round(Math.abs(tx - x) / 44)), st = (tx - x) / hn, HF = Math.min(HMS, 300);
+          pet.style.setProperty("--hop", HF / 1000 + "s"); pet.classList.remove("sit");
+          (function hop() {
+            if (hn-- <= 0) { pet.classList.add("sit"); eat(); return; }
+            x += st; pet.classList.remove("jump"); void pet.offsetWidth; pet.classList.add("jump"); place(HF);
+            tm = setTimeout(function () { pet.classList.remove("jump"); tm = setTimeout(hop, 60); }, HF);
+          })();
+        } else {   /* 고양이는 우다다 */
+          var ms = Math.abs(tx - x) * 9; x = tx;
+          pet.classList.remove("sit"); pet.classList.add("walk", "run");
+          requestAnimationFrame(function () { requestAnimationFrame(function () { place(ms); }); });
+          tm = setTimeout(eat, ms + 60);
+        }
+      } };
+    PETS.push(Q); Q.dress();
     wrap.removeAttribute("aria-hidden"); pet.setAttribute("role", "button"); pet.setAttribute("aria-label", (F ? F.name : PET === "bunny" ? "토롱이" : "고양이") + " 쓰다듬기");
     tm = setTimeout(next, F ? 900 + Math.random() * 3000 : 2500);
     window.addEventListener("resize", function () { var max = Math.max(20, wrap.clientWidth - W - 8); if (x > max) { x = max; place(0); } });
   }
   /* ---- 토롱이 친구들 (2026-11-18 장동욱 "각자 고유의 성격을 가진 토롱이들, 랜덤으로 나오는 날도 안 나오는 날도" + "약간 까칠한 토롱이도")
      주인공 토롱이(pet:"bunny") 회원만. 날마다(날짜+회원 주소로 정해짐) 0~2마리, 하루 동안은 같은 친구. 처음 만나면 "새 친구 발견!" + 도감(꾹 누르기) */
-  var BNY_SVG = '<svg class="b-all" viewBox="0 -6 64 68" width="48" height="51"><g class="b-body"><circle cx="11" cy="44" r="5.2" fill="#fff" stroke="#B8325A" stroke-width="1.5"/><ellipse class="b-foot" cx="20" cy="56" rx="9" ry="3.8" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/><ellipse cx="25" cy="45" rx="14.5" ry="11.5" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/><ellipse class="b-paw" cx="38" cy="56" rx="4.6" ry="3.4" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/></g><g class="b-ears"><g transform="translate(11.2 1.2) scale(.48)"><ellipse cx="45" cy="17" rx="9" ry="20" transform="rotate(-12 45 17)" fill="#FFE8EE" stroke="#B8325A" stroke-width="3"/><ellipse cx="45" cy="19" rx="4" ry="13" transform="rotate(-12 45 19)" fill="#F7A9BC"/><path d="M68 36 C66 20 72 5 81 6 C90 7 106 16 104 27 C102 34 92 31 84 27 C81 31 79 35 77 37 Z" fill="#FFE8EE" stroke="#B8325A" stroke-width="3" stroke-linejoin="round"/><path d="M74 30 C73 20 77 12 82 12 C88 13 97 19 97 24 C93 25 87 22 82 20 C79 23 77 27 76 31 Z" fill="#F7A9BC"/></g></g><g class="b-head"><g transform="translate(11.2 1.2) scale(.48)"><ellipse cx="60" cy="60" rx="34" ry="30" fill="#FFE8EE" stroke="#B8325A" stroke-width="3"/><path d="M27 50 Q60 34 93 50 L92 58 Q60 43 28 58 Z" fill="#D6204F" stroke="#B8325A" stroke-width="2" stroke-linejoin="round"/><g class="b-eyes"><ellipse cx="47" cy="65" rx="5.4" ry="7" fill="#4A2030"/><circle cx="49" cy="62" r="2.1" fill="#fff"/><circle cx="45.4" cy="67.6" r="1" fill="#fff"/><ellipse cx="73" cy="65" rx="5.4" ry="7" fill="#4A2030"/><circle cx="75" cy="62" r="2.1" fill="#fff"/><circle cx="71.4" cy="67.6" r="1" fill="#fff"/></g><g class="b-sleep"><path d="M40 64.5q7 6 14 0M66 64.5q7 6 14 0" fill="none" stroke="#4A2030" stroke-width="3.2" stroke-linecap="round"/></g><g class="b-slit"><path d="M40 66.2q7 1.6 14 0M66 66.2q7 1.6 14 0" fill="none" stroke="#4A2030" stroke-width="3.6" stroke-linecap="round"/><path d="M38.5 62.5q8.5 -2 17 0M64.5 62.5q8.5 -2 17 0" fill="none" stroke="#4A2030" stroke-width="1.6" stroke-linecap="round" opacity=".55"/></g><g class="b-happy"><path d="M41 67q6-8 12 0M67 67q6-8 12 0" fill="none" stroke="#4A2030" stroke-width="3.4" stroke-linecap="round"/></g><ellipse cx="37" cy="76" rx="6.5" ry="4" fill="#FF8FA8" opacity=".8"/><ellipse cx="83" cy="76" rx="6.5" ry="4" fill="#FF8FA8" opacity=".8"/><path class="b-mouth" d="M56 73 Q58 76 60 73 Q62 76 64 73" fill="none" stroke="#B8325A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g></g></svg>';
+  var BNY_SVG = '<svg class="b-all" viewBox="0 -6 64 68" width="48" height="51"><g class="b-body"><circle cx="11" cy="44" r="5.2" fill="#fff" stroke="#B8325A" stroke-width="1.5"/><ellipse class="b-foot" cx="20" cy="56" rx="9" ry="3.8" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/><ellipse cx="25" cy="45" rx="14.5" ry="11.5" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/><g class="lvx lv-bag"><path d="M24.2 40.5q4.6 3.6 6.6 9.6" fill="none" stroke="#C98A12" stroke-width="1.4" stroke-linecap="round"/><path d="M15 38.6q-.4-3.4 3-3.6q3.4.2 3 3.6" fill="none" stroke="#C98A12" stroke-width="1.3"/><rect x="11.2" y="38" width="13.6" height="12.4" rx="4.4" fill="#FFD15C" stroke="#C98A12" stroke-width="1.3"/><rect x="13.6" y="43.4" width="8.8" height="5" rx="2.2" fill="#FFE9A8" stroke="#C98A12" stroke-width="1"/><path d="M18 45.2c-.9-1-2.3-.2-1.6.9l1.6 1.4 1.6-1.4c.7-1.1-.7-1.9-1.6-.9z" fill="#FF6F91"/></g><g class="lvx lv-db1"><rect x="33" y="54.4" width="15" height="1.9" rx=".95" fill="#9AA0AA"/><rect x="31" y="51.8" width="3.4" height="7" rx="1.2" fill="#3B3F4A"/><rect x="46.6" y="51.8" width="3.4" height="7" rx="1.2" fill="#3B3F4A"/></g><g class="lvx lv-db3"><rect x="27" y="54" width="30" height="2.6" rx="1.3" fill="#B8BEC8"/><rect x="21.6" y="46.6" width="5.6" height="17.4" rx="1.8" fill="#2B2E37" stroke="#FFCF3F" stroke-width=".9"/><rect x="27.2" y="49" width="3.6" height="12.6" rx="1.3" fill="#2B2E37" stroke="#FFCF3F" stroke-width=".8"/><rect x="53.2" y="49" width="3.6" height="12.6" rx="1.3" fill="#2B2E37" stroke="#FFCF3F" stroke-width=".8"/><rect x="56.8" y="46.6" width="5.6" height="17.4" rx="1.8" fill="#2B2E37" stroke="#FFCF3F" stroke-width=".9"/></g><ellipse class="b-paw" cx="38" cy="56" rx="4.6" ry="3.4" fill="#FFE8EE" stroke="#B8325A" stroke-width="1.5"/></g><g class="b-ears"><g transform="translate(11.2 1.2) scale(.48)"><ellipse cx="45" cy="17" rx="9" ry="20" transform="rotate(-12 45 17)" fill="#FFE8EE" stroke="#B8325A" stroke-width="3"/><ellipse cx="45" cy="19" rx="4" ry="13" transform="rotate(-12 45 19)" fill="#F7A9BC"/><path d="M68 36 C66 20 72 5 81 6 C90 7 106 16 104 27 C102 34 92 31 84 27 C81 31 79 35 77 37 Z" fill="#FFE8EE" stroke="#B8325A" stroke-width="3" stroke-linejoin="round"/><path d="M74 30 C73 20 77 12 82 12 C88 13 97 19 97 24 C93 25 87 22 82 20 C79 23 77 27 76 31 Z" fill="#F7A9BC"/></g></g><g class="b-head"><g transform="translate(11.2 1.2) scale(.48)"><ellipse cx="60" cy="60" rx="34" ry="30" fill="#FFE8EE" stroke="#B8325A" stroke-width="3"/><path d="M27 50 Q60 34 93 50 L92 58 Q60 43 28 58 Z" fill="#D6204F" stroke="#B8325A" stroke-width="2" stroke-linejoin="round"/><g class="b-eyes"><ellipse cx="47" cy="65" rx="5.4" ry="7" fill="#4A2030"/><circle cx="49" cy="62" r="2.1" fill="#fff"/><circle cx="45.4" cy="67.6" r="1" fill="#fff"/><ellipse cx="73" cy="65" rx="5.4" ry="7" fill="#4A2030"/><circle cx="75" cy="62" r="2.1" fill="#fff"/><circle cx="71.4" cy="67.6" r="1" fill="#fff"/></g><g class="b-sleep"><path d="M40 64.5q7 6 14 0M66 64.5q7 6 14 0" fill="none" stroke="#4A2030" stroke-width="3.2" stroke-linecap="round"/></g><g class="b-slit"><path d="M40 66.2q7 1.6 14 0M66 66.2q7 1.6 14 0" fill="none" stroke="#4A2030" stroke-width="3.6" stroke-linecap="round"/><path d="M38.5 62.5q8.5 -2 17 0M64.5 62.5q8.5 -2 17 0" fill="none" stroke="#4A2030" stroke-width="1.6" stroke-linecap="round" opacity=".55"/></g><g class="b-happy"><path d="M41 67q6-8 12 0M67 67q6-8 12 0" fill="none" stroke="#4A2030" stroke-width="3.4" stroke-linecap="round"/></g><ellipse cx="37" cy="76" rx="6.5" ry="4" fill="#FF8FA8" opacity=".8"/><ellipse cx="83" cy="76" rx="6.5" ry="4" fill="#FF8FA8" opacity=".8"/><path class="b-mouth" d="M56 73 Q58 76 60 73 Q62 76 64 73" fill="none" stroke="#B8325A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g><g class="lvx lv-crown"><path d="M33.4 17.2l-.9-6.4 3.3 2.7 2.7-4.4 2.7 4.4 3.3-2.7-.9 6.4z" fill="#FFCF3F" stroke="#C8921A" stroke-width=".9" stroke-linejoin="round" transform="rotate(-10 38.5 14)"/><circle cx="38.4" cy="14.8" r="1.1" fill="#FF5C8A"/></g></g></svg>';
   var FR = [
     { id: "muscle", name: "근육이", desc: "덤벨을 놓지 않는 운동광. 쉬는 시간에도 한 세트 더!", fur: "#ECECF1", line: "#5A5A66", band: "#2B2B33",
       acc: '<g class="acc"><rect x="36.5" y="49.2" width="15" height="2.4" rx="1.2" fill="#6B6B76"/><rect x="34.4" y="45.4" width="3.6" height="10" rx="1.3" fill="#2B2B33"/><rect x="50" y="45.4" width="3.6" height="10" rx="1.3" fill="#2B2B33"/></g>',
@@ -266,7 +318,7 @@
       acc: '<path d="M29.4 27.6l7 2.6M50.6 27.6l-7 2.6" stroke="#2E3A6B" stroke-width="1.7" stroke-linecap="round"/><g class="gblush"><circle cx="28.6" cy="37.8" r="3.6" fill="#FF7A9A" opacity=".9"/><circle cx="51.2" cy="37.8" r="3.6" fill="#FF7A9A" opacity=".9"/></g>',
       tap: function (n) { return n % 5 < 3 ? { k: 2, say: ["…뭐.", "만지지 마.", "흥."][n % 5] } : { k: 0, happy: false, h: 1, blush: 1, say: n % 5 === 3 ? "…그래도 오늘 운동은 했지?" : "…잘했네. 흥." }; } }
   ];
-  var CAT_SVG = '<svg viewBox="0 0 64 48" width="52" height="39"><g class="p-walk"><path class="p-tail" d="M12 30 C4 28 3 18 8 14" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/><g class="p-legs"><g class="lg a"><path d="M16 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="19.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M22 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="25.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M36 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="39.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg a"><path d="M42 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="45.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g></g><ellipse cx="30" cy="30" rx="18" ry="9.5" fill="#FFF3E2"/><path d="M20 22.5c5-2.5 13-2.5 18 0" fill="none" stroke="#F3D9B8" stroke-width="3" stroke-linecap="round"/></g><g class="p-sit"><path class="p-tail" d="M16 42 C6 42 4 34 9 30" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/><path d="M16 44c0-14 6-21 15-21s15 7 15 21z" fill="#FFF3E2"/><ellipse cx="36" cy="43.5" rx="4" ry="2.5" fill="#fff"/><ellipse cx="45" cy="43.5" rx="4" ry="2.5" fill="#fff"/></g><g class="p-head"><path d="M35 11l2-9 7 5z" fill="#FFF3E2"/><path d="M50 7l7-5 1 9z" fill="#FFF3E2"/><path d="M37.5 8.5l1-4 3.2 2.3z" fill="#F7B6C6"/><path d="M52.5 6.8l3.2-2.3.5 4z" fill="#F7B6C6"/><ellipse cx="46.5" cy="17" rx="12.5" ry="10.5" fill="#FFF3E2"/><path d="M40 7.5c2 2 4 2.5 6.500 2.500" fill="none" stroke="#F3D9B8" stroke-width="2.4" stroke-linecap="round"/><g class="p-eyes"><ellipse cx="42" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/><ellipse cx="51.500" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/></g><g class="p-sleep"><path d="M40.1 16q1.9 2 3.8 0M49.6 16q1.9 2 3.8 0" fill="none" stroke="#3A2E2E" stroke-width="1.1" stroke-linecap="round"/></g><g class="p-slit"><path d="M40.1 16.9q1.9 .5 3.8 0M49.6 16.9q1.9 .5 3.8 0" fill="none" stroke="#3A2E2E" stroke-width="1.3" stroke-linecap="round"/></g><g class="p-happy"><path d="M40 17.4q2-2.6 4 0M49.5 17.4q2-2.6 4 0" fill="none" stroke="#3A2E2E" stroke-width="1.3" stroke-linecap="round"/></g><ellipse cx="38.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/><ellipse cx="54.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/><path d="M46 19.300l.9 1 .9-1z" fill="#E98AA2"/><path d="M44.800 21.600q1.050 1.100 2.100 0q1.050 1.100 2.100 0" fill="none" stroke="#3A2E2E" stroke-width=".9" stroke-linecap="round"/><path d="M40.500 26.200l-4-2.200v4.400zM42.500 26.200l4-2.200v4.400z" fill="#D6204F"/><circle cx="41.500" cy="26.200" r="1.500" fill="#B8173F"/></g></svg>';
+  var CAT_SVG = '<svg viewBox="0 0 64 48" width="52" height="39"><g class="p-walk"><path class="p-tail" d="M12 30 C4 28 3 18 8 14" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/><g class="p-legs"><g class="lg a"><path d="M16 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="19.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M22 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="25.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M36 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="39.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg a"><path d="M42 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="45.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g></g><ellipse cx="30" cy="30" rx="18" ry="9.5" fill="#FFF3E2"/><path d="M20 22.5c5-2.5 13-2.5 18 0" fill="none" stroke="#F3D9B8" stroke-width="3" stroke-linecap="round"/><g class="lvx lv-bag"><path d="M23.4 24.6v7M31.4 24.6v7" stroke="#C98A12" stroke-width="1.3" stroke-linecap="round"/><rect x="20.6" y="15.4" width="13" height="9.6" rx="3.6" fill="#FFD15C" stroke="#C98A12" stroke-width="1.2"/><rect x="23" y="19.4" width="8.2" height="4.2" rx="1.8" fill="#FFE9A8" stroke="#C98A12" stroke-width=".9"/><path d="M27.1 20.8c-.8-.9-2.1-.2-1.5.8l1.5 1.3 1.5-1.3c.6-1-.7-1.7-1.5-.8z" fill="#FF6F91"/></g><g class="lvx lv-db1"><rect x="22" y="13.4" width="10.4" height="1.5" rx=".75" fill="#9AA0AA"/><rect x="20.4" y="11.4" width="2.6" height="5.4" rx="1" fill="#3B3F4A"/><rect x="31.4" y="11.4" width="2.6" height="5.4" rx="1" fill="#3B3F4A"/></g><g class="lvx lv-db3"><rect x="15" y="12.6" width="24" height="2.2" rx="1.1" fill="#B8BEC8"/><rect x="10.6" y="7" width="4.6" height="13.4" rx="1.5" fill="#2B2E37" stroke="#FFCF3F" stroke-width=".8"/><rect x="15.2" y="8.8" width="3" height="9.8" rx="1.1" fill="#2B2E37" stroke="#FFCF3F" stroke-width=".7"/><rect x="35.8" y="8.8" width="3" height="9.8" rx="1.1" fill="#2B2E37" stroke="#FFCF3F" stroke-width=".7"/><rect x="38.8" y="7" width="4.6" height="13.4" rx="1.5" fill="#2B2E37" stroke="#FFCF3F" stroke-width=".8"/></g></g><g class="p-sit"><path class="p-tail" d="M16 42 C6 42 4 34 9 30" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/><path d="M16 44c0-14 6-21 15-21s15 7 15 21z" fill="#FFF3E2"/><ellipse cx="36" cy="43.5" rx="4" ry="2.5" fill="#fff"/><ellipse cx="45" cy="43.5" rx="4" ry="2.5" fill="#fff"/><g class="lvx lv-bag"><rect x="13.6" y="29" width="11" height="11" rx="3.6" fill="#FFD15C" stroke="#C98A12" stroke-width="1.2"/><rect x="15.6" y="33.6" width="7" height="4.4" rx="1.8" fill="#FFE9A8" stroke="#C98A12" stroke-width=".9"/><path d="M19.1 35c-.8-.9-2.1-.2-1.5.8l1.5 1.3 1.5-1.3c.6-1-.7-1.7-1.5-.8z" fill="#FF6F91"/><path d="M24.4 31.4q4 1 6.4 4" fill="none" stroke="#C98A12" stroke-width="1.2" stroke-linecap="round"/></g><g class="lvx lv-db1"><rect x="50" y="42.4" width="9.6" height="1.5" rx=".75" fill="#9AA0AA"/><rect x="48.4" y="40.2" width="2.6" height="5.8" rx="1" fill="#3B3F4A"/><rect x="58.6" y="40.2" width="2.6" height="5.8" rx="1" fill="#3B3F4A"/></g><g class="lvx lv-db3"><rect x="47.4" y="41.8" width="15.6" height="2.2" rx="1.1" fill="#B8BEC8"/><rect x="43.8" y="36.8" width="4.2" height="11.8" rx="1.4" fill="#2B2E37" stroke="#FFCF3F" stroke-width=".8"/><rect x="62.4" y="36.8" width="4.2" height="11.8" rx="1.4" fill="#2B2E37" stroke="#FFCF3F" stroke-width=".8"/></g></g><g class="p-head"><path d="M35 11l2-9 7 5z" fill="#FFF3E2"/><path d="M50 7l7-5 1 9z" fill="#FFF3E2"/><path d="M37.5 8.5l1-4 3.2 2.3z" fill="#F7B6C6"/><path d="M52.5 6.8l3.2-2.3.5 4z" fill="#F7B6C6"/><ellipse cx="46.5" cy="17" rx="12.5" ry="10.5" fill="#FFF3E2"/><path d="M40 7.5c2 2 4 2.5 6.500 2.500" fill="none" stroke="#F3D9B8" stroke-width="2.4" stroke-linecap="round"/><g class="p-eyes"><ellipse cx="42" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/><ellipse cx="51.500" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/></g><g class="p-sleep"><path d="M40.1 16q1.9 2 3.8 0M49.6 16q1.9 2 3.8 0" fill="none" stroke="#3A2E2E" stroke-width="1.1" stroke-linecap="round"/></g><g class="p-slit"><path d="M40.1 16.9q1.9 .5 3.8 0M49.6 16.9q1.9 .5 3.8 0" fill="none" stroke="#3A2E2E" stroke-width="1.3" stroke-linecap="round"/></g><g class="p-happy"><path d="M40 17.4q2-2.6 4 0M49.5 17.4q2-2.6 4 0" fill="none" stroke="#3A2E2E" stroke-width="1.3" stroke-linecap="round"/></g><ellipse cx="38.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/><ellipse cx="54.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/><path d="M46 19.300l.9 1 .9-1z" fill="#E98AA2"/><path d="M44.800 21.600q1.050 1.100 2.100 0q1.050 1.100 2.100 0" fill="none" stroke="#3A2E2E" stroke-width=".9" stroke-linecap="round"/><path d="M40.500 26.200l-4-2.200v4.400zM42.500 26.200l4-2.200v4.400z" fill="#D6204F"/><circle cx="41.500" cy="26.200" r="1.500" fill="#B8173F"/><g class="lvx lv-crown"><path d="M42.4 9.2l-.7-4.8 2.5 2 2.1-3.5 2.1 3.5 2.5-2-.7 4.8z" fill="#FFCF3F" stroke="#C8921A" stroke-width=".8" stroke-linejoin="round"/><circle cx="46.3" cy="7.4" r=".9" fill="#FF5C8A"/></g></g></svg>';
   /* 2026-11-18 유정님 고양이 친구들 (pet:"cat") — 고양이 그림(CAT_SVG)을 색만 바꿈: 털 fur·무늬 stripe·다리 leg·리본 band·눈 eye */
   FR.forEach(function (F) { F.pet = "bunny"; });
   FR.push(
@@ -304,7 +356,7 @@
     var seen = frSeen(), L = FR.filter(function (F) { return F.pet === M.pet; }), got = L.filter(function (F) { return seen.indexOf(F.id) >= 0; }).length;
     var body = '<p class="rts-note">날마다 다른 친구가 놀러 와요 · 만난 친구 ' + got + '/' + L.length + '</p><div class="frdex">' + L.map(function (F) {
       var ok = seen.indexOf(F.id) >= 0;
-      return '<div class="frd' + (ok ? '' : ' unk') + '"><div class="frd-pic">' + frSvg(F) + '</div><b>' + (ok ? esc(F.name) : '???') + '</b><small>' + (ok ? esc(F.desc) : '아직 못 만났어요') + '</small></div>';
+      return '<div class="frd' + (ok ? '' : ' unk') + '"><div class="frd-pic">' + frSvg(F) + '</div><b>' + (ok ? esc(F.name) + (pfLv(F.id) > 1 ? ' <em class="frd-lv">Lv.' + pfLv(F.id) + '</em>' : '') : '???') + '</b><small>' + (ok ? esc(F.desc) : '아직 못 만났어요') + '</small></div>';
     }).join("") + '</div>';
     rtSheet(M.pet === "cat" ? "고양이 친구 도감" : "토롱이 친구 도감", body, function () {}, false);
   }
@@ -327,6 +379,180 @@
     while (today.length < cnt) today.push(pool.splice(Math.floor(rnd() * pool.length), 1)[0]);
     today.forEach(function (F, j) { setTimeout(function () { petSpawn(M.pet, F); setTimeout(function () { frFound(F); }, 2500); }, 1200 + j * 900); });
   })();
+  /* ===== 먹이주머니 · 동물 레벨업 (2026-11-20 장동욱 "배지 얻으면 4개, 루틴 한 종목 체크·출석 2개, 인바디 3개 등 활동하면 당근·생선을 줌 →
+     옆 작은 버튼 누르면 먹이주머니 → 꾹 누르면 모았던 당근이 나오고 지정 토끼한테 뿌리면 달려가서 먹음 → 많이 먹으면 레벨업, 치장이 달라짐(가방·덤벨·특수효과),
+     레벨은 3까지 오래 걸리게, 고양이도 마찬가지")
+     pet:"bunny"(당근)·"cat"(생선) 회원만. 번 개수 = 2×출석일 + 2×✓한 종목(날짜별 가장 많았던 수) + 4×받은 배지 + 3×인바디 기록 — 모두 '가장 많았던 값'으로만 셈(✓ 풀었다 다시 해도 안 늘어남)
+     처음 켤 때 지금까지 한 건 기준선(b0)으로 잡고 선물 10개. 저장 localStorage + 창고 mw:<주소>:pet(폰 바꿔도 이어짐, 값마다 큰 쪽으로 합침). 선생님 폰·체험은 주머니 없음.
+     레벨: 그 동물이 먹은 개수 PF_LV(120 → Lv.2 가방+작은 덤벨, 500 → Lv.3 큰 덤벨+왕관+반짝이) — 동물마다 따로(주인공 main, 친구는 친구 id) */
+  function pfLv(id) { var n = (PF && PF.xp && PF.xp[id]) || 0; return n >= PF_LV[1] ? 3 : n >= PF_LV[0] ? 2 : 1; }
+  function pfFood() { return M.pet === "cat" ? "생선" : "당근"; }
+  function pfIcon(w) {
+    return M.pet === "cat"
+      ? '<svg viewBox="0 0 44 30" width="' + (w || 30) + '" height="' + Math.round((w || 30) * .68) + '"><path d="M6 15c6-10 22-12 30 0-8 12-24 10-30 0z" fill="#8EC5E8" stroke="#4E8DB8" stroke-width="1.6"/><path d="M36 15l7-7v14z" fill="#8EC5E8" stroke="#4E8DB8" stroke-width="1.6" stroke-linejoin="round"/><circle cx="13" cy="13" r="1.8" fill="#24324A"/><path d="M20 9c2 4 2 8 0 12M25 9c2 4 2 8 0 12" fill="none" stroke="#4E8DB8" stroke-width="1.2" stroke-linecap="round"/></svg>'
+      : '<svg viewBox="0 0 40 40" width="' + (w || 26) + '" height="' + (w || 26) + '"><path d="M14 13c-3-6-1-10 2-11 1 3 0 6-1 8M17 12c0-6 4-9 7-8-1 3-3 6-5 8M18 13c3-4 8-5 10-3-2 2-6 4-9 4" fill="#5DBB63" stroke="#3E8E45" stroke-width="1.2" stroke-linejoin="round"/><path d="M13 14c4-4 10-3 11 2L12 37c-2 2-5 0-4-3z" fill="#FF8A3D" stroke="#D9601E" stroke-width="1.6" stroke-linejoin="round"/><path d="M13 21l4 1M11 27l4 1M10 32l3 .8" stroke="#D9601E" stroke-width="1.4" stroke-linecap="round"/></svg>';
+  }
+  function pfNow() {   /* 지금 기록으로 센 값 — 출석일 수·배지 수·인바디 수, ✓는 최근 14일 날짜별 개수 */
+    var a = 0, b = 0, i = 0, d = {};
+    try { a = attLoad().length; } catch (e) {}
+    try { b = badgeList().filter(function (x) { return x.on; }).length; } catch (e) {}
+    try { i = (ibData || []).length; } catch (e) {}
+    var cut = new Date(); cut.setDate(cut.getDate() - 14); cut = ymd(cut);
+    try { var o = (LG && LG.d) || {}; for (var k in o) if (k >= cut && Array.isArray(o[k])) d[k] = o[k].length; } catch (e) {}
+    return { a: a, b: b, i: i, d: d, cut: cut };
+  }
+  function pfEarned(o) { var s = 0, k; for (k in (o.cd || {})) s += o.cd[k]; return 2 * (o.am || 0) + 2 * ((o.cb || 0) + s) + 4 * (o.bm || 0) + 3 * (o.im || 0); }
+  function pfStock() { return PF ? Math.max(0, pfEarned(PF) - (PF.b0 || 0) - (PF.sp || 0)) : 0; }
+  function pfSave(push) {
+    if (!PF) return; PF.at = Date.now();
+    try { localStorage.setItem(PF_LS, JSON.stringify(PF)); } catch (e) {}
+    if (!push || DEMO || TRY || COACH_MODE || !ATT_API) return;
+    clearTimeout(PF_T); PF_T = setTimeout(function () { rtPost({ a: "kv_set", k: "mw:" + SLUG + ":pet", v: PF }).catch(function () {}); }, 2000);
+  }
+  function pfScan(quiet) {   /* 새로 한 활동이 있으면 먹이 추가 (+n 떠오름) */
+    if (!PF_ON || !PF) return;
+    var n = pfNow(), before = pfStock(), ch = false, k;
+    if (n.a > (PF.am || 0)) { PF.am = n.a; ch = true; }
+    if (n.b > (PF.bm || 0)) { PF.bm = n.b; ch = true; }
+    if (n.i > (PF.im || 0)) { PF.im = n.i; ch = true; }
+    PF.cd = PF.cd || {};
+    for (k in PF.cd) if (k < n.cut) { PF.cb = (PF.cb || 0) + PF.cd[k]; delete PF.cd[k]; ch = true; }   /* 14일 지난 날은 합계로 접음 */
+    for (k in n.d) if (n.d[k] > (PF.cd[k] || 0)) { PF.cd[k] = n.d[k]; ch = true; }
+    if (!ch) return;
+    pfSave(true);
+    var got = pfStock() - before;
+    if (got > 0 && !quiet) pfGain(got);
+    pfBtnDraw();
+  }
+  function pfStart() {   /* 창고 기록을 받은 뒤 한 번 — 처음이면 지금까지 한 건 기준선, 선물 10개 */
+    if (PF_ON || !(M.pet === "bunny" || M.pet === "cat") || DEMO || TRY || COACH_MODE) return;
+    PF_ON = true;
+    if (!PF || typeof PF !== "object" || PF.b0 == null) {
+      var n = pfNow(); PF = { am: n.a, bm: n.b, im: n.i, cb: 0, cd: n.d, sp: 0, xp: (PF && PF.xp) || {}, at: 0 };
+      PF.b0 = pfEarned(PF) - 10; pfSave(true);
+      setTimeout(function () { pfGain(10, pfFood() + " 10개 선물! 운동하면 더 모여요"); }, 2500);
+    }
+    PETS.forEach(function (p) { p.dress(); });
+    pfBtn(); pfScan(true);
+    setInterval(function () { if (!document.hidden) pfScan(); }, 4000);
+  }
+  function pfServer(kv) {
+    if (!(M.pet === "bunny" || M.pet === "cat") || DEMO || TRY) return;
+    var v = kv && kv["mw:" + SLUG + ":pet"];
+    if (COACH_MODE) { if (v && v.xp) { PF = v; PETS.forEach(function (p) { p.dress(); }); } return; }   /* 선생님 폰: 회원님 동물 레벨만 보여 줌(저장·주머니 없음) */
+    if (v && typeof v === "object" && v.b0 != null) {
+      if (!PF || PF.b0 == null) PF = JSON.parse(JSON.stringify(v));
+      else {   /* 두 폰 기록 합치기 — 값마다 큰 쪽 */
+        var o = PF, k, more = false;
+        ["am", "bm", "im", "cb", "sp"].forEach(function (f) { if ((v[f] || 0) > (o[f] || 0)) o[f] = v[f]; else if ((o[f] || 0) > (v[f] || 0)) more = true; });
+        if ((v.b0 || 0) > (o.b0 || 0)) o.b0 = v.b0; else if (o.b0 > v.b0) more = true;
+        o.cd = o.cd || {}; o.xp = o.xp || {};
+        for (k in (v.cd || {})) if (v.cd[k] > (o.cd[k] || 0)) o.cd[k] = v.cd[k];
+        for (k in o.cd) if (!(v.cd || {})[k] || o.cd[k] > v.cd[k]) more = true;
+        for (k in (v.xp || {})) if (v.xp[k] > (o.xp[k] || 0)) o.xp[k] = v.xp[k];
+        for (k in o.xp) if (!(v.xp || {})[k] || o.xp[k] > v.xp[k]) more = true;
+        pfSave(more);
+      }
+      try { localStorage.setItem(PF_LS, JSON.stringify(PF)); } catch (e) {}
+      PETS.forEach(function (p) { p.dress(); });
+      pfBtnDraw();
+    }
+    else if (PF && PF.b0 != null) pfSave(true);
+    if (!PF_SV) { PF_SV = true; var w = 0; (function go() { if (ibReady === null && w++ < 8) { setTimeout(go, 1000); return; } pfStart(); })(); }
+  }
+  /* ---- 주머니 버튼 · 주머니 창 */
+  function pfBtn() {
+    if (document.querySelector(".pfbtn")) return;
+    var b = document.createElement("button"); b.type = "button"; b.className = "pfbtn"; b.setAttribute("aria-label", "먹이주머니");
+    document.body.appendChild(b); pfBtnDraw();
+    b.addEventListener("click", function (e) { e.preventDefault(); e.stopPropagation(); if (document.querySelector(".pfbag")) pfClose(); else pfOpen(); });
+  }
+  function pfBtnDraw() {
+    var b = document.querySelector(".pfbtn"); if (!b) return;
+    var n = pfStock();
+    b.innerHTML = '<svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true"><path d="M13 12c2-3 12-3 14 0" fill="none" stroke="#7A4A22" stroke-width="2.4" stroke-linecap="round"/><path d="M12 13c-6 6-7 20 8 21 15-1 14-15 8-21z" fill="#E7B477" stroke="#7A4A22" stroke-width="2" stroke-linejoin="round"/><path d="M13.5 15.5c4 2 9 2 13 0" fill="none" stroke="#7A4A22" stroke-width="1.6" stroke-linecap="round"/><circle cx="20" cy="25" r="4.2" fill="#FFCF3F" stroke="#7A4A22" stroke-width="1.3"/></svg>' +
+      '<b class="pfn' + (n ? '' : ' z') + '">' + (n > 999 ? "999+" : n) + '</b>';
+  }
+  function pfGain(n, msg) {
+    var b = document.querySelector(".pfbtn"); if (!b) return;
+    b.classList.remove("wig"); void b.offsetWidth; b.classList.add("wig");
+    var r = b.getBoundingClientRect(), e = document.createElement("div");
+    e.className = "pfplus"; e.innerHTML = (n ? pfIcon(18) + '<b>+' + n + '</b>' : '') + (msg ? '<small>' + esc(msg) + '</small>' : '');
+    e.style.right = (window.innerWidth - r.right) + "px"; e.style.top = (r.top - 8) + "px";
+    document.body.appendChild(e); setTimeout(function () { e.remove(); }, msg ? 3200 : 1700);
+  }
+  function pfClose() { var p = document.querySelector(".pfbag"); if (p) { p.classList.add("out"); setTimeout(function () { p.remove(); }, 180); } }
+  function pfOpen() {
+    pfScan();
+    var p = document.createElement("div"); p.className = "pfbag";
+    var n = pfStock(), F = pfFood(), list = PETS.map(function (q) {
+      var lv = pfLv(q.id), xp = (PF.xp || {})[q.id] || 0, lo = lv === 1 ? 0 : lv === 2 ? PF_LV[0] : PF_LV[1], hi = lv === 1 ? PF_LV[0] : PF_LV[1];
+      return '<div class="pf-row"><b>' + esc(q.name) + '</b><span class="pf-lv l' + lv + '">Lv.' + lv + '</span>' +
+        (lv < 3 ? '<i class="pf-bar"><i style="width:' + Math.min(100, Math.round((xp - lo) / (hi - lo) * 100)) + '%"></i></i><small>' + (hi - xp) + '개 더</small>' : '<small class="max">최고 레벨 ✨</small>') + '</div>';
+    }).join("");
+    p.innerHTML = '<div class="pf-top"><b>먹이주머니</b><button type="button" class="pf-x" aria-label="닫기">✕</button></div>' +
+      '<div class="pf-food' + (n ? '' : ' empty') + '">' + pfIcon(44) + '<b>' + F + ' ' + n + '개</b><small>' + (n ? '꾹 누른 채로 끌어서 ' + (M.pet === "cat" ? "고양이" : "토롱이") + '한테 뿌려요' : '운동하면 ' + F + '이 모여요!') + '</small></div>' +
+      '<div class="pf-how"><span>🏅 배지 +4</span><span>📊 인바디 +3</span><span>✅ 출석 +2</span><span>💪 종목 ✓ +2</span></div>' +
+      (list ? '<div class="pf-pets">' + list + '</div>' : '') +
+      '<p class="pf-note">많이 먹으면 레벨업! Lv.2 가방 · Lv.3 큰 덤벨과 왕관</p>';
+    document.body.appendChild(p);
+    p.querySelector(".pf-x").addEventListener("click", pfClose);
+    setTimeout(function () { document.addEventListener("pointerdown", function off(e) { if (!p.isConnected) { document.removeEventListener("pointerdown", off, true); return; } if (!e.target.closest(".pfbag, .pfbtn")) { pfClose(); document.removeEventListener("pointerdown", off, true); } }, true); }, 0);
+    pfHold(p.querySelector(".pf-food"), p);
+  }
+  /* 꾹 누르면 주머니에서 먹이가 하나씩 쏟아져 손가락을 따라옴(최대 30개) → 놓은 자리에 떨어지고 가장 가까운 동물이 달려가서 먹음 */
+  function pfHold(el, bag) {
+    var hand = null, cnt = 0, tmr = 0, sx = 0, sy = 0, lx = 0, ly = 0, on = false;
+    function draw() { if (hand) hand.innerHTML = pfIcon(34) + '<b>' + cnt + '</b>'; }
+    function pos() { if (hand) { hand.style.left = lx + "px"; hand.style.top = ly + "px"; } }
+    el.addEventListener("pointerdown", function (e) {
+      var st = pfStock();
+      if (!st) { el.classList.remove("no"); void el.offsetWidth; el.classList.add("no"); return; }
+      if (!PETS.length) return;
+      e.preventDefault(); on = true; try { el.setPointerCapture(e.pointerId); } catch (x) {}
+      sx = lx = e.clientX; sy = ly = e.clientY; cnt = 1;
+      hand = document.createElement("div"); hand.className = "pfhand"; document.body.appendChild(hand); draw(); pos();
+      var max = Math.min(st, 30), step = 260;
+      (function pour() { tmr = setTimeout(function () { if (!on || cnt >= max) return; cnt++; draw(); hand.classList.remove("bump"); void hand.offsetWidth; hand.classList.add("bump"); try { navigator.vibrate && navigator.vibrate(6); } catch (x) {} step = Math.max(70, step * .86); pour(); }, step); })();
+    });
+    el.addEventListener("pointermove", function (e) {
+      if (!on) return; lx = e.clientX; ly = e.clientY; pos();
+      if (Math.abs(lx - sx) + Math.abs(ly - sy) > 24) bag.classList.add("drag");
+    });
+    function up(e) {
+      if (!on) return; on = false; clearTimeout(tmr);
+      if (e && e.type === "pointercancel") { if (hand) hand.remove(); hand = null; bag.classList.remove("drag"); return; }
+      var h = hand; hand = null; if (h) h.remove();
+      pfClose(); pfThrow(lx, ly, cnt);
+    }
+    el.addEventListener("pointerup", up); el.addEventListener("pointercancel", up);
+  }
+  function pfThrow(cx, cy, n) {
+    if (!n || n > pfStock()) return;
+    var best = null, bd = 1e9;
+    PETS.forEach(function (q) { if (!q.wrap.isConnected || q.busy()) return; var r = q.el.getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - cx); if (d < bd) { bd = d; best = q; } });
+    if (!best) { pfGain(0, "다들 먹는 중이에요! 조금 있다 줘요"); return; }
+    PF.sp = (PF.sp || 0) + n; pfSave(true); pfBtnDraw();
+    var wr = best.wrap.getBoundingClientRect(), gx = Math.max(wr.left + 14, Math.min(wr.right - 14, cx)), gy = wr.bottom - 4;
+    var pile = document.createElement("div"); pile.className = "pfpile";
+    var k = Math.min(n, 6), html = "";
+    for (var i = 0; i < k; i++) html += '<span style="--dx:' + ((i - (k - 1) / 2) * 7) + 'px;--r:' + ((i * 47) % 70 - 35) + 'deg">' + pfIcon(18) + '</span>';
+    pile.innerHTML = html + (n > 1 ? '<b>×' + n + '</b>' : '');
+    pile.style.left = gx + "px"; pile.style.top = gy + "px"; pile.style.setProperty("--fy", Math.min(0, cy - gy) + "px");
+    document.body.appendChild(pile);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { pile.classList.add("land"); }); });
+    setTimeout(function () { best.goEat(gx - wr.left, n, pile); }, 420);
+  }
+  /* 레벨업 창 — 새 치장을 크게 보여 줌 */
+  function pfLevelUp(q, lv) {
+    var say = lv === 3 ? "큰 덤벨 · 반짝이 왕관이 생겼어요! 최고 레벨이에요" : "귀여운 가방이랑 작은 덤벨이 생겼어요!";
+    var bg = document.createElement("div"); bg.className = "frpop-bg pflvup";
+    bg.innerHTML = '<div class="frpop"><small>LEVEL UP! Lv.' + lv + '</small><div class="frpop-pic pet lv' + lv + (M.pet === "bunny" ? " hop sit" : " sit") + '">' + q.svg() + (lv === 3 ? '<span class="plv"><i>✦</i><i>✦</i><i>✧</i></span>' : '') + '</div><b>' + esc(q.name) + '</b><p>' + say + '</p>' +
+      '<div class="frpop-b"><button type="button" class="rtb fill" data-ok>최고야!</button></div></div>';
+    document.body.appendChild(bg);
+    bg.addEventListener("click", function (e) { if (e.target === bg || e.target.closest("[data-ok]")) bg.remove(); });
+  }
+  setTimeout(function () { if (M.pet === "bunny" || M.pet === "cat") { if (!ATT_API) pfServer(null); setTimeout(function () { if (!PF_SV) pfServer(null); }, 12000); } }, 0);
   function skinDeco() {   /* 토롱이 그림을 정해진 칸에 하나씩 (이미 있으면 그대로) — 누르기·글자에는 영향 없음(pointer-events none) */
     if (!SKIN) return;
     var T = BASE + "theme/" + SKIN + "/";
@@ -949,7 +1175,7 @@
   function attCall(q) {
     return fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + (q || ""), { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw new Error("save"); mlFlag(j); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); dbServer(j.kv); lgServer(j.kv); bgServer(j.kv); mvServer(j.kv); fvServer(j.kv); rkServer(j.kv); } return j; });
+      .then(function (j) { if (!j || !j.ok) throw new Error("save"); mlFlag(j); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); dbServer(j.kv); lgServer(j.kv); bgServer(j.kv); pfServer(j.kv); mvServer(j.kv); fvServer(j.kv); rkServer(j.kv); } return j; });
   }
   function attSync() {
     if (!ATT_API) return;
