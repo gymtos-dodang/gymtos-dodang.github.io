@@ -1060,7 +1060,16 @@
     { k: "bfm", name: "체지방량", unit: "kg", good: -1 },
     { k: "pbf", name: "체지방률", unit: "%", good: -1 }
   ];
+  /* 2026-11-20 "BMI·기초대사량도 추가, 있어 보이게 + 식단 짤 때 더 정확하게" — 값이 있는 기록만 줄이 생김 (BMI = 체중 ÷ 키², 키는 결과지에서 읽거나 BMI로 거꾸로 계산해 저장) */
+  var IB_ROWS2 = [
+    { k: "bmi", name: "BMI", unit: "", good: 0 },
+    { k: "bmr", name: "기초대사량", unit: "kcal", good: 1, int: 1 }
+  ];
+  function ibBmi(r) { return r && +r.h >= 120 && +r.w > 0 ? Math.round(r.w / Math.pow(r.h / 100, 2) * 10) / 10 : null; }
+  function ibV(r, k) { return !r ? null : k === "bmi" ? ibBmi(r) : r[k] == null || r[k] === "" ? null : +r[k]; }
+  function ibRows(a, b) { return IB_ROWS.concat(IB_ROWS2.filter(function (x) { return ibV(b, x.k) !== null && (!a || ibV(a, x.k) !== null); })); }
   function ibFmt(n) { return (Math.round(n * 10) / 10).toFixed(1); }
+  function ibF(r, v) { return r.int ? Math.round(v).toLocaleString() : ibFmt(v); }
   function ibDate(d) { var p = d.split("-"); return (+p[1]) + ". " + (+p[2]); }
   function ibPair() {   /* [이전, 이번] — 이번 = 가장 최근 기록, 이전 = 그보다 앞선 달의 마지막 기록 */
     var a = ibData || [];
@@ -1091,24 +1100,24 @@
     var head2, rows;
     if (p.prev) {
       head2 = '<div class="ib-when"><span><small>' + (+p.prev.d.slice(5, 7)) + '월</small>' + ibDate(p.prev.d) + '</span><b aria-hidden="true">→</b><span class="now"><small>' + (+p.cur.d.slice(5, 7)) + '월</small>' + ibDate(p.cur.d) + '</span></div>';
-      rows = IB_ROWS.map(function (r) {
-        var a = p.prev[r.k], b = p.cur[r.k], dlt = Math.round((b - a) * 10) / 10;
+      rows = ibRows(p.prev, p.cur).map(function (r) {
+        var a = ibV(p.prev, r.k), b = ibV(p.cur, r.k), dlt = Math.round((b - a) * 10) / 10;
         var cls = dlt === 0 || !r.good ? "same" : (dlt > 0) === (r.good > 0) ? "up" : "down";
         var sign = dlt > 0 ? "▲ +" : dlt < 0 ? "▼ −" : "";
-        return '<div class="ib-row"><span class="ib-name">' + r.name + '</span><span class="ib-prev">' + ibFmt(a) + '</span>' +
-          '<span class="ib-cur">' + ibFmt(b) + '<small>' + r.unit + '</small></span>' +
-          '<span class="ib-d ' + cls + '">' + (dlt === 0 ? "그대로" : sign + ibFmt(Math.abs(dlt)) + r.unit) + '</span></div>';
+        return '<div class="ib-row"><span class="ib-name">' + r.name + '</span><span class="ib-prev">' + ibF(r, a) + '</span>' +
+          '<span class="ib-cur">' + ibF(r, b) + '<small>' + r.unit + '</small></span>' +
+          '<span class="ib-d ' + cls + '">' + (dlt === 0 ? "그대로" : sign + ibF(r, Math.abs(dlt)) + r.unit) + '</span></div>';
       }).join("");
       rows = '<div class="ib-grid"><div class="ib-row ib-hd"><span></span><span>지난달</span><span>이번 달</span><span>변화</span></div>' + rows + '</div>' +
         '<p class="ib-sum">' + ibSummary(p) + '</p>';
     } else {
       head2 = '<div class="ib-when"><span class="now"><small>' + (+p.cur.d.slice(5, 7)) + '월 첫 기록</small>' + ibDate(p.cur.d) + '</span></div>';
-      rows = '<div class="ib-first">' + IB_ROWS.map(function (r) {
-        return '<div><small>' + r.name + '</small><b>' + ibFmt(p.cur[r.k]) + '<em>' + r.unit + '</em></b></div>';
+      rows = '<div class="ib-first">' + ibRows(null, p.cur).map(function (r) {
+        return '<div><small>' + r.name + '</small><b>' + ibF(r, ibV(p.cur, r.k)) + '<em>' + r.unit + '</em></b></div>';
       }).join("") + '</div><p class="ib-sum">첫 기록 완료! 다음 달에 올리면 지난달과 비교해 드려요</p>';
     }
     var hist = (ibData || []).slice().reverse().map(function (r) {
-      return '<li><span class="ib-hd8">' + r.d.replace(/-/g, ". ") + '</span><span>' + ibFmt(r.w) + 'kg · 근육 ' + ibFmt(r.smm) + ' · 지방 ' + ibFmt(r.pbf) + '%</span>' +
+      return '<li><span class="ib-hd8">' + r.d.replace(/-/g, ". ") + '</span><span>' + ibFmt(r.w) + 'kg · 근육 ' + ibFmt(r.smm) + ' · 지방 ' + ibFmt(r.pbf) + '%' + (ibBmi(r) ? ' · BMI ' + ibFmt(ibBmi(r)) : '') + '</span>' +
         (r.img ? '<button type="button" class="ib-photo" data-id="' + esc(r.id) + '">결과지</button>' : '') +
         '<button type="button" class="ib-del" data-id="' + esc(r.id) + '">삭제</button></li>';
     }).join("");
@@ -1186,7 +1195,8 @@
       w: grab(/체\s*중(?!\s*(조절|관리))|weight/, 20, 300, /(적정|표준|목표)\s*$/),
       smm: grab(/골\s*격\s*근\s*량|skeletal\s*muscle\s*mass|SMM/, 3, 90),
       bfm: grab(/체\s*지\s*방\s*량|body\s*fat\s*mass/, 0.5, 200),
-      pbf: grab(/체\s*지\s*방\s*률|percent\s*body\s*fat|PBF/, 1, 75)
+      pbf: grab(/체\s*지\s*방\s*률|percent\s*body\s*fat|PBF/, 1, 75),
+      bmi: grab(/BMI|신\s*체\s*질\s*량\s*지\s*수|body\s*mass\s*index/, 12, 60)
     };
     if (r.smm !== null && r.w !== null && r.smm >= r.w) r.smm = null;
     if (r.w !== null && r.pbf !== null && r.bfm !== null && Math.abs(r.w * r.pbf / 100 - r.bfm) > Math.max(1.5, r.bfm * 0.15)) r.bfm = null;
@@ -1235,13 +1245,15 @@
       '<div class="ibs-top"><h3>인바디 올리기</h3><button type="button" class="ibs-x" data-close aria-label="닫기">×</button></div>' +
       '<label class="ibs-file"><input type="file" id="ibFile" accept="image/*,application/pdf"><span class="ibs-ph"><b>결과지 사진 찍기 · 고르기</b><small>사진이나 PDF 파일을 올리면 숫자를 자동으로 읽어 채워요</small></span><img alt="" hidden></label>' +
       '<label class="ibs-f"><span>측정한 날</span><input type="date" id="ibDate" value="' + ymd(new Date()) + '" max="' + ymd(new Date()) + '"></label>' +
-      '<p class="ibs-hint">결과지 맨 위 <b>체성분분석 · 골격근·지방분석</b> 칸의 숫자를 넣어요</p>' +
+      '<p class="ibs-hint">결과지 <b>체성분분석 · 골격근·지방분석 · 비만분석 · 기초대사량</b> 칸의 숫자를 넣어요</p>' +
       '<div class="ibs-nums">' +
       '<label class="ibs-f"><span>체중 <em>kg</em></span><input id="ibW" inputmode="decimal" placeholder="예 72.4" autocomplete="off"></label>' +
       '<label class="ibs-f"><span>골격근량 <em>kg</em></span><input id="ibS" inputmode="decimal" placeholder="예 31.2" autocomplete="off"></label>' +
       '<label class="ibs-f"><span>체지방량 <em>kg</em></span><input id="ibB" inputmode="decimal" placeholder="비우면 자동" autocomplete="off"></label>' +
       '<label class="ibs-f"><span>체지방률 <em>%</em></span><input id="ibP" inputmode="decimal" placeholder="예 21.5" autocomplete="off"></label>' +
-      '</div><p class="ibs-msg" role="alert"></p>' +
+      '<label class="ibs-f"><span>BMI <em>kg/㎡</em></span><input id="ibI" inputmode="decimal" placeholder="예 23.4" autocomplete="off"></label>' +
+      '<label class="ibs-f"><span>기초대사량 <em>kcal</em></span><input id="ibM" inputmode="numeric" placeholder="예 1520" autocomplete="off"></label>' +
+      '</div><p class="ibs-hint ibs-hint2">BMI·기초대사량을 넣으면 식단 칼로리가 더 정확해져요</p><p class="ibs-msg" role="alert"></p>' +
       '<button class="btn fill ibs-save" type="submit">저장하기</button></form>';
     document.body.appendChild(wrap);
     document.documentElement.classList.add("ib-lock");
@@ -1268,11 +1280,12 @@
             if (my !== ocrRun || !wrap.isConnected) return;
             if (!j || !j.ok) throw new Error(j && j.error || "ocr");
             var r = ibParse(j.text || ""), got = 0, v = j.vals;   /* 2026-11-20 AI가 읽은 값(vals) 먼저, 빈 칸만 OCR 글자로 */
-            if (v) ["w", "smm", "bfm", "pbf", "bmr", "h", "d"].forEach(function (k) { if (v[k] !== null && v[k] !== undefined && v[k] !== "") r[k] = v[k]; });
+            if (v) ["w", "smm", "bfm", "pbf", "bmr", "h", "bmi", "d"].forEach(function (k) { if (v[k] !== null && v[k] !== undefined && v[k] !== "") r[k] = v[k]; });
             if (v && r.w !== null && r.bfm === null && r.pbf !== null) r.bfm = Math.round(r.w * r.pbf / 10) / 10; wrap._x = { bmr: r.bmr, h: r.h };
-            [["#ibW", "w"], ["#ibS", "smm"], ["#ibB", "bfm"], ["#ibP", "pbf"]].forEach(function (x) {
+            if (r.bmi == null && r.w && r.h) r.bmi = ibBmi(r);
+            [["#ibW", "w"], ["#ibS", "smm"], ["#ibB", "bfm"], ["#ibP", "pbf"], ["#ibI", "bmi"], ["#ibM", "bmr"]].forEach(function (x) {
               var inp = wrap.querySelector(x[0]);
-              if (r[x[1]] !== null && r[x[1]] !== undefined && !inp.value) { inp.value = ibFmt(r[x[1]]); inp.classList.add("auto"); got++; }
+              if (r[x[1]] !== null && r[x[1]] !== undefined && !inp.value) { inp.value = x[1] === "bmr" ? String(Math.round(r[x[1]])) : ibFmt(r[x[1]]); inp.classList.add("auto"); got++; }
             });
             if (r.d) { var di = wrap.querySelector("#ibDate"); di.value = r.d; di.classList.add("auto"); }
             msg.className = "ibs-msg " + (got ? "info" : "");
@@ -1309,6 +1322,11 @@
         if (Math.abs(dw) > 3 + gapD * 0.2) { form.setAttribute("data-sure", d + "|" + w); msg.textContent = "지난 기록(" + ibPrev.d.slice(5).replace("-", "/") + " " + (+ibPrev.w) + "kg)보다 " + (dw > 0 ? "+" : "") + dw + "kg 차이 나요. 체중이 맞으면 한 번 더 눌러 주세요"; return; }
       }
       if (bf !== null && !(bf > 0 && bf < w)) { msg.textContent = "체지방량을 확인해 주세요 (모르면 비워 두세요)"; return; }
+      var bi = n("#ibI"), bmrIn = n("#ibM"), hh = wrap._x && wrap._x.h || null;
+      if (bi !== null && !(bi >= 12 && bi <= 60)) { msg.textContent = "BMI를 확인해 주세요 (예 23.4 · 모르면 비워 두세요)"; return; }
+      if (bmrIn !== null && !(bmrIn >= 800 && bmrIn <= 3500)) { msg.textContent = "기초대사량을 확인해 주세요 (예 1520 · 모르면 비워 두세요)"; return; }
+      if (bi !== null) { var hb = Math.round(Math.sqrt(w / bi) * 1000) / 10; if (hb >= 120 && hb <= 220 && (!hh || Math.abs(hb - hh) > 3)) hh = hb; }   /* BMI로 키를 거꾸로 계산 (결과지 키와 크게 다르면 BMI를 믿음) */
+      wrap._x = { bmr: bmrIn !== null ? Math.round(bmrIn) : null, h: hh };
       if (!ATT_API) { msg.textContent = "저장할 곳이 아직 준비 안 됐어요"; return; }
       busy = true; form.classList.add("saving"); msg.className = "ibs-msg info"; msg.textContent = "저장하는 중…";
       fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "inbody_add", m: SLUG, n: M._real || M.name, d: d, w: w, smm: s, bfm: bf, pbf: pf, img: b64 || "", bmr: (wrap._x && wrap._x.bmr) || null, h: (wrap._x && wrap._x.h) || null }) })
