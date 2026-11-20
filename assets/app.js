@@ -2033,7 +2033,7 @@
   }
   var BC_POS = [[-.5, -1], [.5, -1], [1, 0], [.5, 1], [-.5, 1], [-1, 0]];   /* 둘레 6칸: 왼위·오위·오른쪽·오아래·왼아래·왼쪽 (세로 뾰족 육각형 벌집) */
   function bcHtml(d, W, big, sel) {
-    var H = W * 1.1547, g = W * .1, Wd = W + g, Hd = H * .75 + g * .87, CW = W * 3.78, CH = W * 3.62, cx = CW / 2, cy = CH / 2, sc = (W * .98 / 84).toFixed(3);   /* 2026-11-20 2차: 케이스 여백을 위·아래·옆 고르게(약 0.28칸), 배지 조금 크게 */
+    var H = W * 1.1547, g = W * .06, Wd = W + g, Hd = H * .75 + g * .87, CW = W * 3.6, CH = W * 3.12, cx = CW / 2, cy = CH / 2, sc = (W * .98 / 84).toFixed(3);   /* 2026-11-20 3차: 정육각형 케이스(세로 = 가로×0.866, 너무 길다), 칸 사이 0.06칸, 배지 칸의 98% */
     function cell(b, k, dx, dy) {
       var tag = big ? "button" : "span", x = (cx + dx * Wd - W / 2).toFixed(1), y = (cy + dy * Hd - H / 2).toFixed(1);
       return '<' + tag + (big ? ' type="button" data-bc="' + k + '"' : '') + ' class="bc-cell' + (k === "c" ? " c" : "") + (b ? "" : " e") + (sel === k ? " sel" : "") + (b && b.sp ? " sp" : "") +
@@ -2047,7 +2047,7 @@
   }
   function bgHomeChip() {   /* 홈 맨 위 오른쪽 작은 케이스 */
     var d = bcData();
-    return '<button type="button" class="hbcase" data-bcopen aria-label="내 배지 케이스 열기' + (d.c ? ' — 대표 ' + esc(d.c.label) : '') + '">' + bcHtml(d, 20, false) + '</button>';
+    return '<button type="button" class="hbcase" data-bcopen aria-label="내 배지 케이스 열기' + (d.c ? ' — 대표 ' + esc(d.c.label) : '') + '">' + bcHtml(d, 22, false) + '</button>';
   }
   function bcOpen() {   /* 2026-11-20 2차: 한 번 누르면 그 배지 이름·받은 날, 꾹 눌러야 넣고 빼는 창(.bc-sheet) */
     if (document.querySelector(".bcwrap")) return;
@@ -2056,7 +2056,7 @@
     function draw() {
       var d = bcData(), h = '<div class="bc-card" role="dialog" aria-modal="true" aria-label="내 배지 케이스">' +
         '<div class="bc-top"><div><small>JANG KAREDO · BADGE CASE</small><b>내 배지 케이스</b></div><button type="button" class="bc-x" data-bcx aria-label="닫기">×</button></div>' +
-        '<div class="bc-stage">' + bcHtml(d, 64, true, sel) + '</div>';
+        '<div class="bc-stage">' + bcHtml(d, 72, true, sel) + '</div>';
       var ib = info === "c" ? d.c : info !== null ? d.s[+info] : null;
       if (ib) h += '<div class="bc-cname"><span>' + (info === "c" ? "👑 대표" : (+info + 1) + "번 칸") + '</span><b>' + esc(ib.label) + '</b>' + (ib.on && ib.on !== "?" ? '<i>' + ib.on.slice(2).replace(/-/g, ".") + ' 받음</i>' : '') + '</div>';
       else if (info !== null && info !== "c") h += '<div class="bc-cname"><span>' + (+info + 1) + '번 칸</span><b>비어 있어요</b></div>';
