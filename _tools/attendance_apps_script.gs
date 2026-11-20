@@ -401,6 +401,7 @@ function ocr_(b64, pdf) {   // pdf = true면 PDF 결과지(2026-11-19)
   try {
     id = Drive.Files.create({ name: 'inbody_ocr_tmp', mimeType: 'application/vnd.google-apps.document' }, blob, { ocrLanguage: 'ko' }).id;   // Drive API v3
   } catch (e3) {
+    if (typeof Drive.Files.insert !== 'function') throw new Error('drive v3: ' + e3);
     id = Drive.Files.insert({ title: 'inbody_ocr_tmp', mimeType: 'application/vnd.google-apps.document' }, blob, { ocr: true, ocrLanguage: 'ko' }).id;   // v2
   }
   try {
