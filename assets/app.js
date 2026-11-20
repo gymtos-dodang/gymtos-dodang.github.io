@@ -4802,7 +4802,7 @@
   function navName(h) {
     h = String(h || "").replace(/^#/, "") || "home";
     if (/^routine/.test(h)) return "루틴"; if (/^form-/.test(h)) return "자세 복습지"; if (h === "forms") return "복습지";
-    if (h === "diet") return "식단"; if (/^goal/.test(h)) return "목표"; if (h === "body") return "몸변화"; if (h === "notice") return "공지";
+    if (h === "diet" || h === "diet-guide") return "식단"; if (/^goal/.test(h)) return "목표"; if (h === "body") return "몸변화"; if (h === "notice") return "공지";
     if (/^report/.test(h)) return "리포트"; if (h === "growth") return "성장 기록"; if (h === "app") return "앱으로 쓰기"; if (h === "muscle") return "근육 지도"; return "홈";
   }
   document.addEventListener("touchstart", function () {}, { passive: true });   /* 아이폰에서 :active(살짝 눌림)가 먹게 */
@@ -5028,6 +5028,7 @@
     else if (hsh === "routine") { html = renderRoutine(); tab = "routine"; }
     else if (hsh.indexOf("routine-") === 0 && (DAY_KO[hsh.slice(8)] || isRotKey(hsh.slice(8)))) { html = renderRoutine(hsh.slice(8)); tab = "routine"; scrollDay = true; }
     else if (hsh === "diet") { html = renderDiet(); tab = "diet"; }
+    else if (hsh === "diet-guide") { DB_TAB = "guide"; html = renderDiet(); tab = "diet"; }   /* 식단 가이드 바로 열기 (2026-11-20) */
     else if (hsh === "notice") { html = renderNotice(); tab = "notice"; }
     else if (hsh === "goal" || hsh === "journey") { html = renderGoal(); tab = "goal"; }
     else if (hsh === "goal-badges" || hsh === "badges") { html = renderGoal(); tab = "goal"; jumpTo = "badges"; }
