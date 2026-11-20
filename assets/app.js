@@ -456,7 +456,7 @@
   function pfServer(kv) {
     if (!(M.pet === "bunny" || M.pet === "cat") || DEMO || TRY) return;
     var v = kv && kv["mw:" + SLUG + ":pet"];
-    if (COACH_MODE) { if (v && v.xp) { PF = v; PETS.forEach(function (p) { p.dress(); }); } return; }   /* 선생님 폰: 회원님 동물 레벨만 보여 줌(저장·주머니 없음) */
+    if (COACH_MODE) { if (v && v.b0 != null) { PF = v; PETS.forEach(function (p) { p.dress(); }); } pfBtn(); pfBtnDraw(); return; }   /* 선생님 폰: 주머니는 보기만(2026-11-20 "보기만") — 회원님 먹이 개수·레벨, 저장·뿌리기 없음 */
     if (v && typeof v === "object" && v.b0 != null) {
       if (!PF || PF.b0 == null) PF = JSON.parse(JSON.stringify(v));
       else {   /* 두 폰 기록 합치기 — 값마다 큰 쪽 */
@@ -503,19 +503,19 @@
     pfScan();
     var p = document.createElement("div"); p.className = "pfbag";
     var n = pfStock(), F = pfFood(), list = PETS.map(function (q) {
-      var lv = pfLv(q.id), xp = (PF.xp || {})[q.id] || 0, lo = lv === 1 ? 0 : lv === 2 ? PF_LV[0] : PF_LV[1], hi = lv === 1 ? PF_LV[0] : PF_LV[1];
+      var lv = pfLv(q.id), xp = ((PF && PF.xp) || {})[q.id] || 0, lo = lv === 1 ? 0 : lv === 2 ? PF_LV[0] : PF_LV[1], hi = lv === 1 ? PF_LV[0] : PF_LV[1];
       return '<div class="pf-row"><b>' + esc(q.name) + '</b><span class="pf-lv l' + lv + '">Lv.' + lv + '</span>' +
         (lv < 3 ? '<i class="pf-bar"><i style="width:' + Math.min(100, Math.round((xp - lo) / (hi - lo) * 100)) + '%"></i></i><small>' + (hi - xp) + '개 더</small>' : '<small class="max">최고 레벨 ✨</small>') + '</div>';
     }).join("");
     p.innerHTML = '<div class="pf-top"><b>먹이주머니</b><button type="button" class="pf-x" aria-label="닫기">✕</button></div>' +
-      '<div class="pf-food' + (n ? '' : ' empty') + '">' + pfIcon(44) + '<b>' + F + ' ' + n + '개</b><small>' + (n ? '꾹 누른 채로 끌어서 ' + (M.pet === "cat" ? "고양이" : "토롱이") + '한테 뿌려요' : '운동하면 ' + F + '이 모여요!') + '</small></div>' +
+      '<div class="pf-food' + (n && !COACH_MODE ? '' : ' empty') + (COACH_MODE ? ' coach' : '') + '">' + pfIcon(44) + '<b>' + (COACH_MODE ? '회원님 ' : '') + F + ' ' + n + '개</b><small>' + (COACH_MODE ? (PF ? '선생님 폰은 보기만 돼요 · 먹이는 회원님 폰에서' : '회원님이 아직 주머니를 안 열었어요') : n ? '꾹 누른 채로 끌어서 ' + (M.pet === "cat" ? "고양이" : "토롱이") + '한테 뿌려요' : '운동하면 ' + F + '이 모여요!') + '</small></div>' +
       '<div class="pf-how"><span>🏅 배지 +4</span><span>📊 인바디 +3</span><span>✅ 출석 +2</span><span>💪 종목 ✓ +2</span></div>' +
       (list ? '<div class="pf-pets">' + list + '</div>' : '') +
       '<p class="pf-note">많이 먹으면 레벨업! 친구마다 다른 치장이 생겨요</p>';
     document.body.appendChild(p);
     p.querySelector(".pf-x").addEventListener("click", pfClose);
     setTimeout(function () { document.addEventListener("pointerdown", function off(e) { if (!p.isConnected) { document.removeEventListener("pointerdown", off, true); return; } if (!e.target.closest(".pfbag, .pfbtn")) { pfClose(); document.removeEventListener("pointerdown", off, true); } }, true); }, 0);
-    pfHold(p.querySelector(".pf-food"), p);
+    if (!COACH_MODE) pfHold(p.querySelector(".pf-food"), p);
   }
   /* 꾹 누르면 주머니에서 먹이가 하나씩 쏟아져 손가락을 따라옴(최대 30개) → 놓은 자리에 떨어지고 가장 가까운 동물이 달려가서 먹음 */
   function pfHold(el, bag) {
