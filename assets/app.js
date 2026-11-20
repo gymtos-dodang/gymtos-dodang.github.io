@@ -47,7 +47,7 @@
       steps: [
         { h: "#home", s: ".hbcase", t: "배지 케이스가 새로워졌어요", b: "가운데는 내 최고 배지가 자동으로,\n둘레 6칸은 내가 고른 배지를 넣어요.\n누르면 크게, 꾹 누르면 넣고 빼기!" },
         { h: "#diet", s: ".db-tabs", t: "식단 탭에 칸이 늘었어요", b: "위 전환 칸에서\n먹은 기록 · 식단 가이드로 바로 넘어가요." },
-        { h: "#diet-log", s: ".ml-add", t: "📸 먹은 기록", b: "먹기 전에 사진 한 장 찍어 올리면\n음식·양·탄단지·칼로리를 읽어 줘요.\n선생님도 같이 보고 한마디 남겨요." },
+        { h: "#diet-log", need: function () { return ML_ON; }, s: ".ml-add", t: "📸 먹은 기록", b: "먹기 전에 사진 한 장 찍어 올리면\n음식·양·탄단지·칼로리를 읽어 줘요.\n선생님도 같이 보고 한마디 남겨요." },
         { h: "#diet-guide", s: ".dg-sub", t: "📖 식단 가이드 · 💊 영양제", b: "탄단지가 왜 중요한지, 식이섬유, 끼니 거르면 안 되는 이유.\n옆 '영양제' 칸엔 남녀별 추천 조합이 있어요." }
       ] }
   ];
@@ -5127,7 +5127,7 @@
     TOUR_ON = true; if (!S0) TOUR_WANT = false; else WN_WANT = false;
     opt = opt || {};
     document.querySelectorAll(".npop-wrap").forEach(function (x) { x.remove(); });
-    var S = S0 || tourSteps(), i = 0, dir = 1;
+    var S = (S0 || tourSteps()).filter(function (x) { return !x.need || x.need(); }), i = 0, dir = 1;   /* need: 이 회원에겐 없는 칸이면 미리 뺌 — 빈 화면을 들렀다 가는 끊김 없게 */
     var w = document.createElement("div"); w.className = "tour"; w.setAttribute("role", "dialog"); w.setAttribute("aria-modal", "true");
     w.innerHTML = '<div class="tour-hole"></div><div class="tour-card"><button type="button" class="tour-skip">건너뛰기</button><div class="tour-dots"></div><b class="tour-t"></b><p class="tour-b"></p><div class="tour-btns"></div></div>';
     document.body.appendChild(w);
@@ -5154,29 +5154,30 @@
       if (cur === x.h) rerender(); else location.hash = x.h;
       window.scrollTo(0, 0); return true;
     }
-    /* 2026-11-20 장동욱 "새 기능 둘러보기 할 때 딱 끊기게 넘어감 → 부드럽게": 다른 화면으로 갈 땐 카드는 살짝 내려가며 사라지고,
-       비추는 구멍은 화면 전체로 열려 새 화면이 차례로 올라오는 게 보임 → 그 칸이 그려지면(최소 0.5초) 구멍이 그 칸으로 스르륵 좁혀지고 카드가 떠오름 */
+    /* 2026-11-20 장동욱 "다음으로 넘어가면 한 템포 끊김"(화면 녹화): 카드가 사라졌다 다시 뜨고 구멍이 멈춰 있던 게 끊김으로 보였음
+       → 카드는 그대로 둔 채 글자만 살짝 바뀌고(.swap), 카드 자리와 비추는 구멍은 다음 칸으로 바로 미끄러져 감.
+       다음 화면은 그 칸이 그려지는 즉시(최소 0.12초) 비추고, 화면이 차례로 올라오는 동안 두 번 더 자리를 맞춤(place 0.35·0.7초) */
     function settle(fn) {
       var t0 = Date.now(), x = S[i];
       (function poll() {
-        var ok = !x.s || document.querySelector(x.s), dt = Date.now() - t0;
-        if ((ok && dt >= 520) || dt > 1600) return fn();
-        setTimeout(poll, 80);
+        var el = x.s && document.querySelector(x.s), dt = Date.now() - t0;
+        if ((!x.s || (el && el.getBoundingClientRect().width)) && dt >= 120) return fn();
+        if (dt > 1200) return fn();
+        requestAnimationFrame(poll);
       })();
     }
     function show() {
       var x = S[i];
-      if (goH(x)) {
-        card.classList.add("wait"); w.classList.add("moving");
-        hole.style.cssText = "left:0;top:0;width:" + window.innerWidth + "px;height:" + window.innerHeight + "px;border-radius:0";
-        settle(show2); return;
-      }
+      if (goH(x)) { card.classList.add("swap"); settle(show2); return; }
+      if (card.classList.contains("on1")) { card.classList.add("swap"); setTimeout(show2, 140); return; }   /* 같은 화면: 글자만 살짝 바꿈 */
       show2();
     }
     function reveal() {
-      place(); w.classList.remove("moving");
-      card.classList.remove("in"); void card.offsetWidth; card.classList.add("in");
-      requestAnimationFrame(function () { card.classList.remove("wait"); });
+      place();
+      if (!card.classList.contains("on1")) { card.classList.add("on1"); card.classList.remove("in"); void card.offsetWidth; card.classList.add("in"); }
+      requestAnimationFrame(function () { card.classList.remove("swap"); });
+      var me = i;
+      [350, 720].forEach(function (t) { setTimeout(function () { if (me === i && w.isConnected) place(); }, t); });
     }
     function show2() {
       var x = S[i];
@@ -5195,7 +5196,7 @@
         var el = document.querySelector(x.s);
         if (el && !el.closest(".tabs, .bar")) {
           var r = el.getBoundingClientRect();
-          if (r.top < 70 || r.bottom > window.innerHeight - 220) { card.classList.add("wait"); window.scrollTo({ top: window.scrollY + r.top - 110, behavior: "smooth" }); setTimeout(reveal, 480); return; }
+          if (r.top < 70 || r.bottom > window.innerHeight - 220) { window.scrollTo({ top: window.scrollY + r.top - 110, behavior: "smooth" }); reveal(); return; }   /* 스크롤하는 동안에도 place가 따라감 */
         }
       }
       reveal();
@@ -5203,7 +5204,7 @@
     w.addEventListener("click", function (e) {
       if (e.target.closest(".tour-skip")) return end();
       if (e.target.closest(".tb-app")) return end();
-      if (card.classList.contains("wait")) return;
+      if (card.classList.contains("swap")) return;
       if (e.target.closest(".tb-prev")) { i = Math.max(0, i - 1); dir = -1; return show(); }
       if (e.target.closest(".tb-next") || e.target === hole || e.target === w) { if (i >= S.length - 1) return end(); i++; dir = 1; show(); }
     });
