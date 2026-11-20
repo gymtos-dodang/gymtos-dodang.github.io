@@ -2285,7 +2285,7 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 /* 2026-11-18 토롱이 친구들 (app.js FR·petSpawn·frDex·frFound) — 근육이·졸졸이·번개·냠냠이·수줍이·까칠이 */
 .petwalk .pet.hop.jump svg, .petwalk .pet.hop.jump .b-ears, .petwalk .pet.hop.jump .b-foot { animation-duration: var(--hop, .42s); }
 .pet .acc, .pet .zz { transform-box: fill-box; transform-origin: 50% 50%; }
-.fr-muscle.sit .acc { animation: frLift 1.6s ease-in-out infinite; }
+.fr-muscle.sit .acc, .fr-muscle.sit .b-paw { animation: frLift 1.6s ease-in-out infinite; }   /* 2026-11-20 앞발이 덤벨을 쥐고 같이 들어 올림 */
 @keyframes frLift { 0%, 35%, 100% { transform: translateY(0); } 55%, 80% { transform: translateY(-10px); } }
 .pet .zz { opacity: 0; } .fr-sleepy.sit .zz { animation: frZ 2.4s ease-in-out infinite; }
 .fr-sleepy.sit .b-head { animation: frNod 2.4s ease-in-out infinite !important; }
