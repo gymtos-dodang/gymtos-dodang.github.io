@@ -532,7 +532,7 @@
     function rnd() { seed = (seed * 1103515245 + 12345) >>> 0; return (seed >>> 8) / 16777216; }
     var cnt = Math.floor(rnd() * 3), pool = FR.filter(function (F) { return F.pet === M.pet; }), today = [];
     while (today.length < cnt) today.push(pool.splice(Math.floor(rnd() * pool.length), 1)[0]);
-    today.forEach(function (F, j) { setTimeout(function () { petSpawn(M.pet, F); setTimeout(function () { frFound(F); }, 2500); }, 1200 + j * 900); });
+    today.forEach(function (F, j) { setTimeout(function () { petSpawn(M.pet, F); setTimeout(function () { frFound(F); }, 2500); }, j * 200); });   /* 2026-11-21 "한번에 뜨게" — 기다리지 않고 바로 */
   })();
   /* ===== 먹이주머니 · 동물 레벨업 (2026-11-20 장동욱 "배지 얻으면 4개, 루틴 한 종목 체크·출석 2개, 인바디 3개 등 활동하면 당근·생선을 줌 →
      옆 작은 버튼 누르면 먹이주머니 → 꾹 누르면 모았던 당근이 나오고 지정 토끼한테 뿌리면 달려가서 먹음 → 많이 먹으면 레벨업, 치장이 달라짐(가방·덤벨·특수효과),
@@ -711,6 +711,7 @@
     document.body.appendChild(bg);
     bg.addEventListener("click", function (e) { if (e.target === bg || e.target.closest("[data-ok]")) bg.remove(); });
   }
+  setTimeout(function () { if (PX[M.pet] && !DEMO && !TRY && !COACH_MODE && !(PF_VIS && !(PF && PF.vp))) pfBtn(); }, 0);   /* 2026-11-21 "펫이랑 먹이창 너무 늦게 뜬다, 한번에" — 주머니 탭은 창고 응답 기다리지 않고 바로(DEMO·COACH_MODE가 정해진 뒤 · 개수는 이 폰 기록, 응답 오면 맞춰짐) */
   setTimeout(function () { if (M.pet === "bunny" || M.pet === "cat" || PF_VIS) { if (!ATT_API) pfServer(null); setTimeout(function () { if (!PF_SV) pfServer(null); }, 12000); } }, 0);
   function skinDeco() {   /* 토롱이 그림을 정해진 칸에 하나씩 (이미 있으면 그대로) — 누르기·글자에는 영향 없음(pointer-events none) */
     if (!SKIN) return;
