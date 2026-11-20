@@ -1669,7 +1669,23 @@
     add("grow", "fv3", "자세 공부 3개", "book", 3, q(fo >= 3), fo, 3, "자세 복습지를 3개 열어 보면 받아요", "복습지 3개를 직접 봤어요. 차근차근 배워 가고 있어요.");
     if (IB_ON) {   /* 몸 변화 탭 (2026-11-19 장동욱 "인바디 전달·이번 달 비교해서 2키로 빠지면 2키로 감량 배지")
                       감량 n kg = 인바디 기록을 바로 앞 기록(지난번 측정)과 비교해 체중이 n kg 이상 빠진 적이 있으면 — 그 측정한 날이 받은 날 */
-      var ibr = (ibData || []).filter(function (r) { return r && r.d && +r.w > 0; }).sort(function (x, y) { return x.d < y.d ? -1 : x.d > y.d ? 1 : 0; });
+      /* 2026-11-20 장동욱 "찬영님 인바디 처음 올렸는데 업적 다 완료" — 잘못 읽힌 기록 하나로 감량 배지가 한꺼번에 받아지던 것 막기:
+         ① 숫자가 서로 안 맞는 기록(체지방량 ≠ 체중×체지방률, 골격근 ≥ 체중)은 감량 계산에서 뺌 ② 같은 날 여러 번 올리면 마지막 것만
+         ③ 바로 앞 기록과 날짜에 비해 너무 차이 나면(3kg + 하루 0.2kg 넘게) 앞 기록을 잘못 읽은 것으로 보고 뺌 ④ 아래 L.forEach에서 몸 변화 배지는 저장된 걸로 붙잡지 않고 지금 기록으로 다시 계산 */
+      var ibr0 = (ibData || []).filter(function (r) {
+        if (!r || !r.d || !(+r.w > 0)) return false;
+        var w = +r.w, pf = +r.pbf, bf = +r.bfm, sm = +r.smm;
+        if (sm && sm >= w * 0.7) return false;
+        if (pf > 0 && bf > 0 && Math.abs(w * pf / 100 - bf) > Math.max(2, bf * 0.2)) return false;
+        return true;
+      }).sort(function (x, y) { return x.d < y.d ? -1 : x.d > y.d ? 1 : 0; });
+      var ibr = [];
+      ibr0.forEach(function (r) {
+        var pv = ibr[ibr.length - 1];
+        if (pv && pv.d === r.d) { ibr[ibr.length - 1] = r; return; }
+        if (pv) { var gap = (new Date(r.d) - new Date(pv.d)) / 86400000; if (Math.abs(+pv.w - +r.w) > 3 + gap * 0.2) { ibr[ibr.length - 1] = r; return; } }   /* 날짜에 비해 말이 안 되게 차이 나면(30일에 9kg 넘게) 앞 기록을 잘못 읽은 걸로 보고 새 기록으로 바꿈 */
+        ibr.push(r);
+      });
       add("body", "ib1", "첫 인바디", "scale", null, ibr.length ? ibr[0].d : ((ibData || []).map(function (r) { return r.d; }).sort()[0] || null), (ibData || []).length, 1, "기록 탭에서 인바디를 올리면 받아요", "첫 인바디 기록 완료! 이제 변화를 숫자로 봐요.");
       var lossMax = 0, lossOn = {};
       for (var li = 1; li < ibr.length; li++) {
@@ -1716,6 +1732,7 @@
       if (!b.sp) b.col = BG_PAL[stl[0]]; if (!b.sp) { b.ic = stl[1]; b.fx = stl[2]; b.sh = stl[3] || "circle"; b.lv = stl[4] || 1; }
       if (b.big) { b.sm = b.big; b.big = null; }
       var saved = o.on[b.id];
+      if (b.cat === "body" && b.id !== "ib1" && ibReady === true && !b.on && saved) { delete o.on[b.id]; saved = null; ch = true; try { localStorage.setItem(BG_SEEN, JSON.stringify(lsArr(BG_SEEN).filter(function (x) { return x !== b.id; }))); } catch (e9) {} }   /* 몸 변화(감량) 배지는 지금 인바디 기록으로만 — 잘못 받은 건 회수 (2026-11-20) */
       if (b.on === "?") b.on = saved || today;
       if (!b.on && saved) b.on = saved;
       if (b.on && b.on > today) b.on = today;
