@@ -1267,7 +1267,9 @@
           .then(function (j) {
             if (my !== ocrRun || !wrap.isConnected) return;
             if (!j || !j.ok) throw new Error(j && j.error || "ocr");
-            var r = ibParse(j.text), got = 0; wrap._x = { bmr: r.bmr, h: r.h };
+            var r = ibParse(j.text || ""), got = 0, v = j.vals;   /* 2026-11-20 AI가 읽은 값(vals) 먼저, 빈 칸만 OCR 글자로 */
+            if (v) ["w", "smm", "bfm", "pbf", "bmr", "h", "d"].forEach(function (k) { if (v[k] !== null && v[k] !== undefined && v[k] !== "") r[k] = v[k]; });
+            if (v && r.w !== null && r.bfm === null && r.pbf !== null) r.bfm = Math.round(r.w * r.pbf / 10) / 10; wrap._x = { bmr: r.bmr, h: r.h };
             [["#ibW", "w"], ["#ibS", "smm"], ["#ibB", "bfm"], ["#ibP", "pbf"]].forEach(function (x) {
               var inp = wrap.querySelector(x[0]);
               if (r[x[1]] !== null && r[x[1]] !== undefined && !inp.value) { inp.value = ibFmt(r[x[1]]); inp.classList.add("auto"); got++; }

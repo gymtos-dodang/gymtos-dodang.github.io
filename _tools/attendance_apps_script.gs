@@ -147,7 +147,30 @@ function mealAiAll_(keys, model, img, hint) {   // 열쇠 여러 개면 차례�
   throw last || new Error('nokey');
 }
 function mealAi_(key, model, img, hint) {
-  const prompt = ML_PROMPT + (hint ? ' 먹은 사람이 적은 메모: ' + hint.slice(0, 120) : '');
+  const text = aiText_(key, model, img, ML_PROMPT + (hint ? ' 먹은 사람이 적은 메모: ' + hint.slice(0, 120) : ''));
+  const a = text.indexOf('{'), z = text.lastIndexOf('}');
+  const o = JSON.parse(text.slice(a, z + 1));
+  return { items: mlItems_(o.items), note: String(o.note || '').slice(0, 60) };
+}
+/* 2026-11-20 인바디 결과지도 AI가 직접 보고 숫자를 읽음 (드라이브 OCR은 폰 사진에서 자주 실패 → 예비로만) */
+const IB_PROMPT = '이 사진은 InBody(인바디) 체성분 결과지입니다. 사진이 기울었거나 빛이 반사돼도 결과지를 잘 보고 이 사람의 측정값을 읽으세요. ' +
+  '표준범위(괄호 안 숫자)나 예시가 아니라 실제 측정값입니다. 다른 말 없이 JSON만 답하세요: ' +
+  '{"w":체중 kg,"smm":골격근량 kg,"bfm":체지방량 kg,"pbf":체지방률 %,"bmr":기초대사량 kcal,"h":키 cm,"d":"검사일시 YYYY-MM-DD"} ' +
+  '안 보이는 값은 null. 인바디 결과지가 아니면 {"none":true}';
+function inbodyAi_(keys, model, img) {
+  let last = null;
+  for (let i = 0; i < keys.length; i++) {
+    try {
+      const t = aiText_(keys[i], i === 0 ? model : '', img, IB_PROMPT), a = t.indexOf('{'), z = t.lastIndexOf('}');
+      const o = JSON.parse(t.slice(a, z + 1));
+      if (o.none) return null;
+      const d = /^20\d{2}-\d{2}-\d{2}$/.test(String(o.d || '')) ? String(o.d) : null;
+      return { w: num_(o.w, 20, 300), smm: num_(o.smm, 3, 90), bfm: num_(o.bfm, 0.5, 200), pbf: num_(o.pbf, 1, 75), bmr: num_(o.bmr, 800, 3500), h: num_(o.h, 120, 220), d: d };
+    } catch (err) { last = err; }
+  }
+  throw last || new Error('nokey');
+}
+function aiText_(key, model, img, prompt) {   // 사진 + 질문 → AI 답 글자 (열쇠 종류에 따라 업체 자동)
   let text = '';
   if (/^mi:/.test(key)) {
     text = mlOpenAi_('https://api.mistral.ai/v1/chat/completions', key.slice(3), model || 'pixtral-large-latest', img, prompt);
@@ -172,9 +195,7 @@ function mealAi_(key, model, img, hint) {
     if (!j.content) throw new Error('claude ' + r.getResponseCode());
     text = j.content.map(function (x) { return x.text || ''; }).join('');
   }
-  const a = text.indexOf('{'), z = text.lastIndexOf('}');
-  const o = JSON.parse(text.slice(a, z + 1));
-  return { items: mlItems_(o.items), note: String(o.note || '').slice(0, 60) };
+  return text;
 }
 function mlItems_(arr) {
   return (Array.isArray(arr) ? arr : []).slice(0, 12).map(function (x) {
@@ -397,8 +418,15 @@ function doPost(e) {
   if (!memberOk_(m)) return json_({ ok: false, error: 'member' });
   if (b.a === 'inbody_ocr') {
     if (!b.img || String(b.img).length > 8000000) return json_({ ok: false, error: 'img' });
-    try { return json_({ ok: true, text: ocr_(String(b.img), b.mime === 'application/pdf') }); }
-    catch (err) { return json_({ ok: false, error: 'ocr', msg: String(err) }); }
+    const pdf = b.mime === 'application/pdf', P = PropertiesService.getScriptProperties(), key = P.getProperty('AI_KEY');
+    let vals = null, aiErr = '';
+    if (key && !pdf) {
+      try { vals = inbodyAi_(key.split(',').map(function (x) { return x.trim(); }).filter(String), P.getProperty('AI_MODEL'), String(b.img)); }
+      catch (err) { aiErr = String(err); }
+    }
+    if (vals && vals.w !== null) return json_({ ok: true, vals: vals, text: '' });
+    try { return json_({ ok: true, vals: vals, text: ocr_(String(b.img), pdf) }); }
+    catch (err) { return vals ? json_({ ok: true, vals: vals, text: '' }) : json_({ ok: false, error: 'ocr', msg: String(err) + ' / ' + aiErr }); }
   }
   if (b.a === 'meal_ai') {   // 식단 사진 → 음식·양·순탄수·단백질·지방·칼로리 (스크립트 속성 AI_KEY 필요)
     if (!b.img || String(b.img).length > 3000000) return json_({ ok: false, error: 'img' });
