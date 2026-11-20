@@ -1283,6 +1283,16 @@
       if (!(w >= 20 && w <= 300)) { msg.textContent = "체중을 확인해 주세요 (예 72.4)"; return; }
       if (!(s >= 3 && s <= 90)) { msg.textContent = "골격근량을 확인해 주세요 (예 31.2)"; return; }
       if (!(pf >= 1 && pf <= 75)) { msg.textContent = "체지방률을 확인해 주세요 (예 21.5)"; return; }
+      /* 2026-11-20 "처음 올려도 업적이 잘 인식되게" — 잘못 읽힌 숫자가 저장되지 않게 한 번 더 확인 */
+      if (d > ymd(new Date())) { msg.textContent = "측정한 날이 오늘보다 뒤예요. 날짜를 확인해 주세요"; return; }
+      if (s >= w * 0.7) { msg.textContent = "골격근량이 체중에 비해 너무 커요. 체중·골격근량을 확인해 주세요"; return; }
+      if (bf !== null && Math.abs(w * pf / 100 - bf) > Math.max(2, bf * 0.2)) { msg.textContent = "체중 × 체지방률과 체지방량이 안 맞아요. 세 숫자를 결과지와 다시 비교해 주세요"; return; }
+      var ibPrev = (ibData || []).filter(function (r) { return r && r.d && r.d <= d && +r.w > 0; }).sort(function (x, y) { return x.d < y.d ? 1 : x.d > y.d ? -1 : 0; })[0];
+      if (ibPrev && form.getAttribute("data-sure") !== d + "|" + w) {
+        var gapD = Math.round((new Date(d) - new Date(ibPrev.d)) / 86400000), dw = Math.round((w - +ibPrev.w) * 10) / 10;
+        if (gapD === 0) { form.setAttribute("data-sure", d + "|" + w); msg.textContent = "같은 날 기록이 이미 있어요 (" + (+ibPrev.w) + "kg). 이 숫자로 하나 더 저장하려면 한 번 더 눌러 주세요"; return; }
+        if (Math.abs(dw) > 3 + gapD * 0.2) { form.setAttribute("data-sure", d + "|" + w); msg.textContent = "지난 기록(" + ibPrev.d.slice(5).replace("-", "/") + " " + (+ibPrev.w) + "kg)보다 " + (dw > 0 ? "+" : "") + dw + "kg 차이 나요. 체중이 맞으면 한 번 더 눌러 주세요"; return; }
+      }
       if (bf !== null && !(bf > 0 && bf < w)) { msg.textContent = "체지방량을 확인해 주세요 (모르면 비워 두세요)"; return; }
       if (!ATT_API) { msg.textContent = "저장할 곳이 아직 준비 안 됐어요"; return; }
       busy = true; form.classList.add("saving"); msg.className = "ibs-msg info"; msg.textContent = "저장하는 중…";
@@ -1713,6 +1723,9 @@
           { unit: "kg", art: "loss", artn: v[0], sp: true, sh: v[2], lv: 4, enk: v[3], spc: v[4], ink: v[5], col: [v[4], v[4]], fx: v[0] === 20 ? "rays spin twinkle shine pulse" : v[0] === 15 ? "rays spin twinkle shine" : "rays twinkle shine" });
       });
     }
+    /* 2026-11-20 배지 점검: '함께 n일'은 PT 시작일(journey.start)부터 — startDate()는 출석 기록 시작(ATT_SINCE)으로 잘려서 3월에 시작한 회원도 11월부터 세던 것 고침 */
+    var pt0 = null; if (M.journey && /^\d{4}-\d{2}-\d{2}$/.test(M.journey.start || "")) { var pj = M.journey.start.split("-"); pt0 = new Date(+pj[0], +pj[1] - 1, +pj[2]); }
+    if (pt0) st0 = pt0;
     var days = st0 ? Math.floor((new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) - st0) / 86400000) + 1 : 0;
     function dayOn(n) { if (!st0 || days < n) return null; var d = new Date(st0); d.setDate(d.getDate() + n - 1); return ymd(d); }
     add("grow", "day30", "함께 30일", "heart", 30, dayOn(30), Math.max(0, days), 30, "PT 시작하고 30일이 되면 받아요", "첫 한 달 완주! 제일 어려운 구간을 넘었어요.", { unit: "일" });
@@ -1732,7 +1745,7 @@
       if (!b.sp) b.col = BG_PAL[stl[0]]; if (!b.sp) { b.ic = stl[1]; b.fx = stl[2]; b.sh = stl[3] || "circle"; b.lv = stl[4] || 1; }
       if (b.big) { b.sm = b.big; b.big = null; }
       var saved = o.on[b.id];
-      if (b.cat === "body" && b.id !== "ib1" && ibReady === true && !b.on && saved) { delete o.on[b.id]; saved = null; ch = true; try { localStorage.setItem(BG_SEEN, JSON.stringify(lsArr(BG_SEEN).filter(function (x) { return x !== b.id; }))); } catch (e9) {} }   /* 몸 변화(감량) 배지는 지금 인바디 기록으로만 — 잘못 받은 건 회수 (2026-11-20) */
+      if (b.cat === "body" && ibReady === true && !b.on && saved) { delete o.on[b.id]; saved = null; ch = true; try { localStorage.setItem(BG_SEEN, JSON.stringify(lsArr(BG_SEEN).filter(function (x) { return x !== b.id; }))); } catch (e9) {} }   /* 몸 변화(감량) 배지는 지금 인바디 기록으로만 — 잘못 받은 건 회수 (2026-11-20) */
       if (b.on === "?") b.on = saved || today;
       if (!b.on && saved) b.on = saved;
       if (b.on && b.on > today) b.on = today;
