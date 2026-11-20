@@ -405,7 +405,10 @@ function ocr_(b64, pdf) {   // pdf = true면 PDF 결과지(2026-11-19)
     id = Drive.Files.insert({ title: 'inbody_ocr_tmp', mimeType: 'application/vnd.google-apps.document' }, blob, { ocr: true, ocrLanguage: 'ko' }).id;   // v2
   }
   try {
-    return DocumentApp.openById(id).getBody().getText();
+    try { return DocumentApp.openById(id).getBody().getText(); }
+    catch (eD) {   // 2026-11-20 문서(Docs) 권한이 없을 때: 드라이브에서 글자로 내보내기
+      return UrlFetchApp.fetch('https://www.googleapis.com/drive/v3/files/' + id + '/export?mimeType=text/plain', { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() } }).getContentText();
+    }
   } finally {
     try { DriveApp.getFileById(id).setTrashed(true); } catch (e) {}
   }
