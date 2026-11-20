@@ -2757,6 +2757,7 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 
 /* 2026-11-20 찾아오는 동물(강아지·라쿤·곰·수달) — 팝업·카드 그림은 서 있는 모습만 */
 .frpop-pic .p-sit, .frd-pic .p-sit { display: none; }
+.pet.lv2 .pv-collar, .pet.lv3 .pv-collar { display: none; }   /* 뭉치는 스카프 두르면 빨간 목걸이 숨김 */
 .pvdex { grid-template-columns: 1fr; } .pvdex .frd-pic { width: 120px; height: 100px; }
 
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
