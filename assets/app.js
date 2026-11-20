@@ -40,9 +40,22 @@
   /* 전체 공지 (2026-11-11): 선생님 페이지에서 쓴 공지 — 출석 창고 "전체공지" 탭 → 모든 회원 노트 공지에 같이 나옴. 휴대폰엔 ptnote:bn */
   var BN = [];
   try { BN = JSON.parse(localStorage.getItem("ptnote:bn") || "[]") || []; } catch (e) { BN = []; }
+  /* 업데이트 소식 데이터 (2026-11-20 — 2026-11-20 "업데이트 소식이랑 공지 합치기": 공지 목록에도 '업데이트' 공지로 같이 들어감 nBuild, 쓰는 법은 스킬 pt-update-tour·아래 업데이트 소식 칸) */
+  var WN = [
+    { id: "2026-11-20", t: "식단 탭 · 배지 케이스 업데이트",
+      items: ["📸 먹은 기록 — 사진만 찍으면 탄단지·칼로리 분석", "📖 식단 가이드 — 탄단지·식이섬유·끼니 이야기", "💊 영양제 가이드 — 남녀별 추천 조합", "🏅 홈 배지 케이스 새 디자인"],
+      steps: [
+        { h: "#home", s: ".hbcase", t: "배지 케이스가 새로워졌어요", b: "가운데는 내 최고 배지가 자동으로,\n둘레 6칸은 내가 고른 배지를 넣어요.\n누르면 크게, 꾹 누르면 넣고 빼기!" },
+        { h: "#diet", s: ".db-tabs", t: "식단 탭에 칸이 늘었어요", b: "위 전환 칸에서\n먹은 기록 · 식단 가이드로 바로 넘어가요." },
+        { h: "#diet-log", s: ".ml-add", t: "📸 먹은 기록", b: "먹기 전에 사진 한 장 찍어 올리면\n음식·양·탄단지·칼로리를 읽어 줘요.\n선생님도 같이 보고 한마디 남겨요." },
+        { h: "#diet-guide", s: ".dg-sub", t: "📖 식단 가이드 · 💊 영양제", b: "탄단지가 왜 중요한지, 식이섬유, 끼니 거르면 안 되는 이유.\n옆 '영양제' 칸엔 남녀별 추천 조합이 있어요." }
+      ] }
+  ];
+  function wnDate(w) { var m = String(w.id).match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? m[1] + ". " + +m[2] + ". " + +m[3] : ""; }
   function nYmd(n) { var m = String(n.date || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/); return m ? +m[1] * 10000 + +m[2] * 100 + +m[3] : 0; }
   function nBuild() {   /* data.js 공지 + 전체 공지 + 폰에서 고친 루틴 공지 → 날짜 최신순(같은 날은 원래 순서) */
     var extra = BN.map(function (b) { return { date: b.date, title: b.title, body: b.body, link: b.link || "", all: 1 }; });
+    WN.forEach(function (w) { extra.push({ date: wnDate(w), title: w.t, body: (w.items || []).join("\n"), wn: w.id }); });   /* 업데이트 소식 = 공지 (2026-11-20) */
     var nt = RT_REC && RT_REC.notice;
     if (nt && nt.title) extra.push(nt);
     var list = NT_ORIG.slice();
@@ -2792,7 +2805,8 @@
 
   /* ---------------- 공지 */
   function noticeCard(n) {
-    return '<div class="panel notice" data-nkey="' + esc(nKey(n)) + '"><time>' + esc(n.date) + (n.all ? '<span class="nall">전체 공지</span>' : '') + '</time><h3>' + esc(n.title) + '</h3><p>' + esc(n.body) + '</p>' +
+    return '<div class="panel notice" data-nkey="' + esc(nKey(n)) + '"><time>' + esc(n.date) + (n.all ? '<span class="nall">전체 공지</span>' : '') + (n.wn ? '<span class="nall nup">업데이트</span>' : '') + '</time><h3>' + esc(n.title) + '</h3><p' + (n.wn ? ' class="nup-p"' : '') + '>' + esc(n.body) + '</p>' +
+      (n.wn ? '<a class="btn fill" href="#home" data-wn="' + esc(n.wn) + '">새 기능 둘러보기 →</a>' : '') +
       (n.link ? '<a class="btn" href="#' + esc(n.link) + '">바로 보기</a>' : '') + '</div>';
   }
   function renderNotice() {
@@ -5190,16 +5204,6 @@
      ⚙️ 설정 "업데이트 소식 다시 보기"·주소 ?wn 으로 언제든(선생님 폰에서 미리보기도 이걸로). 선생님 폰·안내서 데모·iframe 안에선 저절로 안 뜸.
      단계: { h:"#화면", pre:함수(선택), s:"비출 칸 선택자", t:"제목", b:"설명(\n 줄바꿈)" } — 회원 화면에 그 칸이 없으면(그룹 PT 등) 그 단계는 저절로 건너뜀.
      새 소식 쓰는 법은 스킬 pt-update-tour. 새 탭·칸이면 처음 둘러보기(tourSteps)에도 한 줄 추가. */
-  var WN = [
-    { id: "2026-11-20", t: "식단 탭 · 배지 케이스 업데이트",
-      items: ["📸 먹은 기록 — 사진만 찍으면 탄단지·칼로리 분석", "📖 식단 가이드 — 탄단지·식이섬유·끼니 이야기", "💊 영양제 가이드 — 남녀별 추천 조합", "🏅 홈 배지 케이스 새 디자인"],
-      steps: [
-        { h: "#home", s: ".hbcase", t: "배지 케이스가 새로워졌어요", b: "가운데는 내 최고 배지가 자동으로,\n둘레 6칸은 내가 고른 배지를 넣어요.\n누르면 크게, 꾹 누르면 넣고 빼기!" },
-        { h: "#diet", s: ".db-tabs", t: "식단 탭에 칸이 늘었어요", b: "위 전환 칸에서\n먹은 기록 · 식단 가이드로 바로 넘어가요." },
-        { h: "#diet-log", s: ".ml-add", t: "📸 먹은 기록", b: "먹기 전에 사진 한 장 찍어 올리면\n음식·양·탄단지·칼로리를 읽어 줘요.\n선생님도 같이 보고 한마디 남겨요." },
-        { h: "#diet-guide", s: ".dg-sub", t: "📖 식단 가이드 · 💊 영양제", b: "탄단지가 왜 중요한지, 식이섬유, 끼니 거르면 안 되는 이유.\n옆 '영양제' 칸엔 남녀별 추천 조합이 있어요." }
-      ] }
-  ];
   var WN_K = "ptnote:" + SLUG + ":wn", WN_DAYS = 21, WN_WANT = false;
   function wnSeen() { try { return localStorage.getItem(WN_K) || ""; } catch (e) { return ""; } }
   function wnSeenAll() { if (WN[0]) { try { localStorage.setItem(WN_K, WN[0].id); } catch (e) {} } }
@@ -5217,11 +5221,16 @@
     L.forEach(function (w) { items = items.concat(w.items || []); steps = steps.concat(w.steps || []); });
     return [{ c: 1, h: "#home", t: "새 기능이 생겼어요 🎉", b: tourName() + "님, PT노트가 업데이트됐어요!", l: items, ok: "보러 가기" }]
       .concat(steps)
-      .concat([{ c: 1, h: "#home", t: "업데이트 둘러보기 끝! 💪", b: "다시 보고 싶으면\n오른쪽 위 ⚙️ 설정 → '업데이트 소식'에서 볼 수 있어요.", ok: "확인" }]);
+      .concat([{ c: 1, h: "#home", t: "업데이트 둘러보기 끝! 💪", b: "다시 보고 싶으면\n🔔 공지에서 '새 기능 둘러보기'를 누르면 돼요.", ok: "확인" }]);
   }
-  function wnStart(force) {
-    var L = force ? WN.slice(0, 1) : wnList(); if (!L.length || TOUR_ON) return;
-    tourStart(wnSteps(L), { skip: "나중에 볼게요", done: function () { if (!COACH_MODE && !DEMO) wnSeenAll(); } });
+  function wnStart(force) {   /* force: true = 최신 소식, "날짜 id" = 그 소식(공지의 '새 기능 둘러보기') */
+    var L = force === true ? WN.slice(0, 1) : force ? WN.filter(function (w) { return w.id === force; }) : wnList(); if (!L.length || TOUR_ON) return;
+    tourStart(wnSteps(L), { skip: "나중에 볼게요", done: function () {
+      if (COACH_MODE || DEMO) return;
+      if (!force) wnSeenAll();
+      var ks = (M.notices || []).filter(function (n) { return n.wn && L.some(function (w) { return w.id === n.wn; }); }).map(nKey);
+      lsAdd(NSEEN_KEY, ks); lsAdd(NPOP_KEY, ks); nDot();   /* 둘러본 소식은 공지 팝업·빨간 점에서도 뺌 */
+    } });
   }
   function wnMaybe() {
     if (!WN_WANT || TOUR_ON || TOUR_WANT) return;
@@ -5234,7 +5243,6 @@
     var E = typeof instEnv === "function" ? instEnv() : { standalone: true }, g = document.getElementById("gearBtn");
     var m = document.createElement("div"); m.id = "gearMenu"; m.className = "gmenu"; m.setAttribute("role", "menu");
     m.innerHTML = '<a href="#home" role="menuitem" data-tour="1"><span>🧭</span><b>앱 사용법 다시 보기</b></a>' +
-      (WN.length ? '<a href="#home" role="menuitem" data-wn="1"><span>🆕</span><b>업데이트 소식</b></a>' : '') +
       '<a href="#app" role="menuitem"><span>📲</span><b>' + (E.standalone ? '홈 화면 앱 설치 안내' : '홈 화면에 앱으로 추가하기') + '</b></a>' +
       '<div class="gm-theme" role="group" aria-label="다크 모드"><span>🌙</span><b>다크 모드</b><i>' +
       [["auto", "자동"], ["dark", "켜기"], ["light", "끄기"]].map(function (o) { return '<button type="button" data-th="' + o[0] + '"' + (themeGet() === o[0] ? ' aria-pressed="true"' : '') + '>' + o[1] + '</button>'; }).join("") + '</i></div>';   /* 2026-11-13 "앱아이콘 설치 옵션 왜 뺐냐" — 앱으로 열었어도 항상 보이게 */
@@ -5258,7 +5266,7 @@
   (function () { var g = document.getElementById("gearBtn"); if (g) g.addEventListener("click", function (e) { e.stopPropagation(); gearMenu(); }); })();
   document.addEventListener("click", function (e) {
     var wa = e.target.closest("[data-wn]");
-    if (wa) { e.preventDefault(); if (location.hash && location.hash !== "#home") { LINKAT = Date.now(); location.hash = "#home"; } window.scrollTo(0, 0); setTimeout(function () { wnStart(true); }, 500); return; }
+    if (wa) { e.preventDefault(); if (location.hash && location.hash !== "#home") { LINKAT = Date.now(); location.hash = "#home"; } window.scrollTo(0, 0); var wid = wa.getAttribute("data-wn"); setTimeout(function () { wnStart(wid === "1" ? true : wid); }, 500); return; }
     var a = e.target.closest("[data-tour]"); if (!a) return;
     TOUR_WANT = true;
     if (!location.hash || location.hash === "#home") { e.preventDefault(); window.scrollTo(0, 0); tourMaybe(); }

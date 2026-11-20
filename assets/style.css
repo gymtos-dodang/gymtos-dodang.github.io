@@ -2654,6 +2654,10 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .tour-card.wait { opacity: .25; }
 .tour-ul { list-style: none; margin: -4px 0 16px; padding: 12px 14px; border-radius: 14px; background: #F4F5F8; text-align: left; display: grid; gap: 7px; }
 .tour-ul li { font-size: 13.5px; font-weight: 700; line-height: 1.45; color: #2A2E38; }
+/* 2026-11-20 업데이트 소식을 공지에 합침 — 업데이트 공지 표시 */
+.notice .nup { background: var(--seal, #E1141E); color: #fff; }
+.notice p.nup-p { white-space: pre-line; }
+.notice [data-wn] { margin-top: 10px; }
 
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
