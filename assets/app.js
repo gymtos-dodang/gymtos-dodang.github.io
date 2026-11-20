@@ -148,14 +148,16 @@
   /* 먹이주머니 상태(2026-11-20) — 아래 '먹이주머니 · 동물 레벨업' 참고 */
   var PETS = [], PF = null, PF_LS = "ptnote:" + RT_SLUG + ":pet", PF_T = 0, PF_ON = false, PF_SV = false, PF_LV = [120, 500];
   try { PF = JSON.parse(localStorage.getItem(PF_LS) || "null"); } catch (e) {}
+  var PF_VIS = !M.pet;   /* pet 없는 회원 = 찾아오는 동물(2026-11-20) 대상 */
+  if (PF_VIS && PF && PF.vp) M.pet = PF.vp;
   function petNight() { var h = new Date().getHours(); return h < 6; }   /* 밤 12시~새벽 6시 = 자는 시간 (2026-11-18) */
   function petSpawn(PET, F) {   /* F = 토롱이 친구 설정(2026-11-18), 없으면 주인공 */
-    if (!F && ((PET !== "cat" && PET !== "bunny") || document.querySelector(".petwalk"))) return;
+    if (!F && (!PX[PET] || PETS.some(function (q) { return q.id === "main"; }))) return;
     if (!F) document.documentElement.setAttribute("data-pet", PET);   /* bunny = 김지수님 토롱이가 깡충깡충(2026-11-16) — 테마 그림 base.svg 그대로, 탭 위 빼꼼 그림은 숨김 */
     var wrap = document.createElement("div"); wrap.className = "petwalk"; wrap.setAttribute("aria-hidden", "true");
     if (F) wrap.innerHTML = '<div class="pet' + (PET === "bunny" ? " hop" : "") + ' sit fr fr-' + F.id + '">' + frSvg(F) + '</div>';
     else if (PET === "bunny") wrap.innerHTML = '<div class="pet hop sit">' + pfDeco(BNY_SVG, "main_b") + '</div>';
-    else wrap.innerHTML = '<div class="pet sit">' + pfDeco(CAT_SVG, "main_c") + '</div>';
+    else wrap.innerHTML = '<div class="pet sit pv-' + PET + '">' + pfDeco(petSvgOf(PET), PX[PET].key) + '</div>';
     document.body.appendChild(wrap);
     var pet = wrap.firstChild, x = F ? 30 + Math.random() * 220 : 16, HMS = (F && F.hop) || 420, dir = 1, tm = 0, W = PET === "bunny" ? 48 : 52, HOP = PET === "bunny", FLIP = true;
     pet.insertAdjacentHTML("beforeend", '<span class="pzz" aria-hidden="true"><i>z</i><i>z</i><i>Z</i></span>');
@@ -189,11 +191,7 @@
     /* 2026-11-17 장동욱 "만지면 좋아하거나 밥을 먹는다던지" — 동물을 누르면 멈춰서 반응: 쓰담쓰담(하트·웃는 눈) → 밥 먹기(당근·생선 냠냠) → 한마디(말풍선) 순서로 돌아가며.
        반응 그림(.petfx)은 화면 위 따로 떠 있는 칸이라 본문엔 영향 없음, 동물 몸만 눌림(.pet pointer-events auto) */
     var tapN = 0, busy = 0;
-    var FOOD = PET === "bunny"
-      ? '<svg viewBox="0 0 40 40" width="26" height="26"><path d="M14 13c-3-6-1-10 2-11 1 3 0 6-1 8M17 12c0-6 4-9 7-8-1 3-3 6-5 8M18 13c3-4 8-5 10-3-2 2-6 4-9 4" fill="#5DBB63" stroke="#3E8E45" stroke-width="1.2" stroke-linejoin="round"/><path d="M13 14c4-4 10-3 11 2L12 37c-2 2-5 0-4-3z" fill="#FF8A3D" stroke="#D9601E" stroke-width="1.6" stroke-linejoin="round"/><path d="M13 21l4 1M11 27l4 1M10 32l3 .8" stroke="#D9601E" stroke-width="1.4" stroke-linecap="round"/></svg>'
-      : '<svg viewBox="0 0 44 30" width="30" height="20"><path d="M6 15c6-10 22-12 30 0-8 12-24 10-30 0z" fill="#8EC5E8" stroke="#4E8DB8" stroke-width="1.6"/><path d="M36 15l7-7v14z" fill="#8EC5E8" stroke="#4E8DB8" stroke-width="1.6" stroke-linejoin="round"/><circle cx="13" cy="13" r="1.8" fill="#24324A"/><path d="M20 9c2 4 2 8 0 12M25 9c2 4 2 8 0 12" fill="none" stroke="#4E8DB8" stroke-width="1.2" stroke-linecap="round"/></svg>';
-    var LINES = PET === "bunny" ? ["오늘도 운동 가자!", "깡충! 같이 뛰자!", "물 많이 마셔요!", "스트레칭 잊지 마요!", "최고예요! ♡", "근육아 자라라~"]
-      : ["냥~ 오늘도 화이팅!", "쓰담쓰담 좋아냥", "물 마셨냥?", "운동 끝나면 꿀잠냥", "멋지다냥 ♡", "스트레칭도 하자냥"];
+    var X = PX[PET] || PX.bunny, FOOD = X.ico(), LINES = X.lines;
     function fx(cls, html, dx, dy, ms) {
       var r = pet.getBoundingClientRect(), e = document.createElement("div");
       e.className = "petfx " + cls; e.innerHTML = html;
@@ -212,18 +210,17 @@
       busy = 1; freeze();
       var n = tapN++, R = F ? F.tap(n) : { k: n % 3 }, kind = R.k, end = 1800, cls = [];
       if (pet.classList.contains("sleep")) {   /* 자는 중(밤 12시~6시): 깨면 잠꼬대·"얼른 자요" 하고 다시 쿨쿨 */
-        var SL = PET === "bunny" ? ["쿨쿨… zZ", "흐암… 지금 몇 시예요? 얼른 자요!", "음냐… 근육은 잘 때 자라요…", "쉿… 내일 운동하려면 자야 해요"]
-          : ["쿨쿨… zZ", "흐암… 지금 몇 시냥? 얼른 자라냥", "음냐… 생선… 냠…", "쉿… 내일 운동하려면 자야 한다냥"];
+        var SL = X.sl;
         pet.classList.add("wake"); bubble(SL[n % SL.length], 2000);
         setTimeout(function () { pet.classList.remove("wake"); busy = 0; }, 1600); return;
       }
       if (kind === 0) {   /* 쓰담쓰담 → 웃는 눈 + 하트 */
         cls = R.happy === false ? ["pat"] : ["happy", "pat"]; if (R.h !== 0) hearts(R.h || 3);
-        bubble(R.say || (PET === "bunny" ? "헤헤 좋아요!" : "골골골~ 좋아냥"));
+        bubble(R.say || X.pat);
       } else if (kind === 1) {   /* 밥 먹기 → 앞에 음식, 세 입에 냠냠 */
         end = 2600; cls = ["eat"];
         var f = fx("pfood", FOOD, (FLIP ? dir : 1) * 24, 20, 2400);
-        bubble(R.say || (PET === "bunny" ? "당근 냠냠!" : "생선 냠냠!"), 2300);
+        bubble(R.say || X.eat, 2300);
         setTimeout(function () { f.classList.add("bite1"); }, 700); setTimeout(function () { f.classList.add("bite2"); }, 1300); setTimeout(function () { f.classList.add("gone"); }, 1900);
         setTimeout(function () { pet.classList.add("happy"); hearts(2); }, 2000);
       } else if (kind === 2) {   /* 한마디 → 폴짝 */
@@ -243,11 +240,11 @@
       pet.addEventListener("click", function (e) { if (lt === -1) { lt = 0; e.stopImmediatePropagation(); e.preventDefault(); } }, true); })();
     pet.addEventListener("click", function (e) { e.preventDefault(); e.stopPropagation(); react(); });
     /* 먹이주머니(2026-11-20): 동물 목록에 올림 — 레벨 치장(dress)·먹이 보고 달려가 먹기(goEat) */
-    var PI = PFI[F ? F.id : (PET === "bunny" ? "main_b" : "main_c")] || PFI.main_b;
+    var PI = PFI[F ? F.id : X.key] || PFI.main_b;
     pet.insertAdjacentHTML("beforeend", '<span class="plv" aria-hidden="true">' + PI.fx.map(function (c) { return '<i>' + c + '</i>'; }).join("") + '</span>');
     pet.style.setProperty("--pfc", PI.c);
-    var Q = { id: F ? F.id : "main", name: F ? F.name : (PET === "bunny" ? "토롱이" : "냥이"), el: pet, wrap: wrap,
-      svg: function () { return F ? frSvg(F) : pfDeco(PET === "bunny" ? BNY_SVG : CAT_SVG, PET === "bunny" ? "main_b" : "main_c"); },
+    var Q = { id: F ? F.id : "main", name: F ? F.name : X.qn, el: pet, wrap: wrap,
+      svg: function () { return F ? frSvg(F) : pfDeco(petSvgOf(PET), X.key); },
       busy: function () { return !!busy; },
       dress: function () { var lv = pfLv(Q.id); pet.classList.remove("lv2", "lv3"); if (lv > 1) pet.classList.add("lv" + lv); },
       goEat: function (gx, n, pile) {
@@ -255,7 +252,7 @@
         var mx = Math.max(20, wrap.clientWidth - W - 8);
         dir = gx > x + W / 2 ? 1 : -1;
         var tx = Math.max(0, Math.min(mx, dir > 0 ? gx - W * .8 : gx - W * .2));
-        bubble(PET === "bunny" ? "당근이다!" : "생선이다냥!", 1000);
+        bubble(X.go, 1000);
         function eat() {
           dir = gx > x + W / 2 ? 1 : -1; place(0);
           pet.classList.remove("walk", "jump", "run"); pet.classList.add("sit", "eat", "pfeat");
@@ -271,7 +268,7 @@
             var old = pfLv(Q.id); PF.xp = PF.xp || {}; PF.xp[Q.id] = (PF.xp[Q.id] || 0) + n; pfSave(true);
             var lv = pfLv(Q.id), xp = PF.xp[Q.id];
             if (lv > old) { Q.dress(); fx("pflvfx", "LEVEL UP!", 0, -16, 1800); setTimeout(function () { pfLevelUp(Q, lv); }, 900); }
-            else bubble(lv < 3 ? "냠냠! 레벨업까지 " + (PF_LV[lv - 1] - xp) + "개" : (PET === "bunny" ? "배불러요! ♡" : "배부르다냥 ♡"), 2000);
+            else bubble(lv < 3 ? "냠냠! 레벨업까지 " + (PF_LV[lv - 1] - xp) + "개" : X.full, 2000);
             try { navigator.vibrate && navigator.vibrate(15); } catch (e) {}
             tm = setTimeout(function () { pet.classList.remove("happy"); pet.style.setProperty("--hop", HMS / 1000 + "s"); busy = 0; tm = setTimeout(next, 2500); }, 1800);
           }, T);
@@ -293,7 +290,7 @@
         }
       } };
     PETS.push(Q); Q.dress();
-    wrap.removeAttribute("aria-hidden"); pet.setAttribute("role", "button"); pet.setAttribute("aria-label", (F ? F.name : PET === "bunny" ? "토롱이" : "고양이") + " 쓰다듬기");
+    wrap.removeAttribute("aria-hidden"); pet.setAttribute("role", "button"); pet.setAttribute("aria-label", (F ? F.name : X.lab) + " 쓰다듬기");
     tm = setTimeout(next, F ? 900 + Math.random() * 3000 : 2500);
     window.addEventListener("resize", function () { var max = Math.max(20, wrap.clientWidth - W - 8); if (x > max) { x = max; place(0); } });
   }
@@ -321,6 +318,115 @@
       tap: function (n) { return n % 5 < 3 ? { k: 2, say: ["…뭐.", "만지지 마.", "흥."][n % 5] } : { k: 0, happy: false, h: 1, blush: 1, say: n % 5 === 3 ? "…그래도 오늘 운동은 했지?" : "…잘했네. 흥." }; } }
   ];
   var CAT_SVG = '<svg viewBox="0 0 64 48" width="52" height="39"><g class="p-walk"><path class="p-tail" d="M12 30 C4 28 3 18 8 14" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/><g class="p-legs"><g class="lg a"><path d="M16 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="19.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M22 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="25.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg b"><path d="M36 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#EBCBA4"/><ellipse cx="39.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g><g class="lg a"><path d="M42 30c-.6 4-.4 7 .3 10.5h4.4c.7-3.5.9-6.5.3-10.5z" fill="#FFF3E2"/><ellipse cx="45.2" cy="42.3" rx="3.3" ry="2.3" fill="#fff"/></g></g><ellipse cx="30" cy="30" rx="18" ry="9.5" fill="#FFF3E2"/><path d="M20 22.5c5-2.5 13-2.5 18 0" fill="none" stroke="#F3D9B8" stroke-width="3" stroke-linecap="round"/><g class="lvx lv-bag"><path d="M23.4 24.6v7M31.4 24.6v7" stroke="#C98A12" stroke-width="1.3" stroke-linecap="round"/><rect x="20.6" y="15.4" width="13" height="9.6" rx="3.6" fill="#FFD15C" stroke="#C98A12" stroke-width="1.2"/><rect x="23" y="19.4" width="8.2" height="4.2" rx="1.8" fill="#FFE9A8" stroke="#C98A12" stroke-width=".9"/><path d="M27.1 20.8c-.8-.9-2.1-.2-1.5.8l1.5 1.3 1.5-1.3c.6-1-.7-1.7-1.5-.8z" fill="#FF6F91"/></g><!--W--></g><g class="p-sit"><path class="p-tail" d="M16 42 C6 42 4 34 9 30" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/><path d="M16 44c0-14 6-21 15-21s15 7 15 21z" fill="#FFF3E2"/><ellipse cx="36" cy="43.5" rx="4" ry="2.5" fill="#fff"/><ellipse cx="45" cy="43.5" rx="4" ry="2.5" fill="#fff"/><g class="lvx lv-bag"><rect x="13.6" y="29" width="11" height="11" rx="3.6" fill="#FFD15C" stroke="#C98A12" stroke-width="1.2"/><rect x="15.6" y="33.6" width="7" height="4.4" rx="1.8" fill="#FFE9A8" stroke="#C98A12" stroke-width=".9"/><path d="M19.1 35c-.8-.9-2.1-.2-1.5.8l1.5 1.3 1.5-1.3c.6-1-.7-1.7-1.5-.8z" fill="#FF6F91"/><path d="M24.4 31.4q4 1 6.4 4" fill="none" stroke="#C98A12" stroke-width="1.2" stroke-linecap="round"/></g><!--S--></g><g class="p-head"><path d="M35 11l2-9 7 5z" fill="#FFF3E2"/><path d="M50 7l7-5 1 9z" fill="#FFF3E2"/><path d="M37.5 8.5l1-4 3.2 2.3z" fill="#F7B6C6"/><path d="M52.5 6.8l3.2-2.3.5 4z" fill="#F7B6C6"/><ellipse cx="46.5" cy="17" rx="12.5" ry="10.5" fill="#FFF3E2"/><path d="M40 7.5c2 2 4 2.5 6.500 2.500" fill="none" stroke="#F3D9B8" stroke-width="2.4" stroke-linecap="round"/><g class="p-eyes"><ellipse cx="42" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/><ellipse cx="51.500" cy="16.500" rx="1.7" ry="2.2" fill="#3A2E2E"/></g><g class="p-sleep"><path d="M40.1 16q1.9 2 3.8 0M49.6 16q1.9 2 3.8 0" fill="none" stroke="#3A2E2E" stroke-width="1.1" stroke-linecap="round"/></g><g class="p-slit"><path d="M40.1 16.9q1.9 .5 3.8 0M49.6 16.9q1.9 .5 3.8 0" fill="none" stroke="#3A2E2E" stroke-width="1.3" stroke-linecap="round"/></g><g class="p-happy"><path d="M40 17.4q2-2.6 4 0M49.5 17.4q2-2.6 4 0" fill="none" stroke="#3A2E2E" stroke-width="1.3" stroke-linecap="round"/></g><ellipse cx="38.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/><ellipse cx="54.800" cy="20.500" rx="2.4" ry="1.500" fill="#F9B9C8" opacity=".8"/><path d="M46 19.300l.9 1 .9-1z" fill="#E98AA2"/><path d="M44.800 21.600q1.050 1.100 2.100 0q1.050 1.100 2.100 0" fill="none" stroke="#3A2E2E" stroke-width=".9" stroke-linecap="round"/><path d="M40.500 26.200l-4-2.200v4.400zM42.500 26.200l4-2.200v4.400z" fill="#D6204F"/><circle cx="41.500" cy="26.200" r="1.500" fill="#B8173F"/><!--H--></g></svg>';
+  /* 2026-11-20 찾아오는 동물(장동욱 "강아지·라쿤·곰·수달 추가, 랜덤 지급 — 바로 말고 어느 정도 출석하고 열심히 하면 '강아지가 찾아왔어요!'", 고양이·토끼는 유정·지수 전용이라 뺌).
+     pet 없는 회원: 먹이주머니 기준선부터 활동 점수(배지 4·인바디 3·출석 2·종목 ✓ 2) PV_N점 + 출석 PV_A일이 쌓이면 4마리 중 하나가 랜덤으로 찾아옴 → PF.vp에 저장(창고 mw:<주소>:pet).
+     그림은 고양이 뼈대(CAT_SVG)에 귀·얼굴·꼬리·색만 바꿔 씀(mkPetSvg) → 걷기·앉기·반응·치장(W·S·H 칸) 그대로 동작. */
+  var PV_T = ["dog", "raccoon", "bear", "otter"], PV_N = 60, PV_A = 3;
+  function pvIco(vb, r, d, w0) { return function (w) { w = w || w0; return '<svg viewBox="' + vb + '" width="' + w + '" height="' + Math.round(w * r) + '">' + d + '</svg>'; }; }
+  var PX = {
+    bunny: { qn: "토롱이", lab: "토롱이", food: "당근", pat: "헤헤 좋아요!", eat: "당근 냠냠!", go: "당근이다!", full: "배불러요! ♡", key: "main_b",
+      lines: ["오늘도 운동 가자!", "깡충! 같이 뛰자!", "물 많이 마셔요!", "스트레칭 잊지 마요!", "최고예요! ♡", "근육아 자라라~"],
+      sl: ["쿨쿨… zZ", "흐암… 지금 몇 시예요? 얼른 자요!", "음냐… 근육은 잘 때 자라요…", "쉿… 내일 운동하려면 자야 해요"],
+      ico: pvIco("0 0 40 40", 1, '<path d="M14 13c-3-6-1-10 2-11 1 3 0 6-1 8M17 12c0-6 4-9 7-8-1 3-3 6-5 8M18 13c3-4 8-5 10-3-2 2-6 4-9 4" fill="#5DBB63" stroke="#3E8E45" stroke-width="1.2" stroke-linejoin="round"/><path d="M13 14c4-4 10-3 11 2L12 37c-2 2-5 0-4-3z" fill="#FF8A3D" stroke="#D9601E" stroke-width="1.6" stroke-linejoin="round"/><path d="M13 21l4 1M11 27l4 1M10 32l3 .8" stroke="#D9601E" stroke-width="1.4" stroke-linecap="round"/>', 26) },
+    cat: { qn: "냥이", lab: "고양이", food: "생선", pat: "골골골~ 좋아냥", eat: "생선 냠냠!", go: "생선이다냥!", full: "배부르다냥 ♡", key: "main_c",
+      lines: ["냥~ 오늘도 화이팅!", "쓰담쓰담 좋아냥", "물 마셨냥?", "운동 끝나면 꿀잠냥", "멋지다냥 ♡", "스트레칭도 하자냥"],
+      sl: ["쿨쿨… zZ", "흐암… 지금 몇 시냥? 얼른 자라냥", "음냐… 생선… 냠…", "쉿… 내일 운동하려면 자야 한다냥"],
+      ico: pvIco("0 0 44 30", .68, '<path d="M6 15c6-10 22-12 30 0-8 12-24 10-30 0z" fill="#8EC5E8" stroke="#4E8DB8" stroke-width="1.6"/><path d="M36 15l7-7v14z" fill="#8EC5E8" stroke="#4E8DB8" stroke-width="1.6" stroke-linejoin="round"/><circle cx="13" cy="13" r="1.8" fill="#24324A"/><path d="M20 9c2 4 2 8 0 12M25 9c2 4 2 8 0 12" fill="none" stroke="#4E8DB8" stroke-width="1.2" stroke-linecap="round"/>', 30) },
+    dog: { qn: "뭉치", lab: "뭉치", kind: "강아지", food: "뼈다귀", pat: "헥헥 좋아멍!", eat: "뼈다귀 냠냠!", go: "뼈다귀다멍!", full: "배부르다멍 ♡", key: "main_dog",
+      desc: "꼬리를 살랑살랑 흔드는 황금빛 강아지. 산책이랑 공놀이가 제일 좋아!",
+      lines: ["오늘도 운동 가자멍!", "꼬리 살랑살랑~ 최고멍!", "물 많이 마셨멍?", "스트레칭 같이 하자멍!", "멋져요! ♡", "근육 쑥쑥 자라라멍~"],
+      sl: ["쿨쿨… zZ", "흐암… 지금 몇 시멍? 얼른 자요!", "음냐… 뼈다귀… 냠…", "쉿… 내일 운동하려면 자야 한다멍"],
+      ico: pvIco("0 0 44 26", .6, '<g fill="#B98A52"><rect x="8" y="9.4" width="28" height="7.2" rx="3.6"/><circle cx="8.6" cy="8.6" r="5.2"/><circle cx="8.6" cy="17.4" r="5.2"/><circle cx="35.4" cy="8.6" r="5.2"/><circle cx="35.4" cy="17.4" r="5.2"/></g><g fill="#FFF3DC"><rect x="8" y="10.6" width="28" height="4.8" rx="2.4"/><circle cx="8.6" cy="8.6" r="3.8"/><circle cx="8.6" cy="17.4" r="3.8"/><circle cx="35.4" cy="8.6" r="3.8"/><circle cx="35.4" cy="17.4" r="3.8"/></g>', 30) },
+    raccoon: { qn: "너굴이", lab: "너굴이", kind: "라쿤", food: "사과", pat: "너굴너굴~ 좋아!", eat: "사과 냠냠!", go: "사과다! 씻어 먹어야지!", full: "배부르다 너굴 ♡", key: "main_rac",
+      desc: "눈가에 까만 가면을 쓴 장난꾸러기 라쿤. 먹기 전엔 꼭 손을 씻어요.",
+      lines: ["오늘 운동도 몰래몰래 해치우자!", "너굴너굴~ 기분 최고!", "물 마셨어요? 난 사과 씻는 중!", "스트레칭은 꼼꼼하게!", "오늘도 멋져요 ♡", "근육은 내가 지켜 줄게!"],
+      sl: ["쿨쿨… zZ", "흐암… 밤엔 원래 내가 노는 시간인데… 얼른 자요!", "음냐… 사과… 씻어야지…", "쉿… 내일 운동하려면 자야 해요"],
+      ico: pvIco("0 0 40 40", 1, '<path d="M20 12c-4-3-13-2-13 9 0 10 7 16 13 13 6 3 13-3 13-13 0-11-9-12-13-9z" fill="#FF5A5F" stroke="#C0303A" stroke-width="1.6"/><path d="M20 12c0-3 1-6 3-7" stroke="#7A4A22" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M22.5 8.5c3-3.4 7.5-3.4 9.5-1.2-2.4 3-6.6 3.2-9.5 1.2z" fill="#5DBB63" stroke="#3E8E45" stroke-width="1"/><ellipse cx="13.5" cy="19" rx="2" ry="3.2" fill="#FFFFFF" opacity=".55"/>', 26) },
+    bear: { qn: "곰곰이", lab: "곰곰이", kind: "곰", food: "꿀", pat: "포근포근 좋다곰!", eat: "꿀 냠냠!", go: "꿀이다곰!", full: "배부르다곰 ♡", key: "main_bear",
+      desc: "힘세고 포근한 갈색 곰. 꿀 한 숟갈이면 기운이 펄펄!",
+      lines: ["오늘도 힘내자곰!", "곰처럼 튼튼해지자!", "물 많이 마셨곰?", "스트레칭은 천천히곰~", "최고다곰 ♡", "근육 키워서 겨울잠 준비곰!"],
+      sl: ["쿨쿨… zZ", "흐암… 겨울잠 자는 중이곰… 얼른 자요!", "음냐… 꿀… 달다…", "쉿… 내일 운동하려면 자야 한다곰"],
+      ico: pvIco("0 0 40 40", 1, '<rect x="11" y="5" width="18" height="6.4" rx="2.2" fill="#B9773A" stroke="#7A4A22" stroke-width="1.4"/><path d="M9.6 14.4c0-2.2 1.8-3.4 4-3.4h12.8c2.2 0 4 1.2 4 3.4V30c0 4-3 6.4-6.4 6.4h-8c-3.4 0-6.4-2.4-6.4-6.4z" fill="#FFB52E" stroke="#C87A10" stroke-width="1.6"/><path d="M10.4 14.6h19.2v3c-1.6 0-1.8 4-3.6 4s-1.4-3-3-3-1.8 5-3.8 5-1.8-4.2-3.6-4.2-1.8 2-5.2 1.2z" fill="#FFE08A"/><ellipse cx="15" cy="27" rx="1.8" ry="3.4" fill="#FFFFFF" opacity=".45"/>', 26) },
+    otter: { qn: "달달이", lab: "달달이", kind: "수달", food: "조개", pat: "꺄르르 좋아달!", eat: "조개 톡톡 냠냠!", go: "조개다달!", full: "배부르다달 ♡", key: "main_ott",
+      desc: "물놀이를 좋아하는 수달. 배 위에 조개를 올리고 톡톡 깨 먹어요.",
+      lines: ["오늘도 첨벙첨벙 운동 가자!", "헤엄치듯 가볍게~", "물 많이 마셨달?", "스트레칭 쭉쭉 하자달!", "멋져요 ♡", "조개 깨는 힘은 근력에서!"],
+      sl: ["쿨쿨… zZ", "흐암… 물 위에 둥둥… 얼른 자요!", "음냐… 조개… 톡톡…", "쉿… 내일 운동하려면 자야 한다달"],
+      ico: pvIco("0 0 40 36", .9, '<path d="M20 30L6 18C6 9 13 4 20 4s14 5 14 14z" fill="#FFB8C6" stroke="#D96A86" stroke-width="1.6" stroke-linejoin="round"/><path d="M20 30L13.5 6.5M20 30V4.4M20 30l6.5-23.5M20 30L8.4 12M20 30l11.6-18" stroke="#D96A86" stroke-width="1.1"/><path d="M15 29.6h10l-2 3.4h-6z" fill="#FFB8C6" stroke="#D96A86" stroke-width="1.3" stroke-linejoin="round"/>', 28) }
+  };
+  function petX() { return PX[M.pet] || PX.bunny; }
+  function jo(w, a, b) { var c = (w || "").charCodeAt(w.length - 1); return w + ((c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28) ? a : b); }
+  /* 고양이 뼈대에서 바꿀 조각 */
+  var PVS = {
+    ears: '<path d="M35 11l2-9 7 5z" fill="#FFF3E2"/><path d="M50 7l7-5 1 9z" fill="#FFF3E2"/><path d="M37.5 8.5l1-4 3.2 2.3z" fill="#F7B6C6"/><path d="M52.5 6.8l3.2-2.3.5 4z" fill="#F7B6C6"/>',
+    head: '<ellipse cx="46.5" cy="17" rx="12.5" ry="10.5" fill="#FFF3E2"/>',
+    brow: '<path d="M40 7.5c2 2 4 2.5 6.500 2.500" fill="none" stroke="#F3D9B8" stroke-width="2.4" stroke-linecap="round"/>',
+    nose: '<path d="M46 19.300l.9 1 .9-1z" fill="#E98AA2"/>',
+    bow: '<path d="M40.500 26.200l-4-2.200v4.400zM42.500 26.200l4-2.200v4.400z" fill="#D6204F"/><circle cx="41.500" cy="26.200" r="1.500" fill="#B8173F"/>',
+    tw: '<path class="p-tail" d="M12 30 C4 28 3 18 8 14" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/>',
+    ts: '<path class="p-tail" d="M16 42 C6 42 4 34 9 30" fill="none" stroke="#F3D9B8" stroke-width="4.5" stroke-linecap="round"/>'
+  };
+  var NOSE = '<ellipse cx="46.9" cy="19.6" rx="1.9" ry="1.3" fill="#2E2426"/><ellipse cx="46.4" cy="19.2" rx=".6" ry=".35" fill="#FFFFFF" opacity=".7"/>';
+  var PVD = {   /* fur 몸·stripe 등 무늬·leg 뒷다리·foot 발 · ears(머리 뒤)·post(머리 위)·brow·nose·bow·tw/ts 꼬리 */
+    dog: { fur: "#F6DDB2", stripe: "#E0B074", leg: "#EBC892", foot: "#FFF8EC", ears: "",
+      post: '<path d="M37 9.6c-4.4-.4-7.4 3.8-7 9.6.2 3.2 2.8 4.8 4.8 3 1.8-1.8 2.6-6.4 3.6-10.6z" fill="#B97F4A"/><path d="M56 9.6c4.4-.4 7.4 3.8 7 9.6-.2 3.2-2.8 4.8-4.8 3-1.8-1.8-2.6-6.4-3.6-10.6z" fill="#B97F4A"/><ellipse cx="46.6" cy="21.2" rx="5.4" ry="3.8" fill="#FFF8EC"/><ellipse cx="51.6" cy="14.6" rx="3.6" ry="3.2" fill="#E8B87C" opacity=".55"/>',
+      brow: "", nose: NOSE, bow: '<path d="M36.6 25.4q9.9 4.6 19.8 0" fill="none" stroke="#E1141E" stroke-width="2.2" stroke-linecap="round"/><circle cx="46.5" cy="28.6" r="1.6" fill="#FFCF3F" stroke="#B8860B" stroke-width=".6"/>',
+      tw: '<path class="p-tail" d="M12 28 C7 26 6.5 20 9.5 16" fill="none" stroke="#E0B074" stroke-width="4" stroke-linecap="round"/>',
+      ts: '<path class="p-tail" d="M16 42 C9.5 41.5 8.5 36.5 11 32.5" fill="none" stroke="#E0B074" stroke-width="4" stroke-linecap="round"/>' },
+    raccoon: { fur: "#BDB7B3", stripe: "#8E8784", leg: "#4E4749", foot: "#3E3839",
+      ears: '<path d="M35.4 11.6c-.8-4.4 1.2-8 4.6-8.8 1.8 2.2 2.4 5 1.8 7.4z" fill="#BDB7B3" stroke="#4E4749" stroke-width=".9"/><path d="M57.6 11.6c.8-4.4-1.2-8-4.6-8.8-1.8 2.2-2.4 5-1.8 7.4z" fill="#BDB7B3" stroke="#4E4749" stroke-width=".9"/><path d="M37.2 10.2c-.2-2.6.8-4.6 2.4-5.4.8 1.4 1.1 2.8.9 4.2z" fill="#F4F0EC"/><path d="M55.8 10.2c.2-2.6-.8-4.6-2.4-5.4-.8 1.4-1.1 2.8-.9 4.2z" fill="#F4F0EC"/>',
+      post: '<path d="M37.4 12.6q4.6-2.4 8.2.6 1-.6 1.8 0 3.6-3 8.2-.6" fill="none" stroke="#F4F0EC" stroke-width="1.6" stroke-linecap="round"/><path d="M36.6 15.6c0-2.4 2.8-3.6 5.4-3.2 2 .3 3.4 1.4 4.5 2.4 1.1-1 2.5-2.1 4.5-2.4 2.6-.4 5.4.8 5.4 3.2 0 2.6-2.6 4-5.2 3.6-2-.3-3.6-1.4-4.7-2.4-1.1 1-2.7 2.1-4.7 2.4-2.6.4-5.2-1-5.2-3.6z" fill="#5A5254"/><ellipse cx="46.6" cy="21.4" rx="5" ry="3.4" fill="#F4F0EC"/>',
+      brow: '<path d="M46.5 7v4" stroke="#6E6668" stroke-width="2" stroke-linecap="round"/>', nose: NOSE, bow: "", eye: "#140F10", lid: "#FFFFFF",
+      tw: '<g class="p-tail"><path d="M12 30 C4 28 2.4 19.5 6.4 14.6" fill="none" stroke="#BDB7B3" stroke-width="6" stroke-linecap="round"/><path d="M12 30 C4 28 2.4 19.5 6.4 14.6" fill="none" stroke="#4E4749" stroke-width="6.2" stroke-dasharray="3.2 3.4"/></g>',
+      ts: '<g class="p-tail"><path d="M16 42 C6 42 3.6 33.6 8.4 29.4" fill="none" stroke="#BDB7B3" stroke-width="6" stroke-linecap="round"/><path d="M16 42 C6 42 3.6 33.6 8.4 29.4" fill="none" stroke="#4E4749" stroke-width="6.2" stroke-dasharray="3.2 3.4"/></g>' },
+    bear: { fur: "#B5845A", stripe: "#9A6B44", leg: "#966A42", foot: "#E9CDA8",
+      ears: '<circle cx="37.4" cy="8.8" r="4.8" fill="#B5845A"/><circle cx="55.6" cy="8.8" r="4.8" fill="#B5845A"/><circle cx="37.6" cy="9" r="2.5" fill="#E7B49A"/><circle cx="55.4" cy="9" r="2.5" fill="#E7B49A"/>',
+      post: '<ellipse cx="46.6" cy="21.2" rx="5.6" ry="4" fill="#ECD3B0"/>', brow: "", nose: NOSE, bow: "", eye: "#241A1A",
+      tw: '<path class="p-tail" d="M12.6 27.4 C10.4 27.6 9.6 25.2 11 23.6" fill="none" stroke="#B5845A" stroke-width="5" stroke-linecap="round"/>',
+      ts: '<path class="p-tail" d="M16.6 42 C13.8 42.2 12.8 39.6 14.4 38" fill="none" stroke="#B5845A" stroke-width="5" stroke-linecap="round"/>' },
+    otter: { fur: "#A0714F", stripe: "#86593A", leg: "#7E553A", foot: "#6A4630",
+      ears: '<circle cx="36.4" cy="12" r="2.6" fill="#86593A"/><circle cx="56.6" cy="12" r="2.6" fill="#86593A"/>',
+      post: '<path d="M35.2 19.6c1.4 5 6 7.8 11.3 7.8s9.9-2.8 11.3-7.8c-3.4 1-6.6-.4-11.3-.4s-7.9 1.4-11.3.4z" fill="#EBD6BC"/><ellipse cx="46.6" cy="21" rx="4.4" ry="2.8" fill="#F6E8D6"/><path d="M41.4 21.2l-4.4-.8M41.4 22.6l-4.2.6M51.8 21.2l4.4-.8M51.8 22.6l4.2.6" stroke="#6A4630" stroke-width=".55" stroke-linecap="round"/>',
+      brow: "", nose: NOSE, bow: "",
+      tw: '<path class="p-tail" d="M13 31 C7.5 32 3.6 33.6 1 36.6" fill="none" stroke="#86593A" stroke-width="5" stroke-linecap="round"/>',
+      ts: '<path class="p-tail" d="M17 43 C11 44.4 6.6 44.2 3.6 42" fill="none" stroke="#86593A" stroke-width="5" stroke-linecap="round"/>' }
+  };
+  function mkPetSvg(t) {
+    var D = PVD[t]; if (!D) return CAT_SVG;
+    var s = CAT_SVG.replace("<svg ", '<svg class="pv-' + t + '" ')
+      .replace(/#FFF3E2/g, "%FUR%").replace(/#F3D9B8/g, "%STR%").replace(/#EBCBA4/g, "%LEG%").replace(/fill="#fff"\/>/g, 'fill="%FOOT%"/>');
+    function u(x) { return x.replace(/#FFF3E2/g, "%FUR%").replace(/#F3D9B8/g, "%STR%").replace(/#EBCBA4/g, "%LEG%"); }
+    s = s.replace(u(PVS.ears), D.ears).replace(u(PVS.head), u(PVS.head) + D.post).replace(u(PVS.brow), D.brow).replace(PVS.nose, D.nose).replace(PVS.bow, D.bow)
+      .replace(u(PVS.tw), D.tw).replace(u(PVS.ts), D.ts);
+    if (D.eye) s = s.replace(/(<g class="p-eyes">.*?<\/g>)/, function (m) { return m.replace(/#3A2E2E/g, D.eye); });
+    if (D.lid) s = s.replace(/(<g class="p-(sleep|slit|happy)">.*?<\/g>)/g, function (m) { return m.replace(/#3A2E2E/g, D.lid); });
+    return s.replace(/%FUR%/g, D.fur).replace(/%STR%/g, D.stripe).replace(/%LEG%/g, D.leg).replace(/%FOOT%/g, D.foot);
+  }
+  function petSvgOf(t) { return t === "bunny" ? BNY_SVG : t === "cat" ? CAT_SVG : mkPetSvg(t); }
+  /* 찾아왔어요! 창 */
+  function pvPop() {
+    var X = petX();
+    try { if (localStorage.getItem("ptnote:" + RT_SLUG + ":pv") === M.pet) return; } catch (e) {}
+    if (document.querySelector(".frpop-bg, .rtsheet-bg, .bgpop-wrap, .npop, .tour, .pfbag")) { setTimeout(pvPop, 1500); return; }
+    try { localStorage.setItem("ptnote:" + RT_SLUG + ":pv", M.pet); } catch (e) {}
+    var bg = document.createElement("div"); bg.className = "frpop-bg pvpop";
+    bg.innerHTML = '<div class="frpop"><small>두근두근! 누가 왔어요</small><div class="frpop-pic">' + pfDeco(petSvgOf(M.pet), X.key) + '</div><b>' + esc(jo(X.kind, "이", "가")) + ' 찾아왔어요!</b>' +
+      '<p>이름은 <strong>' + esc(X.qn) + '</strong>! ' + esc(X.desc) + '<br>열심히 운동한 선물이에요. 먹이주머니에 ' + esc(X.food) + ' 10개를 넣어 뒀어요 — 꾹 눌러 뿌려 주면 달려와서 먹어요!</p>' +
+      '<div class="frpop-b"><button type="button" class="rtb fill" data-ok>반가워!</button></div></div>';
+    document.body.appendChild(bg);
+    bg.addEventListener("click", function (e) { if (e.target === bg || e.target.closest("[data-ok]")) bg.remove(); });
+  }
+  function pvArrive(t, fromServer) {   /* 동물이 찾아옴 — 화면에 등장 + 주머니 버튼 + 창 */
+    if (!t || !PX[t] || PETS.some(function (q) { return q.id === "main"; })) return;
+    M.pet = t; petSpawn(t, null); PETS.forEach(function (p) { p.dress(); }); pfBtn(); pfBtnDraw();
+    if (!COACH_MODE) setTimeout(pvPop, fromServer ? 1500 : 2200);
+  }
+  function pvCheck() {   /* 기준선부터 점수·출석이 쌓였는지 */
+    if (!PF_VIS || !PF || PF.vp || PF.b0 == null || COACH_MODE) return;
+    if (pfEarned(PF) - PF.b0 < PV_N || (PF.am || 0) - (PF.a0 || 0) < PV_A) return;
+    PF.vp = PV_T[Math.floor(Math.random() * PV_T.length)];
+    PF.sp = Math.max(0, pfEarned(PF) - PF.b0 - 10);   /* 주머니엔 선물 10개부터 */
+    pfSave(true); pvArrive(PF.vp);
+  }
   /* 2026-11-18 유정님 고양이 친구들 (pet:"cat") — 고양이 그림(CAT_SVG)을 색만 바꿈: 털 fur·무늬 stripe·다리 leg·리본 band·눈 eye */
   FR.forEach(function (F) { F.pet = "bunny"; });
   FR.push(
@@ -349,6 +455,23 @@
   };
   FR.forEach(function (F) { F.acc = (F.acc || "") + (FACE[F.id] || ""); });
   var PFI = {"main_b": {"bag": null, "B0": [["lv2o", "<rect x=\"32.6\" y=\"55.1\" width=\"10.8\" height=\"1.9\" rx=\".95\" fill=\"#AEB4BE\"/><rect x=\"29.6\" y=\"52.4\" width=\"3.8\" height=\"7.4\" rx=\"1.4\" fill=\"#5B6170\" stroke=\"#B8325A\" stroke-width=\"1\"/><rect x=\"42.6\" y=\"52.4\" width=\"3.8\" height=\"7.4\" rx=\"1.4\" fill=\"#5B6170\" stroke=\"#B8325A\" stroke-width=\"1\"/><path d=\"M30.6 53.8v2.4M43.6 53.8v2.4\" stroke=\"#fff\" stroke-width=\".7\" stroke-linecap=\"round\" opacity=\".6\"/>"], ["lv3o", "<rect x=\"24\" y=\"54.6\" width=\"28\" height=\"2.6\" rx=\"1.3\" fill=\"#C9CED6\" stroke=\"#B8325A\" stroke-width=\".7\"/><rect x=\"19.4\" y=\"47.8\" width=\"5.2\" height=\"15.2\" rx=\"1.8\" fill=\"#2B2E37\" stroke=\"#C8921A\" stroke-width=\"1\"/><rect x=\"24.4\" y=\"50.2\" width=\"3.4\" height=\"10.4\" rx=\"1.3\" fill=\"#2B2E37\" stroke=\"#C8921A\" stroke-width=\".9\"/><rect x=\"48.2\" y=\"50.2\" width=\"3.4\" height=\"10.4\" rx=\"1.3\" fill=\"#2B2E37\" stroke=\"#C8921A\" stroke-width=\".9\"/><rect x=\"51.4\" y=\"47.8\" width=\"5.2\" height=\"15.2\" rx=\"1.8\" fill=\"#2B2E37\" stroke=\"#C8921A\" stroke-width=\"1\"/><path d=\"M20.8 49.6v4M52.8 49.6v4\" stroke=\"#FFE7A0\" stroke-width=\".8\" stroke-linecap=\"round\"/>"]], "H": [["lv3o", "<g transform=\"rotate(-8 40 14)\"><path d=\"M33.6 17.6l-1.2-7.2 4 3.3 3.6-5.2 3.6 5.2 4-3.3-1.2 7.2q-6.4-1.6-12.8 0z\" fill=\"#FFCF3F\" stroke=\"#C8921A\" stroke-width=\"1\" stroke-linejoin=\"round\"/><circle cx=\"40\" cy=\"15\" r=\"1.4\" fill=\"#FF5C8A\" stroke=\"#C8921A\" stroke-width=\".5\"/><circle cx=\"32.4\" cy=\"10.2\" r=\".9\" fill=\"#FFF2B0\"/><circle cx=\"40\" cy=\"8.2\" r=\".9\" fill=\"#FFF2B0\"/><circle cx=\"47.6\" cy=\"10.2\" r=\".9\" fill=\"#FFF2B0\"/><path d=\"M35.2 13.6l.6 2\" stroke=\"#FFF2B0\" stroke-width=\".8\" stroke-linecap=\"round\"/></g>"]], "fx": ["✦", "✦", "✧"], "c": "#FFCF3F", "t2": "귀여운 가방이랑 작은 덤벨이 생겼어요!", "t3": "큰 덤벨 · 반짝이 왕관! 최고 레벨이에요"}, "main_c": {"bag": ["#FF8FB1", "#C2185B", "#FFD3E1"], "W": [["lv2o", "<rect x=\"22\" y=\"13.4\" width=\"10.4\" height=\"1.5\" rx=\".75\" fill=\"#9AA0AA\"/><rect x=\"20.4\" y=\"11.4\" width=\"2.6\" height=\"5.4\" rx=\"1\" fill=\"#3B3F4A\"/><rect x=\"31.4\" y=\"11.4\" width=\"2.6\" height=\"5.4\" rx=\"1\" fill=\"#3B3F4A\"/>"], ["lv3o", "<rect x=\"15\" y=\"12.6\" width=\"24\" height=\"2.2\" rx=\"1.1\" fill=\"#B8BEC8\"/><rect x=\"10.6\" y=\"7\" width=\"4.6\" height=\"13.4\" rx=\"1.5\" fill=\"#2B2E37\" stroke=\"#FFCF3F\" stroke-width=\".8\"/><rect x=\"15.2\" y=\"8.8\" width=\"3\" height=\"9.8\" rx=\"1.1\" fill=\"#2B2E37\" stroke=\"#FFCF3F\" stroke-width=\".7\"/><rect x=\"35.8\" y=\"8.8\" width=\"3\" height=\"9.8\" rx=\"1.1\" fill=\"#2B2E37\" stroke=\"#FFCF3F\" stroke-width=\".7\"/><rect x=\"38.8\" y=\"7\" width=\"4.6\" height=\"13.4\" rx=\"1.5\" fill=\"#2B2E37\" stroke=\"#FFCF3F\" stroke-width=\".8\"/>"]], "S": [["lv2o", "<rect x=\"50\" y=\"42.4\" width=\"9.6\" height=\"1.5\" rx=\".75\" fill=\"#9AA0AA\"/><rect x=\"48.4\" y=\"40.2\" width=\"2.6\" height=\"5.8\" rx=\"1\" fill=\"#3B3F4A\"/><rect x=\"58.6\" y=\"40.2\" width=\"2.6\" height=\"5.8\" rx=\"1\" fill=\"#3B3F4A\"/>"], ["lv3o", "<rect x=\"47.4\" y=\"41.8\" width=\"15.6\" height=\"2.2\" rx=\"1.1\" fill=\"#B8BEC8\"/><rect x=\"43.8\" y=\"36.8\" width=\"4.2\" height=\"11.8\" rx=\"1.4\" fill=\"#2B2E37\" stroke=\"#FFCF3F\" stroke-width=\".8\"/><rect x=\"62.4\" y=\"36.8\" width=\"4.2\" height=\"11.8\" rx=\"1.4\" fill=\"#2B2E37\" stroke=\"#FFCF3F\" stroke-width=\".8\"/>"]], "H": [["lv3o", "<path d=\"M42.4 9.2l-.7-4.8 2.5 2 2.1-3.5 2.1 3.5 2.5-2-.7 4.8z\" fill=\"#FFCF3F\" stroke=\"#C8921A\" stroke-width=\".8\" stroke-linejoin=\"round\"/><circle cx=\"46.3\" cy=\"7.4\" r=\".9\" fill=\"#FF5C8A\"/>"]], "fx": ["✦", "✦", "✧"], "c": "#FFCF3F", "t2": "분홍 가방이랑 작은 덤벨이 생겼어요!", "t3": "큰 덤벨 · 반짝이 왕관! 최고 레벨이에요"}, "muscle": {"bag": ["#5A5A66", "#1F1F26", "#9A9AA6"], "fx": ["🔥", "💪", "🔥"], "c": "#FF7A1A", "t2": "리프팅 벨트를 찼어요! 한 세트 더!", "t3": "금빛 챔피언 벨트 + 불꽃! 근육은 배신 안 해!", "B0": [["all", "<rect x=\"31.4\" y=\"55\" width=\"13.2\" height=\"2.1\" rx=\"1\" fill=\"#8A8F99\" stroke=\"#B8325A\" stroke-width=\".6\"/><rect x=\"27.6\" y=\"51.4\" width=\"4.4\" height=\"9.4\" rx=\"1.5\" fill=\"#2B2B33\" stroke=\"#B8325A\" stroke-width=\"1\"/><rect x=\"44\" y=\"51.4\" width=\"4.4\" height=\"9.4\" rx=\"1.5\" fill=\"#2B2B33\" stroke=\"#B8325A\" stroke-width=\"1\"/><path d=\"M28.8 53v3M45.2 53v3\" stroke=\"#fff\" stroke-width=\".7\" stroke-linecap=\"round\" opacity=\".5\"/>"], ["lv2o", "<path d=\"M10.6 45.6Q25 52.6 39.4 45.6L39.6 50Q25 57.4 10.8 50z\" fill=\"#2B2B33\" stroke=\"#B8325A\" stroke-width=\"1\"/><rect x=\"28.6\" y=\"48\" width=\"5\" height=\"5.2\" rx=\"1\" fill=\"none\" stroke=\"#C0C4CC\" stroke-width=\"1.3\"/><path d=\"M14 48.6q11 4.2 22 0\" fill=\"none\" stroke=\"#55555F\" stroke-width=\".6\" stroke-dasharray=\"1.2 1\"/>"], ["lv3o", "<path d=\"M10.4 44.8Q25 52 39.6 44.8L39.8 50.6Q25 58.4 10.6 50.6z\" fill=\"#C62828\" stroke=\"#B8325A\" stroke-width=\"1\"/><path d=\"M12 48.6q13 5.6 26 0\" fill=\"none\" stroke=\"#FFCF3F\" stroke-width=\".7\" stroke-dasharray=\"1.4 1\"/><ellipse cx=\"30.4\" cy=\"50.4\" rx=\"6.2\" ry=\"4.8\" fill=\"#FFCF3F\" stroke=\"#C8921A\" stroke-width=\"1\"/><ellipse cx=\"30.4\" cy=\"50.4\" rx=\"4.2\" ry=\"3.1\" fill=\"none\" stroke=\"#C8921A\" stroke-width=\".6\"/><path d=\"M30.4 47.8l.8 1.7 1.8.2-1.3 1.2.4 1.8-1.7-.9-1.7.9.4-1.8-1.3-1.2 1.8-.2z\" fill=\"#E1141E\"/>"]]}, "sleepy": {"bag": ["#A9C8F2", "#4C6E9A", "#DCEBFF"], "H": [["lv2o", "<path d=\"M29.2 22.4Q40 14.4 50.8 22.4L50.2 25.4Q40 17.8 29.8 25.4z\" fill=\"#C9B8F5\" stroke=\"#B8325A\" stroke-width=\"1\"/><path d=\"M33.6 21.4q1.8 1.4 3.6 0M42.8 21.4q1.8 1.4 3.6 0\" fill=\"none\" stroke=\"#4A3A8A\" stroke-width=\".9\" stroke-linecap=\"round\"/>"], ["lv3o", "<path d=\"M26.4 22C27 10 37 4 47 5.6c8 1.2 13.6 6.4 14.6 14-3-3.2-6.6-4.2-9.2-3 1.2 1.8 1.6 3.4 1.6 5Q40 11.8 26.4 22z\" fill=\"#6F8FE0\" stroke=\"#B8325A\" stroke-width=\"1.2\" stroke-linejoin=\"round\"/><path d=\"M31.6 14.6q7-4.4 15.4-3.4M36.2 9.2q5.4-2.6 11.6-1.4\" fill=\"none\" stroke=\"#FFE066\" stroke-width=\"1.3\" stroke-linecap=\"round\"/><path d=\"M45 13.4l.6 1.3 1.4.2-1 1 .2 1.4-1.2-.7-1.2.7.2-1.4-1-1 1.4-.2z\" fill=\"#FFE066\"/><path d=\"M24.8 22.6Q40 11.4 55.2 22.6L54.4 25.6Q40 15 25.6 25.6z\" fill=\"#fff\" stroke=\"#B8325A\" stroke-width=\"1\"/><circle cx=\"61.6\" cy=\"20.8\" r=\"3\" fill=\"#fff\" stroke=\"#B8325A\" stroke-width=\"1\"/>"]], "fx": ["☾", "★", "z"], "c": "#8FA8FF", "t2": "수면 안대가 생겼어요… 5분만 더…", "t3": "별 달린 나이트캡! 꿀잠 챔피언이에요 zZ"}, "bolt": {"bag": ["#FF8A00", "#B35E00", "#FFD08A"], "H": [["lv2p", "<path d=\"M24.4 25Q40 15.6 55.6 25\" fill=\"none\" stroke=\"#2B2B33\" stroke-width=\"1.7\"/><circle cx=\"34.6\" cy=\"21.4\" r=\"3.7\" fill=\"#8FE3FF\" stroke=\"#B8325A\" stroke-width=\"1.1\"/><circle cx=\"45.4\" cy=\"21.4\" r=\"3.7\" fill=\"#8FE3FF\" stroke=\"#B8325A\" stroke-width=\"1.1\"/><path d=\"M38.3 21.2h3.4\" stroke=\"#B8325A\" stroke-width=\"1.1\"/><path d=\"M33 20.2l1.6-1.2M43.8 20.2l1.6-1.2\" stroke=\"#fff\" stroke-width=\"1\" stroke-linecap=\"round\"/>"]], "B": [["lv3o", "<path d=\"M34.6 41.6l5 7.8 5-7.8\" fill=\"none\" stroke=\"#2F6FE0\" stroke-width=\"2.2\" stroke-linejoin=\"round\"/><circle cx=\"39.6\" cy=\"51.4\" r=\"4\" fill=\"#FFCF3F\" stroke=\"#C8921A\" stroke-width=\"1\"/><path d=\"M39.6 49.2l.7 1.4 1.5.2-1.1 1 .3 1.5-1.4-.7-1.4.7.3-1.5-1.1-1 1.5-.2z\" fill=\"#C8921A\"/>"]], "fx": ["⚡", "✦", "⚡"], "c": "#FFD000", "t2": "스포츠 고글 장착! 더 빨리 뛰자!", "t3": "금메달 + 번개 효과! 스피드 1등!"}, "foodie": {"bag": ["#FF9A5C", "#BF6129", "#FFD9BF"], "H": [["lv3o", "<path d=\"M29.2 18.8C26.6 13.4 30 9.6 34 10.4c.6-5 7-6.4 9.6-2.8 3.4-3 9.8-.6 9 4.4 3 1.6 1.8 6-1.4 6.6Q40 14.2 29.2 18.8z\" fill=\"#fff\" stroke=\"#B8325A\" stroke-width=\"1\" stroke-linejoin=\"round\"/><path d=\"M36 12.4q.8 2.6 0 4.8M44.4 11.8q.8 2.6 0 4.6\" fill=\"none\" stroke=\"#E2E2EA\" stroke-width=\".9\" stroke-linecap=\"round\"/><path d=\"M28.6 18.6Q40 13.8 51.4 18.6L51 22.2Q40 17.6 29 22.2z\" fill=\"#fff\" stroke=\"#B8325A\" stroke-width=\"1\"/>"]], "fx": ["🍗", "♥", "🥚"], "c": "#FF9A5C", "t2": "프로틴 쉐이커가 생겼어요! 단백질 냠냠!", "t3": "셰프 모자! 단백질 요리왕이에요", "B0": [["lv2p", "<rect x=\"33.8\" y=\"45.6\" width=\"6.4\" height=\"10.6\" rx=\"1.8\" fill=\"#fff\" stroke=\"#B8325A\" stroke-width=\"1\"/><rect x=\"34.7\" y=\"49.6\" width=\"4.6\" height=\"5.6\" rx=\"1\" fill=\"#C89466\"/><rect x=\"33.2\" y=\"43.6\" width=\"7.6\" height=\"2.8\" rx=\"1.1\" fill=\"#FF7A45\" stroke=\"#B8325A\" stroke-width=\".9\"/><path d=\"M35 47.2v1.6\" stroke=\"#E6E6EE\" stroke-width=\".8\" stroke-linecap=\"round\"/>"]]}, "shy": {"bag": ["#C9A6F0", "#7D5BA6", "#EBDDFB"], "H": [["lv2p", "<circle cx=\"51.4\" cy=\"18.1\" r=\"1.6\" fill=\"#FF9EC4\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"53.6\" cy=\"19.7\" r=\"1.6\" fill=\"#FF9EC4\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"52.7\" cy=\"22.3\" r=\"1.6\" fill=\"#FF9EC4\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"50.1\" cy=\"22.3\" r=\"1.6\" fill=\"#FF9EC4\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"49.2\" cy=\"19.7\" r=\"1.6\" fill=\"#FF9EC4\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"51.4\" cy=\"20.4\" r=\"1.1\" fill=\"#FFE066\"/>"], ["lv3o", "<path d=\"M25.6 24.4Q40 12 54.6 22.8\" fill=\"none\" stroke=\"#6BBF6B\" stroke-width=\"1.6\" stroke-linecap=\"round\"/><path d=\"M31 17.6q-2.6-.6-3.2 1.6 2.4.6 3.2-1.6zM43.6 14.4q1.4-2.2 3.6-1.2-1.4 2.2-3.6 1.2z\" fill=\"#7FD07F\" stroke=\"#4E9B4E\" stroke-width=\".4\"/><circle cx=\"28.4\" cy=\"19.8\" r=\"1.4\" fill=\"#FFB3D1\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"30.3\" cy=\"21.2\" r=\"1.4\" fill=\"#FFB3D1\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"29.5\" cy=\"23.4\" r=\"1.4\" fill=\"#FFB3D1\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"27.3\" cy=\"23.4\" r=\"1.4\" fill=\"#FFB3D1\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"26.5\" cy=\"21.2\" r=\"1.4\" fill=\"#FFB3D1\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"28.4\" cy=\"21.8\" r=\"1.0\" fill=\"#FFE066\"/><circle cx=\"34.2\" cy=\"15.5\" r=\"1.5\" fill=\"#C9A6F0\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"36.2\" cy=\"16.9\" r=\"1.5\" fill=\"#C9A6F0\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"35.4\" cy=\"19.3\" r=\"1.5\" fill=\"#C9A6F0\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"33.0\" cy=\"19.3\" r=\"1.5\" fill=\"#C9A6F0\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"32.2\" cy=\"16.9\" r=\"1.5\" fill=\"#C9A6F0\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"34.2\" cy=\"17.6\" r=\"1.1\" fill=\"#FFE066\"/><circle cx=\"40.6\" cy=\"13.5\" r=\"1.5\" fill=\"#FF9EC4\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"42.6\" cy=\"14.9\" r=\"1.5\" fill=\"#FF9EC4\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"41.8\" cy=\"17.3\" r=\"1.5\" fill=\"#FF9EC4\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"39.4\" cy=\"17.3\" r=\"1.5\" fill=\"#FF9EC4\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"38.6\" cy=\"14.9\" r=\"1.5\" fill=\"#FF9EC4\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"40.6\" cy=\"15.6\" r=\"1.1\" fill=\"#FFE066\"/><circle cx=\"46.6\" cy=\"14.4\" r=\"1.4\" fill=\"#FFD1E3\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"48.5\" cy=\"15.8\" r=\"1.4\" fill=\"#FFD1E3\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"47.7\" cy=\"18.0\" r=\"1.4\" fill=\"#FFD1E3\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"45.5\" cy=\"18.0\" r=\"1.4\" fill=\"#FFD1E3\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"44.7\" cy=\"15.8\" r=\"1.4\" fill=\"#FFD1E3\" stroke=\"#B8325A\" stroke-width=\".45\"/><circle cx=\"46.6\" cy=\"16.4\" r=\"1.0\" fill=\"#FFE066\"/>"]], "fx": ["✿", "♥", "✿"], "c": "#FF9EC4", "t2": "꽃 머리핀… 어, 어울려요?", "t3": "꽃 화관을 썼어요! 꽃잎이 흩날려요"}, "grumpy": {"bag": ["#2E3A6B", "#151C3A", "#7C88B8"], "H": [["lv2p", "<path d=\"M24.4 31.4C22.6 17 32 12.6 40 12.6s17.4 4.4 15.6 18.8\" fill=\"none\" stroke=\"#3A3F55\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><path d=\"M27 22.4q3.6-6.8 13-7.6\" fill=\"none\" stroke=\"#8C93AD\" stroke-width=\".8\" stroke-linecap=\"round\"/><ellipse cx=\"24.2\" cy=\"32.6\" rx=\"3.7\" ry=\"5.3\" fill=\"#D94A4A\" stroke=\"#B8325A\" stroke-width=\"1.1\"/><ellipse cx=\"55.8\" cy=\"32.6\" rx=\"3.7\" ry=\"5.3\" fill=\"#D94A4A\" stroke=\"#B8325A\" stroke-width=\"1.1\"/><ellipse cx=\"23.4\" cy=\"31\" rx=\"1\" ry=\"1.8\" fill=\"#fff\" opacity=\".55\"/><ellipse cx=\"55\" cy=\"31\" rx=\"1\" ry=\"1.8\" fill=\"#fff\" opacity=\".55\"/>"], ["lv3o", "<ellipse cx=\"24.2\" cy=\"32.6\" rx=\"3.7\" ry=\"5.3\" fill=\"#FFCF3F\" stroke=\"#C8921A\" stroke-width=\"1.1\"/><ellipse cx=\"55.8\" cy=\"32.6\" rx=\"3.7\" ry=\"5.3\" fill=\"#FFCF3F\" stroke=\"#C8921A\" stroke-width=\"1.1\"/><ellipse cx=\"23.4\" cy=\"31\" rx=\"1\" ry=\"1.8\" fill=\"#fff\" opacity=\".7\"/><ellipse cx=\"55\" cy=\"31\" rx=\"1\" ry=\"1.8\" fill=\"#fff\" opacity=\".7\"/>"]], "B": [["lv3o", "<path d=\"M31 43q9 9 18 0\" fill=\"none\" stroke=\"#FFCF3F\" stroke-width=\"1.9\" stroke-dasharray=\"1.7 .8\"/><circle cx=\"40\" cy=\"48.6\" r=\"2.8\" fill=\"#FFCF3F\" stroke=\"#C8921A\" stroke-width=\".9\"/><path d=\"M39 47.6h2l-2 2h2\" fill=\"none\" stroke=\"#C8921A\" stroke-width=\".7\"/>"]], "fx": ["✦", "✧", "✦"], "c": "#9C7BFF", "t2": "…헤드폰. 말 걸지 마. 흥.", "t3": "금빛 헤드폰에 금 체인까지. …칭찬해도 돼. 흥."}, "c-cheese": {"bag": ["#5BC08A", "#2F7D57", "#C9EEDA"], "H": [["lv2p", "<path d=\"M42.4 25.2q4.6-1 9.2 0 0 6-4.6 6.2-4.6-.2-4.6-6.2z\" fill=\"#fff\" stroke=\"#EE9A4E\" stroke-width=\".8\"/><path d=\"M44.6 28.2q1.6-1.6 3.4 0-1.8 1.6-3.4 0zM48 28.2l1.4-1v2z\" fill=\"#8EC5E8\"/>"], ["lv3o", "<path d=\"M39.6 9q-1-4.6 2.4-5.4Q43 -.6 47 .4q4-.8 4.6 3.4 3.4.8 1.8 5.2z\" fill=\"#fff\" stroke=\"#D98A3A\" stroke-width=\".8\" stroke-linejoin=\"round\"/><path d=\"M39.4 8.6q7-2 14 0V11q-7-2-14 0z\" fill=\"#fff\" stroke=\"#D98A3A\" stroke-width=\".8\"/>"]], "fx": ["🐟", "♥", "🐟"], "c": "#FFB15C", "t2": "생선 턱받이를 했다냥! 냠냠 준비 완료", "t3": "셰프 모자! 생선 요리왕이다냥"}, "c-black": {"bag": ["#C9A227", "#7A6114", "#F1E1A0"], "H": [["lv2p", "<path d=\"M38.6 14.6h6.8l-.5 3.2q-2.9 1.6-5.8 0zM48.1 14.6h6.8l-.5 3.2q-2.9 1.6-5.8 0z\" fill=\"#0B0D14\" stroke=\"#C0C4CC\" stroke-width=\".6\"/><path d=\"M45.4 15.2h2.7\" stroke=\"#C0C4CC\" stroke-width=\".8\"/>"], ["lv3o", "<path d=\"M38.8 8.6q7.7-2 15.4 0l-.4 1.4q-7.3-1.8-14.6 0z\" fill=\"#1B1E2B\" stroke=\"#C0C4CC\" stroke-width=\".6\"/><path d=\"M42.6 8.2V-1.4h8V8.2q-4-1-8 0z\" fill=\"#1B1E2B\" stroke=\"#C0C4CC\" stroke-width=\".6\"/><path d=\"M42.6 5.2q4-.8 8 0v1.6q-4-.8-8 0z\" fill=\"#C9A227\"/>"]], "fx": ["☾", "✧", "✦"], "c": "#DDE3EE", "t2": "…선글라스. 시크하다냥.", "t3": "실크햇까지. …멋있다고 해도 된다냥."}, "c-gray": {"bag": ["#7FA8E0", "#3F5F94", "#D4E3F7"], "H": [["lv2o", "<path d=\"M39.6 10.4q6.9-2.2 13.8 0l-.4 2.6q-6.5-2-13 0z\" fill=\"#B9A7F2\" stroke=\"#6F5BB5\" stroke-width=\".7\"/><path d=\"M42 11.6q1.2 1 2.4 0M48.6 11.6q1.2 1 2.4 0\" fill=\"none\" stroke=\"#4A3A8A\" stroke-width=\".7\" stroke-linecap=\"round\"/>"], ["lv3o", "<path d=\"M39.6 9.4C41 2 48-1.5 55 1c3.4 1.4 5.4 4 6 6.6-2.6-1.8-5.4-1.6-7.4-.2.4.8.4 1.4 0 2Q46.5 6.8 39.6 9.4z\" fill=\"#5C7FD6\" stroke=\"#2F4A99\" stroke-width=\".8\" stroke-linejoin=\"round\"/><path d=\"M44 5.2q4-2 9-1\" fill=\"none\" stroke=\"#FFE066\" stroke-width=\"1\" stroke-linecap=\"round\"/><path d=\"M38.6 9.6q7.9-3 15.8 0l-.4 2.2q-7.5-2.6-15 0z\" fill=\"#fff\" stroke=\"#2F4A99\" stroke-width=\".7\"/><circle cx=\"61\" cy=\"7.6\" r=\"2.2\" fill=\"#fff\" stroke=\"#2F4A99\" stroke-width=\".7\"/>"]], "fx": ["☾", "z", "★"], "c": "#8FA8FF", "t2": "수면 안대… 졸리다냥…", "t3": "나이트캡! 꿀잠 챔피언이다냥 zZ"}, "c-calico": {"bag": ["#FF5C8A", "#B3264F", "#FFC7D6"], "H": [["lv2p", "<path d=\"M35.2 10.6q11.3-4.8 22.6 0l-.4 2.8q-10.9-4.6-21.8 0z\" fill=\"#2F6FE0\" stroke=\"#1A4BA8\" stroke-width=\".6\"/><path d=\"M36.4 11.6q10.1-4 20.2 0\" fill=\"none\" stroke=\"#fff\" stroke-width=\".6\"/>"], ["lv3o", "<path d=\"M45 25.4l4 4.4 4-4.4\" fill=\"none\" stroke=\"#2F6FE0\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/><circle cx=\"49\" cy=\"31.4\" r=\"2.9\" fill=\"#FFCF3F\" stroke=\"#C8921A\" stroke-width=\".8\"/><path d=\"M49 29.9l.5 1 1.1.2-.8.7.2 1.1-1-.5-1 .5.2-1.1-.8-.7 1.1-.2z\" fill=\"#C8921A\"/>"]], "fx": ["⚡", "✦", "⚡"], "c": "#FFD000", "t2": "땀밴드 장착! 우다다 달리자냥!", "t3": "금메달이다냥! 달리기 1등!"}, "c-pink": {"bag": ["#B98AE0", "#6E4A99", "#E6D6F5"], "H": [["lv2p", "<circle cx=\"56.8\" cy=\"9.2\" r=\"1.1\" fill=\"#FF9EC4\"/><circle cx=\"55.7\" cy=\"10.7\" r=\"1.1\" fill=\"#FF9EC4\"/><circle cx=\"53.9\" cy=\"10.2\" r=\"1.1\" fill=\"#FF9EC4\"/><circle cx=\"53.9\" cy=\"8.2\" r=\"1.1\" fill=\"#FF9EC4\"/><circle cx=\"55.7\" cy=\"7.7\" r=\"1.1\" fill=\"#FF9EC4\"/><circle cx=\"55.2\" cy=\"9.2\" r=\"0.8\" fill=\"#FFE066\"/>"], ["lv3o", "<path d=\"M36 11.2Q46.5 3.8 57 10.4\" fill=\"none\" stroke=\"#6BBF6B\" stroke-width=\"1.2\" stroke-linecap=\"round\"/><circle cx=\"39.9\" cy=\"9.6\" r=\"1.1\" fill=\"#FFB3D1\"/><circle cx=\"38.9\" cy=\"11.1\" r=\"1.1\" fill=\"#FFB3D1\"/><circle cx=\"37.2\" cy=\"10.5\" r=\"1.1\" fill=\"#FFB3D1\"/><circle cx=\"37.2\" cy=\"8.7\" r=\"1.1\" fill=\"#FFB3D1\"/><circle cx=\"38.9\" cy=\"8.1\" r=\"1.1\" fill=\"#FFB3D1\"/><circle cx=\"38.4\" cy=\"9.6\" r=\"0.7\" fill=\"#FFE066\"/><circle cx=\"44.4\" cy=\"7.0\" r=\"1.1\" fill=\"#C9A6F0\"/><circle cx=\"43.3\" cy=\"8.5\" r=\"1.1\" fill=\"#C9A6F0\"/><circle cx=\"41.5\" cy=\"8.0\" r=\"1.1\" fill=\"#C9A6F0\"/><circle cx=\"41.5\" cy=\"6.0\" r=\"1.1\" fill=\"#C9A6F0\"/><circle cx=\"43.3\" cy=\"5.5\" r=\"1.1\" fill=\"#C9A6F0\"/><circle cx=\"42.8\" cy=\"7.0\" r=\"0.8\" fill=\"#FFE066\"/><circle cx=\"49.2\" cy=\"5.8\" r=\"1.1\" fill=\"#FF9EC4\"/><circle cx=\"48.1\" cy=\"7.3\" r=\"1.1\" fill=\"#FF9EC4\"/><circle cx=\"46.3\" cy=\"6.8\" r=\"1.1\" fill=\"#FF9EC4\"/><circle cx=\"46.3\" cy=\"4.8\" r=\"1.1\" fill=\"#FF9EC4\"/><circle cx=\"48.1\" cy=\"4.3\" r=\"1.1\" fill=\"#FF9EC4\"/><circle cx=\"47.6\" cy=\"5.8\" r=\"0.8\" fill=\"#FFE066\"/><circle cx=\"53.4\" cy=\"6.6\" r=\"1.0\" fill=\"#FFD1E3\"/><circle cx=\"52.4\" cy=\"8.0\" r=\"1.0\" fill=\"#FFD1E3\"/><circle cx=\"50.8\" cy=\"7.4\" r=\"1.0\" fill=\"#FFD1E3\"/><circle cx=\"50.8\" cy=\"5.8\" r=\"1.0\" fill=\"#FFD1E3\"/><circle cx=\"52.4\" cy=\"5.2\" r=\"1.0\" fill=\"#FFD1E3\"/><circle cx=\"52.0\" cy=\"6.6\" r=\"0.7\" fill=\"#FFE066\"/>"]], "fx": ["✿", "♥", "✿"], "c": "#FF9EC4", "t2": "꽃핀… 어, 어울리냥?", "t3": "꽃 화관이다냥! 꽃잎이 흩날려요"}};
+  /* 찾아오는 동물 치장(2026-11-20) — 가방은 같은 모양·색만, 치장은 컨셉대로: 뭉치 반다나→산책왕 모자 · 곰곰이 꿀벌 머리띠→왕관+꿀벌 친구 · 너굴이 비니→베레모+금 외눈안경 · 달달이 수경→수영모 */
+  PFI.main_dog = { bag: ["#FF9B5C", "#C4561A", "#FFE0C8"], H: [
+    ["lv2p", '<path d="M37.4 25.2q9.1 3.6 18.2 0l-9.1 7.2z" fill="#E1141E" stroke="#9E0E15" stroke-width=".7" stroke-linejoin="round"/><circle cx="43.4" cy="27.2" r=".65" fill="#FFFFFF"/><circle cx="49.4" cy="27.3" r=".65" fill="#FFFFFF"/><circle cx="46.4" cy="29.7" r=".65" fill="#FFFFFF"/>'],
+    ["lv3o", '<path d="M37.2 10.2c.6-5.4 4.6-8.4 9.4-8.4s8.8 3 9.4 8.4q-9.4-2.6-18.8 0z" fill="#2F6FE0" stroke="#1A3F8F" stroke-width=".8" stroke-linejoin="round"/><path d="M55.4 9.6q5.2-.2 8 1.6-3.6 1.2-8.2.6z" fill="#2F6FE0" stroke="#1A3F8F" stroke-width=".8" stroke-linejoin="round"/><circle cx="46.6" cy="2" r=".9" fill="#1A3F8F"/><path d="M47 3.8l.7 1.5 1.6.2-1.2 1.1.3 1.6-1.4-.8-1.4.8.3-1.6-1.2-1.1 1.6-.2z" fill="#FFCF3F"/>']],
+    fx: ["★", "♪", "✦"], c: "#FFB300", t2: "빨간 반다나 두르고 산책 준비 끝이멍!", t3: "산책왕 모자까지! 최고 레벨이멍 ★" };
+  PFI.main_bear = { bag: ["#9BD77A", "#3F7F2A", "#DDF3CF"], H: [
+    ["lv2o", '<path d="M37.6 11q8.9-6.4 17.8 0" fill="none" stroke="#2B2B33" stroke-width="1.3" stroke-linecap="round"/><path d="M42.6 7.6l-2.2-4.6M50.4 7.6l2.2-4.6" stroke="#2B2B33" stroke-width="1" stroke-linecap="round"/><circle cx="40.2" cy="2.6" r="1.7" fill="#FFC83D" stroke="#2B2B33" stroke-width=".6"/><circle cx="52.8" cy="2.6" r="1.7" fill="#FFC83D" stroke="#2B2B33" stroke-width=".6"/>'],
+    ["lv3o", '<path d="M41.4 9.6l-.8-5 2.7 2.1 2.3-3.7 2.3 3.7 2.7-2.1-.8 5z" fill="#FFCF3F" stroke="#C8921A" stroke-width=".8" stroke-linejoin="round"/><circle cx="46.5" cy="7.6" r=".9" fill="#FF5C8A"/><g class="acc"><ellipse cx="60.6" cy="3.6" rx="1.5" ry="1" fill="#E6F4FF" stroke="#9CC3E6" stroke-width=".4"/><ellipse cx="62.4" cy="3.4" rx="1.5" ry="1" fill="#E6F4FF" stroke="#9CC3E6" stroke-width=".4"/><ellipse cx="61.4" cy="6" rx="2.8" ry="2" fill="#FFC83D" stroke="#2B2B33" stroke-width=".5"/><path d="M60.6 4.2v3.6M62.2 4.3v3.4" stroke="#2B2B33" stroke-width=".8"/><circle cx="63.4" cy="5.6" r=".4" fill="#2B2B33"/></g>']],
+    fx: ["♛", "✿", "✦"], c: "#FFC83D", t2: "꿀벌 머리띠! 꿀 냄새가 솔솔~ 곰!", t3: "꿀벌 친구랑 왕관까지! 최고 레벨이곰 ♛" };
+  PFI.main_rac = { bag: ["#B48CF0", "#6A3FB5", "#E9DDFB"], H: [
+    ["lv2o", '<path d="M37.6 10.4c.8-5.2 4.4-7.8 8.9-7.8s8.1 2.6 8.9 7.8z" fill="#3A4A7A"/><path d="M38.8 7.4q7.7-2 15.4 0" fill="none" stroke="#F4F0EC" stroke-width="1.2"/><path d="M37 10.8q9.5-2.4 19 0l-.3 1.8q-9.2-2.2-18.4 0z" fill="#2A375E"/><circle cx="46.5" cy="2.4" r="1.8" fill="#F4F0EC"/>'],
+    ["lv3o", '<path d="M36.8 9.2c-.4-3.6 4-6.2 9.8-6.2 6.4 0 10.6 2.4 10.2 5.6-.2 1.4-1.6 2-3 1.6q-7-1.8-14.4.4c-1.4.4-2.4 0-2.6-1.4z" fill="#B3123E" stroke="#7A0B2A" stroke-width=".7" stroke-linejoin="round"/><path d="M46.6 3.2l.3-1.6" stroke="#7A0B2A" stroke-width="1" stroke-linecap="round"/><path d="M54 5.4c3-3.4 6.4-4.4 8.6-3.8-1.2 2.6-4.4 4.6-8.6 3.8z" fill="#FFCF3F" stroke="#C8921A" stroke-width=".6"/><circle cx="51.5" cy="16.5" r="3.3" fill="#FFFFFF" fill-opacity=".18" stroke="#FFCF3F" stroke-width="1.1"/><path d="M54.6 17.6q1.6 3.6 1 7" fill="none" stroke="#FFCF3F" stroke-width=".7" stroke-dasharray="1 .7"/>']],
+    fx: ["✦", "♦", "✧"], c: "#C9A0FF", t2: "비니 쓰고 몰래몰래~ 너굴너굴!", t3: "베레모에 금 외눈안경! 괴도 너굴이 등장 ✦" };
+  PFI.main_ott = { bag: ["#5FD0C8", "#1E8077", "#CFF3EF"], H: [
+    ["lv3o", '<path d="M35 12.4c.4-6 5.4-9.6 11.5-9.6s11.1 3.6 11.5 9.6q-11.5-3.4-23 0z" fill="#E1141E" stroke="#9E0E15" stroke-width=".7" stroke-linejoin="round"/><path d="M37.6 7.6q8.9-3.2 17.8 0" fill="none" stroke="#FFFFFF" stroke-width="1"/><path d="M46.5 3.4l.6 1.3 1.4.2-1 .9.3 1.4-1.3-.7-1.3.7.3-1.4-1-.9 1.4-.2z" fill="#FFCF3F"/>'],
+    ["lv2p", '<path d="M34.6 11.8q11.9-5 23.8 0" fill="none" stroke="#1E6FB0" stroke-width="1.5" stroke-linecap="round"/><circle cx="42.6" cy="9.6" r="2.6" fill="#8FE0FF" stroke="#1E6FB0" stroke-width="1"/><circle cx="50.4" cy="9.6" r="2.6" fill="#8FE0FF" stroke="#1E6FB0" stroke-width="1"/><path d="M45.2 9.6h2.6" stroke="#1E6FB0" stroke-width="1"/><path d="M41.4 8.6l1-.9M49.2 8.6l1-.9" stroke="#FFFFFF" stroke-width=".7" stroke-linecap="round"/>']],
+    fx: ["✦", "◦", "✧"], c: "#5FD0F0", t2: "수경 장착! 헤엄치러 가자달~", t3: "수영모까지 쓰고 수영 챔피언이달 ✦" };
   /* 레벨 치장 채우기 — 그림 안 빈칸(<!--B0--> 몸 앞 · <!--B--> 몸 위 · <!--H--> 머리 · <!--W--> 고양이 선 몸 · <!--S--> 고양이 앉은 몸)에 동물별 치장, 가방은 모양 같고 색만 다름
      lv2o = Lv.2에만 · lv2p = Lv.2부터 계속 · lv3o = Lv.3부터 (2026-11-20 "애들 컨셉에 맞게 치장, 가방은 동일(색만 다르게)") */
   function pfDeco(svg, id) {
@@ -359,7 +482,7 @@
     });
     return svg;
   }
-  function pfKey(id) { return id === "main" ? (M.pet === "cat" ? "main_c" : "main_b") : id; }
+  function pfKey(id) { return id === "main" ? petX().key : id; }
   function frSvg(F) {   /* 토롱이 친구는 치장을 먼저 넣고 색을 바꿈 → 치장 테두리가 그 친구 선 색을 따라감(2026-11-20 "붙여넣은 느낌, 자연스럽게") */
     return F.pet === "cat" ? pfDeco(frSvg0(F), F.id) : frSvg0(F, pfDeco(BNY_SVG, F.id));
   }
@@ -370,6 +493,12 @@
   }
   function frSeen() { try { return JSON.parse(localStorage.getItem("ptnote:" + RT_SLUG + ":fr") || "[]"); } catch (e) { return []; } }
   function frDex() {
+    if (!FR.some(function (F) { return F.pet === M.pet; })) {   /* 찾아온 동물(친구 없음) — 내 동물 카드 */
+      var X = petX(), q = PETS.filter(function (p) { return p.id === "main"; })[0], lv = pfLv("main");
+      rtSheet(X.qn + " (" + X.kind + ")", '<div class="frdex pvdex"><div class="frd"><div class="frd-pic">' + (q ? q.svg() : "") + '</div><b>' + esc(X.qn) + (lv > 1 ? ' <em class="frd-lv">Lv.' + lv + '</em>' : '') + '</b><small>' + esc(X.desc) + '</small></div></div>' +
+        '<p class="rts-note">좋아하는 먹이: ' + esc(X.food) + ' · 운동할수록 먹이주머니에 모여요</p>', function () {}, false);
+      return;
+    }
     var seen = frSeen(), L = FR.filter(function (F) { return F.pet === M.pet; }), got = L.filter(function (F) { return seen.indexOf(F.id) >= 0; }).length;
     var body = '<p class="rts-note">날마다 다른 친구가 놀러 와요 · 만난 친구 ' + got + '/' + L.length + '</p><div class="frdex">' + L.map(function (F) {
       var ok = seen.indexOf(F.id) >= 0;
@@ -403,12 +532,8 @@
      처음 켤 때 지금까지 한 건 기준선(b0)으로 잡고 선물 10개. 저장 localStorage + 창고 mw:<주소>:pet(폰 바꿔도 이어짐, 값마다 큰 쪽으로 합침). 선생님 폰·체험은 주머니 없음.
      레벨: 그 동물이 먹은 개수 PF_LV(120 → Lv.2 가방+작은 덤벨, 500 → Lv.3 큰 덤벨+왕관+반짝이) — 동물마다 따로(주인공 main, 친구는 친구 id) */
   function pfLv(id) { var n = (PF && PF.xp && PF.xp[id]) || 0; return n >= PF_LV[1] ? 3 : n >= PF_LV[0] ? 2 : 1; }
-  function pfFood() { return M.pet === "cat" ? "생선" : "당근"; }
-  function pfIcon(w) {
-    return M.pet === "cat"
-      ? '<svg viewBox="0 0 44 30" width="' + (w || 30) + '" height="' + Math.round((w || 30) * .68) + '"><path d="M6 15c6-10 22-12 30 0-8 12-24 10-30 0z" fill="#8EC5E8" stroke="#4E8DB8" stroke-width="1.6"/><path d="M36 15l7-7v14z" fill="#8EC5E8" stroke="#4E8DB8" stroke-width="1.6" stroke-linejoin="round"/><circle cx="13" cy="13" r="1.8" fill="#24324A"/><path d="M20 9c2 4 2 8 0 12M25 9c2 4 2 8 0 12" fill="none" stroke="#4E8DB8" stroke-width="1.2" stroke-linecap="round"/></svg>'
-      : '<svg viewBox="0 0 40 40" width="' + (w || 26) + '" height="' + (w || 26) + '"><path d="M14 13c-3-6-1-10 2-11 1 3 0 6-1 8M17 12c0-6 4-9 7-8-1 3-3 6-5 8M18 13c3-4 8-5 10-3-2 2-6 4-9 4" fill="#5DBB63" stroke="#3E8E45" stroke-width="1.2" stroke-linejoin="round"/><path d="M13 14c4-4 10-3 11 2L12 37c-2 2-5 0-4-3z" fill="#FF8A3D" stroke="#D9601E" stroke-width="1.6" stroke-linejoin="round"/><path d="M13 21l4 1M11 27l4 1M10 32l3 .8" stroke="#D9601E" stroke-width="1.4" stroke-linecap="round"/></svg>';
-  }
+  function pfFood() { return petX().food; }
+  function pfIcon(w) { return petX().ico(w); }
   function pfNow() {   /* 지금 기록으로 센 값 — 출석일 수·배지 수·인바디 수, ✓는 최근 14일 날짜별 개수 */
     var a = 0, b = 0, i = 0, d = {};
     try { a = attLoad().length; } catch (e) {}
@@ -435,6 +560,7 @@
     PF.cd = PF.cd || {};
     for (k in PF.cd) if (k < n.cut) { PF.cb = (PF.cb || 0) + PF.cd[k]; delete PF.cd[k]; ch = true; }   /* 14일 지난 날은 합계로 접음 */
     for (k in n.d) if (n.d[k] > (PF.cd[k] || 0)) { PF.cd[k] = n.d[k]; ch = true; }
+    if (PF_VIS && !PF.vp) { if (ch) pfSave(true); pvCheck(); return; }
     if (!ch) return;
     pfSave(true);
     var got = pfStock() - before;
@@ -442,21 +568,23 @@
     pfBtnDraw();
   }
   function pfStart() {   /* 창고 기록을 받은 뒤 한 번 — 처음이면 지금까지 한 건 기준선, 선물 10개 */
-    if (PF_ON || !(M.pet === "bunny" || M.pet === "cat") || DEMO || TRY || COACH_MODE) return;
+    if (PF_ON || !(M.pet === "bunny" || M.pet === "cat" || PF_VIS) || DEMO || TRY || COACH_MODE) return;
     PF_ON = true;
     if (!PF || typeof PF !== "object" || PF.b0 == null) {
       var n = pfNow(); PF = { am: n.a, bm: n.b, im: n.i, cb: 0, cd: n.d, sp: 0, xp: (PF && PF.xp) || {}, at: 0 };
-      PF.b0 = pfEarned(PF) - 10; pfSave(true);
-      setTimeout(function () { pfGain(10, pfFood() + " 10개 선물! 운동하면 더 모여요"); }, 2500);
+      if (PF_VIS) { PF.b0 = pfEarned(PF); PF.a0 = n.a; pfSave(true); }   /* 찾아오는 동물: 지금부터 쌓이는 활동으로 셈(선물은 찾아올 때) */
+      else { PF.b0 = pfEarned(PF) - 10; pfSave(true);
+        setTimeout(function () { pfGain(10, pfFood() + " 10개 선물! 운동하면 더 모여요"); }, 2500); }
     }
+    if (PF_VIS && !PF.vp) { pfScan(true); setInterval(function () { if (!document.hidden) pfScan(!PF.vp); }, 4000); return; }   /* 아직 안 찾아옴 — 버튼 없이 조용히 셈 */
     PETS.forEach(function (p) { p.dress(); });
     pfBtn(); pfScan(true);
     setInterval(function () { if (!document.hidden) pfScan(); }, 4000);
   }
   function pfServer(kv) {
-    if (!(M.pet === "bunny" || M.pet === "cat") || DEMO || TRY) return;
+    if (!(M.pet === "bunny" || M.pet === "cat" || PF_VIS) || DEMO || TRY) return;
     var v = kv && kv["mw:" + SLUG + ":pet"];
-    if (COACH_MODE) { if (v && v.b0 != null) { PF = v; PETS.forEach(function (p) { p.dress(); }); } pfBtn(); pfBtnDraw(); return; }   /* 선생님 폰: 주머니는 보기만(2026-11-20 "보기만") — 회원님 먹이 개수·레벨, 저장·뿌리기 없음 */
+    if (COACH_MODE) { if (v && v.b0 != null) { PF = v; PETS.forEach(function (p) { p.dress(); }); } if (PF_VIS) { if (PF && PF.vp) pvArrive(PF.vp, 1); return; } pfBtn(); pfBtnDraw(); return; }   /* 선생님 폰: 주머니는 보기만(2026-11-20 "보기만") — 회원님 먹이 개수·레벨, 저장·뿌리기 없음 */
     if (v && typeof v === "object" && v.b0 != null) {
       if (!PF || PF.b0 == null) PF = JSON.parse(JSON.stringify(v));
       else {   /* 두 폰 기록 합치기 — 값마다 큰 쪽 */
@@ -468,9 +596,12 @@
         for (k in o.cd) if (!(v.cd || {})[k] || o.cd[k] > v.cd[k]) more = true;
         for (k in (v.xp || {})) if (v.xp[k] > (o.xp[k] || 0)) o.xp[k] = v.xp[k];
         for (k in o.xp) if (!(v.xp || {})[k] || o.xp[k] > v.xp[k]) more = true;
+        if (v.vp && !o.vp) { o.vp = v.vp; if (v.a0 != null) o.a0 = v.a0; } else if (o.vp && !v.vp) more = true;   /* 찾아온 동물은 먼저 온 쪽 */
+        if (o.a0 == null && v.a0 != null) o.a0 = v.a0;
         pfSave(more);
       }
       try { localStorage.setItem(PF_LS, JSON.stringify(PF)); } catch (e) {}
+      if (PF_VIS && PF.vp) pvArrive(PF.vp, 1);
       PETS.forEach(function (p) { p.dress(); });
       pfBtnDraw();
     }
@@ -508,7 +639,7 @@
         (lv < 3 ? '<i class="pf-bar"><i style="width:' + Math.min(100, Math.round((xp - lo) / (hi - lo) * 100)) + '%"></i></i><small>' + (hi - xp) + '개 더</small>' : '<small class="max">최고 레벨 ✨</small>') + '</div>';
     }).join("");
     p.innerHTML = '<div class="pf-top"><b>먹이주머니</b><button type="button" class="pf-x" aria-label="닫기">✕</button></div>' +
-      '<div class="pf-food' + (n && !COACH_MODE ? '' : ' empty') + (COACH_MODE ? ' coach' : '') + '">' + pfIcon(44) + '<b>' + (COACH_MODE ? '회원님 ' : '') + F + ' ' + n + '개</b><small>' + (COACH_MODE ? (PF ? '선생님 폰은 보기만 돼요 · 먹이는 회원님 폰에서' : '회원님이 아직 주머니를 안 열었어요') : n ? '꾹 누른 채로 끌어서 ' + (M.pet === "cat" ? "고양이" : "토롱이") + '한테 뿌려요' : '운동하면 ' + F + '이 모여요!') + '</small></div>' +
+      '<div class="pf-food' + (n && !COACH_MODE ? '' : ' empty') + (COACH_MODE ? ' coach' : '') + '">' + pfIcon(44) + '<b>' + (COACH_MODE ? '회원님 ' : '') + F + ' ' + n + '개</b><small>' + (COACH_MODE ? (PF ? '선생님 폰은 보기만 돼요 · 먹이는 회원님 폰에서' : '회원님이 아직 주머니를 안 열었어요') : n ? '꾹 누른 채로 끌어서 ' + petX().lab + '한테 뿌려요' : '운동하면 ' + jo(F, '이', '가') + ' 모여요!') + '</small></div>' +
       '<div class="pf-how"><span>🏅 배지 +4</span><span>📊 인바디 +3</span><span>✅ 출석 +2</span><span>💪 종목 ✓ +2</span></div>' +
       (list ? '<div class="pf-pets">' + list + '</div>' : '') +
       '<p class="pf-note">많이 먹으면 레벨업! 친구마다 다른 치장이 생겨요</p>';
@@ -569,7 +700,7 @@
     document.body.appendChild(bg);
     bg.addEventListener("click", function (e) { if (e.target === bg || e.target.closest("[data-ok]")) bg.remove(); });
   }
-  setTimeout(function () { if (M.pet === "bunny" || M.pet === "cat") { if (!ATT_API) pfServer(null); setTimeout(function () { if (!PF_SV) pfServer(null); }, 12000); } }, 0);
+  setTimeout(function () { if (M.pet === "bunny" || M.pet === "cat" || PF_VIS) { if (!ATT_API) pfServer(null); setTimeout(function () { if (!PF_SV) pfServer(null); }, 12000); } }, 0);
   function skinDeco() {   /* 토롱이 그림을 정해진 칸에 하나씩 (이미 있으면 그대로) — 누르기·글자에는 영향 없음(pointer-events none) */
     if (!SKIN) return;
     var T = BASE + "theme/" + SKIN + "/";

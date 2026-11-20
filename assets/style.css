@@ -2755,6 +2755,10 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 @media print { .pfbtn, .pfbag, .pfpile { display: none; } }
 @media (prefers-reduced-motion: reduce) { .pet .plv i, .pet.lv3::before, .pf-food svg, .pfbtn.wig { animation: none !important; } .pet .plv i { opacity: .9; } }
 
+/* 2026-11-20 찾아오는 동물(강아지·라쿤·곰·수달) — 팝업·카드 그림은 서 있는 모습만 */
+.frpop-pic .p-sit, .frd-pic .p-sit { display: none; }
+.pvdex { grid-template-columns: 1fr; } .pvdex .frd-pic { width: 120px; height: 100px; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
