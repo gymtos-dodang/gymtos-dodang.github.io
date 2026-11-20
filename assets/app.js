@@ -3409,7 +3409,7 @@
       d.w = d.h = d.pbf = null; d.manual = 1; attToast("내 몸 숫자를 지웠어요");
     }
     else if (a[0] === "ib") { d.manual = 0; try { localStorage.setItem(DB_LS, JSON.stringify(d)); } catch (e2) {} ibSheetOpen(); return; }
-    else if (a[0] === "tab") { DB_TAB = a[1]; rerender(); return; }
+    else if (a[0] === "tab") { DB_TAB = a[1]; rerender(); if (t.classList.contains("dg-go")) window.scrollTo(0, 0); return; }
     else return;
     dbSave();
   });
@@ -3650,14 +3650,83 @@
       ML_DAY = nd === td ? null : nd; rerender();
     }
   });
+  /* ===== 식단 가이드 (2026-11-20 장동욱 "식단 항목에 탄단지 중요성·식이섬유 섭취 이유·끼니 거르면 안 되는 이유·식단의 중요성을 알기 쉽게, 전환칸 만들어서")
+     식단 탭 전환 칸 '식단 가이드'(DB_TAB "guide") — 모든 회원에게 보임(data.js 필요 없음). CSS .dg-* */
+  function dgView() {
+    function li(a) { return a.map(function (x) { return '<li>' + x + '</li>'; }).join(""); }
+    function hand(k) {   /* 손 어림 그림: fist 주먹 · palm 손바닥 · thumb 엄지 */
+      var p = k === "fist" ? '<rect x="9" y="12" width="22" height="18" rx="7"/><path d="M14 12v-2a3 3 0 0 1 6 0v2M20 12v-3a3 3 0 0 1 6 0v3" />'
+        : k === "palm" ? '<rect x="9" y="13" width="20" height="20" rx="6"/><path d="M12 13V6M17 13V4M22 13V5M27 14V8M29 22l4-5"/>'
+        : '<rect x="14" y="6" width="11" height="26" rx="5.5"/><path d="M15 13h9"/>';
+      return '<svg class="dg-hand" viewBox="0 0 40 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>';
+    }
+    function mac(c, nm, en, role, does, low, good, bad, k, amt) {
+      return '<div class="dg-mac ' + c + '"><div class="dg-mh"><span class="dg-dot"></span><b>' + nm + '</b><i>' + en + '</i><em>' + role + '</em></div>' +
+        '<ul class="dg-ul">' + li(does) + '</ul>' +
+        '<div class="dg-low"><small>부족하면</small><p>' + low + '</p></div>' +
+        '<div class="dg-food"><span class="ok">추천</span>' + good + '</div>' +
+        (bad ? '<div class="dg-food"><span class="no">줄이기</span>' + bad + '</div>' : '') +
+        '<div class="dg-amt">' + hand(k) + '<div><small>한 끼 어림</small><b>' + amt + '</b></div></div></div>';
+    }
+    var h = '<div class="dg">' +
+      '<div class="dg-hero"><small>MEAL GUIDE · 식단 가이드</small><h2>운동은 자극,<br>몸은 음식이 만들어요</h2>' +
+      '<p>운동을 아무리 열심히 해도 먹는 게 그대로면 몸은 잘 안 바뀌어요. 꼭 알아둘 기본만 쉽게 모았어요.</p></div>';
+
+    h += '<section>' + head("01", "식단이 왜 중요할까?", "") +
+      '<div class="dg-why">' +
+      '<div><span>🧱</span><b>근육은 재료가 있어야 자라요</b><p>운동은 근육에 작은 상처를 내는 일, 회복시키고 키우는 재료는 음식이에요.</p></div>' +
+      '<div><span>⚖️</span><b>체중은 먹는 양이 정해요</b><p>운동 1시간에 약 300~500kcal. 빵 하나, 달달한 라떼 한 잔이면 금방 다시 채워져요.</p></div>' +
+      '<div><span>🔋</span><b>컨디션·회복이 달라져요</b><p>잘 먹어야 다음 운동 때 힘이 나고, 피로·잠·기분까지 좋아져요.</p></div>' +
+      '</div><div class="dg-ratio"><span class="a">운동 3</span><span class="b">식단 7 · 몸 만들기는 식단이 7할</span></div></section>';
+
+    h += '<section>' + head("02", "탄·단·지, 셋 다 필요해요", "하나라도 빼면 몸이 티를 내요") +
+      '<div class="dg-kcal"><span class="c">탄수화물 1g = 4kcal</span><span class="p">단백질 1g = 4kcal</span><span class="f">지방 1g = 9kcal</span></div><div class="dg-macs">' +
+      mac("c", "탄수화물", "CARB", "몸의 연료", ["운동할 힘과 뇌가 쓰는 에너지", "운동 전·후에 먹으면 힘이 나고 회복이 빨라요"],
+        "힘이 빠지고 집중이 안 돼요. 단 게 당겨서 폭식하기 쉽고, 몸이 근육을 연료로 쓰기도 해요.",
+        "현미·잡곡밥, 고구마, 감자, 오트밀, 바나나", "과자, 빵, 떡, 단 음료", "fist", "주먹 1개 (밥 반 공기~2/3공기)") +
+      mac("p", "단백질", "PROTEIN", "근육의 벽돌", ["운동으로 생긴 근육 상처를 고치고 키워요", "배가 오래 불러서 군것질이 줄어요"],
+        "근육이 빠지고 회복이 느려요. 금방 배고프고 운동해도 몸이 잘 안 바뀌어요.",
+        "닭가슴살, 계란, 두부, 생선, 소고기 살코기, 그릭요거트", "", "palm", "손바닥 1장 (두께까지) · 끼니마다 나눠서") +
+      mac("f", "지방", "FAT", "몸 관리 담당", ["호르몬을 만들고 비타민(A·D·E·K) 흡수를 도와요", "적게 먹어도 칼로리가 커요 — 양 조절이 핵심"],
+        "피부가 푸석해지고 호르몬 균형이 흔들려요. 여성은 생리 주기가 흐트러질 수 있어요.",
+        "견과류, 올리브유, 아보카도, 연어·고등어, 계란 노른자", "튀김, 가공육(햄·소시지), 과자", "thumb", "엄지 1개 (견과류 한 줌 정도)") +
+      '</div></section>';
+
+    h += '<section>' + head("03", "식이섬유, 왜 챙겨야 할까?", "") +
+      '<div class="dg-fib">' +
+      '<div><span>😌</span><b>배가 오래 불러요</b><p>위에 오래 머물러서 덜 먹게 돼요.</p></div>' +
+      '<div><span>📉</span><b>혈당이 천천히 올라요</b><p>탄수화물 흡수를 늦춰서 식후 졸림·단 게 당기는 게 줄어요.</p></div>' +
+      '<div><span>🌿</span><b>장이 편해져요</b><p>장 속 좋은 균의 먹이가 되고 변비를 막아요. 단백질을 많이 먹을수록 더 중요해요.</p></div>' +
+      '</div><div class="dg-tip"><b>이렇게 먹어요</b><ul class="dg-ul">' + li([
+        "<b>채소 → 단백질 → 탄수화물</b> 순서로 먹기",
+        "매 끼 채소 <b>두 주먹</b> (하루 식이섬유 약 25g)",
+        "채소·버섯·해조류·현미·귀리·콩·사과(껍질째)",
+        "물을 같이 충분히 — 섬유질은 물이 있어야 제 역할을 해요"]) + '</ul></div></section>';
+
+    h += '<section>' + head("04", "끼니를 거르면 안 되는 이유", "") +
+      '<p class="dg-lead">굶으면 빠질 것 같지만 오히려 반대예요</p><ol class="dg-skip">' + li([
+        "<b>다음 끼니에 폭식해요</b><p>너무 배고프면 빨리, 많이, 단 것부터 먹게 돼요.</p>",
+        "<b>근육이 빠져요</b><p>단백질이 오래 안 들어오면 몸이 근육을 에너지로 꺼내 써요.</p>",
+        "<b>혈당이 롤러코스터를 타요</b><p>확 떨어졌다 확 올라가면 피곤하고 졸리고, 지방으로 쌓이기 쉬워요.</p>",
+        "<b>운동할 힘이 없어요</b><p>어지럽고 무게가 안 올라가요. 운동 효과도 떨어져요.</p>",
+        "<b>몸이 아끼는 모드가 돼요</b><p>적게 먹는 날이 이어지면 몸이 에너지를 덜 쓰려고 해요.</p>"]) + '</ol>' +
+      '<div class="dg-tip"><b>바쁠 땐 간단하게라도</b><div class="dg-chips"><span>삶은 계란 2개 + 바나나</span><span>그릭요거트 + 견과류</span><span>단백질 쉐이크 + 고구마</span><span>편의점 닭가슴살 + 주먹밥</span></div></div></section>';
+
+    h += '<section>' + head("05", "오늘부터 이것만", "다 못 해도 하나씩") +
+      '<ul class="dg-check">' + li([
+        "끼니마다 단백질 <b>손바닥 1장</b>", "채소는 매 끼 <b>두 주먹</b>, 먼저 먹기", "탄수화물은 <b>운동 전·후</b>에 챙기기",
+        "물 하루 <b>1.5~2L</b>", "끼니 거르지 말고 <b>간단하게라도</b>", "한 끼 많이 먹었으면 <b>다음 끼니는 원래대로</b> — 굶어서 메우지 않기"]) + '</ul>' +
+      '<button type="button" class="dg-go" data-db="tab:my">내 식단 짜러 가기 ›</button></section></div>';
+    return h;
+  }
   function renderDiet() {
     var D = M.diet, has = D && typeof D === "object";
-    if (!has && !ML_ON) return dbBuilder() + remember();
     var tab = DB_TAB || (has ? "coach" : "my");
     if ((tab === "log" && !ML_ON) || (tab === "coach" && !has)) tab = has ? "coach" : "my";
     function sb(id, l) { return '<button type="button" class="' + (tab === id ? "on" : "") + '" data-db="tab:' + id + '">' + l + '</button>'; }
-    var seg = '<div class="db-tabs">' + (has ? sb("coach", "선생님 식단표") : "") + sb("my", "내 식단 짜기") + (ML_ON ? sb("log", "먹은 기록") : "") + '</div>';
-    return seg + (tab === "log" ? mlView() + remember() : tab === "my" ? dbBuilder() + remember() : renderDietCoach());
+    var nb = 2 + (has ? 1 : 0) + (ML_ON ? 1 : 0);
+    var seg = '<div class="db-tabs' + (nb > 3 ? ' n4' : '') + '">' + (has ? sb("coach", nb > 3 ? "선생님 식단" : "선생님 식단표") : "") + sb("my", "내 식단 짜기") + (ML_ON ? sb("log", "먹은 기록") : "") + sb("guide", "식단 가이드") + '</div>';
+    return seg + (tab === "guide" ? dgView() + remember() : tab === "log" ? mlView() + remember() : tab === "my" ? dbBuilder() + remember() : renderDietCoach());
   }
   function renderDietCoach() {
     var D = M.diet;
