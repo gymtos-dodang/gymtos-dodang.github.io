@@ -5154,10 +5154,29 @@
       if (cur === x.h) rerender(); else location.hash = x.h;
       window.scrollTo(0, 0); return true;
     }
+    /* 2026-11-20 장동욱 "새 기능 둘러보기 할 때 딱 끊기게 넘어감 → 부드럽게": 다른 화면으로 갈 땐 카드는 살짝 내려가며 사라지고,
+       비추는 구멍은 화면 전체로 열려 새 화면이 차례로 올라오는 게 보임 → 그 칸이 그려지면(최소 0.5초) 구멍이 그 칸으로 스르륵 좁혀지고 카드가 떠오름 */
+    function settle(fn) {
+      var t0 = Date.now(), x = S[i];
+      (function poll() {
+        var ok = !x.s || document.querySelector(x.s), dt = Date.now() - t0;
+        if ((ok && dt >= 520) || dt > 1600) return fn();
+        setTimeout(poll, 80);
+      })();
+    }
     function show() {
       var x = S[i];
-      if (goH(x)) { card.classList.add("wait"); setTimeout(function () { card.classList.remove("wait"); show2(); }, 700); return; }
+      if (goH(x)) {
+        card.classList.add("wait"); w.classList.add("moving");
+        hole.style.cssText = "left:0;top:0;width:" + window.innerWidth + "px;height:" + window.innerHeight + "px;border-radius:0";
+        settle(show2); return;
+      }
       show2();
+    }
+    function reveal() {
+      place(); w.classList.remove("moving");
+      card.classList.remove("in"); void card.offsetWidth; card.classList.add("in");
+      requestAnimationFrame(function () { card.classList.remove("wait"); });
     }
     function show2() {
       var x = S[i];
@@ -5172,15 +5191,14 @@
       card.querySelector(".tour-btns").innerHTML = (x.app ? '<a class="tb-app" href="#app">📲 홈 화면에 앱으로 추가하기</a>' : '') +
         (i > 0 && !x.c ? '<button type="button" class="tb-prev">이전</button>' : '') +
         '<button type="button" class="tb-next">' + (x.ok || (i === S.length - 2 ? "마지막" : "다음") + ' <small>' + i + '/' + (S.length - 2) + '</small>') + '</button>';
-      card.classList.remove("in"); void card.offsetWidth; card.classList.add("in");
       if (x.s) {
         var el = document.querySelector(x.s);
         if (el && !el.closest(".tabs, .bar")) {
           var r = el.getBoundingClientRect();
-          if (r.top < 70 || r.bottom > window.innerHeight - 220) { window.scrollTo({ top: window.scrollY + r.top - 110, behavior: "smooth" }); setTimeout(place, 420); return; }
+          if (r.top < 70 || r.bottom > window.innerHeight - 220) { card.classList.add("wait"); window.scrollTo({ top: window.scrollY + r.top - 110, behavior: "smooth" }); setTimeout(reveal, 480); return; }
         }
       }
-      place();
+      reveal();
     }
     w.addEventListener("click", function (e) {
       if (e.target.closest(".tour-skip")) return end();
