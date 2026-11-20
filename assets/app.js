@@ -148,6 +148,14 @@
   /* 먹이주머니 상태(2026-11-20) — 아래 '먹이주머니 · 동물 레벨업' 참고 */
   var PETS = [], PF = null, PF_LS = "ptnote:" + RT_SLUG + ":pet", PF_T = 0, PF_ON = false, PF_SV = false, PF_LV = [120, 500];
   try { PF = JSON.parse(localStorage.getItem(PF_LS) || "null"); } catch (e) {}
+  var PET_OFF_K = "ptnote:" + RT_SLUG + ":petoff";   /* 2026-11-20 "이 시스템이 싫은 사람은 펫 집어넣기 옵션" — 켜면 동물·주머니 탭이 안 보임(먹이는 계속 모임) */
+  function petOff() { try { return localStorage.getItem(PET_OFF_K) === "1"; } catch (e) { return false; } }
+  function petOffSet(on) {
+    try { if (on) localStorage.setItem(PET_OFF_K, "1"); else localStorage.removeItem(PET_OFF_K); } catch (e) {}
+    document.documentElement.classList.toggle("pet-off", !!on);
+    if (on) pfClose(); else if (M.pet && !COACH_MODE) setTimeout(pvPop, 600);
+  }
+  if (petOff()) document.documentElement.classList.add("pet-off");
   var PF_VIS = !M.pet;   /* pet 없는 회원 = 찾아오는 동물(2026-11-20) 대상 */
   if (PF_VIS && PF && PF.vp) M.pet = PF.vp;
   function petNight() { var h = new Date().getHours(); return h < 6; }   /* 밤 12시~새벽 6시 = 자는 시간 (2026-11-18) */
@@ -404,7 +412,7 @@
   function petSvgOf(t) { return t === "bunny" ? BNY_SVG : t === "cat" ? CAT_SVG : mkPetSvg(t); }
   /* 찾아왔어요! 창 */
   function pvPop() {
-    var X = petX();
+    var X = petX(); if (!PX[M.pet] || !X.kind || petOff()) return;
     try { if (localStorage.getItem("ptnote:" + RT_SLUG + ":pv") === M.pet) return; } catch (e) {}
     if (document.querySelector(".frpop-bg, .rtsheet-bg, .bgpop-wrap, .npop, .tour, .pfbag")) { setTimeout(pvPop, 1500); return; }
     try { localStorage.setItem("ptnote:" + RT_SLUG + ":pv", M.pet); } catch (e) {}
@@ -612,14 +620,14 @@
   /* ---- 주머니 버튼 · 주머니 창 */
   function pfBtn() {
     if (document.querySelector(".pfbtn")) return;
-    var b = document.createElement("button"); b.type = "button"; b.className = "pfbtn"; b.setAttribute("aria-label", "먹이주머니");
+    var b = document.createElement("button"); b.type = "button"; b.className = "pfbtn"; b.setAttribute("aria-label", "먹이주머니 열기");
     document.body.appendChild(b); pfBtnDraw();
     b.addEventListener("click", function (e) { e.preventDefault(); e.stopPropagation(); if (document.querySelector(".pfbag")) pfClose(); else pfOpen(); });
   }
   function pfBtnDraw() {
     var b = document.querySelector(".pfbtn"); if (!b) return;
     var n = pfStock();
-    b.innerHTML = '<svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true"><path d="M13 12c2-3 12-3 14 0" fill="none" stroke="#7A4A22" stroke-width="2.4" stroke-linecap="round"/><path d="M12 13c-6 6-7 20 8 21 15-1 14-15 8-21z" fill="#E7B477" stroke="#7A4A22" stroke-width="2" stroke-linejoin="round"/><path d="M13.5 15.5c4 2 9 2 13 0" fill="none" stroke="#7A4A22" stroke-width="1.6" stroke-linecap="round"/><circle cx="20" cy="25" r="4.2" fill="#FFCF3F" stroke="#7A4A22" stroke-width="1.3"/></svg>' +
+    b.innerHTML = '<svg viewBox="0 0 40 40" width="17" height="17" aria-hidden="true"><path d="M13 12c2-3 12-3 14 0" fill="none" stroke="#7A4A22" stroke-width="2.4" stroke-linecap="round"/><path d="M12 13c-6 6-7 20 8 21 15-1 14-15 8-21z" fill="#E7B477" stroke="#7A4A22" stroke-width="2" stroke-linejoin="round"/><path d="M13.5 15.5c4 2 9 2 13 0" fill="none" stroke="#7A4A22" stroke-width="1.6" stroke-linecap="round"/><circle cx="20" cy="25" r="4.2" fill="#FFCF3F" stroke="#7A4A22" stroke-width="1.3"/></svg>' +
       '<b class="pfn' + (n ? '' : ' z') + '">' + (n > 999 ? "999+" : n) + '</b>';
   }
   function pfGain(n, msg) {
@@ -643,9 +651,11 @@
       '<div class="pf-food' + (n && !COACH_MODE ? '' : ' empty') + (COACH_MODE ? ' coach' : '') + '">' + pfIcon(44) + '<b>' + (COACH_MODE ? '회원님 ' : '') + F + ' ' + n + '개</b><small>' + (COACH_MODE ? (PF ? '선생님 폰은 보기만 돼요 · 먹이는 회원님 폰에서' : '회원님이 아직 주머니를 안 열었어요') : n ? '꾹 누른 채로 끌어서 ' + petX().lab + '한테 뿌려요' : '운동하면 ' + jo(F, '이', '가') + ' 모여요!') + '</small></div>' +
       '<div class="pf-how"><span>🏅 배지 +4</span><span>📊 인바디 +3</span><span>✅ 출석 +2</span><span>💪 종목 ✓ +2</span></div>' +
       (list ? '<div class="pf-pets">' + list + '</div>' : '') +
-      '<p class="pf-note">많이 먹으면 레벨업! 친구마다 다른 치장이 생겨요</p>';
+      '<p class="pf-note">많이 먹으면 레벨업! 친구마다 다른 치장이 생겨요</p>' +
+      (COACH_MODE ? '' : '<button type="button" class="pf-hide">🏠 펫 집에 들여보내기 <small>⚙️ 설정에서 다시 꺼내요</small></button>');
     document.body.appendChild(p);
     p.querySelector(".pf-x").addEventListener("click", pfClose);
+    var hb = p.querySelector(".pf-hide"); if (hb) hb.addEventListener("click", function () { petOffSet(true); });
     setTimeout(function () { document.addEventListener("pointerdown", function off(e) { if (!p.isConnected) { document.removeEventListener("pointerdown", off, true); return; } if (!e.target.closest(".pfbag, .pfbtn")) { pfClose(); document.removeEventListener("pointerdown", off, true); } }, true); }, 0);
     if (!COACH_MODE) pfHold(p.querySelector(".pf-food"), p);
   }
@@ -5681,6 +5691,7 @@
     var m = document.createElement("div"); m.id = "gearMenu"; m.className = "gmenu"; m.setAttribute("role", "menu");
     m.innerHTML = '<a href="#home" role="menuitem" data-tour="1"><span>🧭</span><b>앱 사용법 다시 보기</b></a>' +
       (WN.length ? '<a href="#home" role="menuitem" data-wn="1"><span>🆕</span><b>새 기능 둘러보기</b></a>' : '') +   /* 2026-11-20 "상단 설정 아이콘에도 새 기능 둘러보기" — 최신 업데이트 소식 */
+      ((M.pet || PF_VIS) && !DEMO && !TRY ? '<a href="#" role="menuitem" data-petoff="1"><span>' + (petOff() ? '🐾' : '🏠') + '</span><b>' + (petOff() ? '펫 다시 꺼내기' : '펫 집어넣기') + '</b></a>' : '') +   /* 2026-11-20 펫 집어넣기 옵션 */
       '<a href="#app" role="menuitem"><span>📲</span><b>' + (E.standalone ? '홈 화면 앱 설치 안내' : '홈 화면에 앱으로 추가하기') + '</b></a>' +
       '<div class="gm-theme" role="group" aria-label="다크 모드"><span>🌙</span><b>다크 모드</b><i>' +
       [["auto", "자동"], ["dark", "켜기"], ["light", "끄기"]].map(function (o) { return '<button type="button" data-th="' + o[0] + '"' + (themeGet() === o[0] ? ' aria-pressed="true"' : '') + '>' + o[1] + '</button>'; }).join("") + '</i></div>';   /* 2026-11-13 "앱아이콘 설치 옵션 왜 뺐냐" — 앱으로 열었어도 항상 보이게 */
@@ -5703,6 +5714,8 @@
   }
   (function () { var g = document.getElementById("gearBtn"); if (g) g.addEventListener("click", function (e) { e.stopPropagation(); gearMenu(); }); })();
   document.addEventListener("click", function (e) {
+    var po = e.target.closest("[data-petoff]");
+    if (po) { e.preventDefault(); petOffSet(!petOff()); return; }
     var wa = e.target.closest("[data-wn]");
     if (wa) { e.preventDefault(); if (location.hash && location.hash !== "#home") { LINKAT = Date.now(); location.hash = "#home"; } window.scrollTo(0, 0); var wid = wa.getAttribute("data-wn"); setTimeout(function () { wnStart(wid === "1" ? true : wid); }, 500); return; }
     var a = e.target.closest("[data-tour]"); if (!a) return;
