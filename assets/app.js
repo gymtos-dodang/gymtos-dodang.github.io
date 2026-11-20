@@ -526,6 +526,11 @@
     bg.addEventListener("click", function (e) { if (e.target === bg || e.target.closest("[data-ok]")) bg.remove(); else if (e.target.closest("[data-dex]")) { bg.remove(); frDex(); } });
   }
   petSpawn(M.pet, null);
+  (function () {   /* 2026-11-21 "먹이창고 더 빠르게" — 주머니 탭도 펫과 같은 순간에(선생님 폰·체험 링크는 뒤에서 따로) */
+    var co = false, dm = TRY || /[?&]demo\b/.test(location.search);
+    try { co = !!(sessionStorage.getItem("ptcoach") || localStorage.getItem("ptcoach")); dm = dm || !!sessionStorage.getItem("ptdemo"); } catch (e) {}
+    if (PX[M.pet] && !co && !dm && !(PF_VIS && !(PF && PF.vp))) pfBtn();
+  })();
   if (M.pet === "bunny" || M.pet === "cat") (function () {
     var seed = 0, str = ymd(new Date()) + RT_SLUG;
     for (var i = 0; i < str.length; i++) seed = (seed * 31 + str.charCodeAt(i)) >>> 0;
@@ -638,9 +643,8 @@
     e.style.right = (window.innerWidth - r.right) + "px"; e.style.top = (r.top - 8) + "px";
     document.body.appendChild(e); setTimeout(function () { e.remove(); }, msg ? 3200 : 1700);
   }
-  function pfClose() { var p = document.querySelector(".pfbag"); if (p) { p.classList.add("out"); setTimeout(function () { p.remove(); }, 180); } }
-  function pfOpen() {
-    pfScan();
+  function pfClose() { var p = document.querySelector(".pfbag"); if (p) { p.classList.add("out"); setTimeout(function () { p.remove(); }, 130); } }
+  function pfOpen() {   /* 2026-11-21 "먹이창고 더 빠르게" — 계산(pfScan: 배지·출석 다시 셈)은 창이 뜬 뒤에 */
     var p = document.createElement("div"); p.className = "pfbag";
     var n = pfStock(), F = pfFood(), list = PETS.map(function (q) {
       var lv = pfLv(q.id), xp = ((PF && PF.xp) || {})[q.id] || 0, lo = lv === 1 ? 0 : lv === 2 ? PF_LV[0] : PF_LV[1], hi = lv === 1 ? PF_LV[0] : PF_LV[1];
@@ -658,6 +662,8 @@
     var hb = p.querySelector(".pf-hide"); if (hb) hb.addEventListener("click", function () { petOffSet(true); });
     setTimeout(function () { document.addEventListener("pointerdown", function off(e) { if (!p.isConnected) { document.removeEventListener("pointerdown", off, true); return; } if (!e.target.closest(".pfbag, .pfbtn")) { pfClose(); document.removeEventListener("pointerdown", off, true); } }, true); }, 0);
     if (!COACH_MODE) pfHold(p.querySelector(".pf-food"), p);
+    if (!COACH_MODE) setTimeout(function () { var b0 = pfStock(); pfScan(true); var n2 = pfStock();
+      if (n2 !== b0 && p.isConnected) { var fb = p.querySelector(".pf-food > b"); if (fb) fb.textContent = F + " " + n2 + "개"; p.querySelector(".pf-food").classList.toggle("empty", !n2); pfBtnDraw(); } }, 260);
   }
   /* 꾹 누르면 주머니에서 먹이가 하나씩 쏟아져 손가락을 따라옴(최대 30개) → 놓은 자리에 떨어지고 가장 가까운 동물이 달려가서 먹음 */
   function pfHold(el, bag) {
