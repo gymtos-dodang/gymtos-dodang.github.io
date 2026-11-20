@@ -297,7 +297,7 @@
   }
   function frFound(F) {
     var seen = frSeen(); if (seen.indexOf(F.id) >= 0) return;
-    if (document.querySelector(".frpop-bg, .rtsheet-bg, .bgpop-wrap, .npop")) { setTimeout(function () { frFound(F); }, 1200); return; }   /* 다른 창이 떠 있으면 닫힌 뒤에 */
+    if (document.querySelector(".frpop-bg, .rtsheet-bg, .bgpop-wrap, .npop, .tour")) { setTimeout(function () { frFound(F); }, 1200); return; }   /* 다른 창이 떠 있으면 닫힌 뒤에 */
     seen.push(F.id); try { localStorage.setItem("ptnote:" + RT_SLUG + ":fr", JSON.stringify(seen)); } catch (e) {}
     var bg = document.createElement("div"); bg.className = "frpop-bg";
     bg.innerHTML = '<div class="frpop"><small>새 친구 발견!</small><div class="frpop-pic">' + frSvg(F) + '</div><b>' + esc(F.name) + '</b><p>' + esc(F.desc) + '</p>' +
@@ -2123,7 +2123,7 @@
   function badgeCheck() {   /* 새로 받은 배지가 있으면 팝업 한 번 */
     bgReady = true;
     if (DEMO || COACH_MODE) return;
-    if (TOUR_ON || TOUR_WANT || document.querySelector(".npop-wrap, .bgpop-wrap, .ibsheet")) { setTimeout(badgeCheck, 6500); return; }
+    if (TOUR_ON || TOUR_WANT || WN_WANT || document.querySelector(".npop-wrap, .bgpop-wrap, .ibsheet, .tour")) { setTimeout(badgeCheck, 6500); return; }
     var L = badgeList(), seen = lsArr(BG_SEEN);
     var fresh = L.filter(function (b) { return b.on && seen.indexOf(b.id) < 0; });
     if (!fresh.length) return;
@@ -2830,7 +2830,7 @@
     if ((location.hash || "").replace(/^#/, "") === "notice") route(); else location.hash = "notice";
   }
   function showNoticePop() {
-    if (TOUR_ON || (TOUR_WANT && (!location.hash || location.hash === "#home"))) return;
+    if (TOUR_ON || ((TOUR_WANT || WN_WANT) && (!location.hash || location.hash === "#home"))) return;
     var popped = lsArr(NPOP_KEY);
     var list = nUnseen().filter(function (n) { return popped.indexOf(nKey(n)) < 0; });
     if (!list.length) return;
@@ -5033,7 +5033,7 @@
   function navName(h) {
     h = String(h || "").replace(/^#/, "") || "home";
     if (/^routine/.test(h)) return "루틴"; if (/^form-/.test(h)) return "자세 복습지"; if (h === "forms") return "복습지";
-    if (h === "diet" || h === "diet-guide" || h === "diet-supp") return "식단"; if (/^goal/.test(h)) return "목표"; if (h === "body") return "몸변화"; if (h === "notice") return "공지";
+    if (h === "diet" || h === "diet-log" || h === "diet-guide" || h === "diet-supp") return "식단"; if (/^goal/.test(h)) return "목표"; if (h === "body") return "몸변화"; if (h === "notice") return "공지";
     if (/^report/.test(h)) return "리포트"; if (h === "growth") return "성장 기록"; if (h === "app") return "앱으로 쓰기"; if (h === "muscle") return "근육 지도"; return "홈";
   }
   document.addEventListener("touchstart", function () {}, { passive: true });   /* 아이폰에서 :active(살짝 눌림)가 먹게 */
@@ -5108,17 +5108,18 @@
     ];
     return S.filter(function (x) { if (!x.s) return true; var el = document.querySelector(x.s); return el && el.getBoundingClientRect().width > 0; });
   }
-  function tourStart() {
-    if (TOUR_ON || !document.querySelector(".stamp, .thero")) return;
-    TOUR_ON = true; TOUR_WANT = false;
+  function tourStart(S0, opt) {
+    if (TOUR_ON || (!S0 && !document.querySelector(".stamp, .thero"))) return;
+    TOUR_ON = true; if (!S0) TOUR_WANT = false; else WN_WANT = false;
+    opt = opt || {};
     document.querySelectorAll(".npop-wrap").forEach(function (x) { x.remove(); });
-    var S = tourSteps(), i = 0;
+    var S = S0 || tourSteps(), i = 0, dir = 1;
     var w = document.createElement("div"); w.className = "tour"; w.setAttribute("role", "dialog"); w.setAttribute("aria-modal", "true");
     w.innerHTML = '<div class="tour-hole"></div><div class="tour-card"><button type="button" class="tour-skip">건너뛰기</button><div class="tour-dots"></div><b class="tour-t"></b><p class="tour-b"></p><div class="tour-btns"></div></div>';
     document.body.appendChild(w);
     var hole = w.querySelector(".tour-hole"), card = w.querySelector(".tour-card");
     function end() {
-      try { localStorage.setItem(TOUR_K, "1"); } catch (e) {}
+      if (opt.done) opt.done(); else { try { localStorage.setItem(TOUR_K, "1"); } catch (e) {} wnSeenAll(); }   /* 처음 둘러보기를 본 회원은 지금까지의 업데이트 소식은 안 띄움 */
       w.classList.remove("on"); setTimeout(function () { w.remove(); }, 260);
       TOUR_ON = false; setTimeout(function () { if (!DEMO) showNoticePop(); }, 600);
     }
@@ -5132,12 +5133,28 @@
       var ch = card.offsetHeight, below = r.bottom + pad + 14;
       card.style.top = (below + ch < vh - 12 ? below : Math.max(12, r.top - pad - 14 - ch)) + "px";
     }
+    function goH(x) {   /* 업데이트 소식: 그 단계 화면(x.h)으로 먼저 이동 — x.pre는 전환 칸 고르기 등 */
+      var cur = location.hash || "#home"; if (!x.h || (cur === x.h && !x.pre)) return false;
+      if (x.pre) x.pre();
+      LINKAT = Date.now(); NAVS = []; TABRET = null;
+      if (cur === x.h) rerender(); else location.hash = x.h;
+      window.scrollTo(0, 0); return true;
+    }
     function show() {
       var x = S[i];
+      if (goH(x)) { card.classList.add("wait"); setTimeout(function () { card.classList.remove("wait"); show2(); }, 700); return; }
+      show2();
+    }
+    function show2() {
+      var x = S[i];
+      if (x.s) { var el0 = document.querySelector(x.s); if (!el0 || !el0.getBoundingClientRect().width) { i += dir; if (i < 0) { i = 0; dir = 1; } if (i >= S.length) return end(); return show(); } }
       card.querySelector(".tour-dots").innerHTML = S.map(function (_, k) { return '<i' + (k === i ? ' class="on"' : '') + '></i>'; }).join("");
       card.querySelector(".tour-t").textContent = x.t;
       card.querySelector(".tour-b").textContent = x.b;
+      var ul0 = card.querySelector(".tour-ul"); if (ul0) ul0.remove();
+      if (x.l) { var ul = document.createElement("ul"); ul.className = "tour-ul"; x.l.forEach(function (t) { var li = document.createElement("li"); li.textContent = t; ul.appendChild(li); }); card.querySelector(".tour-b").after(ul); }
       card.querySelector(".tour-skip").hidden = i === S.length - 1;
+      card.querySelector(".tour-skip").textContent = opt.skip || "건너뛰기";
       card.querySelector(".tour-btns").innerHTML = (x.app ? '<a class="tb-app" href="#app">📲 홈 화면에 앱으로 추가하기</a>' : '') +
         (i > 0 && !x.c ? '<button type="button" class="tb-prev">이전</button>' : '') +
         '<button type="button" class="tb-next">' + (x.ok || (i === S.length - 2 ? "마지막" : "다음") + ' <small>' + i + '/' + (S.length - 2) + '</small>') + '</button>';
@@ -5154,8 +5171,9 @@
     w.addEventListener("click", function (e) {
       if (e.target.closest(".tour-skip")) return end();
       if (e.target.closest(".tb-app")) return end();
-      if (e.target.closest(".tb-prev")) { i = Math.max(0, i - 1); return show(); }
-      if (e.target.closest(".tb-next") || e.target === hole || e.target === w) { if (i >= S.length - 1) return end(); i++; show(); }
+      if (card.classList.contains("wait")) return;
+      if (e.target.closest(".tb-prev")) { i = Math.max(0, i - 1); dir = -1; return show(); }
+      if (e.target.closest(".tb-next") || e.target === hole || e.target === w) { if (i >= S.length - 1) return end(); i++; dir = 1; show(); }
     });
     window.addEventListener("resize", function rs() { if (!w.isConnected) return window.removeEventListener("resize", rs); place(); });
     requestAnimationFrame(function () { w.classList.add("on"); show(); });
@@ -5166,12 +5184,57 @@
     if (h && h !== "home") return;
     setTimeout(function () { if (TOUR_WANT && (!location.hash || location.hash === "#home")) tourStart(); }, document.body.classList.contains("ready") ? 450 : 1300);
   }
+  /* ---------------- 업데이트 소식(새 기능 튜토리얼) (2026-11-20 장동욱 "대규모 업데이트 생기면 회원님들이 접속하면 튜토리얼처럼 새 기능 설명")
+     WN 맨 위에 한 덩어리 추가 → 회원 폰이 홈을 열 때 아직 안 본 소식이면 한 번: 소개 카드(무엇이 생겼는지 목록) → 단계마다 그 화면으로 이동해 그 칸을 동그랗게 비춤 → 끝 카드 후 홈으로.
+     본 기록은 이 폰 localStorage ptnote:<주소>:wn(마지막으로 본 id). 처음 둘러보기를 본 새 회원은 지금까지 소식은 본 걸로. WN_DAYS일 지난 소식은 저절로 안 뜸.
+     ⚙️ 설정 "업데이트 소식 다시 보기"·주소 ?wn 으로 언제든(선생님 폰에서 미리보기도 이걸로). 선생님 폰·안내서 데모·iframe 안에선 저절로 안 뜸.
+     단계: { h:"#화면", pre:함수(선택), s:"비출 칸 선택자", t:"제목", b:"설명(\n 줄바꿈)" } — 회원 화면에 그 칸이 없으면(그룹 PT 등) 그 단계는 저절로 건너뜀.
+     새 소식 쓰는 법은 스킬 pt-update-tour. 새 탭·칸이면 처음 둘러보기(tourSteps)에도 한 줄 추가. */
+  var WN = [
+    { id: "2026-11-20", t: "식단 탭 · 배지 케이스 업데이트",
+      items: ["📸 먹은 기록 — 사진만 찍으면 탄단지·칼로리 분석", "📖 식단 가이드 — 탄단지·식이섬유·끼니 이야기", "💊 영양제 가이드 — 남녀별 추천 조합", "🏅 홈 배지 케이스 새 디자인"],
+      steps: [
+        { h: "#home", s: ".hbcase", t: "배지 케이스가 새로워졌어요", b: "가운데는 내 최고 배지가 자동으로,\n둘레 6칸은 내가 고른 배지를 넣어요.\n누르면 크게, 꾹 누르면 넣고 빼기!" },
+        { h: "#diet", s: ".db-tabs", t: "식단 탭에 칸이 늘었어요", b: "위 전환 칸에서\n먹은 기록 · 식단 가이드로 바로 넘어가요." },
+        { h: "#diet-log", s: ".ml-add", t: "📸 먹은 기록", b: "먹기 전에 사진 한 장 찍어 올리면\n음식·양·탄단지·칼로리를 읽어 줘요.\n선생님도 같이 보고 한마디 남겨요." },
+        { h: "#diet-guide", s: ".dg-sub", t: "📖 식단 가이드 · 💊 영양제", b: "탄단지가 왜 중요한지, 식이섬유, 끼니 거르면 안 되는 이유.\n옆 '영양제' 칸엔 남녀별 추천 조합이 있어요." }
+      ] }
+  ];
+  var WN_K = "ptnote:" + SLUG + ":wn", WN_DAYS = 21, WN_WANT = false;
+  function wnSeen() { try { return localStorage.getItem(WN_K) || ""; } catch (e) { return ""; } }
+  function wnSeenAll() { if (WN[0]) { try { localStorage.setItem(WN_K, WN[0].id); } catch (e) {} } }
+  function wnFresh(w) { var d = new Date(String(w.id).slice(0, 10) + "T00:00:00"); return !isNaN(d) && (Date.now() - d) / 864e5 <= WN_DAYS; }
+  function wnList() { var seen = wnSeen(); return WN.filter(function (w) { return w.id > seen && wnFresh(w); }).slice(0, 2); }
+  try {
+    if (!COACH_MODE && !DEMO && window.self === window.top) {
+      if (TOUR_WANT) wnSeenAll();   /* 새 회원은 처음 둘러보기만 */
+      else WN_WANT = wnList().length > 0;
+    }
+  } catch (e) {}
+  if (/[?&]wn\b/.test(location.search)) WN_WANT = true;
+  function wnSteps(L) {
+    var items = [], steps = [];
+    L.forEach(function (w) { items = items.concat(w.items || []); steps = steps.concat(w.steps || []); });
+    return [{ c: 1, h: "#home", t: "새 기능이 생겼어요 🎉", b: tourName() + "님, PT노트가 업데이트됐어요!", l: items, ok: "보러 가기" }]
+      .concat(steps)
+      .concat([{ c: 1, h: "#home", t: "업데이트 둘러보기 끝! 💪", b: "다시 보고 싶으면\n오른쪽 위 ⚙️ 설정 → '업데이트 소식'에서 볼 수 있어요.", ok: "확인" }]);
+  }
+  function wnStart(force) {
+    var L = force ? WN.slice(0, 1) : wnList(); if (!L.length || TOUR_ON) return;
+    tourStart(wnSteps(L), { skip: "나중에 볼게요", done: function () { if (!COACH_MODE && !DEMO) wnSeenAll(); } });
+  }
+  function wnMaybe() {
+    if (!WN_WANT || TOUR_ON || TOUR_WANT) return;
+    var h = location.hash.replace("#", ""); if (h && h !== "home") return;
+    setTimeout(function () { if (WN_WANT && !TOUR_ON && (!location.hash || location.hash === "#home")) wnStart(/[?&]wn\b/.test(location.search)); }, document.body.classList.contains("ready") ? 600 : 1500);
+  }
   /* 위 막대 ⚙️ 설정 (2026-11-13 "상단 지수 아이콘 옆에 설정 아이콘 — 앱 사용법·홈 화면 앱 추가, 기존 항목 없애고") */
   function gearMenu() {
     var old = document.getElementById("gearMenu"); if (old) { old.remove(); return; }
     var E = typeof instEnv === "function" ? instEnv() : { standalone: true }, g = document.getElementById("gearBtn");
     var m = document.createElement("div"); m.id = "gearMenu"; m.className = "gmenu"; m.setAttribute("role", "menu");
     m.innerHTML = '<a href="#home" role="menuitem" data-tour="1"><span>🧭</span><b>앱 사용법 다시 보기</b></a>' +
+      (WN.length ? '<a href="#home" role="menuitem" data-wn="1"><span>🆕</span><b>업데이트 소식</b></a>' : '') +
       '<a href="#app" role="menuitem"><span>📲</span><b>' + (E.standalone ? '홈 화면 앱 설치 안내' : '홈 화면에 앱으로 추가하기') + '</b></a>' +
       '<div class="gm-theme" role="group" aria-label="다크 모드"><span>🌙</span><b>다크 모드</b><i>' +
       [["auto", "자동"], ["dark", "켜기"], ["light", "끄기"]].map(function (o) { return '<button type="button" data-th="' + o[0] + '"' + (themeGet() === o[0] ? ' aria-pressed="true"' : '') + '>' + o[1] + '</button>'; }).join("") + '</i></div>';   /* 2026-11-13 "앱아이콘 설치 옵션 왜 뺐냐" — 앱으로 열었어도 항상 보이게 */
@@ -5194,6 +5257,8 @@
   }
   (function () { var g = document.getElementById("gearBtn"); if (g) g.addEventListener("click", function (e) { e.stopPropagation(); gearMenu(); }); })();
   document.addEventListener("click", function (e) {
+    var wa = e.target.closest("[data-wn]");
+    if (wa) { e.preventDefault(); if (location.hash && location.hash !== "#home") { LINKAT = Date.now(); location.hash = "#home"; } window.scrollTo(0, 0); setTimeout(function () { wnStart(true); }, 500); return; }
     var a = e.target.closest("[data-tour]"); if (!a) return;
     TOUR_WANT = true;
     if (!location.hash || location.hash === "#home") { e.preventDefault(); window.scrollTo(0, 0); tourMaybe(); }
@@ -5259,6 +5324,7 @@
     else if (hsh === "routine") { html = renderRoutine(); tab = "routine"; }
     else if (hsh.indexOf("routine-") === 0 && (DAY_KO[hsh.slice(8)] || isRotKey(hsh.slice(8)))) { html = renderRoutine(hsh.slice(8)); tab = "routine"; scrollDay = true; }
     else if (hsh === "diet") { html = renderDiet(); tab = "diet"; }
+    else if (hsh === "diet-log") { DB_TAB = ML_ON ? "log" : null; html = renderDiet(); tab = "diet"; }   /* 먹은 기록 바로 열기 (2026-11-20 업데이트 소식) */
     else if (hsh === "diet-guide") { DB_TAB = "guide"; DG_SUB = "food"; html = renderDiet(); tab = "diet"; }
     else if (hsh === "diet-supp") { DB_TAB = "guide"; DG_SUB = "supp"; html = renderDiet(); tab = "diet"; }   /* 영양제 가이드 바로 열기 */   /* 식단 가이드 바로 열기 (2026-11-20) */
     else if (hsh === "notice") { html = renderNotice(); tab = "notice"; }
@@ -5379,8 +5445,8 @@
   window.addEventListener("resize", function () { viewHeal("크기"); });
   document.addEventListener("visibilitychange", function () { if (!document.hidden) setTimeout(function () { viewHeal("돌아옴"); }, 300); });
   [800, 2500].forEach(function (t) { setTimeout(function () { viewHeal("처음"); }, t); });
-  window.addEventListener("hashchange", function () { route(); tourMaybe(); });
-  route(); tourMaybe();
+  window.addEventListener("hashchange", function () { route(); tourMaybe(); wnMaybe(); });
+  route(); tourMaybe(); wnMaybe();
   cmemoFill();
   (function () {   /* 로딩 화면 걷기 — 앱 아이콘으로 열었을 때 0.6초는 보이게, 그 밖(아이패드 칸 안·안내서 데모)은 바로 */
     var t0 = (window.performance && performance.timing && performance.timing.navigationStart) || Date.now();

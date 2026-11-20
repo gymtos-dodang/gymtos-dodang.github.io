@@ -94,3 +94,6 @@ D .atttoast { background: #2A2A30; color: var(--ink); box-shadow: 0 0 0 1px rgba
 
 /* 배지 케이스 칩 글씨는 흰색 그대로 (2026-11-20) */
 D .bc-cname span, D .bc-pb em { color: #fff; }
+
+/* 업데이트 소식 목록 칸 — 카드(paper)와 같은 색이라 한 단계 밝게 (2026-11-20) */
+D .tour-ul { background: var(--card2); }

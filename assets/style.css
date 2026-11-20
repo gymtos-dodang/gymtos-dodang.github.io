@@ -2649,6 +2649,12 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .bc-pb em { position: absolute; top: 3px; right: 3px; font-style: normal; font-size: 9px; font-weight: 900; color: #fff; background: rgba(0, 0, 0, .4); padding: 1px 5px; border-radius: 99px; }
 .bc-all { display: block; margin-top: 12px; text-align: center; font-size: 13px; font-weight: 800; color: rgba(255, 255, 255, .55); text-decoration: none; }
 
+/* 2026-11-20 업데이트 소식(새 기능 튜토리얼) — 화면 넘어가는 동안 카드 흐리게 */
+.tour-card { transition: top .38s cubic-bezier(.2, .8, .2, 1), opacity .2s; }
+.tour-card.wait { opacity: .25; }
+.tour-ul { list-style: none; margin: -4px 0 16px; padding: 12px 14px; border-radius: 14px; background: #F4F5F8; text-align: left; display: grid; gap: 7px; }
+.tour-ul li { font-size: 13.5px; font-weight: 700; line-height: 1.45; color: #2A2E38; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -2852,6 +2858,8 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .dg-go { background: var(--seal); }
 :where(html:not([data-theme="light"])) .dg-sub button.on { background: var(--seal); }
 :where(html:not([data-theme="light"])) .sp-pyr .l1 { background: var(--seal); }
+:where(html:not([data-theme="light"])) .tour-ul { background: var(--paper); }
+:where(html:not([data-theme="light"])) .tour-ul li { color: var(--ink); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -2949,6 +2957,9 @@ html:not([data-theme="light"]) .atttoast { background: #2A2A30; color: var(--ink
 
 /* 배지 케이스 칩 글씨는 흰색 그대로 (2026-11-20) */
 html:not([data-theme="light"]) .bc-cname span, html:not([data-theme="light"]) .bc-pb em { color: #fff; }
+
+/* 업데이트 소식 목록 칸 — 카드(paper)와 같은 색이라 한 단계 밝게 (2026-11-20) */
+html:not([data-theme="light"]) .tour-ul { background: var(--card2); }
 
 }
 :where(html[data-theme="dark"]) .num { background: var(--seal); }
@@ -3152,6 +3163,8 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .dg-go { background: var(--seal); }
 :where(html[data-theme="dark"]) .dg-sub button.on { background: var(--seal); }
 :where(html[data-theme="dark"]) .sp-pyr .l1 { background: var(--seal); }
+:where(html[data-theme="dark"]) .tour-ul { background: var(--paper); }
+:where(html[data-theme="dark"]) .tour-ul li { color: var(--ink); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {
@@ -3249,5 +3262,8 @@ html[data-theme="dark"] .atttoast { background: #2A2A30; color: var(--ink); box-
 
 /* 배지 케이스 칩 글씨는 흰색 그대로 (2026-11-20) */
 html[data-theme="dark"] .bc-cname span, html[data-theme="dark"] .bc-pb em { color: #fff; }
+
+/* 업데이트 소식 목록 칸 — 카드(paper)와 같은 색이라 한 단계 밝게 (2026-11-20) */
+html[data-theme="dark"] .tour-ul { background: var(--card2); }
 
 /* DARK-END */
