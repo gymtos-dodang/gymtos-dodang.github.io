@@ -15,3 +15,5 @@
 - 창고 주소(ATT_API)는 assets/site.js·app.js·coach-tqqnlh/index.html에 있음 — 바꾸면 전부. 선생님 열쇠는 저장소에 넣지 말 것(RT_KEY_HASH 지문만).
 - 지금 쓰는 저장소 키: `mw:<주소>:log`(운동 기록) · `mw:<주소>:mv`(요일 옮기기) · `mw:<주소>:diet`(내 식단 짜기) · `pub:m:<주소>:growth`(처음 무게) · `pub:m:<주소>:member`(폰에서 만든 회원) · `pub:m:roster-list:members`(공개 회원 목록) · `pub:all:rank`(출석 순위) · `coach:members` · `coach:memo:<주소>`.
 
+
+- 먹은 기록(2026-11-20): 시트 "식단기록" 탭(회원주소·이름·날짜·끼니·음식 JSON·kcal·사진ID·작은사진·기록ID·기록시각·쓴사람·메모·선생님한마디) + 드라이브 "PT노트 식단 사진". 사진 자동 분석 meal_ai는 스크립트 속성 `AI_KEY`(sk-ant… = Claude / AIza… = Gemini), `AI_MODEL`(선택)로 동작, 회원 한 명 6시간에 20장까지. 열쇠는 Apps Script 프로젝트 설정에만.

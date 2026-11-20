@@ -2448,6 +2448,46 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .vw-b { flex: 1 1 0; min-width: 0; width: auto; border: 0; border-radius: 999px; padding: 9px 0; font: inherit; font-weight: 700; font-size: 14px; background: transparent; color: var(--ink, #1A1A1E); cursor: pointer; }
 .vw-b[aria-pressed="true"] { background: var(--primary, #E1141E); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
 
+/* 먹은 기록 (2026-11-20 "식단칸에 사진으로 찍어 기록 + 음식·양·순탄수·단백질·지방·칼로리 분석, 따로 전환칸") */
+.ml-date { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 0 12px; }
+.ml-date b { font-size: 16px; font-weight: 900; } .ml-date b i { font-style: normal; font-size: 11.5px; font-weight: 900; color: #fff; background: var(--primary); border-radius: 99px; padding: 2px 8px; margin-left: 6px; vertical-align: 2px; }
+.ml-date button { width: 38px; height: 38px; border-radius: 50%; border: 0; background: var(--paper); color: var(--ink); font: inherit; font-size: 22px; line-height: 1; cursor: pointer; } .ml-date button:disabled { opacity: .3; }
+.ml-sum { margin-bottom: 12px; } .ml-k { margin-bottom: 10px; } .ml-k small { display: block; font-size: 12px; font-weight: 800; color: var(--sub); }
+.ml-k > b { display: block; font-size: 28px; font-weight: 900; letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin: 1px 0 7px; } .ml-k > b i { font-style: normal; font-size: 13px; font-weight: 700; color: var(--sub); letter-spacing: 0; }
+.ml-k .db-track { height: 10px; flex: none; } .ml-tip { margin: 8px 0 0; font-size: 12px; color: var(--faint); }
+.ml-add { width: 100%; justify-content: center; gap: 8px; padding: 13px; font-size: 16px; border-radius: 16px; margin-bottom: 14px; } .ml-add svg { width: 21px; height: 21px; }
+.ml-empty { text-align: center; color: var(--sub); font-size: 14px; line-height: 1.6; padding: 26px 10px; margin: 0; }
+.ml-list { display: flex; flex-direction: column; gap: 10px; }
+.ml-card { display: flex; gap: 12px; background: var(--paper); border-radius: 20px; padding: 12px; cursor: pointer; min-width: 0; }
+.ml-ph { flex: none; width: 92px; height: 92px; border-radius: 14px; overflow: hidden; background: var(--tint); display: flex; align-items: center; justify-content: center; color: var(--primary); }
+.ml-ph img { width: 100%; height: 100%; object-fit: cover; display: block; } .ml-ph svg { width: 30px; height: 30px; opacity: .6; }
+.ml-b { flex: 1; min-width: 0; } .ml-h { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; } .ml-h > b { font-size: 16px; font-weight: 900; }
+.ml-by { font-size: 10.5px; font-weight: 900; color: var(--sub); background: var(--page); border-radius: 99px; padding: 2px 7px; white-space: nowrap; } .ml-by.c { color: #fff; background: var(--primary); }
+.ml-h em { margin-left: auto; font-style: normal; font-size: 17px; font-weight: 900; font-variant-numeric: tabular-nums; white-space: nowrap; } .ml-h em i { font-style: normal; font-size: 11px; font-weight: 700; color: var(--sub); margin-left: 2px; }
+.ml-it { list-style: none; margin: 0 0 7px; padding: 0; } .ml-it li { display: flex; justify-content: space-between; gap: 8px; font-size: 13.5px; line-height: 1.55; }
+.ml-it li span { font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ml-it li i { font-style: normal; color: var(--sub); font-size: 12px; white-space: nowrap; flex: none; max-width: 58%; overflow: hidden; text-overflow: ellipsis; }
+.ml-mac { display: flex; gap: 5px; flex-wrap: wrap; } .ml-mac span { font-size: 11.5px; font-weight: 700; color: var(--sub); background: var(--page); border-radius: 8px; padding: 3px 7px; white-space: nowrap; } .ml-mac b { color: var(--ink); font-weight: 900; }
+.ml-wait { margin: 0; font-size: 13px; font-weight: 700; color: var(--primary); }
+.ml-memo { margin: 7px 0 0; font-size: 12.5px; color: var(--sub); } .ml-memo::before { content: "메모 · "; font-weight: 800; }
+.ml-cm { margin: 8px 0 0; font-size: 13px; line-height: 1.5; background: var(--tint); border-radius: 10px; padding: 7px 10px; } .ml-cm b { display: block; font-size: 11px; color: var(--primary); }
+.ml-row2 { display: grid; grid-template-columns: 1fr 1.25fr; gap: 10px; } .ml-row2 .ibs-f { min-width: 0; } .ml-row2 input[type="date"] { font-size: 15px; padding: 10px 8px; min-width: 0; }
+.ml-seg { display: flex; gap: 4px; height: 100%; } .ml-seg button { flex: 1; min-width: 0; border: 1.5px solid var(--line); background: var(--paper); color: var(--sub); font: inherit; font-size: 13.5px; font-weight: 800; border-radius: 10px; padding: 10px 0; cursor: pointer; }
+.ml-seg button.on { border-color: var(--primary); background: var(--primary); color: #fff; }
+.ml-ai { margin: 0; font-size: 13px; font-weight: 700; line-height: 1.5; border-radius: 10px; padding: 8px 11px; background: var(--tint); color: var(--primary); } .ml-ai.warn { background: var(--page); color: var(--sub); }
+.ml-ai.wait { animation: mlPulse 1.2s ease-in-out infinite; } @keyframes mlPulse { 50% { opacity: .5; } }
+.ml-items { display: flex; flex-direction: column; gap: 8px; } .ml-items:empty { display: none; }
+.ml-i { border: 1.5px solid var(--line); border-radius: 12px; padding: 9px 10px 10px; background: var(--paper); }
+.ml-i1 { display: flex; gap: 6px; align-items: center; } .ml-n { flex: 1; min-width: 0; font: inherit; font-size: 16px; font-weight: 800; border: 0; background: none; color: var(--ink); padding: 3px 0; } .ml-n:focus { outline: none; }
+.ml-rm { flex: none; width: 28px; height: 28px; border-radius: 50%; border: 0; background: var(--page); color: var(--sub); font-size: 18px; line-height: 1; cursor: pointer; }
+.ml-u { display: block; font-size: 12px; color: var(--faint); margin: -1px 0 5px; }
+.ml-i2 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 4px; } .ml-i2 label { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ml-i2 span { font-size: 10.5px; font-weight: 800; color: var(--sub); text-align: center; white-space: nowrap; }
+.ml-i2 input { width: 100%; min-width: 0; font: inherit; font-size: 16px; font-weight: 800; text-align: center; padding: 7px 2px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--page); color: var(--ink); font-variant-numeric: tabular-nums; }
+.ml-i2 input:focus { outline: none; border-color: var(--primary); } .ml-i2 label:last-child input { color: var(--primary); }
+.ml-plus, .ml-big, .ml-del { border: 0; background: none; font: inherit; font-size: 13.5px; font-weight: 800; color: var(--primary); padding: 4px 0; cursor: pointer; align-self: flex-start; } .ml-del { align-self: center; color: var(--sub); }
+.ml-tot { display: flex; flex-direction: column; gap: 1px; border-top: 1.5px dashed var(--line); padding-top: 9px; } .ml-tot b { font-size: 17px; font-weight: 900; } .ml-tot span { font-size: 12.5px; color: var(--sub); font-weight: 700; }
+.mlsheet textarea { font: inherit; font-size: 15px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); width: 100%; resize: vertical; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -2643,6 +2683,9 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .db-seg button { background-image: linear-gradient(160deg, var(--paper), var(--tint)); }
 :where(html:not([data-theme="light"])) .fvs.no { color: var(--sub); }
 :where(html:not([data-theme="light"])) .vw-b[aria-pressed="true"] { background: var(--seal); }
+:where(html:not([data-theme="light"])) .ml-date b i { background: var(--seal); }
+:where(html:not([data-theme="light"])) .ml-by.c { background: var(--seal); }
+:where(html:not([data-theme="light"])) .ml-seg button.on { background: var(--seal); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -2932,6 +2975,9 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .db-seg button { background-image: linear-gradient(160deg, var(--paper), var(--tint)); }
 :where(html[data-theme="dark"]) .fvs.no { color: var(--sub); }
 :where(html[data-theme="dark"]) .vw-b[aria-pressed="true"] { background: var(--seal); }
+:where(html[data-theme="dark"]) .ml-date b i { background: var(--seal); }
+:where(html[data-theme="dark"]) .ml-by.c { background: var(--seal); }
+:where(html[data-theme="dark"]) .ml-seg button.on { background: var(--seal); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {

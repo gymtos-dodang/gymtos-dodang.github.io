@@ -16,6 +16,10 @@ const KV_SHEET = '저장소';
 const RT_KEY_HASH = '4756ec53d712de9927d43e17e7efda99bb0a8312a08e1b82be440c1f2cf5da25';
 const IB_SHEET = '인바디';
 const IB_FOLDER = 'PT노트 인바디 사진';
+// 2026-11-20 먹은 기록(식단 사진): 시트 "식단기록" 탭 + 드라이브 "PT노트 식단 사진" 폴더.
+//   사진 자동 분석(meal_ai)은 프로젝트 설정 → 스크립트 속성 AI_KEY(sk-ant… = Claude / AIza… = Gemini)가 있어야 동작. AI_MODEL로 모델 바꾸기. 열쇠는 코드에 넣지 말 것.
+const ML_SHEET = '식단기록';
+const ML_FOLDER = 'PT노트 식단 사진';
 
 function book_() {
   const act = SpreadsheetApp.getActiveSpreadsheet();
@@ -91,6 +95,68 @@ function ibRow_(s, m, id) {
 function num_(x, lo, hi) {
   const n = Number(x);
   return isFinite(n) && n >= lo && n <= hi ? Math.round(n * 10) / 10 : null;
+}
+
+/* ---------------- 먹은 기록 (2026-11-20) */
+function mlSheet_() { return rtSheet_(ML_SHEET, ['회원주소', '이름', '날짜', '끼니', '음식(JSON)', 'kcal', '사진ID', '작은사진', '기록ID', '기록시각', '쓴사람', '메모', '선생님한마디']); }
+function mlFolder_() {
+  const p = PropertiesService.getScriptProperties();
+  const id = p.getProperty('MLF');
+  if (id) { try { return DriveApp.getFolderById(id); } catch (e) {} }
+  const f = DriveApp.createFolder(ML_FOLDER);
+  p.setProperty('MLF', f.getId());
+  return f;
+}
+function mlList_(m, d) {   // d 있으면 그날만, 없으면 최근 14일
+  const v = mlSheet_().getDataRange().getValues(), out = [];
+  const from = Utilities.formatDate(new Date(Date.now() - 13 * 864e5), 'Asia/Seoul', 'yyyy-MM-dd');
+  for (let i = 1; i < v.length; i++) {
+    if (v[i][0] !== m) continue;
+    const dd = txt_(v[i][2], 'yyyy-MM-dd').replace(/^'/, '');
+    if (d ? dd !== d : dd < from) continue;
+    let it = []; try { it = JSON.parse(v[i][4] || '[]'); } catch (e) {}
+    out.push({ id: String(v[i][8]), d: dd, t: String(v[i][3]), it: it, k: Number(v[i][5]) || 0, ph: v[i][6] ? 1 : 0, th: String(v[i][7] || ''),
+      at: txt_(v[i][9], 'HH:mm'), by: String(v[i][10] || 'm'), memo: String(v[i][11] || ''), cm: String(v[i][12] || '') });
+  }
+  return out;
+}
+function mlRow_(s, m, id) {
+  const v = s.getDataRange().getValues();
+  for (let i = 1; i < v.length; i++) if (v[i][0] === m && String(v[i][8]) === id) return { row: i + 1, photo: String(v[i][6] || ''), th: String(v[i][7] || ''), by: String(v[i][10] || 'm'), cm: String(v[i][12] || ''), at: v[i][9] };
+  return null;
+}
+const ML_PROMPT = '이 사진은 한 끼 식사입니다. 보이는 음식을 하나씩 알아보고, 그릇·수저·손 크기를 참고해 먹는 양을 어림한 뒤 영양을 계산하세요. 한국 음식·한국 제품 기준. ' +
+  '순탄수 = 탄수화물 - 식이섬유. 조리에 쓴 기름·양념도 넣으세요. 다른 말 없이 JSON만 답하세요: ' +
+  '{"items":[{"n":"음식 이름","g":먹는 양(g 숫자),"u":"알기 쉬운 양(예: 1공기, 손바닥 1장)","c":순탄수 g,"p":단백질 g,"f":지방 g,"k":칼로리 kcal}],"note":"한 줄 평(30자 안)"} ' +
+  '음식 사진이 아니면 {"items":[],"note":"음식이 안 보여요"}';
+function mealAi_(key, model, img, hint) {
+  const prompt = ML_PROMPT + (hint ? ' 먹은 사람이 적은 메모: ' + hint.slice(0, 120) : '');
+  let text = '';
+  if (/^AIza/.test(key)) {
+    const r = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + (model || 'gemini-2.5-flash') + ':generateContent?key=' + encodeURIComponent(key), {
+      method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+      payload: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: img } }, { text: prompt }] }], generationConfig: { temperature: 0.2 } }) });
+    const j = JSON.parse(r.getContentText());
+    if (!j.candidates) throw new Error('gemini ' + r.getResponseCode());
+    text = j.candidates[0].content.parts.map(function (x) { return x.text || ''; }).join('');
+  } else {
+    const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+      method: 'post', contentType: 'application/json', muteHttpExceptions: true, headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+      payload: JSON.stringify({ model: model || 'claude-haiku-4-5', max_tokens: 900,
+        messages: [{ role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: img } }, { type: 'text', text: prompt }] }] }) });
+    const j = JSON.parse(r.getContentText());
+    if (!j.content) throw new Error('claude ' + r.getResponseCode());
+    text = j.content.map(function (x) { return x.text || ''; }).join('');
+  }
+  const a = text.indexOf('{'), z = text.lastIndexOf('}');
+  const o = JSON.parse(text.slice(a, z + 1));
+  return { items: mlItems_(o.items), note: String(o.note || '').slice(0, 60) };
+}
+function mlItems_(arr) {
+  return (Array.isArray(arr) ? arr : []).slice(0, 12).map(function (x) {
+    x = x || {};
+    return { n: String(x.n || '').slice(0, 40), g: num_(x.g, 0, 5000), u: String(x.u || '').slice(0, 20), c: num_(x.c, 0, 2000), p: num_(x.p, 0, 2000), f: num_(x.f, 0, 2000), k: num_(x.k, 0, 20000) };
+  }).filter(function (x) { return x.n; });
 }
 
 function memberOk_(m) { return /^[a-z0-9-]{3,40}$/.test(m); }
@@ -183,6 +249,28 @@ function doGet(e) {
   if (p.a === 'inbody') return json_({ ok: true, inbody: ibList_(m) });
   if (p.a === 'bn') return json_({ ok: true, bnotices: bnList_() });
   if (p.a === 'all') return json_({ ok: true, all: allFor_(String(p.ms || '')) });   // 2026-11-13 선생님 페이지: 회원 n명을 요청 1번으로
+  if (p.a === 'meal') return json_({ ok: true, meal: mlList_(m, /^\d{4}-\d{2}-\d{2}$/.test(String(p.d || '')) ? String(p.d) : '') });
+  if (p.a === 'meal_img') {
+    const r = mlRow_(mlSheet_(), m, String(p.id || ''));
+    if (!r || !r.photo) return json_({ ok: false, error: 'photo' });
+    const blob = DriveApp.getFileById(r.photo).getBlob();
+    return json_({ ok: true, data: 'data:' + blob.getContentType() + ';base64,' + Utilities.base64Encode(blob.getBytes()) });
+  }
+  if (p.a === 'meal_del') {
+    const lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      const s = mlSheet_();
+      const r = mlRow_(s, m, String(p.id || ''));
+      if (r) {
+        if (r.photo) { try { DriveApp.getFileById(r.photo).setTrashed(true); } catch (err) {} }
+        s.deleteRow(r.row);
+      }
+      return json_({ ok: true, meal: mlList_(m, '') });
+    } finally {
+      lock.releaseLock();
+    }
+  }
   if (p.a === 'inbody_img') {
     const r = ibRow_(ibSheet_(), m, String(p.id || ''));
     if (!r || !r.photo) return json_({ ok: false, error: 'photo' });
@@ -237,7 +325,7 @@ function doGet(e) {
   try { routine = rtGet_(m); } catch (err) {}
   try { bnotices = bnList_(); } catch (err) {}
   try { kv = kvFor_(m); } catch (err) {}
-  return json_({ ok: true, days: days, routine: routine, bnotices: bnotices, kv: kv });
+  return json_({ ok: true, days: days, routine: routine, bnotices: bnotices, kv: kv, meal: 1 });   // meal: 1 = 먹은 기록을 쓸 수 있는 창고
 }
 
 /* 선생님 페이지용: 회원 여러 명의 출석·폰 루틴·저장소를 시트 한 번씩만 읽어서 */
@@ -287,6 +375,43 @@ function doPost(e) {
     if (!b.img || String(b.img).length > 8000000) return json_({ ok: false, error: 'img' });
     try { return json_({ ok: true, text: ocr_(String(b.img), b.mime === 'application/pdf') }); }
     catch (err) { return json_({ ok: false, error: 'ocr', msg: String(err) }); }
+  }
+  if (b.a === 'meal_ai') {   // 식단 사진 → 음식·양·순탄수·단백질·지방·칼로리 (스크립트 속성 AI_KEY 필요)
+    if (!b.img || String(b.img).length > 3000000) return json_({ ok: false, error: 'img' });
+    const P = PropertiesService.getScriptProperties(), key = P.getProperty('AI_KEY');
+    if (!key) return json_({ ok: false, error: 'nokey' });
+    const c = CacheService.getScriptCache(), ck = 'mlai:' + m, n = Number(c.get(ck) || 0);
+    if (n >= 20) return json_({ ok: false, error: 'limit' });   // 회원 한 명이 6시간에 20장까지
+    c.put(ck, String(n + 1), 21600);
+    try { return json_({ ok: true, ai: mealAi_(key, P.getProperty('AI_MODEL'), String(b.img), String(b.hint || '')) }); }
+    catch (err) { return json_({ ok: false, error: 'ai', msg: String(err) }); }
+  }
+  if (b.a === 'meal_add') {   // 새 기록 또는 고치기(id) — 회원·선생님 모두. 선생님 열쇠가 맞으면 쓴사람 c, 한마디(cm)도 저장
+    const d = String(b.d || '');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return json_({ ok: false, error: 'date' });
+    const t = ['아침', '점심', '저녁', '간식'].indexOf(String(b.t)) >= 0 ? String(b.t) : '간식';
+    const it = mlItems_(b.it), memo = String(b.memo || '').slice(0, 200), coach = keyOk_(b.key);
+    let k = 0; it.forEach(function (x) { k += x.k || 0; });
+    const lock = LockService.getScriptLock();
+    lock.waitLock(20000);
+    try {
+      const s = mlSheet_(), r = b.id ? mlRow_(s, m, String(b.id)) : null;
+      let photo = r ? r.photo : '', th = r ? r.th : '';
+      if (b.img && String(b.img).length < 8000000) {
+        const blob = Utilities.newBlob(Utilities.base64Decode(String(b.img)), 'image/jpeg', m + '_' + d + '_' + Date.now() + '.jpg');
+        if (photo) { try { DriveApp.getFileById(photo).setTrashed(true); } catch (err) {} }
+        photo = mlFolder_().createFile(blob).getId();
+        th = String(b.th || '').slice(0, 40000);
+      }
+      if (!it.length && !photo && !memo) return json_({ ok: false, error: 'empty' });
+      const cm = coach && b.cm !== undefined ? String(b.cm || '').slice(0, 300) : (r ? r.cm : '');
+      const row = [m, String(b.n || ''), "'" + d, t, JSON.stringify(it), Math.round(k), photo, th, r ? String(b.id) : Utilities.getUuid().replace(/-/g, '').slice(0, 10), r ? r.at : new Date(), r ? r.by : (coach ? 'c' : 'm'), memo, cm];
+      if (r) s.getRange(r.row, 1, 1, row.length).setValues([row]); else s.appendRow(row);
+      SpreadsheetApp.flush();
+      return json_({ ok: true, meal: mlList_(m, '') });
+    } finally {
+      lock.releaseLock();
+    }
   }
   if (b.a === 'kv_get') {   // 선생님: 이름 앞부분(prefix)으로 읽기
     if (!keyOk_(b.key)) return json_({ ok: false, error: 'key' });
