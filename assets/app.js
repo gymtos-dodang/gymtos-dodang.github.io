@@ -2033,7 +2033,7 @@
   }
   var BC_POS = [[-.5, -1], [.5, -1], [1, 0], [.5, 1], [-.5, 1], [-1, 0]];   /* 둘레 6칸: 왼위·오위·오른쪽·오아래·왼아래·왼쪽 (세로 뾰족 육각형 벌집) */
   function bcHtml(d, W, big, sel) {
-    var H = W * 1.1547, g = W * .1, Wd = W + g, Hd = H * .75 + g * .87, CW = W * 4.3, CH = W * 3.72, cx = CW / 2, cy = CH / 2, sc = (W * .86 / 84).toFixed(3);
+    var H = W * 1.1547, g = W * .1, Wd = W + g, Hd = H * .75 + g * .87, CW = W * 3.78, CH = W * 3.62, cx = CW / 2, cy = CH / 2, sc = (W * .98 / 84).toFixed(3);   /* 2026-11-20 2차: 케이스 여백을 위·아래·옆 고르게(약 0.28칸), 배지 조금 크게 */
     function cell(b, k, dx, dy) {
       var tag = big ? "button" : "span", x = (cx + dx * Wd - W / 2).toFixed(1), y = (cy + dy * Hd - H / 2).toFixed(1);
       return '<' + tag + (big ? ' type="button" data-bc="' + k + '"' : '') + ' class="bc-cell' + (k === "c" ? " c" : "") + (b ? "" : " e") + (sel === k ? " sel" : "") + (b && b.sp ? " sp" : "") +
@@ -2047,26 +2047,29 @@
   }
   function bgHomeChip() {   /* 홈 맨 위 오른쪽 작은 케이스 */
     var d = bcData();
-    return '<button type="button" class="hbcase" data-bcopen aria-label="내 배지 케이스 열기' + (d.c ? ' — 대표 ' + esc(d.c.label) : '') + '">' + bcHtml(d, 19, false) + '</button>';
+    return '<button type="button" class="hbcase" data-bcopen aria-label="내 배지 케이스 열기' + (d.c ? ' — 대표 ' + esc(d.c.label) : '') + '">' + bcHtml(d, 20, false) + '</button>';
   }
-  function bcOpen() {
+  function bcOpen() {   /* 2026-11-20 2차: 한 번 누르면 그 배지 이름·받은 날, 꾹 눌러야 넣고 빼는 창(.bc-sheet) */
     if (document.querySelector(".bcwrap")) return;
-    var box = document.createElement("div"), sel = null;
+    var box = document.createElement("div"), sel = null, info = null, lpT = 0, lpXY = null, lpDone = false;
     box.className = "bcwrap";
     function draw() {
       var d = bcData(), h = '<div class="bc-card" role="dialog" aria-modal="true" aria-label="내 배지 케이스">' +
-        '<div class="bc-top"><div><small>MY BADGE CASE</small><b>내 배지 케이스</b></div><button type="button" class="bc-x" data-bcx aria-label="닫기">×</button></div>' +
-        '<div class="bc-stage">' + bcHtml(d, 66, true, sel) + '</div>';
-      if (sel === null) {
-        h += '<p class="bc-help">' + (d.c ? '<b>가운데는 제일 높은 배지</b>가 자동으로 들어가요.<br>둘레 칸을 눌러 자랑하고 싶은 배지를 넣고 빼요.' : '아직 받은 배지가 없어요.<br>배지를 받으면 여기에 모아 둘 수 있어요.') + '</p>';
-        if (d.c) h += '<div class="bc-cname"><span>👑 대표</span><b>' + esc(d.c.label) + '</b></div>';
-      } else if (sel === "c") {
-        h += '<p class="bc-help"><b>👑 ' + esc(d.c ? d.c.label : "") + '</b><br>가운데는 받은 배지 중 제일 높은 등급이 자동으로 들어가요. 더 높은 배지를 받으면 바뀌어요.</p>';
-      } else {
+        '<div class="bc-top"><div><small>JANG KAREDO · BADGE CASE</small><b>내 배지 케이스</b></div><button type="button" class="bc-x" data-bcx aria-label="닫기">×</button></div>' +
+        '<div class="bc-stage">' + bcHtml(d, 64, true, sel) + '</div>';
+      var ib = info === "c" ? d.c : info !== null ? d.s[+info] : null;
+      if (ib) h += '<div class="bc-cname"><span>' + (info === "c" ? "👑 대표" : (+info + 1) + "번 칸") + '</span><b>' + esc(ib.label) + '</b>' + (ib.on && ib.on !== "?" ? '<i>' + ib.on.slice(2).replace(/-/g, ".") + ' 받음</i>' : '') + '</div>';
+      else if (info !== null && info !== "c") h += '<div class="bc-cname"><span>' + (+info + 1) + '번 칸</span><b>비어 있어요</b></div>';
+      else if (d.c) h += '<div class="bc-cname"><span>👑 대표</span><b>' + esc(d.c.label) + '</b></div>';
+      h += '<ul class="bc-how"><li><b>👑 가운데</b>는 받은 배지 중 제일 높은 배지가 자동으로 들어가요</li>' +
+        '<li><b>👆 한 번 누르면</b> 그 배지 이름을 볼 수 있어요</li><li><b>✋ 둘레 칸을 꾹 누르면</b> 배지를 넣고 뺄 수 있어요</li></ul>' +
+        '<a class="bc-all" href="#goal-badges" data-bcx>배지 전체 보기 ›</a></div>';
+      if (sel !== null) {
         var cur = d.s[+sel], pick = d.all.filter(function (b) { return b !== d.c; });
-        h += '<div class="bc-pick"><div class="bc-ph"><b>' + (+sel + 1) + '번 칸' + (cur ? ' · ' + esc(cur.label) : ' · 비어 있어요') + '</b>' +
-          (cur ? '<button type="button" class="bc-out" data-bcout>빼기</button>' : '') + '</div>';
-        if (!pick.length) h += '<p class="bc-help">넣을 수 있는 배지가 아직 없어요. 배지를 더 모아 봐요!</p>';
+        h += '<div class="bc-sheet" role="dialog" aria-label="배지 바꾸기"><div class="bc-ph"><b>' + (+sel + 1) + '번 칸' + (cur ? ' · ' + esc(cur.label) : ' · 비어 있어요') + '</b>' +
+          (cur ? '<button type="button" class="bc-out" data-bcout>빼기</button>' : '') + '<button type="button" class="bc-sx" data-bcsx aria-label="닫기">×</button></div>' +
+          '<p class="bc-sub">넣고 싶은 배지를 눌러요 · 다른 칸에 있던 배지는 자리가 바뀌어요</p>';
+        if (!pick.length) h += '<p class="bc-sub">넣을 수 있는 배지가 아직 없어요. 배지를 더 모아 봐요!</p>';
         else h += '<div class="bc-grid">' + pick.map(function (b) {
           var at = d.s.indexOf(b);
           return '<button type="button" class="bc-pb' + (b === cur ? ' on' : '') + '" data-bcput="' + b.id + '"><span class="bc-pi">' + bgIcon(b) + '</span><i>' + esc(b.label) + '</i>' +
@@ -2074,21 +2077,42 @@
         }).join("") + '</div>';
         h += '</div>';
       }
-      h += '<a class="bc-all" href="#goal-badges" data-bcx>배지 전체 보기 ›</a></div>';
-      box.innerHTML = h;
+      box.innerHTML = h; box.classList.toggle("sheet", sel !== null);
     }
     function close() { box.classList.remove("in"); setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 220); if (/^#?(home)?$/.test(location.hash)) rerender(); }
+    function lpClear() { clearTimeout(lpT); lpT = 0; }
+    box.addEventListener("pointerdown", function (e) {
+      var t = e.target.closest("[data-bc]"); if (!t || sel !== null) return;
+      var k = t.getAttribute("data-bc"); lpDone = false; lpXY = [e.clientX, e.clientY]; lpClear();
+      t.classList.add("press");
+      lpT = setTimeout(function () {
+        lpT = 0; t.classList.remove("press");
+        if (k === "c") { info = "c"; lpDone = true; draw(); attToast("가운데는 제일 높은 배지 자리예요"); return; }
+        lpDone = true; sel = k; info = k; try { navigator.vibrate && navigator.vibrate(15); } catch (e2) {} draw();
+      }, 450);
+    });
+    box.addEventListener("pointermove", function (e) { if (lpT && lpXY && Math.abs(e.clientX - lpXY[0]) + Math.abs(e.clientY - lpXY[1]) > 10) { lpClear(); var p = box.querySelector(".bc-cell.press"); if (p) p.classList.remove("press"); } });
+    ["pointerup", "pointercancel", "pointerleave"].forEach(function (ev) { box.addEventListener(ev, function () { lpClear(); var p = box.querySelector(".bc-cell.press"); if (p) p.classList.remove("press"); }); });
+    box.addEventListener("contextmenu", function (e) { if (e.target.closest("[data-bc]")) e.preventDefault(); });
     box.addEventListener("click", function (e) {
-      if (e.target === box) { close(); return; }
+      if (e.target === box) { if (sel !== null) { sel = null; draw(); } else close(); return; }
       if (e.target.closest("[data-bcx]")) { close(); return; }
+      if (e.target.closest("[data-bcsx]")) { sel = null; draw(); return; }
       var d = bcData(), t;
-      if ((t = e.target.closest("[data-bc]"))) { var k = t.getAttribute("data-bc"); sel = sel === k ? null : k; draw(); return; }
-      if (e.target.closest("[data-bcout]") && sel !== null && sel !== "c") { d.s[+sel] = null; bcSave(d.s); sel = null; draw(); attToast("배지를 뺐어요"); return; }
-      if ((t = e.target.closest("[data-bcput]")) && sel !== null && sel !== "c") {
+      if ((t = e.target.closest("[data-bc]"))) {
+        if (lpDone) { lpDone = false; return; }   /* 꾹 누른 뒤 손 뗄 때 click은 무시 */
+        if (sel !== null) { sel = null; draw(); return; }
+        var k = t.getAttribute("data-bc"); info = info === k ? null : k; draw();
+        if (k !== "c" && !d.s[+k]) attToast("빈 칸이에요 · 꾹 누르면 배지를 넣을 수 있어요");
+        return;
+      }
+      if (sel !== null && !e.target.closest(".bc-sheet")) { sel = null; draw(); return; }
+      if (e.target.closest("[data-bcout]") && sel !== null) { d.s[+sel] = null; bcSave(d.s); sel = null; draw(); attToast("배지를 뺐어요"); return; }
+      if ((t = e.target.closest("[data-bcput]")) && sel !== null) {
         var id = t.getAttribute("data-bcput"), b = d.all.filter(function (x) { return x.id === id; })[0]; if (!b) return;
         var at = d.s.indexOf(b), cur = d.s[+sel];
         if (at >= 0) d.s[at] = cur || null;   /* 다른 칸에 있던 배지면 자리 바꾸기 */
-        d.s[+sel] = b; bcSave(d.s); sel = null; draw(); attToast("배지를 넣었어요");
+        d.s[+sel] = b; bcSave(d.s); info = sel; sel = null; draw(); attToast("배지를 넣었어요");
       }
     });
     draw(); document.body.appendChild(box);
