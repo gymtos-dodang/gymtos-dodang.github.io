@@ -2550,13 +2550,16 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .dg-sub button.on { background: var(--primary); border-color: var(--primary); color: #fff; }
 /* 식단 가이드 05 치팅 (2026-11-20) */
 .dg-cv { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.dg-cv > div { background: var(--paper); border-radius: 16px; padding: 13px 13px 12px; border-top: 5px solid #22A06B; min-width: 0; }
+.dg-cv > div { background: var(--paper); border-radius: 16px; padding: 11px 13px 10px; border-top: 5px solid #22A06B; min-width: 0; }
 .dg-cv > .no { border-top-color: #8A90A0; }
 .dg-cv small { font-size: 11px; font-weight: 900; color: #1C8A5B; }
 .dg-cv .no small { color: var(--sub); }
 .dg-cv b { display: block; margin-top: 2px; font-size: 17px; font-weight: 900; color: var(--ink); }
 .dg-cv i { font-style: normal; font-size: 12px; font-weight: 800; color: var(--faint); }
-.dg-cv p { margin: 6px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--ink); }
+.dg-strat { background: linear-gradient(135deg, var(--hero, var(--primary)), var(--hero2, var(--side))); color: #fff; border-radius: 18px; padding: 15px 16px; display: grid; gap: 8px; }
+.dg-strat b { font-size: 17px; font-weight: 900; line-height: 1.4; }
+.dg-strat em { font-style: normal; text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 4px; }
+.dg-strat span { justify-self: start; font-size: 12.5px; font-weight: 900; background: rgba(255,255,255,.22); padding: 4px 11px; border-radius: 99px; }
 .dg-cv .no b { text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--sub) 60%, transparent); }
 .dg-scale { display: grid; grid-template-columns: 38px 1fr; gap: 10px; background: var(--paper); border-radius: 16px; padding: 13px 14px; border: 1.5px dashed var(--primary); }
 .dg-scale > span { width: 38px; height: 38px; border-radius: 12px; background: var(--tint); display: grid; place-items: center; font-size: 19px; }
