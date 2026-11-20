@@ -2683,12 +2683,12 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 
 /* ===== 먹이주머니 · 동물 레벨업 (2026-11-20, app.js pfBtn·pfOpen·pfHold·pfThrow·goEat) ===== */
 .lvx { display: none; }
-.pet.lv2 .lv-bag, .pet.lv2 .lv-db1, .pet.lv3 .lv-bag, .pet.lv3 .lv-db3, .pet.lv3 .lv-crown { display: inline; }
+.pet.lv2 .lv-bag, .pet.lv2 .lv2o, .pet.lv2 .lv2p, .pet.lv3 .lv-bag, .pet.lv3 .lv2p, .pet.lv3 .lv3o { display: inline; }
 .pet .plv { display: none; position: absolute; inset: -6px -4px 0; pointer-events: none; }
 .pet.lv3 .plv { display: block; }
-.pet .plv i { position: absolute; font-style: normal; color: #FFCF3F; font-size: 10px; text-shadow: 0 0 4px rgba(255, 200, 60, .9); opacity: 0; animation: pfTw 2.2s ease-in-out infinite; }
+.pet .plv i { position: absolute; font-style: normal; color: var(--pfc, #FFCF3F); font-size: 10px; text-shadow: 0 0 4px var(--pfc, #FFCF3F); opacity: 0; animation: pfTw 2.2s ease-in-out infinite; }
 .pet .plv i:nth-child(1) { left: 2px; top: 10px; } .pet .plv i:nth-child(2) { right: 0; top: 2px; font-size: 8px; animation-delay: .8s; } .pet .plv i:nth-child(3) { left: 46%; top: -4px; font-size: 12px; animation-delay: 1.5s; }
-.pet.lv3::before { content: ""; position: absolute; left: 50%; bottom: -2px; width: 66px; height: 18px; margin-left: -33px; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 207, 63, .6), rgba(255, 207, 63, 0)); animation: pfGlow 1.8s ease-in-out infinite alternate; z-index: -1; pointer-events: none; }
+.pet.lv3::before { content: ""; position: absolute; left: 50%; bottom: -2px; width: 66px; height: 18px; margin-left: -33px; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--pfc, #FFCF3F) 60%, transparent), transparent); animation: pfGlow 1.8s ease-in-out infinite alternate; z-index: -1; pointer-events: none; }
 @keyframes pfTw { 0%, 100% { opacity: 0; transform: scale(.4) rotate(0); } 40%, 60% { opacity: 1; transform: scale(1) rotate(45deg); } }
 @keyframes pfGlow { from { opacity: .45; transform: scaleX(.85); } to { opacity: 1; transform: scaleX(1.05); } }
 .petwalk .pet.eat.pfeat svg, .petwalk .pet.hop.eat.pfeat .b-all { animation-iteration-count: infinite; }
@@ -2751,6 +2751,7 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 @keyframes pfLvUp { 0% { opacity: 0; transform: translate(-50%, -60%) scale(.4); } 25% { opacity: 1; transform: translate(-50%, -130%) scale(1.25); } 80% { opacity: 1; transform: translate(-50%, -150%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -170%); } }
 .pflvup .frpop small { color: #E0820B; }
 .pflvup .frpop-pic.pet { position: relative; cursor: default; }
+.pflvup .frpop-pic .p-sit { display: none; }
 @media print { .pfbtn, .pfbag, .pfpile { display: none; } }
 @media (prefers-reduced-motion: reduce) { .pet .plv i, .pet.lv3::before, .pf-food svg, .pfbtn.wig { animation: none !important; } .pet .plv i { opacity: .9; } }
 
