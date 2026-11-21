@@ -42,12 +42,18 @@
   try { BN = JSON.parse(localStorage.getItem("ptnote:bn") || "[]") || []; } catch (e) { BN = []; }
   /* 업데이트 소식 데이터 (2026-11-20 — 2026-11-20 "업데이트 소식이랑 공지 합치기": 공지 목록에도 '업데이트' 공지로 같이 들어감 nBuild, 쓰는 법은 스킬 pt-update-tour·아래 업데이트 소식 칸) */
   var WN = [
+    { id: "2026-11-21", t: "인바디 · 식단 기록 소식",
+      items: ["📊 인바디 결과지 읽기가 더 정확해졌어요 (제미나이 AI)", "📸 '먹은 기록'이 '식단 기록'으로 이름이 바뀌었어요", "🛠️ 식단 기록은 아직 시험판이에요 — 곧 다 완성돼요"],
+      steps: [
+        { h: "#body", need: function () { return IB_ON; }, s: ".ib-add", t: "📊 인바디 읽기가 정확해졌어요", b: "결과지 사진을 올리면 이제 제미나이 AI가 읽어요.\n체중·골격근량·체지방이 더 정확하게 들어가요." },
+        { h: "#diet-log", need: function () { return ML_ON; }, s: ".ml-add", t: "📸 이제 '식단 기록'이에요", b: "'먹은 기록'이 '식단 기록'으로 바뀌었어요.\n아직 시험판이라 조금 어색할 수 있어요.\n조만간 다 완성해서 다시 알려 드릴게요!" }
+      ] },
     { id: "2026-11-20", t: "식단 탭 · 배지 케이스 업데이트",
-      items: ["📸 먹은 기록 — 사진만 찍으면 탄단지·칼로리 분석", "📖 식단 가이드 — 탄단지·식이섬유·끼니 이야기", "💊 영양제 가이드 — 남녀별 추천 조합", "🏅 홈 배지 케이스 새 디자인"],
+      items: ["📸 식단 기록 — 사진만 찍으면 탄단지·칼로리 분석", "📖 식단 가이드 — 탄단지·식이섬유·끼니 이야기", "💊 영양제 가이드 — 남녀별 추천 조합", "🏅 홈 배지 케이스 새 디자인"],
       steps: [
         { h: "#home", s: ".hbcase", t: "배지 케이스가 새로워졌어요", b: "가운데는 내 최고 배지가 자동으로,\n둘레 6칸은 내가 고른 배지를 넣어요.\n누르면 크게, 꾹 누르면 넣고 빼기!" },
-        { h: "#diet", s: ".db-tabs", t: "식단 탭에 칸이 늘었어요", b: "위 전환 칸에서\n먹은 기록 · 식단 가이드로 바로 넘어가요." },
-        { h: "#diet-log", need: function () { return ML_ON; }, s: ".ml-add", t: "📸 먹은 기록", b: "먹기 전에 사진 한 장 찍어 올리면\n음식·양·탄단지·칼로리를 읽어 줘요.\n선생님도 같이 보고 한마디 남겨요." },
+        { h: "#diet", s: ".db-tabs", t: "식단 탭에 칸이 늘었어요", b: "위 전환 칸에서\n식단 기록 · 식단 가이드로 바로 넘어가요." },
+        { h: "#diet-log", need: function () { return ML_ON; }, s: ".ml-add", t: "📸 식단 기록", b: "먹기 전에 사진 한 장 찍어 올리면\n음식·양·탄단지·칼로리를 읽어 줘요.\n선생님도 같이 보고 한마디 남겨요." },
         { h: "#diet-guide", s: ".dg-sub", t: "📖 식단 가이드 · 💊 영양제", b: "탄단지가 왜 중요한지, 식이섬유, 끼니 거르면 안 되는 이유.\n옆 '영양제' 칸엔 남녀별 추천 조합이 있어요." }
       ] }
   ];
@@ -4039,7 +4045,7 @@
     if (!old && ML === null && !ML_ERR && !ML_BUSY) { ML_BUSY = true; mlSync(); }
     if (old && !(d in ML_OLD)) { ML_OLD[d] = null; mlSync(d); }
     var list = mlDayList(d), R = dbCalc(), T = mlSum(list), dt = new Date(d + "T00:00:00");
-    var h = '<section class="ml">' + head("", "먹은 기록", "사진만 찍어 올리면 음식·양·탄단지·칼로리를 읽어 줘요");
+    var h = '<section class="ml">' + head("", "식단 기록", "사진만 찍어 올리면 음식·양·탄단지·칼로리를 읽어 줘요");
     h += '<div class="ml-date"><button type="button" data-ml="day:-1" aria-label="전날">‹</button><b>' + (dt.getMonth() + 1) + '월 ' + dt.getDate() + '일 (' + "일월화수목금토".charAt(dt.getDay()) + ')' + (d === today ? '<i>오늘</i>' : '') + '</b>' +
       '<button type="button" data-ml="day:1" aria-label="다음 날"' + (d >= today ? ' disabled' : '') + '>›</button></div>';
     h += '<div class="panel ml-sum"><div class="ml-k"><small>' + (d === today ? '오늘' : '이날') + ' 먹은 칼로리</small><b>' + Math.round(T.k).toLocaleString() + (R ? '<i> / ' + R.kcal.toLocaleString() + ' kcal</i>' : '<i> kcal</i>') + '</b>' +
@@ -4080,7 +4086,7 @@
     var wrap = document.createElement("div");
     wrap.className = "ibsheet mlsheet";
     wrap.innerHTML = '<div class="ibs-back" data-close></div><form class="ibs-card" novalidate>' +
-      '<div class="ibs-top"><h3>' + (rec ? '먹은 기록 고치기' : '먹은 것 기록하기') + '</h3><button type="button" class="ibs-x" data-close aria-label="닫기">×</button></div>' +
+      '<div class="ibs-top"><h3>' + (rec ? '식단 기록 고치기' : '식단 기록하기') + '</h3><button type="button" class="ibs-x" data-close aria-label="닫기">×</button></div>' +
       '<label class="ibs-file"><input type="file" id="mlFile" accept="image/*"><span class="ibs-ph"><b>음식 사진 찍기 · 고르기</b><small>사진을 올리면 음식·양·순탄수·단백질·지방·칼로리를 읽어 채워요</small></span><img alt="" hidden></label>' +
       (rec && rec.ph ? '<button type="button" class="ml-big">사진 크게 보기</button>' : '') +
       '<div class="ml-row2"><label class="ibs-f"><span>먹은 날</span><input type="date" id="mlDate" value="' + (rec ? rec.d : (ML_DAY || ymd(now))) + '" max="' + ymd(now) + '"></label>' +
@@ -4395,7 +4401,7 @@
     if ((tab === "log" && !ML_ON) || (tab === "coach" && !has)) tab = has ? "coach" : "my";
     function sb(id, l) { return '<button type="button" class="' + (tab === id ? "on" : "") + '" data-db="tab:' + id + '">' + l + '</button>'; }
     var nb = 2 + (has ? 1 : 0) + (ML_ON ? 1 : 0);
-    var seg = '<div class="db-tabs' + (nb > 3 ? ' n4' : '') + '">' + (has ? sb("coach", nb > 3 ? "선생님 식단" : "선생님 식단표") : "") + sb("my", "내 식단 짜기") + (ML_ON ? sb("log", "먹은 기록") : "") + sb("guide", "식단 가이드") + '</div>';
+    var seg = '<div class="db-tabs' + (nb > 3 ? ' n4' : '') + '">' + (has ? sb("coach", nb > 3 ? "선생님 식단" : "선생님 식단표") : "") + sb("my", "내 식단 짜기") + (ML_ON ? sb("log", "식단 기록") : "") + sb("guide", "식단 가이드") + '</div>';
     return seg + (tab === "guide" ? dgSubSeg() + (DG_SUB === "supp" ? spView() : dgView()) + remember() : tab === "log" ? mlView() + remember() : tab === "my" ? dbBuilder() + remember() : renderDietCoach());
   }
   function renderDietCoach() {
