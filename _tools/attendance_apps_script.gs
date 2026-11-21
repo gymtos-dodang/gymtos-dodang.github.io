@@ -180,11 +180,21 @@ function aiText_(key, model, img, prompt) {   // 사진 + 질문 → AI 답 글�
     const c = key.split(':');
     text = mlOpenAi_('https://api.cloudflare.com/client/v4/accounts/' + c[1] + '/ai/v1/chat/completions', c.slice(2).join(':'), model || '@cf/meta/llama-4-scout-17b-16e-instruct', img, prompt);
   } else if (/^AIza|^AQ\./.test(key)) {   // Gemini (2026-11-21 새 열쇠는 AQ. 로 시작 — 열쇠는 헤더로)
-    const r = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + (model || 'gemini-2.5-flash') + ':generateContent', {
-      method: 'post', contentType: 'application/json', muteHttpExceptions: true, headers: { 'x-goog-api-key': key },
-      payload: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: img } }, { text: prompt }] }], generationConfig: { temperature: 0.2 } }) });
-    const j = JSON.parse(r.getContentText());
-    if (!j.candidates) throw new Error('gemini ' + r.getResponseCode() + ' ' + String(j.error && j.error.message || '').slice(0, 120));
+    // 2026-11-21 옛 모델(2.5-flash)은 새 사용자에게 막힘 → 최신 별칭부터, 404면 오류가 알려 주는 모델로 한 번 더
+    const tried = {}, list = [model || 'gemini-flash-latest', 'gemini-2.5-flash'];
+    let j = null, code = 0;
+    for (let k = 0; k < list.length && k < 4; k++) {
+      const mdl = list[k];
+      if (tried[mdl]) continue; tried[mdl] = 1;
+      const r = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + mdl + ':generateContent', {
+        method: 'post', contentType: 'application/json', muteHttpExceptions: true, headers: { 'x-goog-api-key': key },
+        payload: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: img } }, { text: prompt }] }], generationConfig: { temperature: 0.1 } }) });
+      code = r.getResponseCode(); j = JSON.parse(r.getContentText());
+      if (j.candidates) break;
+      const sug = /models\/(gemini[\w.\-]*)/.exec(String(j.error && j.error.message || '').replace('models/' + mdl, ''));
+      if (code === 404 && sug) list.splice(k + 1, 0, sug[1]);
+    }
+    if (!j || !j.candidates) throw new Error('gemini ' + code + ' ' + String(j && j.error && j.error.message || '').slice(0, 160));
     text = j.candidates[0].content.parts.map(function (x) { return x.text || ''; }).join('');
   } else {
     const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
@@ -428,8 +438,9 @@ function doPost(e) {
       try { vals = inbodyAi_(key.split(',').map(function (x) { return x.trim(); }).filter(String), P.getProperty('AI_MODEL'), String(b.img)); }
       catch (err) { aiErr = String(err); }
     }
-    if (vals && vals.w !== null) return json_({ ok: true, vals: vals, text: '' });
-    try { return json_({ ok: true, vals: vals, text: ocr_(String(b.img), pdf) }); }
+    const ai = pdf ? 'pdf' : !key ? 'nokey' : aiErr ? aiErr.slice(0, 200) : vals ? 'ok' : 'none';   // 2026-11-21 AI 읽기 상태(원인 확인용)
+    if (vals && vals.w !== null) return json_({ ok: true, vals: vals, text: '', ai: ai });
+    try { return json_({ ok: true, vals: vals, text: ocr_(String(b.img), pdf), ai: ai }); }
     catch (err) { return vals ? json_({ ok: true, vals: vals, text: '' }) : json_({ ok: false, error: 'ocr', msg: String(err) + ' / ' + aiErr }); }
   }
   if (b.a === 'meal_ai') {   // 식단 사진 → 음식·양·순탄수·단백질·지방·칼로리 (스크립트 속성 AI_KEY 필요)
