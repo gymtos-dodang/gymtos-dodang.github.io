@@ -18,7 +18,7 @@ const IB_SHEET = '인바디';
 const IB_FOLDER = 'PT노트 인바디 사진';
 // 2026-11-20 먹은 기록(식단 사진): 시트 "식단기록" 탭 + 드라이브 "PT노트 식단 사진" 폴더.
 //   사진 자동 분석(meal_ai)은 프로젝트 설정 → 스크립트 속성 AI_KEY가 있어야 동작. 열쇠는 코드에 넣지 말 것.
-//   AI_KEY: mi:<키> = Mistral(무료, Pixtral Large) / gsk_… = Groq(무료) / cf:<계정ID>:<토큰> = Cloudflare(무료) / sk-ant… = Claude / AIza… = Gemini. 쉼표로 여러 개 넣으면 앞에서부터 쓰고, 막히면 다음 것으로 (2026-11-20).
+//   AI_KEY: mi:<키> = Mistral(무료, Pixtral Large) / gsk_… = Groq(무료) / cf:<계정ID>:<토큰> = Cloudflare(무료) / sk-ant… = Claude / AIza…·AQ.… = Gemini. 쉼표로 여러 개 넣으면 앞에서부터 쓰고, 막히면 다음 것으로 (2026-11-20).
 const ML_SHEET = '식단기록';
 const ML_FOLDER = 'PT노트 식단 사진';
 
@@ -179,12 +179,12 @@ function aiText_(key, model, img, prompt) {   // 사진 + 질문 → AI 답 글�
   } else if (/^cf:/.test(key)) {
     const c = key.split(':');
     text = mlOpenAi_('https://api.cloudflare.com/client/v4/accounts/' + c[1] + '/ai/v1/chat/completions', c.slice(2).join(':'), model || '@cf/meta/llama-4-scout-17b-16e-instruct', img, prompt);
-  } else if (/^AIza/.test(key)) {
-    const r = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + (model || 'gemini-2.5-flash') + ':generateContent?key=' + encodeURIComponent(key), {
-      method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+  } else if (/^AIza|^AQ\./.test(key)) {   // Gemini (2026-11-21 새 열쇠는 AQ. 로 시작 — 열쇠는 헤더로)
+    const r = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + (model || 'gemini-2.5-flash') + ':generateContent', {
+      method: 'post', contentType: 'application/json', muteHttpExceptions: true, headers: { 'x-goog-api-key': key },
       payload: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: img } }, { text: prompt }] }], generationConfig: { temperature: 0.2 } }) });
     const j = JSON.parse(r.getContentText());
-    if (!j.candidates) throw new Error('gemini ' + r.getResponseCode());
+    if (!j.candidates) throw new Error('gemini ' + r.getResponseCode() + ' ' + String(j.error && j.error.message || '').slice(0, 120));
     text = j.candidates[0].content.parts.map(function (x) { return x.text || ''; }).join('');
   } else {
     const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
