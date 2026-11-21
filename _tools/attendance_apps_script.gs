@@ -153,15 +153,15 @@ function mealAi_(key, model, img, hint) {
   return { items: mlItems_(o.items), note: String(o.note || '').slice(0, 60) };
 }
 /* 2026-11-20 인바디 결과지도 AI가 직접 보고 숫자를 읽음 (드라이브 OCR은 폰 사진에서 자주 실패 → 예비로만) */
-const IB_PROMPT = '이 사진은 InBody(인바디) 체성분 결과지입니다. 사진이 기울었거나 빛이 반사돼도 결과지를 잘 보고 이 사람의 측정값을 읽으세요. ' +
+const IB_PROMPT = '이 사진(또는 PDF)은 InBody(인바디) 체성분 결과지입니다. 사진이 기울었거나 빛이 반사돼도 결과지를 잘 보고 이 사람의 측정값을 읽으세요. ' +
   '표준범위(괄호 안 숫자)나 예시가 아니라 실제 측정값입니다. 다른 말 없이 JSON만 답하세요: ' +
   '{"w":체중 kg,"smm":골격근량 kg,"bfm":체지방량 kg,"pbf":체지방률 %,"bmi":BMI,"bmr":기초대사량 kcal,"h":키 cm,"d":"검사일시 YYYY-MM-DD"} ' +
   '안 보이는 값은 null. 인바디 결과지가 아니면 {"none":true}';
-function inbodyAi_(keys, model, img) {
+function inbodyAi_(keys, model, img, mime) {   // mime: PDF 결과지면 'application/pdf' (2026-11-21)
   let last = null;
   for (let i = 0; i < keys.length; i++) {
     try {
-      const t = aiText_(keys[i], i === 0 ? model : '', img, IB_PROMPT), a = t.indexOf('{'), z = t.lastIndexOf('}');
+      const t = aiText_(keys[i], i === 0 ? model : '', img, IB_PROMPT, mime), a = t.indexOf('{'), z = t.lastIndexOf('}');
       const o = JSON.parse(t.slice(a, z + 1));
       if (o.none) return null;
       const d = /^20\d{2}-\d{2}-\d{2}$/.test(String(o.d || '')) ? String(o.d) : null;
@@ -170,8 +170,10 @@ function inbodyAi_(keys, model, img) {
   }
   throw last || new Error('nokey');
 }
-function aiText_(key, model, img, prompt) {   // 사진 + 질문 → AI 답 글자 (열쇠 종류에 따라 업체 자동)
+function aiText_(key, model, img, prompt, mime) {   // 사진(또는 PDF) + 질문 → AI 답 글자 (열쇠 종류에 따라 업체 자동)
   let text = '';
+  const pdf = mime === 'application/pdf';   // PDF는 Gemini·Claude만 읽음 (2026-11-21)
+  if (pdf && /^mi:|^gsk_|^cf:/.test(key)) throw new Error('pdf: 이 열쇠는 PDF 못 읽음');
   if (/^mi:/.test(key)) {
     text = mlOpenAi_('https://api.mistral.ai/v1/chat/completions', key.slice(3), model || 'pixtral-large-latest', img, prompt);
   } else if (/^gsk_/.test(key)) {
@@ -188,7 +190,7 @@ function aiText_(key, model, img, prompt) {   // 사진 + 질문 → AI 답 글�
       if (tried[mdl]) continue; tried[mdl] = 1;
       const r = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + mdl + ':generateContent', {
         method: 'post', contentType: 'application/json', muteHttpExceptions: true, headers: { 'x-goog-api-key': key },
-        payload: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: img } }, { text: prompt }] }], generationConfig: { temperature: 0.1 } }) });
+        payload: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: pdf ? 'application/pdf' : 'image/jpeg', data: img } }, { text: prompt }] }], generationConfig: { temperature: 0.1 } }) });
       code = r.getResponseCode(); j = JSON.parse(r.getContentText());
       if (j.candidates) break;
       const sug = /models\/(gemini[\w.\-]*)/.exec(String(j.error && j.error.message || '').replace('models/' + mdl, ''));
@@ -200,7 +202,7 @@ function aiText_(key, model, img, prompt) {   // 사진 + 질문 → AI 답 글�
     const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
       method: 'post', contentType: 'application/json', muteHttpExceptions: true, headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
       payload: JSON.stringify({ model: model || 'claude-haiku-4-5', max_tokens: 900,
-        messages: [{ role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: img } }, { type: 'text', text: prompt }] }] }) });
+        messages: [{ role: 'user', content: [pdf ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: img } } : { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: img } }, { type: 'text', text: prompt }] }] }) });
     const j = JSON.parse(r.getContentText());
     if (!j.content) throw new Error('claude ' + r.getResponseCode());
     text = j.content.map(function (x) { return x.text || ''; }).join('');
@@ -434,11 +436,11 @@ function doPost(e) {
     if (!b.img || String(b.img).length > 8000000) return json_({ ok: false, error: 'img' });
     const pdf = b.mime === 'application/pdf', P = PropertiesService.getScriptProperties(), key = P.getProperty('AI_KEY');
     let vals = null, aiErr = '';
-    if (key && !pdf) {
-      try { vals = inbodyAi_(key.split(',').map(function (x) { return x.trim(); }).filter(String), P.getProperty('AI_MODEL'), String(b.img)); }
+    if (key) {   // 2026-11-21 PDF도 AI로 (전엔 PDF는 OCR만 → 숫자 엉망)
+      try { vals = inbodyAi_(key.split(',').map(function (x) { return x.trim(); }).filter(String), P.getProperty('AI_MODEL'), String(b.img), pdf ? 'application/pdf' : 'image/jpeg'); }
       catch (err) { aiErr = String(err); }
     }
-    const ai = pdf ? 'pdf' : !key ? 'nokey' : aiErr ? aiErr.slice(0, 200) : vals ? 'ok' : 'none';   // 2026-11-21 AI 읽기 상태(원인 확인용)
+    const ai = !key ? 'nokey' : aiErr ? aiErr.slice(0, 200) : vals ? 'ok' : 'none';   // 2026-11-21 AI 읽기 상태(원인 확인용)
     if (vals && vals.w !== null) return json_({ ok: true, vals: vals, text: '', ai: ai });
     try { return json_({ ok: true, vals: vals, text: ocr_(String(b.img), pdf), ai: ai }); }
     catch (err) { return vals ? json_({ ok: true, vals: vals, text: '' }) : json_({ ok: false, error: 'ocr', msg: String(err) + ' / ' + aiErr }); }
