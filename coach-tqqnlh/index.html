@@ -125,6 +125,9 @@
 .bni button.sure { background: var(--bad); color: #fff; border-color: var(--bad); }
 .bnempty { font-size: 13px; color: var(--faint); margin: 10px 0 0; }
 /* 새 회원 추가 (2026-11-12) */
+.nmgoals { display: flex; flex-wrap: wrap; gap: 6px; margin-top: -4px; }   /* 2026-11-21 목표 추천 문구 — 누르면 넣고 다시 누르면 빠짐 */
+.nmgoals button { font: inherit; font-size: 12.5px; font-weight: 700; color: var(--sub); background: #fff; border: 1.5px solid var(--rule); border-radius: 99px; padding: 5px 10px; cursor: pointer; }
+.nmgoals button.on { color: #fff; background: var(--primary); border-color: var(--primary); }
 .nmsex { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .nmsex label { flex-direction: row; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid var(--rule); border-radius: 10px; padding: 10px; color: var(--ink); font-size: 15px; cursor: pointer; }
 .nmsex input { width: auto; margin: 0; accent-color: var(--primary); }
@@ -378,6 +381,8 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 :where(html:not([data-theme="light"])) .bnf .row button { background: var(--paper); }
 :where(html:not([data-theme="light"])) .bnf .row button.fill { background: var(--seal); }
 :where(html:not([data-theme="light"])) .bni button { background: var(--paper); }
+:where(html:not([data-theme="light"])) .nmgoals button { background: var(--paper); }
+:where(html:not([data-theme="light"])) .nmgoals button.on { background: var(--seal); }
 :where(html:not([data-theme="light"])) .nmsex label.F:has(input:checked) { background: color-mix(in srgb, #FCE4EC 14%, var(--paper)); }
 :where(html:not([data-theme="light"])) .nmdone .btns a, :where(html:not([data-theme="light"])) .nmdone .btns button { background: var(--paper); }
 :where(html:not([data-theme="light"])) .nmdone .btns .fill { background: var(--seal); }
@@ -434,6 +439,8 @@ html:not([data-theme="light"]) .msh-p, html:not([data-theme="light"]) .csh-p { b
 :where(html[data-theme="dark"]) .bnf .row button { background: var(--paper); }
 :where(html[data-theme="dark"]) .bnf .row button.fill { background: var(--seal); }
 :where(html[data-theme="dark"]) .bni button { background: var(--paper); }
+:where(html[data-theme="dark"]) .nmgoals button { background: var(--paper); }
+:where(html[data-theme="dark"]) .nmgoals button.on { background: var(--seal); }
 :where(html[data-theme="dark"]) .nmsex label.F:has(input:checked) { background: color-mix(in srgb, #FCE4EC 14%, var(--paper)); }
 :where(html[data-theme="dark"]) .nmdone .btns a, :where(html[data-theme="dark"]) .nmdone .btns button { background: var(--paper); }
 :where(html[data-theme="dark"]) .nmdone .btns .fill { background: var(--seal); }
@@ -568,6 +575,7 @@ html[data-theme="dark"] .msh-p, html[data-theme="dark"] .csh-p { background: rgb
         <div class="nmsex" role="radiogroup" aria-label="성별"><label><input type="radio" name="nmSex" value="M" checked>남자 회원 <small>블랙</small></label><label class="F"><input type="radio" name="nmSex" value="F">여자 회원 <small>핑크</small></label></div>
         <label>PT 시작한 달 <small>나의 PT 여정 그래프가 여기서 시작해요</small><input id="nmStart" type="month"></label>
         <label>목표 <small>없어도 돼요</small><input id="nmGoal" maxlength="40" placeholder="예: 다이어트 · 근력 강화" autocomplete="off"></label>
+        <div class="nmgoals" id="nmGoals" aria-label="목표 추천"><button type="button">다이어트</button><button type="button">체지방 감량</button><button type="button">근력 강화</button><button type="button">근육량 늘리기</button><button type="button">바디프로필</button><button type="button">힙업</button><button type="button">하체 강화</button><button type="button">체형 교정</button><button type="button">허리·어깨 통증 관리</button><button type="button">체력 향상</button><button type="button">운동 습관화</button><button type="button">건강 관리</button></div>
         <label id="nmKeyWrap" hidden>선생님 열쇠 <small>처음 한 번만</small><input id="nmKey" type="password" autocomplete="off"></label>
         <p class="bnmsg" id="nmMsg" role="status"></p>
         <div class="row" id="nmRow"><button type="button" class="del" id="nmDel" hidden>지우기</button><button type="button" id="nmCancel">취소</button><button type="submit" class="fill" id="nmSend">PT 노트 만들기</button></div>
@@ -1003,6 +1011,15 @@ html[data-theme="dark"] .msh-p, html[data-theme="dark"] .csh-p { background: rgb
   }
   function nmUrl(slug) { return location.origin + "/m/" + slug + "/"; }
   var nmForm = document.getElementById("nmForm"), nmOpen = document.getElementById("nmOpen"), nmDone = document.getElementById("nmDone");
+  function nmGoalList() { return document.getElementById("nmGoal").value.split(/\s*[·,]\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
+  function nmGoalSync() { var l = nmGoalList(); Array.prototype.forEach.call(document.querySelectorAll("#nmGoals button"), function (b) { b.classList.toggle("on", l.indexOf(b.textContent) >= 0); }); }
+  document.getElementById("nmGoals").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    var inp = document.getElementById("nmGoal"), l = nmGoalList(), i = l.indexOf(b.textContent);
+    if (i >= 0) l.splice(i, 1); else { if ((l.concat(b.textContent).join(" · ")).length > 40) return; l.push(b.textContent); }
+    inp.value = l.join(" · "); nmGoalSync();
+  });
+  document.getElementById("nmGoal").addEventListener("input", nmGoalSync);
   function nmShow(d) {
     nmEditing = d || null;
     nmForm.hidden = false; nmOpen.hidden = true; nmDone.hidden = true;
@@ -1010,6 +1027,7 @@ html[data-theme="dark"] .msh-p, html[data-theme="dark"] .csh-p { background: rgb
     document.getElementById("nmKeyWrap").hidden = !!bnKey();
     document.getElementById("nmName").value = d ? d.name : "";
     document.getElementById("nmGoal").value = d ? d.goal || "" : "";
+    nmGoalSync();
     var t = new Date(); document.getElementById("nmStart").value = d && d.start ? d.start.slice(0, 7) : t.getFullYear() + "-" + pad(t.getMonth() + 1);
     Array.prototype.forEach.call(document.querySelectorAll('input[name="nmSex"]'), function (r) { r.checked = r.value === (d ? d.sex : "M"); });
     var del = document.getElementById("nmDel"); del.hidden = !d; del.classList.remove("sure"); del.textContent = "지우기";
