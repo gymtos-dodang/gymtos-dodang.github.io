@@ -22,4 +22,4 @@
 - AI_KEY(2026-11-21): 장동욱 구글 계정 AI Studio에서 Gemini 무료 열쇠 "PT노트 인바디" 만듦 — 새 열쇠는 `AQ.`로 시작해서 aiText_가 `^AIza|^AQ\.`를 Gemini로 보고 x-goog-api-key 헤더로 보냄(창고 버전 14 — 모델은 gemini-flash-latest부터, 404면 오류가 알려 주는 모델로 자동 재시도. 2.5-flash는 새 사용자에게 막힘). 열쇠 값은 스크립트 속성에 장동욱이 직접 붙여 넣음(Claude는 열쇠를 칸에 입력하지 않음 — 내장 브라우저 붙여넣기도 안 됨). 열쇠가 없으면 결과지 읽기는 드라이브 OCR(부정확)로 동작. inbody_ocr 응답 `ai` = ok / nokey / 오류 글자 — 안 읽힐 땐 이걸 먼저 볼 것. 테스트 사진 `_tools/test/inbody_sample.jpg`(가짜 결과지, 정답 w72.9·smm32.4·bfm15.6·pbf21.4·bmi24.6·bmr1630·h172·2026-11-15) — github.io 탭에서 fetch해 POST하면 됨.
 - PDF 결과지(2026-11-21): 전엔 PDF는 AI 건너뛰고 드라이브 OCR만 → 숫자 엉망. 이제 PDF도 Gemini(application/pdf)·Claude(document)로 읽음. Mistral·Groq·Cloudflare 열쇠는 PDF 못 읽어 다음 열쇠로 넘어감.
 - 2026-11-21 버전 16: Gemini 503(사람 많음)·429면 1.5초 쉬고 다음 모델(2.5-flash → flash-lite-latest). PDF 테스트(_tools/test/inbody_sample.pdf) 8개 모두 맞음, 단 Gemini 붐빌 땐 78초 걸림.
-- 2026-11-22 속도: Gemini 생각 끄기(thinkingBudget 0, 못 받는 모델이면 빼고 다시) + 503이면 쉬지 않고 바로 다음 모델.
+- 2026-11-22 속도(버전 17): Gemini 생각 끄기(thinkingBudget 0, 못 받는 모델이면 빼고 다시) + 503이면 쉬지 않고 바로 다음 모델. → PDF 5.6초·사진 8.7초, 8개 모두 맞음.
