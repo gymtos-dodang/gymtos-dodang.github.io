@@ -184,16 +184,16 @@ function aiText_(key, model, img, prompt, mime) {   // 사진(또는 PDF) + 질�
   } else if (/^AIza|^AQ\./.test(key)) {   // Gemini (2026-11-21 새 열쇠는 AQ. 로 시작 — 열쇠는 헤더로)
     // 2026-11-21 옛 모델(2.5-flash)은 새 사용자에게 막힘 → 최신 별칭부터, 404면 오류가 알려 주는 모델로 한 번 더
     const tried = {}, list = [model || 'gemini-flash-latest', 'gemini-2.5-flash', 'gemini-flash-lite-latest'];   // 2026-11-21 503(사람 많음)이면 잠깐 쉬고 다음 모델
-    let j = null, code = 0;
+    let j = null, code = 0, noThink = false;   // 2026-11-22 503이면 쉬지 않고 바로 다음 모델(느림 고침)
     for (let k = 0; k < list.length && k < 5; k++) {
       const mdl = list[k];
       if (tried[mdl]) continue; tried[mdl] = 1;
       const r = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + mdl + ':generateContent', {
         method: 'post', contentType: 'application/json', muteHttpExceptions: true, headers: { 'x-goog-api-key': key },
-        payload: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: pdf ? 'application/pdf' : 'image/jpeg', data: img } }, { text: prompt }] }], generationConfig: { temperature: 0.1 } }) });
+        payload: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: pdf ? 'application/pdf' : 'image/jpeg', data: img } }, { text: prompt }] }], generationConfig: noThink ? { temperature: 0.1 } : { temperature: 0.1, thinkingConfig: { thinkingBudget: 0 } } }) });   // 2026-11-22 생각 끄기 = 훨씬 빠름
       code = r.getResponseCode(); j = JSON.parse(r.getContentText());
       if (j.candidates) break;
-      if (code === 503 || code === 500 || code === 429) Utilities.sleep(1500);
+      if (code === 400 && !noThink && /think/i.test(String(j.error && j.error.message || ''))) { noThink = true; delete tried[mdl]; k--; continue; }   // 생각 끄기를 못 받는 모델이면 그대로 다시
       const sug = /models\/(gemini[\w.\-]*)/.exec(String(j.error && j.error.message || '').replace('models/' + mdl, ''));
       if (code === 404 && sug) list.splice(k + 1, 0, sug[1]);
     }
