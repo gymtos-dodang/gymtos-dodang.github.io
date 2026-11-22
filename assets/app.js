@@ -46,12 +46,17 @@
     for (var i = 0; i < fs.length; i++) if (!fs[i].simple && fs[i].primary_muscles && fs[i].primary_muscles.length) return fs[i];
     return null;
   }
+  function wnMuOpen() { return !!document.querySelector(".rtsheet .mu-map"); }
+  function wnMuClose() { var b = document.querySelector(".rtsheet-bg .rts-x"); if (b && b.closest(".rtsheet-bg").querySelector(".mu-map")) b.click(); }
   var WN = [
     { id: "2026-11-22", t: "자세 복습지 업데이트",
       items: ["🫀 03 자극 부위가 해부도 그림으로 바뀌었어요", "👆 근육 이름을 누르면 몸 어디인지 보여 줘요", "🔍 그 근육만 깜빡이며 크게 확대돼요"],
       steps: [
-        { get h() { var f = wnMuForm(); return f ? "#form-" + f.id : "#forms"; }, need: function () { return !!wnMuForm(); }, s: ".muscle", t: "🫀 자극 부위가 해부도로", b: "진한 분홍은 주동근(메인), 연한 분홍은 보조근이에요.\n근육 결까지 보이는 그림으로 바뀌었어요." },
-        { get h() { var f = wnMuForm(); return f ? "#form-" + f.id : "#forms"; }, need: function () { return !!wnMuForm(); }, s: ".mname .mbtn", t: "👆 근육 이름을 눌러 보세요", b: "밑줄 친 근육 이름을 누르면\n그 근육만 깜빡이며 크게 보여 줘요.\n위치와 하는 일도 같이 알려 줘요." }
+        { get h() { var f = wnMuForm(); return f ? "#form-" + f.id : "#forms"; }, need: function () { return !!wnMuForm(); }, s: ".mu-big, .muscle > img", t: "🫀 자극 부위가 해부도로 바뀌었어요", b: "진한 분홍은 주동근(메인), 연한 분홍은 보조근이에요.\n근육 결까지 보이는 그림이에요." },
+        { get h() { var f = wnMuForm(); return f ? "#form-" + f.id : "#forms"; }, need: function () { return !!wnMuForm(); }, s: ".mname .mbtn", t: "👆 밑줄 친 근육 이름을 눌러 보세요", b: "이름을 누르면 그 근육이 몸 어디인지 보여 줘요.\n제가 한번 눌러 볼게요!" },
+        { get h() { var f = wnMuForm(); return f ? "#form-" + f.id : "#forms"; }, need: function () { return !!wnMuForm(); }, tap: ".mname .mbtn", skipIf: wnMuOpen, leave: wnMuClose, s: ".rtsheet .mu-map", t: "🔍 그 근육만 깜빡이며 확대돼요", b: "잘 보이는 쪽(앞·뒤)으로 저절로 크게 보여 주고\n이름표도 붙어요." },
+        { get h() { var f = wnMuForm(); return f ? "#form-" + f.id : "#forms"; }, need: function () { return !!wnMuForm(); }, tap: ".rtsheet .mu-c:not(.on)", leave: wnMuClose, s: ".rtsheet .mu-chips", t: "🔁 다른 근육도 바로 볼 수 있어요", b: "창 위 버튼을 누르면\n이 복습지의 다른 근육으로 바뀌어요." },
+        { get h() { var f = wnMuForm(); return f ? "#form-" + f.id : "#forms"; }, need: function () { return !!wnMuForm(); }, tap: ".rtsheet .mu-z [data-mz=all]", leave: wnMuClose, s: ".rtsheet .mu-z", t: "🧍 앞모습 · 뒷모습 · 전체 몸", b: "버튼으로 보는 쪽을 바꿀 수 있어요.\n아래엔 그 근육의 위치와 하는 일 설명이 있어요." }
       ] },
     { id: "2026-11-21", t: "인바디 · 식단 기록 소식",
       items: ["📊 인바디 결과지 읽기가 더 정확해졌어요 (제미나이 AI)", "📸 '먹은 기록'이 '식단 기록'으로 이름이 바뀌었어요", "🛠️ 식단 기록은 아직 시험판이에요 — 곧 다 완성돼요"],
@@ -5749,6 +5754,7 @@
     document.body.appendChild(w);
     var hole = w.querySelector(".tour-hole"), card = w.querySelector(".tour-card");
     function end() {
+      leaveTo(null);
       if (opt.done) opt.done(); else { try { localStorage.setItem(TOUR_K, "1"); } catch (e) {} wnSeenAll(); }   /* 처음 둘러보기를 본 회원은 지금까지의 업데이트 소식은 안 띄움 */
       w.classList.remove("on"); setTimeout(function () { w.remove(); }, 260);
       TOUR_ON = false; setTimeout(function () { if (!DEMO) showNoticePop(); }, 600);
@@ -5763,10 +5769,10 @@
       }
       return { left: r.left - dx, top: r.top - dy, width: r.width, height: r.height, bottom: r.bottom - dy };
     }
-    function place(sy) {
+    function place(sy, sel) {
       var x = S[i], vw = window.innerWidth, vh = window.innerHeight; sy = sy || 0;
       if (x.c) { hole.style.cssText = "transform:translate3d(" + vw / 2 + "px," + vh / 2 + "px,0);width:0;height:0;border-radius:50%"; card.style.top = Math.max(80, vh / 2 - card.offsetHeight / 2) + "px"; card.classList.add("mid"); return; }
-      var el = document.querySelector(x.s); if (!el) return;
+      var el = document.querySelector(sel || x.s); if (!el) return;
       var r = rectOf(el), pad = el.closest(".tabs") ? 4 : 8, rad = getComputedStyle(el).borderRadius, top = r.top - sy;
       hole.style.cssText = "transform:translate3d(" + (r.left - pad) + "px," + (top - pad) + "px,0);width:" + (r.width + pad * 2) + "px;height:" + (r.height + pad * 2) + "px;border-radius:" + (el.closest(".tabs") ? "18px" : (parseFloat(rad) ? (parseFloat(rad) + pad) + "px" : "18px"));
       card.classList.remove("mid");
@@ -5791,7 +5797,7 @@
       card.querySelector(".tour-skip").textContent = opt.skip || "건너뛰기";
       card.querySelector(".tour-btns").innerHTML = (x.app ? '<a class="tb-app" href="#app">📲 홈 화면에 앱으로 추가하기</a>' : '') +
         (i > 0 && !x.c ? '<button type="button" class="tb-prev">이전</button>' : '') +
-        '<button type="button" class="tb-next">' + (x.ok || (i === S.length - 2 ? "마지막" : "다음") + ' <small>' + i + '/' + (S.length - 2) + '</small>') + '</button>';
+        '<button type="button" class="tb-next">' + (x.ok || (i === S.length - 2 ? "마지막" : "다음") + ' <small>' + S.slice(0, i + 1).filter(function (q) { return !q.c; }).length + '/' + S.filter(function (q) { return !q.c; }).length + '</small>') + '</button>';
       if (card.classList.contains("on1")) { card.classList.remove("fx"); void card.offsetWidth; card.classList.add("fx"); }
       else { card.classList.add("on1"); card.classList.remove("in"); void card.offsetWidth; card.classList.add("in"); }
     }
@@ -5820,11 +5826,35 @@
       place(sy);
       var me = i; setTimeout(function () { if (me === i && w.isConnected) place(); }, 800);   /* 끝난 뒤 한 번만 확인(보통 그대로) */
     }
+    /* 2026-11-22 장동욱 "클릭해서 새 기능 예시로 하는 법을 보여줘야지": 단계에 tap:"선택자"를 주면 손가락(👆)이 그 칸을 눌러 보여 준 뒤(진짜로 click)
+       s 칸을 비춤 · skipIf: 함수 → 참이면 누르지 않음 · leave: 함수 → 그 단계를 떠날 때(다음 단계 leave가 다르면)·끝날 때 정리(열린 창 닫기 등) */
+    var lastX = null;
+    function leaveTo(x) { if (lastX && lastX.leave && (!x || lastX.leave !== x.leave)) { try { lastX.leave(); } catch (e) {} } lastX = x; }
+    function tapDemo(x, cb) {
+      var el = document.querySelector(x.tap); if (!el) return cb();
+      var r0 = el.getBoundingClientRect();
+      if (r0.top < 80 || r0.bottom > window.innerHeight - 240) window.scrollTo({ top: window.scrollY + r0.top - 140 });
+      setTimeout(function () {
+        if (!w.isConnected) return;
+        var r = el.getBoundingClientRect(); place(0, x.tap);
+        var f = document.createElement("div"); f.className = "tour-tap"; f.textContent = "👆";
+        f.style.left = (r.left + r.width / 2) + "px"; f.style.top = (r.top + r.height / 2) + "px"; w.appendChild(f);
+        requestAnimationFrame(function () { f.classList.add("on"); });
+        setTimeout(function () { f.classList.add("press"); try { el.click(); } catch (e) {} }, 750);
+        setTimeout(function () { f.remove(); cb(); }, 1150);
+      }, 60);
+    }
     function show() {
       var x = S[i];
+      leaveTo(x);
       fill(x);
-      if (goH(x)) { busy = true; settle(function () { busy = false; position(); }); return; }
-      position();
+      function go() {
+        if (x.tap && !(x.skipIf && x.skipIf())) { busy = true; tapDemo(x, function () { settle(function () { busy = false; position(); }); }); }
+        else if (busy) settle(function () { busy = false; position(); });
+        else position();
+      }
+      if (goH(x)) { busy = true; settle(go); return; }
+      go();
     }
     var busy = false;
     w.addEventListener("click", function (e) {
@@ -5864,8 +5894,7 @@
   function wnSteps(L) {
     var items = [], steps = [];
     L.forEach(function (w) { items = items.concat(w.items || []); steps = steps.concat(w.steps || []); });
-    return [{ c: 1, h: "#home", t: "새 기능이 생겼어요 🎉", b: tourName() + "님, PT노트가 업데이트됐어요!", l: items, ok: "보러 가기" }]
-      .concat(steps)
+    return steps   /* 2026-11-22 장동욱 "팝업창 보고 보통 무시 — 바로 새 기능 설명": 소개 카드 없이 첫 단계부터 */
       .concat([{ c: 1, h: "#home", t: "업데이트 둘러보기 끝! 💪", b: "다시 보고 싶으면 오른쪽 위 ⚙️ 설정이나\n🔔 공지에서 '새 기능 둘러보기'를 누르면 돼요.", ok: "확인" }]);
   }
   function wnStart(force) {   /* force: true = 최신 소식, "날짜 id" = 그 소식(공지의 '새 기능 둘러보기') */

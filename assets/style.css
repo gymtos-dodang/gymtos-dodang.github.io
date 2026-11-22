@@ -2835,6 +2835,14 @@ html.pet-off .petwalk, html.pet-off .pfbtn, html.pet-off .pfbag, html.pet-off .p
 .mu-lg em { font-style: normal; margin-left: 10px; color: #C97FA4; }
 .mu-lg em { color: var(--pink-e); }
 
+/* 업데이트 소식 — 손가락이 눌러 보여 주기 (2026-11-22, tour 단계 tap) */
+.tour-tap { position: fixed; z-index: 3; font-size: 40px; line-height: 1; pointer-events: none; transform: translate(-30%, 10%) scale(.6); opacity: 0; transition: transform .35s cubic-bezier(.22, 1, .36, 1), opacity .25s; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, .35)); }
+.tour-tap.on { opacity: 1; transform: translate(-30%, 10%) scale(1); }
+.tour-tap.press { transform: translate(-30%, 10%) scale(.82); }
+.tour-tap::after { content: ""; position: absolute; left: 30%; top: -10%; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; border: 3px solid #fff; opacity: 0; }
+.tour-tap.press::after { animation: tourTapRing .5s ease-out; }
+@keyframes tourTapRing { from { opacity: .9; transform: scale(.4); } to { opacity: 0; transform: scale(2.4); } }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -3048,6 +3056,7 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .mu-map { background: var(--paper); }
 :where(html:not([data-theme="light"])) .mu-big { background: var(--paper); }
 :where(html:not([data-theme="light"])) .mu-lg i.s { background: color-mix(in srgb, #F4B3CE 14%, var(--paper)); }
+:where(html:not([data-theme="light"])) .tour-tap::after { border-color: var(--line); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -3370,6 +3379,7 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .mu-map { background: var(--paper); }
 :where(html[data-theme="dark"]) .mu-big { background: var(--paper); }
 :where(html[data-theme="dark"]) .mu-lg i.s { background: color-mix(in srgb, #F4B3CE 14%, var(--paper)); }
+:where(html[data-theme="dark"]) .tour-tap::after { border-color: var(--line); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {
