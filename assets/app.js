@@ -3217,6 +3217,19 @@
     if (window.PTMemo) return go();
     var sc = document.createElement("script"); sc.src = BASE + "memo.js"; sc.onload = go; document.head.appendChild(sc);
   }
+  function reelsHome() {   /* 2026-11-23 "A로 가볼까" — 홈 하단 장동욱TR 인스타 릴스 가로 줄 + 팔로우 (목록은 site.js reels) */
+    var S = window.SITE || {}, L = (S.reels || []).slice(0, 8);
+    if (!L.length || !S.ig) return "";
+    var prof = "https://www.instagram.com/" + S.ig + "/";
+    var h = '<section class="reels"><div class="rl-head"><b><i aria-hidden="true"></i>' + esc(S.trainer || "") + 'TR 운동 릴스</b><a href="' + prof + '" target="_blank" rel="noopener">전체보기 ›</a></div><div class="rl-row">';
+    L.forEach(function (r) {
+      h += '<a class="rl-it' + (r.c ? ' has-c' : '') + '" href="' + esc(r.u) + '" target="_blank" rel="noopener">' +
+        (r.c ? '<img src="' + esc(r.c) + '" alt="" loading="lazy">' : '<span class="rl-tag">REEL</span><img class="rl-lg" src="/assets/logo.png" alt="">') +
+        '<svg class="rl-pl" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>' +
+        (r.c ? '' : '<span class="rl-t">' + esc(r.t) + '</span>') + '</a>';
+    });
+    return h + '</div><a class="rl-fol" href="' + prof + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>@' + esc(S.ig) + ' 팔로우</a></section>';
+  }
   function renderHome() {
     var k = todayKey(), d = dayByKey(k), now = new Date();
     var h = '<div class="hlead hl-bdg">' + bgHomeChip() + '<p>' + esc(M.name) + ' 회원님 · ' + (now.getMonth() + 1) + '월 ' + now.getDate() + '일 ' + DAY_KO[DAY_KEYS[now.getDay()]] + '요일</p><h1>오늘</h1></div>';
@@ -3228,6 +3241,7 @@
     h += homeInfo();   /* 2026-11-18 공지·복습지·출석 순위 칸을 PT 여정 위로 */
     if (IB_ON) h += ibHomeStrip() || '<span class="ibstrip-slot"></span>';   /* 2026-11-19 인바디·식단 2칸 — 공지·복습지 칸 바로 아래 */
     h += journeyHome();
+    h += reelsHome();
 
     if (M.next_class) {
       h += '<div class="panel next"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="7" width="32" height="29" rx="6" fill="var(--primary)"/><rect x="4" y="7" width="32" height="9" rx="4" fill="var(--side)"/><rect x="11" y="3" width="4" height="9" rx="2" fill="var(--key)"/><rect x="25" y="3" width="4" height="9" rx="2" fill="var(--key)"/></svg>' +

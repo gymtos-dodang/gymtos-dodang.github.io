@@ -4,5 +4,17 @@ window.SITE = {
   brand: "JANG KAREDO",                   /* 센터 이름 */
   branch: "PT노트",                  /* 지점 이름 */
   site: "https://gymtos-dodang.github.io",   /* 사이트 주소 (og 미리보기 그림 등) */
+  /* 2026-11-23 회원 홈 하단 "장동욱TR 운동 릴스" 줄 (시안 A) — 새 릴스를 올리면 맨 위에 한 줄 추가 (c: 커버 그림, 없으면 글자 카드) */
+  ig: "jangkaredo_970",
+  reels: [
+    { t: "사이드 레터럴", u: "https://www.instagram.com/reel/DgDIXFWDN1a/", c: "/assets/reels/DgDIXFWDN1a.jpg" },
+    { t: "해머 로우로우", u: "https://www.instagram.com/reel/Df-Dd3gEkZl/" },
+    { t: "힙 쓰러스트", u: "https://www.instagram.com/reel/Df6GrrATWW1/" },
+    { t: "케이블 체스트프레스", u: "https://www.instagram.com/reel/DfnCmrVToCL/" },
+    { t: "아웃타이 윗엉덩이", u: "https://www.instagram.com/reel/DfVwU2iP4Gv/" },
+    { t: "아웃타이 굿모닝", u: "https://www.instagram.com/reel/DfBKgd4zptA/" },
+    { t: "회전발판 스쿼트", u: "https://www.instagram.com/reel/DevKrFfT9Gw/" },
+    { t: "회전발판 와이드 스쿼트", u: "https://www.instagram.com/reel/DecEidzT5j7/" }
+  ],
   att_api: "https://script.google.com/macros/s/AKfycbwtjTpk88xTWQcKXoaFX2qCYtKSzKoCOs-Us26k6QUbtKvewTaqJutJuA4RJjAmV-6bvA/exec"   /* 출석 창고(Apps Script 웹 앱) 주소 */
 };
