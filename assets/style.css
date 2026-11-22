@@ -1964,7 +1964,7 @@ html[data-pet="bunny"] .bny-peek { display: none; }
 .pet.happy .p-happy, .pet.happy .b-happy { display: inline; }
 .petwalk .pet.pat svg, .petwalk .pet.hop.pat .b-all { animation: petPat .5s ease-in-out 3; }
 .petwalk .pet.eat svg, .petwalk .pet.hop.eat .b-all { animation: petMunch .3s ease-in-out 6; }
-.petwalk .pet.hi svg, .petwalk .pet.hop.hi .b-all { animation: petHi .55s cubic-bezier(.3, 0, .4, 1) 2; }
+.petwalk .pet.pethi svg, .petwalk .pet.hop.pethi .b-all { animation: petHi .55s cubic-bezier(.3, 0, .4, 1) 2; }
 @keyframes petPat { 0%, 100% { transform: rotate(0) scale(1, 1); } 30% { transform: rotate(-7deg) scale(1.04, .96); } 70% { transform: rotate(7deg) scale(1.04, .96); } }
 @keyframes petMunch { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.06, .9); } }
 @keyframes petHi { 0%, 100% { transform: translateY(0) scale(1, 1); } 15% { transform: translateY(0) scale(1.1, .88); } 50% { transform: translateY(-16px) scale(.95, 1.06); } 85% { transform: translateY(0) scale(1.1, .9); } }

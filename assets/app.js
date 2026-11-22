@@ -238,7 +238,7 @@
         setTimeout(function () { f.classList.add("bite1"); }, 700); setTimeout(function () { f.classList.add("bite2"); }, 1300); setTimeout(function () { f.classList.add("gone"); }, 1900);
         setTimeout(function () { pet.classList.add("happy"); hearts(2); }, 2000);
       } else if (kind === 2) {   /* 한마디 → 폴짝 */
-        cls = ["hi"]; bubble(R.say || LINES[Math.floor(Math.random() * LINES.length)], 2100);
+        cls = ["pethi"];  /* 2026-11-22 "hi"는 다크모드 .hi(홈 칸) 바탕이 붙어 박스가 생겨 이름 바꿈 */ bubble(R.say || LINES[Math.floor(Math.random() * LINES.length)], 2100);
       } else {   /* 도망(수줍이) → 반대쪽 끝으로 쪼르르 */
         cls = ["shy"]; end = 1500; bubble(R.say, 1400);
         setTimeout(function () { var mx = Math.max(20, wrap.clientWidth - W - 8); dir = x < mx / 2 ? 1 : -1; x = dir > 0 ? mx : 8; place(650); }, 300);
@@ -246,7 +246,7 @@
       if (R.blush) cls.push("blush");
       cls.forEach(function (c) { pet.classList.add(c); });
       try { navigator.vibrate && navigator.vibrate(12); } catch (e) {}
-      setTimeout(function () { pet.classList.remove("happy", "pat", "eat", "hi", "shy", "blush"); busy = 0; tm = setTimeout(next, 1500 + Math.random() * 2500); }, end);
+      setTimeout(function () { pet.classList.remove("happy", "pat", "eat", "pethi", "shy", "blush"); busy = 0; tm = setTimeout(next, 1500 + Math.random() * 2500); }, end);
     }
     /* 꾹(0.6초) 누르면 친구 도감 */
     (function () { var lt = 0; pet.addEventListener("pointerdown", function () { lt = setTimeout(function () { lt = -1; frDex(); }, 600); });
@@ -262,7 +262,7 @@
       busy: function () { return !!busy; },
       dress: function () { var lv = pfLv(Q.id); pet.classList.remove("lv2", "lv3"); if (lv > 1) pet.classList.add("lv" + lv); },
       goEat: function (gx, n, pile) {
-        busy = 1; freeze(); pet.classList.remove("sleep", "wake", "happy", "pat", "hi", "shy");
+        busy = 1; freeze(); pet.classList.remove("sleep", "wake", "happy", "pat", "pethi", "shy");
         var mx = Math.max(20, wrap.clientWidth - W - 8);
         dir = gx > x + W / 2 ? 1 : -1;
         var tx = Math.max(0, Math.min(mx, dir > 0 ? gx - W * .8 : gx - W * .2));
