@@ -330,6 +330,8 @@ button.ba { border: 0; padding: 0; font: inherit; color: inherit; cursor: zoom-i
 .price i u { display: block; height: 100%; border-radius: 7px; }
 .price p { margin: 0; width: 112px; flex: none; display: flex; flex-direction: column; text-align: right; }
 .price strong { font-size: 13.5px; color: var(--navy); white-space: nowrap; } .price span { font-size: 11px; color: var(--sub); }
+.price .pnote { margin: 2px 0 -2px; display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--pink); }
+.price .pnote em { font-style: normal; font-size: 10.5px; color: #fff; background: var(--pink); border-radius: 6px; padding: 2px 6px; }
 .note { margin: 0; font-size: 11.5px; line-height: 1.5; color: var(--sub); }
 .cl-photo { height: 250px; border-radius: 18px; overflow: hidden; flex: none; }
 .cl-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; display: block; }
@@ -481,7 +483,7 @@ html, body { background: #141416; }
     </div>
     <p class="ey2 pk" style="margin-top:4px">FIRST MONTH · 첫 달은 이렇게 시작해요</p>
     <div class="fm">
-      <div class="p"><small>상담 당일</small><b>인바디 · 목표</b><span>전용 PT 노트를 카톡으로</span></div>
+      <div class="p"><small>상담 당일</small><b>인바디 · 목표</b><span>30회부터 전용 PT 노트</span></div>
       <div><small>1주차</small><b>머신 · 스트레칭</b><span>배운 자세는 영상 복습지로</span></div>
       <div><small>2~3주차</small><b>루틴일지로 혼자</b><span>온 날은 출석 체크</span></div>
       <div class="g"><small>4주차</small><b>첫 인바디 비교</b><span>지난달과 비교 · 루틴 UP</span></div>
@@ -534,11 +536,12 @@ html, body { background: #141416; }
     <p class="ey2 pk">PRICE · 가격 안내</p>
     <h2>많이 할수록<br>회당 가격이 내려가요</h2>
     <div class="price">
-      <div><b>10회</b><i><u style="width:100%;background:#DDD2D3"></u></i><p><strong>회당 70,000원</strong><span>총 700,000원</span></p></div>
-      <div><b>20회</b><i><u style="width:92.9%;background:#C2B3B4"></u></i><p><strong>회당 65,000원</strong><span>총 1,300,000원</span></p></div>
-      <div><b>30회</b><i><u style="width:85.7%;background:#9A8586"></u></i><p><strong>회당 60,000원</strong><span>총 1,800,000원</span></p></div>
-      <div><b>50회</b><i><u style="width:78.6%;background:#6E5D5E"></u></i><p><strong>회당 55,000원</strong><span>총 2,750,000원</span></p></div>
-      <div class="best"><b>100회</b><i><u style="width:71.4%;background:#D6204F"></u></i><p><strong>회당 50,000원</strong><span>총 5,000,000원</span></p></div>
+      <div><b>10회</b><i><u style="width:100%;background:#DDD2D3"></u></i><p><strong>회당 75,000원</strong><span>총 750,000원</span></p></div>
+      <div><b>20회</b><i><u style="width:93.3%;background:#C2B3B4"></u></i><p><strong>회당 70,000원</strong><span>총 1,400,000원</span></p></div>
+      <span class="pnote"><em>PT 노트</em>30회부터 전용 PT 노트 제공 · 계속 업데이트</span>
+      <div class="pn"><b>30회</b><i><u style="width:86.7%;background:#9A8586"></u></i><p><strong>회당 65,000원</strong><span>총 1,950,000원</span></p></div>
+      <div class="pn"><b>50회</b><i><u style="width:80%;background:#6E5D5E"></u></i><p><strong>회당 60,000원</strong><span>총 3,000,000원</span></p></div>
+      <div class="best pn"><b>100회</b><i><u style="width:66.7%;background:#D6204F"></u></i><p><strong>회당 50,000원</strong><span>총 5,000,000원</span></p></div>
     </div>
     <p class="note">VAT 별도 · 카드 · 이체 · 현금 결제 가능 · 막대가 짧을수록 회당 가격이 낮아요</p>
   </div></section>
@@ -548,7 +551,7 @@ html, body { background: #141416; }
     <div class="cl-photo"><img src="guide/trainer.jpg" alt="장동욱 트레이너"></div>
     <p class="ey2">START TODAY · 상담 안내</p>
     <h2>오늘 내딛는 작은 도전이<br>가장 단단한 거름이<br>될 겁니다</h2>
-    <p class="cl-lead">상담받은 날부터 회원님 전용 PT 노트를 바로 드려요.<br>인바디 재고, 목표부터 같이 정해요.</p>
+    <p class="cl-lead">30회 이상 등록하시면 회원님 전용 PT 노트를 드려요.<br>인바디 재고, 목표부터 같이 정해요.</p>
     <div class="cl-card"><b>장동욱 트레이너</b><span>JANG KAREDO<span class="ct"></span></span></div>
   </div></section>
 </main>
