@@ -3278,11 +3278,13 @@
     if ((location.hash || "").replace(/^#/, "") === "notice") route(); else location.hash = "notice";
   }
   function showNoticePop() {
-    if (TOUR_ON || ((TOUR_WANT || WN_WANT) && (!location.hash || location.hash === "#home"))) return;
+    if (TOUR_ON || WN_WANT || (TOUR_WANT && (!location.hash || location.hash === "#home"))) return;   /* 2026-11-22 "상단 팝업만 뜨고 튜토리얼로 안 넘어가" — 안 본 새 기능이 있으면 어느 화면이든 팝업 대신 튜토리얼(wnMaybe) */
     var popped = lsArr(NPOP_KEY);
-    var list = nUnseen().filter(function (n) { return popped.indexOf(nKey(n)) < 0; });
+    var wsn = COACH_MODE ? "" : wnSeen();
+    var list = nUnseen().filter(function (n) { return popped.indexOf(nKey(n)) < 0 && !(n.wn && wsn && n.wn <= wsn); });   /* 이미 본 소식보다 예전 업데이트 공지는 다시 안 띄움 */
     if (!list.length) return;
     var n = list[0], extra = list.length - 1, d = nDate(n);
+    if (n.wn && !COACH_MODE && !DEMO && !TRY && window.self === window.top && WN.some(function (w) { return w.id === n.wn; })) { lsAdd(NPOP_KEY, [nKey(n)]); wnStart(n.wn); return; }   /* 업데이트 공지는 팝업 말고 바로 튜토리얼 */
     lsAdd(NPOP_KEY, list.map(nKey));
     var box = document.createElement("div");
     box.className = "npop-wrap"; box.setAttribute("role", "status"); box.setAttribute("aria-live", "polite");
@@ -3301,7 +3303,7 @@
     }
     requestAnimationFrame(function () { requestAnimationFrame(function () { btn.classList.add("in"); }); });
     timer = setTimeout(hide, NPOP_MS + 450);
-    btn.addEventListener("click", function () { if (swiped) return; hide(); openNotice(nKey(n)); });
+    btn.addEventListener("click", function () { if (swiped) return; hide(); if (n.wn && WN.some(function (w) { return w.id === n.wn; })) wnStart(n.wn); else openNotice(nKey(n)); });   /* 업데이트 공지 팝업(선생님 폰)은 누르면 바로 튜토리얼 */
     /* 위로 밀면 바로 닫힘 */
     btn.addEventListener("touchstart", function (e) { sy = e.touches[0].clientY; }, { passive: true });
     btn.addEventListener("touchmove", function (e) {
@@ -5894,22 +5896,23 @@
   function wnSteps(L) {
     var items = [], steps = [];
     L.forEach(function (w) { items = items.concat(w.items || []); steps = steps.concat(w.steps || []); });
-    return steps   /* 2026-11-22 장동욱 "팝업창 보고 보통 무시 — 바로 새 기능 설명": 소개 카드 없이 첫 단계부터 */
+    return [{ c: 1, h: "#home", t: "새 기능이 생겼어요 🎉", b: tourName() + "님, PT노트가 업데이트됐어요!", l: items, ok: "보러 가기" }]   /* 2026-11-22 "뭐뭐 추가됐다부터 보여줘야지" — 소개 카드는 그대로 */
+      .concat(steps)
       .concat([{ c: 1, h: "#home", t: "업데이트 둘러보기 끝! 💪", b: "다시 보고 싶으면 오른쪽 위 ⚙️ 설정이나\n🔔 공지에서 '새 기능 둘러보기'를 누르면 돼요.", ok: "확인" }]);
   }
   function wnStart(force) {   /* force: true = 최신 소식, "날짜 id" = 그 소식(공지의 '새 기능 둘러보기') */
     var L = force === true ? WN.slice(0, 1) : force ? WN.filter(function (w) { return w.id === force; }) : wnList(); if (!L.length || TOUR_ON) return;
     tourStart(wnSteps(L), { skip: "나중에 볼게요", done: function () {
       if (COACH_MODE || DEMO) return;
-      if (!force) wnSeenAll();
+      if (!force) wnSeenAll(); else { var top = L.reduce(function (a, w) { return w.id > a ? w.id : a; }, wnSeen()); try { localStorage.setItem(WN_K, top); } catch (e) {} }
+      WN_WANT = false;
       var ks = (M.notices || []).filter(function (n) { return n.wn && L.some(function (w) { return w.id === n.wn; }); }).map(nKey);
       lsAdd(NSEEN_KEY, ks); lsAdd(NPOP_KEY, ks); nDot();   /* 둘러본 소식은 공지 팝업·빨간 점에서도 뺌 */
     } });
   }
   function wnMaybe() {
     if (!WN_WANT || TOUR_ON || TOUR_WANT) return;
-    var h = location.hash.replace("#", ""); if (h && h !== "home") return;
-    setTimeout(function () { if (WN_WANT && !TOUR_ON && (!location.hash || location.hash === "#home")) wnStart(/[?&]wn\b/.test(location.search)); }, document.body.classList.contains("ready") ? 600 : 1500);
+    setTimeout(function () { if (WN_WANT && !TOUR_ON) wnStart(/[?&]wn\b/.test(location.search)); }, document.body.classList.contains("ready") ? 600 : 1500);
   }
   /* 위 막대 ⚙️ 설정 (2026-11-13 "상단 지수 아이콘 옆에 설정 아이콘 — 앱 사용법·홈 화면 앱 추가, 기존 항목 없애고") */
   function gearMenu() {
