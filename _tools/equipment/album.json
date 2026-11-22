@@ -232,6 +232,11 @@
     "img": "m/mikyung-7rq2vd/media/form-seated-face-pull/step1.jpg"
    },
    {
+    "member": "염승완",
+    "id": "1121-seated-face-pull",
+    "img": "m/dyn/seungwan/media/form-1121-seated-face-pull/step1.jpg"
+   },
+   {
     "member": "김수현",
     "id": "1121-seated-face-pull",
     "img": "m/dyn/suhyun/media/form-1121-seated-face-pull/step1.jpg"
@@ -659,6 +664,11 @@
     "member": "최지훈",
     "id": "assisted-chin-up",
     "img": "m/jihun-g9kgdo/media/form-assisted-chin-up/step1.jpg"
+   },
+   {
+    "member": "염승완",
+    "id": "1121-assisted-chin-up",
+    "img": "m/dyn/seungwan/media/form-1121-assisted-chin-up/step1.jpg"
    }
   ]
  },
