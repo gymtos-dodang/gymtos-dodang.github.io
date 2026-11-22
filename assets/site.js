@@ -8,13 +8,13 @@ window.SITE = {
   ig: "jangkaredo_970",
   reels: [
     { t: "사이드 레터럴", u: "https://www.instagram.com/reel/DgDIXFWDN1a/", c: "/assets/reels/DgDIXFWDN1a.jpg" },
-    { t: "해머 로우로우", u: "https://www.instagram.com/reel/Df-Dd3gEkZl/" },
-    { t: "힙 쓰러스트", u: "https://www.instagram.com/reel/Df6GrrATWW1/" },
-    { t: "케이블 체스트프레스", u: "https://www.instagram.com/reel/DfnCmrVToCL/" },
-    { t: "아웃타이 윗엉덩이", u: "https://www.instagram.com/reel/DfVwU2iP4Gv/" },
-    { t: "아웃타이 굿모닝", u: "https://www.instagram.com/reel/DfBKgd4zptA/" },
-    { t: "회전발판 스쿼트", u: "https://www.instagram.com/reel/DevKrFfT9Gw/" },
-    { t: "회전발판 와이드 스쿼트", u: "https://www.instagram.com/reel/DecEidzT5j7/" }
+    { t: "해머 로우로우", u: "https://www.instagram.com/reel/Df-Dd3gEkZl/", c: "/assets/reels/Df-Dd3gEkZl.jpg" },
+    { t: "힙 쓰러스트", u: "https://www.instagram.com/reel/Df6GrrATWW1/", c: "/assets/reels/Df6GrrATWW1.jpg" },
+    { t: "케이블 체스트프레스", u: "https://www.instagram.com/reel/DfnCmrVToCL/", c: "/assets/reels/DfnCmrVToCL.jpg" },
+    { t: "아웃타이 윗엉덩이", u: "https://www.instagram.com/reel/DfVwU2iP4Gv/", c: "/assets/reels/DfVwU2iP4Gv.jpg" },
+    { t: "아웃타이 굿모닝", u: "https://www.instagram.com/reel/DfBKgd4zptA/", c: "/assets/reels/DfBKgd4zptA.jpg" },
+    { t: "회전발판 스쿼트", u: "https://www.instagram.com/reel/DevKrFfT9Gw/", c: "/assets/reels/DevKrFfT9Gw.jpg" },
+    { t: "회전발판 와이드 스쿼트", u: "https://www.instagram.com/reel/DecEidzT5j7/", c: "/assets/reels/DecEidzT5j7.jpg" }
   ],
   att_api: "https://script.google.com/macros/s/AKfycbwtjTpk88xTWQcKXoaFX2qCYtKSzKoCOs-Us26k6QUbtKvewTaqJutJuA4RJjAmV-6bvA/exec"   /* 출석 창고(Apps Script 웹 앱) 주소 */
 };
