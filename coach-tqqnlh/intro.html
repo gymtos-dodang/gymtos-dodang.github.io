@@ -369,6 +369,7 @@ body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; touch-act
 </div>
 <script src="members.js"></script>
 <script src="guide/try.js?v=1119"></script>
+<script src="guide/dynmembers.js?v=1122"></script>
 <script>
 (function () {
   try { sessionStorage.removeItem("ptdemo"); } catch (e) {}
@@ -456,8 +457,9 @@ body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; touch-act
     return fetch("/m/" + slug + "/data.js", { cache: "no-store" }).then(function (r) { return r.text(); })
       .then(function (t) { var w = {}; new Function("window", t)(w); return w.MEMBER; }).catch(function () { return null; });
   }
-  Promise.all((window.COACH_MEMBERS || []).map(loadMember)).then(function (all) {
-    var ms = all.filter(Boolean), feed = [], rows = [], names = [];
+  Promise.all([Promise.all((window.COACH_MEMBERS || []).map(loadMember)), window.PTDyn ? window.PTDyn(window.COACH_MEMBERS || []) : []]).then(function (rr) {
+    var all = rr[0];   /* 앱에서 만든 회원도 숫자·단계·기록에 (2026-11-22) */
+    var ms = all.filter(Boolean).concat(rr[1] || []), feed = [], rows = [], names = [];
     ms.forEach(function (M) { String(M.name || "").split("·").forEach(function (n) { n = n.trim(); if (n) names.push(n); }); });
     ms.forEach(function (M) {
       auto.total += String(M.name || "").split("·").length;

@@ -564,6 +564,7 @@ html, body { background: #141416; }
 
 <script src="members.js"></script>
 <script src="guide/try.js?v=1119c"></script>
+<script src="guide/dynmembers.js?v=1122"></script>
 <script>
 (function () {
   "use strict";
@@ -675,9 +676,10 @@ html, body { background: #141416; }
       .catch(function () { return null; });
   }
   var pool = [];
-  Promise.all(LIST.map(loadMember)).then(function (all) {
+  Promise.all([Promise.all(LIST.map(loadMember)), window.PTDyn ? window.PTDyn(LIST) : []]).then(function (rr) {
+    var all = rr[0];   /* 앱에서 만든 회원도 숫자·단계·기록에 (2026-11-22) — "보기 →"는 폴더 회원만 */
     all.forEach(function (M, i) { if (M) pool.push({ slug: LIST[i], M: M }); });   /* "보기 →" 누를 때 고를 회원 */
-    var ms = all.filter(Boolean), feed = [], rows = [], names = [];
+    var ms = all.filter(Boolean).concat(rr[1] || []), feed = [], rows = [], names = [];
     ms.forEach(function (M) { String(M.name || "").split("·").forEach(function (n) { n = n.trim(); if (n) names.push(n); }); });
     ms.forEach(function (M) {
       auto.total += headCount(M);
