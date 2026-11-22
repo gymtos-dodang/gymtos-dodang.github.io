@@ -117,8 +117,7 @@ body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; touch-act
 .plc::after { right: -35%; top: -25%; width: 65%; height: 105%; background: radial-gradient(closest-side, rgba(225, 20, 30, .30), transparent); opacity: .85; animation: gDrift2 22s ease-in-out infinite alternate; }
 @keyframes gDrift1 { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(22%, -18%) scale(1.12); } 100% { transform: translate(48%, -6%) scale(.96); } }
 @keyframes gDrift2 { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-18%, 22%) scale(1.1); } 100% { transform: translate(-40%, 8%) scale(1.02); } }
-/* 2026-11-22 "그라데이션 짤림" — 사진·사진 경계 띠가 빛 덩어리를 덮어 경계에서 끊겨 보임 → 빛을 사진 위로 올리고 screen으로 섞음(어두운 곳만 은은히 밝아짐) */
-.slide.plc::before, .slide.plc::after { z-index: 5; mix-blend-mode: screen; }
+/* 2026-11-22 빛은 사진 뒤에만(사진 위로 올리면 바프 사진이 덮임) — 경계선은 사진 가장자리 mask로 풀어서 없앰 */
 @media (prefers-reduced-motion: reduce) { .plc::before, .plc::after { animation: none !important; } }
 </style>
 </head>
