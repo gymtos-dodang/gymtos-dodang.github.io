@@ -687,7 +687,7 @@
     if (!COACH_MODE) setTimeout(function () { var b0 = pfStock(); pfScan(true); var n2 = pfStock();
       if (n2 !== b0 && p.isConnected) { var fb = p.querySelector(".pf-food > b"); if (fb) fb.textContent = F + " " + n2 + "개"; p.querySelector(".pf-food").classList.toggle("empty", !n2); pfBtnDraw(); } }, 260);
   }
-  /* 꾹 누르면 주머니에서 먹이가 하나씩 쏟아져 손가락을 따라옴(최대 30개) → 놓은 자리에 떨어지고 가장 가까운 동물이 달려가서 먹음 */
+  /* 꾹 누르면 주머니에서 먹이가 하나씩 천천히 쏟아져 손가락을 따라옴(최대 10개) → 놓은 자리에 떨어지고 가장 가까운 동물이 달려가서 먹음 */
   function pfHold(el, bag) {
     var hand = null, cnt = 0, tmr = 0, sx = 0, sy = 0, lx = 0, ly = 0, on = false;
     function draw() { if (hand) hand.innerHTML = pfIcon(34) + '<b>' + cnt + '</b>'; }
@@ -699,8 +699,8 @@
       e.preventDefault(); on = true; try { el.setPointerCapture(e.pointerId); } catch (x) {}
       sx = lx = e.clientX; sy = ly = e.clientY; cnt = 1;
       hand = document.createElement("div"); hand.className = "pfhand"; document.body.appendChild(hand); draw(); pos();
-      var max = Math.min(st, 30), step = 260;
-      (function pour() { tmr = setTimeout(function () { if (!on || cnt >= max) return; cnt++; draw(); hand.classList.remove("bump"); void hand.offsetWidth; hand.classList.add("bump"); try { navigator.vibrate && navigator.vibrate(6); } catch (x) {} step = Math.max(70, step * .86); pour(); }, step); })();
+      var max = Math.min(st, 10), step = 420;   /* 2026-11-22 "누르니까 먹이 한번에 주던데" → 천천히 일정하게(0.42초에 1개, 빨라지지 않음), 최대 10개 */
+      (function pour() { tmr = setTimeout(function () { if (!on || cnt >= max) return; cnt++; draw(); hand.classList.remove("bump"); void hand.offsetWidth; hand.classList.add("bump"); try { navigator.vibrate && navigator.vibrate(6); } catch (x) {} pour(); }, step); })();
     });
     el.addEventListener("pointermove", function (e) {
       if (!on) return; lx = e.clientX; ly = e.clientY; pos();
