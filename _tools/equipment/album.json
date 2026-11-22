@@ -230,6 +230,11 @@
     "member": "정미경",
     "id": "seated-face-pull",
     "img": "m/mikyung-7rq2vd/media/form-seated-face-pull/step1.jpg"
+   },
+   {
+    "member": "김수현",
+    "id": "1121-seated-face-pull",
+    "img": "m/dyn/suhyun/media/form-1121-seated-face-pull/step1.jpg"
    }
   ]
  },
@@ -407,6 +412,11 @@
     "member": "박민",
     "id": "hammer-low-row",
     "img": "m/dyn/parkmin/media/form-hammer-low-row/step1.jpg"
+   },
+   {
+    "member": "김수현",
+    "id": "1121-hammer-low-row",
+    "img": "m/dyn/suhyun/media/form-1121-hammer-low-row/step1.jpg"
    }
   ]
  },
@@ -735,6 +745,11 @@
     "member": "박민",
     "id": "mtorture-seated-row",
     "img": "m/dyn/parkmin/media/form-mtorture-seated-row/step1.jpg"
+   },
+   {
+    "member": "김수현",
+    "id": "1121-mtorture-seated-row",
+    "img": "m/dyn/suhyun/media/form-1121-mtorture-seated-row/step1.jpg"
    }
   ]
  },
