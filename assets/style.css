@@ -2775,6 +2775,66 @@ html.rt-dragging, html.rt-dragging body { -webkit-user-select: none; user-select
 .pf-hide small { display: block; font-size: 10.5px; font-weight: 700; opacity: .75; margin-top: 2px; }
 html.pet-off .petwalk, html.pet-off .pfbtn, html.pet-off .pfbag, html.pet-off .pfpile, html.pet-off .pfplus { display: none !important; }
 
+/* 근육 위치 보기 (복습지 03) — 2026-11-22 팀장님 사이트 기능을 내 기준으로(v4 지도 assets/mumap · 강조색은 v4 진한/연한 분홍 · 칩 색은 내 테마 그대로) */
+.mbtn { border: 0; background: transparent; padding: 0; font: inherit; color: inherit; text-decoration: underline; text-decoration-color: var(--pink); text-decoration-thickness: 2px; text-underline-offset: 4px; cursor: pointer; }
+.mbtn.s { color: var(--sub); text-decoration-color: var(--pink-l); }
+.mdot { font-style: normal; margin: 0 6px; color: var(--sub); }
+.mhint { margin: 2px 0 0; font-size: 12.5px; font-weight: 700; color: var(--pink-e); }
+.mhint::before { content: "👆 "; }
+.mu-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.mu-c { border: 0; border-radius: 99px; padding: 7px 12px; font: inherit; font-size: 13.5px; font-weight: 800; cursor: pointer; background: var(--soft, #F2F4F7); color: var(--sub); }
+.mu-c.p { box-shadow: inset 0 0 0 1.5px var(--pink); }
+.mu-c.s { box-shadow: inset 0 0 0 1.5px var(--pink-l); }
+.mu-c.on.p { background: var(--pink); color: #fff; }
+.mu-c.on.s { background: var(--pink-l); color: var(--pink-e); }
+.mu-map { margin: 10px 0 6px; border-radius: 16px; background: #FAF9F7; padding: 6px; min-height: 200px; display: grid; place-items: center; }
+.mu-map svg { width: 100%; height: auto; display: block; }
+.mu-load { color: var(--sub); font-size: 14px; }
+.mmap .m { fill: none; stroke: #9E978D; stroke-width: 1; stroke-linejoin: round; transition: fill .3s; }
+.mmap .m.deep { display: none; }
+.mmap .ln { fill: none; stroke: #9E978D; stroke-width: .9; stroke-linecap: round; }
+.mmap .ol { fill: none; stroke: #8C867E; stroke-width: 2; stroke-linejoin: round; }
+.mmap .lb { font-size: 14px; fill: #7A756E; text-anchor: middle; }
+.mmap .m.on { fill: var(--pink); stroke: var(--pink-e); stroke-width: 1.4; animation: muOn 1.6s ease-in-out infinite; }
+.mmap .m.on.s { fill: var(--pink-l); }
+.mmap .m.deep.on { display: inline; stroke-dasharray: 4 3; }
+@keyframes muOn { 0%, 100% { fill-opacity: 1; } 50% { fill-opacity: .55; } }
+@media (prefers-reduced-motion: reduce) { .mmap .m.on { animation: none; } }
+.mu-role { margin: 4px 0 6px; font-size: 13px; font-weight: 800; }
+.mu-role.p { color: var(--pink-e); }
+.mu-role.s { color: var(--sub); }
+.mu-one { padding: 10px 12px; border-radius: 14px; background: var(--soft, #F2F4F7); margin-bottom: 6px; }
+.mu-one b { display: block; font-size: 17px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+.mu-one p { margin: 2px 0; font-size: 14px; color: var(--ink); }
+.mu-one p i { font-style: normal; font-size: 12px; font-weight: 800; color: var(--sub); margin-right: 8px; }
+.mu-none { color: var(--sub) !important; }
+/* 근육 위치 2차 — 해부도처럼(근육 색·결·확대·이름표) */
+.mu-map { background: #FFFBF8; overflow: hidden; }
+.mmap .skin { fill: #F8E9DF; }
+.mmap .m { fill: #E6A796; stroke: #A5594B; stroke-width: .8; }
+.mmap .fb { pointer-events: none; opacity: .9; }
+.mmap .fl { stroke: rgba(120, 38, 28, .30); stroke-width: .7; }
+.mmap .ln { stroke: #A5594B; stroke-width: .7; opacity: .55; }
+.mmap .ol { stroke: #8E5B4D; stroke-width: 1.6; }
+.mmap.sel .m { fill: #F0D2C8; stroke: #C7978A; }
+.mmap.sel .fb { opacity: .35; }
+.mmap .m.on, .mmap.sel .m.on { fill: #DB4C8C; stroke: #A82E63; stroke-width: 1.3; animation: muOn 1.8s ease-in-out infinite; }
+.mmap .m.on.s, .mmap.sel .m.on.s { fill: #F4B3CE; stroke: #C97FA4; }
+.mmap .mlab { fill: #7A1E48; font-weight: 800; text-anchor: middle; paint-order: stroke; stroke: #fff; stroke-linejoin: round; }
+.mu-z { display: flex; gap: 6px; justify-content: center; margin: 0 0 8px; }
+.mu-z button { border: 0; border-radius: 99px; padding: 6px 12px; font: inherit; font-size: 12.5px; font-weight: 800; background: var(--tint, #F2F4F7); color: var(--sub); cursor: pointer; }
+.mu-z button.on { background: var(--ink); color: #fff; }
+/* 03 큰 그림도 해부도 스타일 */
+.mu-big { display: block; width: 100%; border: 0; padding: 12px 8px 10px; border-radius: 16px; background: #FFFBF8; cursor: pointer; text-align: center; font: inherit; }
+.mu-big svg { width: 100%; height: auto; display: block; }
+.mu-big .mmap .m.on { animation: none; }
+.mu-bt { display: inline-block; padding: 5px 14px; border-radius: 99px; background: #6E6A64; color: #fff; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.mu-lg { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 6px; font-size: 12.5px; font-weight: 700; color: var(--sub); }
+.mu-lg i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.mu-lg i.p { background: #DB4C8C; } .mu-lg i.s { background: #F4B3CE; margin-left: 6px; }
+.mu-lg em { font-style: normal; margin-left: 10px; color: #C97FA4; }
+.mu-lg em { color: var(--pink-e); }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -2985,6 +3045,9 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .pfplus small { background: var(--paper); color: var(--ink); }
 :where(html:not([data-theme="light"])) .pf-food { background-image: repeating-linear-gradient(45deg, color-mix(in srgb, #FFF3DC 16%, var(--paper)) 0 10px, color-mix(in srgb, #FFEBC8 16%, var(--paper)) 10px 20px); }
 :where(html:not([data-theme="light"])) .pfbtn { background-image: linear-gradient(180deg, color-mix(in srgb, #FFF8EA 16%, var(--paper)), color-mix(in srgb, #FFE2B0 16%, var(--paper))); }
+:where(html:not([data-theme="light"])) .mu-map { background: var(--paper); }
+:where(html:not([data-theme="light"])) .mu-big { background: var(--paper); }
+:where(html:not([data-theme="light"])) .mu-lg i.s { background: color-mix(in srgb, #F4B3CE 14%, var(--paper)); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -3085,6 +3148,15 @@ html:not([data-theme="light"]) .bc-cname span, html:not([data-theme="light"]) .b
 
 /* 업데이트 소식 목록 칸 — 카드(paper)와 같은 색이라 한 단계 밝게 (2026-11-20) */
 html:not([data-theme="light"]) .tour-ul { background: var(--card2); }
+
+/* 근육 위치 보기(복습지 03) — 몸 지도 칸은 카드보다 한 단계 밝게, 글씨는 밝게 (2026-11-22) */
+html:not([data-theme="light"]) .mu-map, html:not([data-theme="light"]) .mu-big { background: var(--card2); }
+html:not([data-theme="light"]) .mmap .lb { fill: var(--sub); }
+html:not([data-theme="light"]) .mu-one { background: var(--card2); }
+html:not([data-theme="light"]) .mu-c { background: var(--card2); color: var(--ink); }
+html:not([data-theme="light"]) .mu-z button { background: var(--card2); color: var(--ink); }
+html:not([data-theme="light"]) .mu-z button.on { background: var(--ink); color: var(--page); }
+html:not([data-theme="light"]) .mu-bt { background: #3A3A42; }
 
 }
 :where(html[data-theme="dark"]) .num { background: var(--seal); }
@@ -3295,6 +3367,9 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .pfplus small { background: var(--paper); color: var(--ink); }
 :where(html[data-theme="dark"]) .pf-food { background-image: repeating-linear-gradient(45deg, color-mix(in srgb, #FFF3DC 16%, var(--paper)) 0 10px, color-mix(in srgb, #FFEBC8 16%, var(--paper)) 10px 20px); }
 :where(html[data-theme="dark"]) .pfbtn { background-image: linear-gradient(180deg, color-mix(in srgb, #FFF8EA 16%, var(--paper)), color-mix(in srgb, #FFE2B0 16%, var(--paper))); }
+:where(html[data-theme="dark"]) .mu-map { background: var(--paper); }
+:where(html[data-theme="dark"]) .mu-big { background: var(--paper); }
+:where(html[data-theme="dark"]) .mu-lg i.s { background: color-mix(in srgb, #F4B3CE 14%, var(--paper)); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {
@@ -3395,5 +3470,14 @@ html[data-theme="dark"] .bc-cname span, html[data-theme="dark"] .bc-pb em { colo
 
 /* 업데이트 소식 목록 칸 — 카드(paper)와 같은 색이라 한 단계 밝게 (2026-11-20) */
 html[data-theme="dark"] .tour-ul { background: var(--card2); }
+
+/* 근육 위치 보기(복습지 03) — 몸 지도 칸은 카드보다 한 단계 밝게, 글씨는 밝게 (2026-11-22) */
+html[data-theme="dark"] .mu-map, html[data-theme="dark"] .mu-big { background: var(--card2); }
+html[data-theme="dark"] .mmap .lb { fill: var(--sub); }
+html[data-theme="dark"] .mu-one { background: var(--card2); }
+html[data-theme="dark"] .mu-c { background: var(--card2); color: var(--ink); }
+html[data-theme="dark"] .mu-z button { background: var(--card2); color: var(--ink); }
+html[data-theme="dark"] .mu-z button.on { background: var(--ink); color: var(--page); }
+html[data-theme="dark"] .mu-bt { background: #3A3A42; }
 
 /* DARK-END */

@@ -97,3 +97,12 @@ D .bc-cname span, D .bc-pb em { color: #fff; }
 
 /* 업데이트 소식 목록 칸 — 카드(paper)와 같은 색이라 한 단계 밝게 (2026-11-20) */
 D .tour-ul { background: var(--card2); }
+
+/* 근육 위치 보기(복습지 03) — 몸 지도 칸은 카드보다 한 단계 밝게, 글씨는 밝게 (2026-11-22) */
+D .mu-map, D .mu-big { background: var(--card2); }
+D .mmap .lb { fill: var(--sub); }
+D .mu-one { background: var(--card2); }
+D .mu-c { background: var(--card2); color: var(--ink); }
+D .mu-z button { background: var(--card2); color: var(--ink); }
+D .mu-z button.on { background: var(--ink); color: var(--page); }
+D .mu-bt { background: #3A3A42; }

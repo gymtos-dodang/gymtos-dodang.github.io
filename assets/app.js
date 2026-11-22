@@ -3427,6 +3427,178 @@
   }
 
   /* ---------------- 복습지 상세 */
+  /* ---------------- 근육 위치 보기 (2026-11-22 장동욱 — 박현규 팀장님 사이트 기능을 내 기준으로 옮김: v4 지도·내 분홍색·다크모드)
+     복습지 03 자극 부위의 근육 이름을 누르면 → 몸 지도(assets/mumap/map-M|F.svg, _tools/make_muscle_svg.py = 인체모형 v4 모양)에서 그 근육만 칠하고 위치·하는 일 설명.
+     MU = [이름 찾는 규칙, 그림 칸 키(anatomy_v4 이름 — v3와 같음), 이름, 위치, 하는 일] — 위에서부터 먼저 맞는 것 */
+  var MU = [
+    [/윗가슴|가슴\s*위/, "pec_clav", "대흉근 위쪽", "가슴 위쪽, 쇄골 바로 아래", "팔을 앞·위로 밀어 올릴 때 (인클라인 프레스)"],
+    [/가슴\s*아래/, "pec_stern", "대흉근 아래쪽", "가슴 아래쪽", "팔을 앞·아래로 밀고 모을 때"],
+    [/승모근\s*가운데/, "trap_mid", "중부 승모근", "날개뼈 사이, 등 가운데", "날개뼈를 뒤로 모을 때"],
+    [/이두근\s*(단두|짧은)/, "biceps_short", "이두근 짧은 머리", "팔 앞쪽 안쪽", "팔꿈치를 굽히고 손바닥을 위로 돌릴 때"],
+    [/이두근\s*(장두|긴)/, "biceps_long", "이두근 긴 머리", "팔 앞쪽 바깥쪽", "팔꿈치를 굽혀 당길 때"],
+    [/삼두근\s*(장두|긴)/, "triceps_long", "삼두근 긴 머리", "팔 뒤쪽 안쪽 (겨드랑이 쪽)", "팔꿈치를 펴고 팔을 뒤로 당길 때"],
+    [/대흉근\s*중/, "pec_stern", "대흉근 가운데·아래쪽", "가슴 가운데부터 아래쪽", "팔을 앞·아래로 밀고 모을 때"],
+    [/삼각근\s*전면\s*·\s*측면|전면\s*·\s*측면\s*삼각/, "delt_ant delt_lat", "삼각근 앞·옆", "어깨 앞쪽과 옆 바깥쪽", "팔을 앞·옆으로 들어 올릴 때"],
+    [/삼각근\s*전면/, "delt_ant", "전면 삼각근", "어깨 앞쪽 동그란 부분", "팔을 앞으로 들어 올리고, 머리 위로 밀 때"],
+    [/삼각근\s*측면/, "delt_lat", "측면 삼각근", "어깨 옆 바깥쪽", "팔을 옆으로 들 때 — 어깨가 넓어 보이게 해요"],
+    [/삼각근\s*후면/, "delt_post", "후면 삼각근", "어깨 뒤쪽", "팔을 뒤로 당기고 벌릴 때 — 말린 어깨를 펴 줘요"],
+    [/회전근개/, "supraspinatus infraspinatus teres_minor subscapularis", "회전근개", "날개뼈를 덮은 작은 어깨 근육 4개", "어깨 관절을 단단히 잡아 주고 팔을 돌릴 때"],
+    [/극상근/, "supraspinatus", "극상근", "날개뼈 위쪽, 어깨 위", "팔을 옆으로 들기 시작할 때"],
+    [/극하근/, "infraspinatus", "극하근", "날개뼈 뒤 가운데", "팔을 바깥으로 돌릴 때"],
+    [/소원근/, "teres_minor", "소원근", "날개뼈 바깥 아래 (극하근 바로 아래)", "팔을 바깥으로 돌릴 때"],
+    [/상완요골/, "brachioradialis", "상완요골근", "팔꿈치 바깥에서 아래팔 위쪽", "엄지를 위로 둔 채 팔꿈치를 굽힐 때 (해머컬)"],
+    [/치골근/, "pectineus", "치골근", "허벅지 안쪽 맨 위 (사타구니)", "다리를 안으로 모으고 앞으로 들 때"],
+    [/(^|\s)박근/, "gracilis", "박근", "허벅지 안쪽을 길게", "다리를 모으고 무릎을 굽힐 때"],
+    [/대흉근\s*(위|상부)|쇄골/, "pec_clav", "대흉근 위쪽", "가슴 위쪽, 쇄골 바로 아래", "팔을 앞·위로 밀어 올릴 때 (인클라인 프레스)"],
+    [/대흉근\s*(아래|하부)/, "pec_stern", "대흉근 아래쪽", "가슴 아래쪽", "팔을 앞·아래로 밀고 모을 때"],
+    [/대흉근|가슴/, "pec_clav pec_stern", "대흉근", "가슴 전체 — 가장 큰 가슴 근육", "팔을 앞으로 밀고, 몸 쪽으로 모을 때"],
+    [/전면\s*삼각|어깨\s*앞/, "delt_ant", "전면 삼각근", "어깨 앞쪽 동그란 부분", "팔을 앞으로 들어 올리고, 머리 위로 밀 때"],
+    [/측면\s*삼각|어깨\s*옆/, "delt_lat", "측면 삼각근", "어깨 옆 바깥쪽", "팔을 옆으로 들 때 — 어깨가 넓어 보이게 해요"],
+    [/후면\s*삼각|어깨\s*뒤/, "delt_post", "후면 삼각근", "어깨 뒤쪽", "팔을 뒤로 당기고 벌릴 때 — 말린 어깨를 펴 줘요"],
+    [/삼각근|어깨/, "delt_ant delt_lat delt_post", "삼각근", "어깨를 감싸는 동그란 근육 (앞·옆·뒤)", "팔을 앞·옆·뒤 모든 방향으로 들어 올릴 때"],
+    [/(상부\s*승모|승모근\s*상부|승모근\s*위)/, "trap_up", "상부 승모근", "목 옆에서 어깨 위까지", "어깨를 으쓱 올릴 때 — 너무 많이 쓰면 목이 뻐근해요"],
+    [/(중부\s*승모|승모근\s*중부)/, "trap_mid", "중부 승모근", "날개뼈 사이, 등 가운데", "날개뼈를 뒤로 모을 때"],
+    [/(하부\s*승모|승모근\s*하부)/, "trap_low", "하부 승모근", "날개뼈 아래 안쪽", "날개뼈를 아래로 내려 줄 때"],
+    [/승모근/, "trap_up trap_mid trap_low", "승모근", "목 뒤부터 등 가운데까지 마름모 모양", "어깨를 올리고, 날개뼈를 모으고 내릴 때"],
+    [/능형근/, "rhomboid", "능형근", "날개뼈 사이 깊은 곳", "날개뼈를 등뼈 쪽으로 모아 줘요 — 자세가 펴져요"],
+    [/광배근/, "lat", "광배근", "겨드랑이부터 허리까지 등 옆 넓은 근육", "팔을 아래·뒤로 당길 때 — 등이 넓은 역삼각형이 돼요"],
+    [/대원근/, "teres_major", "대원근", "겨드랑이 뒤, 날개뼈 아래 바깥", "광배근을 도와 팔을 아래·뒤로 당겨요"],
+    [/척추\s*기립|허리/, "erector erector_thoracic", "척추기립근", "등뼈 양옆으로 길게 (허리 양옆)", "상체를 곧게 세우고 허리를 버텨 줘요"],
+    [/이두근\s*짧은/, "biceps_short", "이두근 짧은 머리", "팔 앞쪽 안쪽", "팔꿈치를 굽히고 손바닥을 위로 돌릴 때"],
+    [/상완근/, "brachialis", "상완근", "이두근 아래 깊은 곳 (팔꿈치 위)", "팔꿈치를 굽힐 때 이두근과 같이"],
+    [/이두|팔\s*앞/, "biceps_long biceps_short", "이두근", "팔 앞쪽 (알통)", "팔꿈치를 굽혀 당길 때"],
+    [/삼두|팔\s*뒤/, "triceps_long triceps_lat triceps_med", "삼두근", "팔 뒤쪽", "팔꿈치를 쭉 펼 때 — 팔뚝 뒤 탄력"],
+    [/전완|아래팔|악력/, "forearm_flex forearm_ext brachioradialis", "전완근", "팔꿈치부터 손목까지 (아래팔)", "손잡이를 꽉 쥐고 버틸 때"],
+    [/복사근|옆구리/, "oblique", "복사근", "옆구리", "몸통을 비틀고 옆으로 굽힐 때"],
+    [/(^|[^비])복근|복직근|코어|복부/, "abs", "복직근", "배 앞쪽 (식스팩)", "몸통을 말고 버텨 줘요"],
+    [/중둔|엉덩이\s*옆/, "glute_med", "중둔근", "엉덩이 옆 위쪽 (골반 옆)", "다리를 옆으로 벌리고, 한 발로 설 때 골반을 잡아 줘요"],
+    [/대퇴근막장|골반\s*앞\s*바깥/, "tfl", "대퇴근막장근", "골반 앞 바깥쪽", "다리를 옆·앞으로 들 때 도와줘요"],
+    [/이상근|엉덩이\s*속/, "piriformis", "이상근", "엉덩이 깊은 곳 (대둔근 아래)", "다리를 바깥으로 돌릴 때"],
+    [/대둔|엉덩이/, "glute_max", "대둔근", "엉덩이 전체 — 몸에서 가장 큰 근육", "엉덩이를 앞으로 밀어 골반을 펼 때 (힙 업)"],
+    [/대퇴\s*사두|허벅지\s*앞/, "rectus_fem vastus_lat vastus_med", "대퇴사두근", "허벅지 앞쪽", "무릎을 펼 때 — 앉았다 일어날 때"],
+    [/햄스트링|허벅지\s*뒤/, "ham_bf ham_st", "햄스트링", "허벅지 뒤쪽", "무릎을 굽히고, 숙였다가 골반을 펼 때"],
+    [/내전|허벅지\s*안/, "add_long add_mag gracilis pectineus", "내전근", "허벅지 안쪽", "다리를 안으로 모을 때"],
+    [/종아리|비복|가자미/, "gastroc_med gastroc_lat soleus soleus_f", "종아리 (비복근·가자미근)", "무릎 아래 뒤쪽", "발끝으로 설 때, 걷고 뛸 때"],
+    [/장요근|고관절\s*굴곡/, "iliopsoas", "장요근", "배 깊은 곳에서 허벅지 앞 위로", "다리를 앞으로 들어 올릴 때"],
+    [/전거근/, "serratus", "전거근", "갈비뼈 옆 (겨드랑이 아래)", "날개뼈를 앞으로 밀어 줄 때"]
+  ];
+  function muSplit(t) {   /* "삼두근(팔 뒤) · 승모근" → 괄호 안 · 는 안 자름. 붙여 쓴 "전면·측면"·"중·하부"는 한 근육 (내 회원 글) */
+    var out = [], cur = "", d = 0, s = String(t || "");
+    s.split("").forEach(function (ch, i) {
+      if (ch === "(") d++; else if (ch === ")") d = Math.max(0, d - 1);
+      if ((ch === "," || (ch === "·" && (/\s/.test(s[i - 1] || " ") || /\s/.test(s[i + 1] || " ")))) && !d) { if (cur.trim()) out.push(cur.trim()); cur = ""; } else cur += ch;
+    });
+    if (cur.trim()) out.push(cur.trim());
+    return out;
+  }
+  function muFind(name) {   /* "능형근 · 승모근 중부"처럼 두 개면 둘 다 */
+    var parts = muSplit(name), hits = [];
+    parts.forEach(function (p) {
+      var bare = p.replace(/\(.*?\)?$/, "").trim() || p, q = null;
+      for (var i = 0; i < MU.length; i++) if (MU[i][0].test(bare)) { q = MU[i]; break; }
+      if (!q) for (var j = 0; j < MU.length; j++) if (MU[j][0].test(p)) { q = MU[j]; break; }
+      if (q && hits.indexOf(q) < 0) hits.push(q);
+    });
+    return hits;
+  }
+  var MU_SVG = {};
+  function muSheet(f, name, role) {
+    var all = [];
+    (f.primary_muscles || []).forEach(function (m) { all.push([m.name, "p", m.where || ""]); });
+    muSplit(f.secondary_muscles).forEach(function (t) { if (!/^없음/.test(t)) all.push([t, "s", ""]); });
+    var sh = rtSheet("근육 위치", '<div class="mu-chips">' + all.map(function (x) { return '<button type="button" class="mu-c ' + x[1] + '" data-mu="' + esc(x[0]) + '" data-mr="' + x[1] + '">' + esc(x[0].replace(/\(.*$/, "").trim()) + '</button>'; }).join("") + '</div>' +
+      '<div class="mu-map"><p class="mu-load">몸 지도를 불러오는 중…</p></div>' +
+      '<div class="mu-z"><button type="button" data-mz="F">앞모습</button><button type="button" data-mz="B">뒷모습</button><button type="button" data-mz="all">전체 몸</button></div><div class="mu-info"></div>', null, false);
+    var cl = sh.querySelector(".rts-foot [data-close]"); if (cl) cl.textContent = "닫기";
+    var sx = M.sex === "F" ? "F" : "M";
+    function show(n, r) {
+      Array.prototype.forEach.call(sh.querySelectorAll(".mu-c"), function (b) { b.classList.toggle("on", b.getAttribute("data-mu") === n); });
+      var hits = muFind(n), keys = {};
+      hits.forEach(function (q) { q[1].split(" ").forEach(function (k) { keys[k] = 1; }); });
+      var svg = sh.querySelector(".mu-map svg");
+      if (svg) {
+        Array.prototype.forEach.call(svg.querySelectorAll(".m"), function (el) { var on = !!keys[el.getAttribute("data-k")]; el.classList.toggle("on", on); el.classList.toggle("s", on && r === "s"); });
+        svg.classList.toggle("sel", hits.length > 0);
+        curLab = hits.map(function (q) { return q[2]; }).join(" · ");
+        muZoom("auto");
+      }
+      var w0 = (all.filter(function (x) { return x[0] === n; })[0] || [])[2];
+      sh.querySelector(".mu-info").innerHTML = '<p class="mu-role ' + r + '">' + (r === "p" ? "주동근 · 여기가 메인!" : "보조근 · 같이 도와줘요") + '</p>' +
+        (hits.length ? hits.map(function (q) { return '<div class="mu-one"><b>' + esc(q[2]) + '</b><p><i>위치</i>' + esc(q[3]) + '</p><p><i>하는 일</i>' + esc(q[4]) + '</p></div>'; }).join("")
+          : '<div class="mu-one"><b>' + esc(n) + '</b>' + (w0 ? '<p><i>위치</i>' + esc(w0) + '</p>' : '') + '<p class="mu-none">그림에는 아직 표시하지 못하는 근육이에요</p></div>');
+    }
+    /* 확대: 칠한 근육이 있는 쪽(앞/뒤 중 더 넓게 칠해진 쪽)으로 viewBox를 부드럽게 당김 + 이름표 */
+    var curLab = "", zAnim = 0;
+    function muZoom(mode) {
+      var svg = sh.querySelector(".mu-map svg"); if (!svg) return;
+      var vb0 = svg.getAttribute("data-vb0") || svg.getAttribute("viewBox"); svg.setAttribute("data-vb0", vb0);
+      var F = vb0.split(/\s+/).map(Number), box = { F: null, B: null }, area = { F: 0, B: 0 };
+      Array.prototype.forEach.call(svg.querySelectorAll(".m.on"), function (el) {
+        var v = el.getAttribute("data-v"), bb; try { bb = el.getBBox(); } catch (e2) { return; }
+        if (!bb.width) return;
+        area[v] += bb.width * bb.height;
+        var o = box[v]; box[v] = o ? { x: Math.min(o.x, bb.x), y: Math.min(o.y, bb.y), x2: Math.max(o.x2, bb.x + bb.width), y2: Math.max(o.y2, bb.y + bb.height) } : { x: bb.x, y: bb.y, x2: bb.x + bb.width, y2: bb.y + bb.height };
+      });
+      if (mode === "auto") mode = !box.F && !box.B ? "all" : area.F >= area.B ? "F" : "B";
+      Array.prototype.forEach.call(sh.querySelectorAll("[data-mz]"), function (b) { var z = b.getAttribute("data-mz"); b.hidden = z !== "all" && !box[z]; b.classList.toggle("on", z === mode); });
+      var T = F.slice(), bx = mode !== "all" && box[mode];
+      if (bx) {
+        var w = Math.max(150, (bx.x2 - bx.x) * 1.9), h = Math.max(150, (bx.y2 - bx.y) * 1.6), ar = F[2] / F[3];
+        if (w / h > ar) h = w / ar; else w = h * ar;
+        var cx = (bx.x + bx.x2) / 2, cy = (bx.y + bx.y2) / 2;
+        T = [Math.max(F[0], Math.min(F[0] + F[2] - w, cx - w / 2)), Math.max(F[1], Math.min(F[1] + F[3] - h, cy - h / 2 + h * 0.06)), w, h];
+      }
+      var lab = svg.querySelector(".mlab"); if (lab) lab.remove();
+      var S0 = (svg.getAttribute("viewBox") || vb0).split(/\s+/).map(Number), t0 = performance.now(), me = ++zAnim;
+      (function step(now) {
+        if (me !== zAnim) return;
+        var k = Math.min(1, (now - t0) / 380), e3 = 1 - Math.pow(1 - k, 3);
+        svg.setAttribute("viewBox", S0.map(function (v, i) { return (v + (T[i] - v) * e3).toFixed(1); }).join(" "));
+        if (k < 1) requestAnimationFrame(step);
+        else if (bx && curLab) {
+          var tx = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          tx.setAttribute("class", "mlab"); tx.setAttribute("x", ((bx.x + bx.x2) / 2).toFixed(1));
+          tx.setAttribute("y", Math.max(T[1] + T[3] * 0.07, bx.y - T[3] * 0.03).toFixed(1));
+          tx.setAttribute("font-size", (T[2] * 0.055).toFixed(1)); tx.setAttribute("stroke-width", (T[2] * 0.012).toFixed(1));
+          tx.textContent = curLab; svg.appendChild(tx);
+        }
+      })(t0);
+    }
+    sh.addEventListener("click", function (e) {
+      var z = e.target.closest("[data-mz]"); if (z) { muZoom(z.getAttribute("data-mz")); return; }
+      var b = e.target.closest(".mu-c"); if (b) show(b.getAttribute("data-mu"), b.getAttribute("data-mr"));
+    });
+    function put(t) { var m = sh.querySelector(".mu-map"); if (m) { m.innerHTML = t; show(name, role); } }
+    show(name, role);
+    if (MU_SVG[sx]) put(MU_SVG[sx]);
+    else fetch(BASE + "mumap/map-" + sx + ".svg").then(function (r) { return r.text(); }).then(function (t) { MU_SVG[sx] = t; put(t); })
+      .catch(function () { var m = sh.querySelector(".mu-map"); if (m) m.innerHTML = '<p class="mu-load">몸 지도를 못 불러왔어요 — 인터넷 연결을 확인해 주세요</p>'; });
+  }
+  function muInline() {   /* 2026-11-21 팀장 "이다혜님 봐봐" — 03 자극 부위 큰 그림도 같은 해부도 스타일로(주동근 진한 분홍·보조근 연한 분홍 — 내 v4 색). 못 불러오면 예전 anatomy.png 그대로 */
+    var im = view.querySelector(".muscle > img"), id = (location.hash || "").replace(/^#form-/, ""), f = findForm(id);
+    if (!im || !f || f.simple) return;
+    var sx = M.sex === "F" ? "F" : "M";
+    function put(t) {
+      if (!document.body.contains(im)) return;
+      var on = {};
+      muSplit(f.secondary_muscles).forEach(function (n) { muFind(n).forEach(function (q) { q[1].split(" ").forEach(function (k) { on[k] = "s"; }); }); });
+      (f.primary_muscles || []).forEach(function (m) { muFind(m.name).forEach(function (q) { q[1].split(" ").forEach(function (k) { on[k] = "p"; }); }); });
+      if (!Object.keys(on).length) return;
+      var box = document.createElement("button"); box.type = "button"; box.className = "mu-big"; box.setAttribute("aria-label", "자극 부위 몸 그림 — 누르면 근육 위치 자세히");
+      box.innerHTML = '<span class="mu-bt">오늘의 운동 자극 부위</span>' + t + '<span class="mu-lg"><i class="p"></i>주동근<i class="s"></i>보조근<em>눌러서 자세히 ›</em></span>';
+      var svg = box.querySelector("svg"); svg.classList.add("sel");
+      Array.prototype.forEach.call(svg.querySelectorAll(".m"), function (el) { var r = on[el.getAttribute("data-k")]; if (r) { el.classList.add("on"); if (r === "s") el.classList.add("s"); } });
+      box.addEventListener("click", function () { var m0 = (f.primary_muscles || [])[0]; if (m0) muSheet(f, m0.name, "p"); });
+      im.replaceWith(box);
+    }
+    if (MU_SVG[sx]) put(MU_SVG[sx]);
+    else fetch(BASE + "mumap/map-" + sx + ".svg").then(function (r) { return r.text(); }).then(function (t) { MU_SVG[sx] = t; put(t); }).catch(function () {});
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest(".mbtn"); if (!b) return;
+    var id = (location.hash || "").replace(/^#form-/, ""), f = findForm(id);
+    if (f) muSheet(f, b.getAttribute("data-mu"), b.getAttribute("data-mr"));
+  });
   function renderForm(f) {
     var D = f.dir;
     var h = '<a class="back" href="#forms">← 자세 복습지</a>';
@@ -3461,8 +3633,9 @@
     h += '<section>' + head("03", "자극 부위", "여기에 자극이 와야 정상이에요") + '<div class="muscle">' +
       '<img src="' + esc(D) + 'anatomy.png" alt="자극 부위 인체 그림: 진한 분홍은 주동근, 연한 분홍은 보조근" loading="lazy"><div class="mcol">' +
       '<div class="mgroup"><div class="mrow"><span class="mchip p">주동근</span>여기가 메인!</div>' +
-      f.primary_muscles.map(function (m) { return '<p class="mname">' + esc(m.name) + '<span>' + esc(m.where) + '</span></p>'; }).join("") + '</div>' +
-      '<div class="mgroup"><div class="mrow"><span class="mchip s">보조근</span>같이 도와줘요</div><p class="mname s2">' + esc(f.secondary_muscles) + '</p></div>' +
+      f.primary_muscles.map(function (m) { return '<p class="mname"><button type="button" class="mbtn" data-mu="' + esc(m.name) + '" data-mr="p" data-mw="' + esc(m.where || "") + '">' + esc(m.name) + '</button><span>' + esc(m.where) + '</span></p>'; }).join("") + '</div>' +
+      '<div class="mgroup"><div class="mrow"><span class="mchip s">보조근</span>같이 도와줘요</div><p class="mname s2">' + muSplit(f.secondary_muscles).map(function (t) { return /^없음/.test(t) ? esc(t) : '<button type="button" class="mbtn s" data-mu="' + esc(t) + '" data-mr="s">' + esc(t) + '</button>'; }).join('<i class="mdot">·</i>') + '</p></div>' +
+      '<p class="mhint">근육 이름을 누르면 몸 어디인지 보여 줘요</p>' +
       '<div class="feels"><div class="feel ok"><div class="tag">' + CHECK + '이 느낌이면 성공</div><p>' + esc(f.feel_good) + '</p></div>' +
       '<div class="feel no"><div class="tag">' + XIC + '이 느낌이면 STOP</div><p>' + esc(f.feel_stop) + '</p></div></div></div></div></section>';
 
@@ -3491,6 +3664,7 @@
     });
   });
   function setupPlayer() {
+    muInline();
     var v = document.getElementById("main");
     if (!v) return;
     var badge = document.getElementById("pbadge"), playBtn = document.getElementById("playBtn"), tap = document.getElementById("tap");
