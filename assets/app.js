@@ -41,7 +41,18 @@
   var BN = [];
   try { BN = JSON.parse(localStorage.getItem("ptnote:bn") || "[]") || []; } catch (e) { BN = []; }
   /* 업데이트 소식 데이터 (2026-11-20 — 2026-11-20 "업데이트 소식이랑 공지 합치기": 공지 목록에도 '업데이트' 공지로 같이 들어감 nBuild, 쓰는 법은 스킬 pt-update-tour·아래 업데이트 소식 칸) */
+  function wnMuForm() {   /* 2026-11-22 근육 위치 소식 — 회원님 복습지 중 자극 부위가 있는 첫 복습지 */
+    var fs = (typeof M !== "undefined" && M && M.forms) || [];
+    for (var i = 0; i < fs.length; i++) if (!fs[i].simple && fs[i].primary_muscles && fs[i].primary_muscles.length) return fs[i];
+    return null;
+  }
   var WN = [
+    { id: "2026-11-22", t: "자세 복습지 업데이트",
+      items: ["🫀 03 자극 부위가 해부도 그림으로 바뀌었어요", "👆 근육 이름을 누르면 몸 어디인지 보여 줘요", "🔍 그 근육만 깜빡이며 크게 확대돼요"],
+      steps: [
+        { get h() { var f = wnMuForm(); return f ? "#form-" + f.id : "#forms"; }, need: function () { return !!wnMuForm(); }, s: ".muscle", t: "🫀 자극 부위가 해부도로", b: "진한 분홍은 주동근(메인), 연한 분홍은 보조근이에요.\n근육 결까지 보이는 그림으로 바뀌었어요." },
+        { get h() { var f = wnMuForm(); return f ? "#form-" + f.id : "#forms"; }, need: function () { return !!wnMuForm(); }, s: ".mname .mbtn", t: "👆 근육 이름을 눌러 보세요", b: "밑줄 친 근육 이름을 누르면\n그 근육만 깜빡이며 크게 보여 줘요.\n위치와 하는 일도 같이 알려 줘요." }
+      ] },
     { id: "2026-11-21", t: "인바디 · 식단 기록 소식",
       items: ["📊 인바디 결과지 읽기가 더 정확해졌어요 (제미나이 AI)", "📸 '먹은 기록'이 '식단 기록'으로 이름이 바뀌었어요", "🛠️ 식단 기록은 아직 시험판이에요 — 곧 다 완성돼요"],
       steps: [
