@@ -2018,5 +2018,30 @@
 "triceps_long": "S",
 "triceps_lat": "S"
 }
+},
+"m/chanyoung-dvrara/media/form-1123-chest-press-machine/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/chanyoung-dvrara/media/form-1123-incline-press-machine/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_lat": "S"
+}
 }
 }

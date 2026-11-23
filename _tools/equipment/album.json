@@ -211,6 +211,11 @@
     "img": "m/aeran-bsq16i/media/form-chest-press-machine/step1.jpg"
    },
    {
+    "member": "박찬영",
+    "id": "1123-chest-press-machine",
+    "img": "m/chanyoung-dvrara/media/form-1123-chest-press-machine/step1.jpg"
+   },
+   {
     "member": "조혜영",
     "id": "chest-press-machine",
     "img": "m/hyeyoung-d74063/media/form-chest-press-machine/step1.jpg"
@@ -235,6 +240,11 @@
     "member": "임애란",
     "id": "incline-press-machine",
     "img": "m/aeran-bsq16i/media/form-incline-press-machine/step1.jpg"
+   },
+   {
+    "member": "박찬영",
+    "id": "1123-incline-press-machine",
+    "img": "m/chanyoung-dvrara/media/form-1123-incline-press-machine/step1.jpg"
    },
    {
     "member": "최지훈",

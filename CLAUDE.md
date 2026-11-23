@@ -49,7 +49,7 @@ _docs/RULES-*.md        작업별 자세한 규칙(위 표)
 | 최용민 · 고은성 | m/yongmin-eunseong-1mwau5/ | M (그룹 PT — 두 분이 한 페이지·출석 공유) |
 | 정미경 | m/mikyung-7rq2vd/ | F (토요일 엉덩이 = PT 수업 날) |
 | 이지환 | m/jihwan-t7m4qe/ | M (바프 목표 — 여정 그래프 bodyprofile 모드) |
-| 박찬영 | m/chanyoung-dvrara/ | M (토요일 = 로테이션, day.pick) |
+| 박찬영 | m/chanyoung-dvrara/ | M (토요일 = 로테이션, day.pick · 11-23 복습지 뉴텍 인클라인 프레스 머신·체스트 프레스 머신) |
 | 이진영 | m/jinyoung-n73rzx/ | F (다이어트·근력 강화, 2026-06 시작 — 복습지 3개(11-08), 루틴·식단 아직 없음) |
 | 서인석 | m/inseok-02j3ia/ | M (2026-07 시작, 주 4회 루틴 v2 — PT 주 3회지만 개인운동 안 나옴, 복습지 2개(11-10 촬영: 랫풀다운·뉴텍 시티드 로우 머신)) |
 | 우유정 | m/yujeong-55pl5t/ | F (고양이 pet:"cat" · 바프 2027-04 말 촬영 — 이번 달 시작, 촬영일 맞춤 바프 그래프 fit · 루틴은 나중에 올림) |
