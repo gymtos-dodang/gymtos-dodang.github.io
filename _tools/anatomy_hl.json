@@ -2093,5 +2093,38 @@
 "forearm_ext": "S",
 "rhomboid": "S"
 }
+},
+"m/jihwan-t7m4qe/media/form-straight-arm-pulldown/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_stern": "S",
+"triceps_long": "S",
+"serratus": "S"
+},
+"back": {
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"triceps_long": "S"
+}
+},
+"m/jihwan-t7m4qe/media/form-lat-pulldown/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
 }
 }
