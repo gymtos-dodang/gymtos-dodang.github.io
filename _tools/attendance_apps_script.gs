@@ -193,7 +193,7 @@ function aiText_(key, model, img, prompt, mime) {   // 사진(또는 PDF) + 질�
         payload: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: pdf ? 'application/pdf' : 'image/jpeg', data: img } }, { text: prompt }] }], generationConfig: noThink ? { temperature: 0.1 } : { temperature: 0.1, thinkingConfig: { thinkingBudget: 0 } } }) });   // 2026-11-22 생각 끄기 = 훨씬 빠름
       code = r.getResponseCode(); j = JSON.parse(r.getContentText());
       if (j.candidates) break;
-      if (code === 400 && !noThink && /think/i.test(String(j.error && j.error.message || ''))) { noThink = true; delete tried[mdl]; k--; continue; }   // 생각 끄기를 못 받는 모델이면 그대로 다시
+      if (code === 400 && !noThink) { noThink = true; delete tried[mdl]; k--; continue; }   // 생각 끄기를 못 받는 모델이면 그대로 다시 (2026-11-24: 오류 문구에 think가 없는 "invalid argument"로 와서 사진·PDF 모두 실패했음)
       const sug = /models\/(gemini[\w.\-]*)/.exec(String(j.error && j.error.message || '').replace('models/' + mdl, ''));
       if (code === 404 && sug) list.splice(k + 1, 0, sug[1]);
     }
