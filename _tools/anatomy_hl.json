@@ -2043,5 +2043,55 @@
 "triceps_long": "S",
 "triceps_lat": "S"
 }
+},
+"m/jisu-480xne/media/form-1123-assisted-chin-up/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/jisu-480xne/media/form-1123-seated-face-pull/anatomy.png": {
+"sex": "F",
+"front": {},
+"back": {
+"trap_mid": "P",
+"trap_low": "S",
+"infraspinatus": "S",
+"delt_post": "P",
+"rhomboid": "P",
+"teres_minor": "S"
+}
+},
+"m/jisu-480xne/media/form-1123-lat-pulldown/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
 }
 }
