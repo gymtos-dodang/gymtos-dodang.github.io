@@ -56,6 +56,11 @@
     "img": "m/jihwan-t7m4qe/media/form-goblet-squat/step1.jpg"
    },
    {
+    "member": "서경진",
+    "id": "1123-goblet-squat",
+    "img": "m/kyeongjin-bkwzy9/media/form-1123-goblet-squat/step1.jpg"
+   },
+   {
     "member": "정미경",
     "id": "goblet-squat",
     "img": "m/mikyung-7rq2vd/media/form-goblet-squat/step1.jpg"
@@ -621,6 +626,11 @@
     "member": "최지훈",
     "id": "lying-leg-curl",
     "img": "m/jihun-g9kgdo/media/form-lying-leg-curl/step1.jpg"
+   },
+   {
+    "member": "서경진",
+    "id": "1123-lying-leg-curl",
+    "img": "m/kyeongjin-bkwzy9/media/form-1123-lying-leg-curl/step1.jpg"
    }
   ]
  },
@@ -642,6 +652,11 @@
     "member": "김지수",
     "id": "leg-press",
     "img": "m/jisu-480xne/media/form-leg-press/step1.jpg"
+   },
+   {
+    "member": "서경진",
+    "id": "1123-leg-press",
+    "img": "m/kyeongjin-bkwzy9/media/form-1123-leg-press/step1.jpg"
    }
   ]
  },
