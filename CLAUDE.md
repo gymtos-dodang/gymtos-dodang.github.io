@@ -45,7 +45,7 @@ _docs/RULES-*.md        작업별 자세한 규칙(위 표)
 | 서경진 | m/kyeongjin-bkwzy9/ | F (복습지 6개 — 11-13 핵프레스·힙쓰러스트·11-19 로우로우·11-23 고블릿 스쿼트·라잉 레그컬·레그프레스(정면·측면 views)) |
 | 김지수 | m/jisu-480xne/ | F (토롱이 테마 + 돌아다니는 토끼 pet:"bunny" · 복습지 8개 — 11-12 촬영: 펙덱 플라이·케이블 체스트 프레스·체스트 프레스 머신) |
 | 김태영 | m/taeyoung-k52qnx/ | M |
-| 임애란 | m/aeran-bsq16i/ | F (순환 루틴) |
+| 임애란 | m/aeran-bsq16i/ | F (순환 루틴 · 11-23 복습지 아웃타이 머신·힙쓰러스트 머신(측면·정면 views)) |
 | 최용민 · 고은성 | m/yongmin-eunseong-1mwau5/ | M (그룹 PT — 두 분이 한 페이지·출석 공유) |
 | 정미경 | m/mikyung-7rq2vd/ | F (토요일 엉덩이 = PT 수업 날) |
 | 이지환 | m/jihwan-t7m4qe/ | M (바프 목표 — 여정 그래프 bodyprofile 모드) |
