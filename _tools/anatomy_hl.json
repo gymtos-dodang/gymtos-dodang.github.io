@@ -1992,5 +1992,31 @@
 "ham_bf": "S",
 "ham_st": "S"
 }
+},
+"m/jihun-g9kgdo/media/form-1123-smith-bench-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jihun-g9kgdo/media/form-1123-incline-press-machine/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_lat": "S"
+}
 }
 }

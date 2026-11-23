@@ -1,4 +1,61 @@
 {
+ "아웃타이 머신": {
+  "part": "엉덩이",
+  "en": "Outer Thigh (Abduction)",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "1123-outer-thigh",
+    "img": "m/aeran-bsq16i/media/form-1123-outer-thigh/step1.jpg"
+   },
+   {
+    "member": "조혜영",
+    "id": "outer-thigh",
+    "img": "m/hyeyoung-d74063/media/form-outer-thigh/step1.jpg"
+   },
+   {
+    "member": "서인석",
+    "id": "outer-thigh",
+    "img": "m/inseok-02j3ia/media/form-outer-thigh/step1.jpg"
+   },
+   {
+    "member": "최지훈",
+    "id": "outer-thigh",
+    "img": "m/jihun-g9kgdo/media/form-outer-thigh/step1.jpg"
+   },
+   {
+    "member": "이지환",
+    "id": "outer-thigh",
+    "img": "m/jihwan-t7m4qe/media/form-outer-thigh/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "outer-thigh",
+    "img": "m/jisu-480xne/media/form-outer-thigh/step1.jpg"
+   }
+  ]
+ },
+ "힙쓰러스트 머신": {
+  "part": "엉덩이",
+  "en": "Hip Thrust Machine",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "1123-hip-thrust",
+    "img": "m/aeran-bsq16i/media/form-1123-hip-thrust/step1.jpg"
+   },
+   {
+    "member": "서경진",
+    "id": "hip-thrust",
+    "img": "m/kyeongjin-bkwzy9/media/form-hip-thrust/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "hip-thrust",
+    "img": "m/mikyung-7rq2vd/media/form-hip-thrust/step1.jpg"
+   }
+  ]
+ },
  "프리처 컬 머신": {
   "part": "팔",
   "en": "Preacher Curl Machine",
@@ -178,6 +235,11 @@
     "member": "임애란",
     "id": "incline-press-machine",
     "img": "m/aeran-bsq16i/media/form-incline-press-machine/step1.jpg"
+   },
+   {
+    "member": "최지훈",
+    "id": "1123-incline-press-machine",
+    "img": "m/jihun-g9kgdo/media/form-1123-incline-press-machine/step1.jpg"
    }
   ]
  },
@@ -451,37 +513,6 @@
    }
   ]
  },
- "아웃타이 머신": {
-  "part": "엉덩이",
-  "en": "Outer Thigh (Abduction)",
-  "shots": [
-   {
-    "member": "조혜영",
-    "id": "outer-thigh",
-    "img": "m/hyeyoung-d74063/media/form-outer-thigh/step1.jpg"
-   },
-   {
-    "member": "서인석",
-    "id": "outer-thigh",
-    "img": "m/inseok-02j3ia/media/form-outer-thigh/step1.jpg"
-   },
-   {
-    "member": "최지훈",
-    "id": "outer-thigh",
-    "img": "m/jihun-g9kgdo/media/form-outer-thigh/step1.jpg"
-   },
-   {
-    "member": "이지환",
-    "id": "outer-thigh",
-    "img": "m/jihwan-t7m4qe/media/form-outer-thigh/step1.jpg"
-   },
-   {
-    "member": "김지수",
-    "id": "outer-thigh",
-    "img": "m/jisu-480xne/media/form-outer-thigh/step1.jpg"
-   }
-  ]
- },
  "스미스 인클라인 프레스": {
   "part": "가슴",
   "en": "Smith Incline Press",
@@ -599,6 +630,22 @@
     "member": "어순래",
     "id": "chest-press-machine",
     "img": "m/sunrae-c7yvid/media/form-chest-press-machine/step1.jpg"
+   }
+  ]
+ },
+ "스미스 벤치프레스": {
+  "part": "가슴",
+  "en": "Smith Bench Press",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "1123-smith-bench-press",
+    "img": "m/jihun-g9kgdo/media/form-1123-smith-bench-press/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "smith-bench-press",
+    "img": "m/jisu-480xne/media/form-smith-bench-press/step1.jpg"
    }
   ]
  },
@@ -875,17 +922,6 @@
    }
   ]
  },
- "스미스 벤치프레스": {
-  "part": "가슴",
-  "en": "Smith Bench Press",
-  "shots": [
-   {
-    "member": "김지수",
-    "id": "smith-bench-press",
-    "img": "m/jisu-480xne/media/form-smith-bench-press/step1.jpg"
-   }
-  ]
- },
  "페이스풀": {
   "part": "등",
   "en": "Face Pull",
@@ -937,22 +973,6 @@
     "member": "김지수",
     "id": "db-lateral-raise",
     "img": "m/jisu-480xne/media/form-db-lateral-raise/step1.jpg"
-   }
-  ]
- },
- "힙쓰러스트 머신": {
-  "part": "엉덩이",
-  "en": "Hip Thrust Machine",
-  "shots": [
-   {
-    "member": "서경진",
-    "id": "hip-thrust",
-    "img": "m/kyeongjin-bkwzy9/media/form-hip-thrust/step1.jpg"
-   },
-   {
-    "member": "정미경",
-    "id": "hip-thrust",
-    "img": "m/mikyung-7rq2vd/media/form-hip-thrust/step1.jpg"
    }
   ]
  },
