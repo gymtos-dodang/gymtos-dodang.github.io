@@ -23,3 +23,4 @@
 - PDF 결과지(2026-11-21): 전엔 PDF는 AI 건너뛰고 드라이브 OCR만 → 숫자 엉망. 이제 PDF도 Gemini(application/pdf)·Claude(document)로 읽음. Mistral·Groq·Cloudflare 열쇠는 PDF 못 읽어 다음 열쇠로 넘어감.
 - 2026-11-21 버전 16: Gemini 503(사람 많음)·429면 1.5초 쉬고 다음 모델(2.5-flash → flash-lite-latest). PDF 테스트(_tools/test/inbody_sample.pdf) 8개 모두 맞음, 단 Gemini 붐빌 땐 78초 걸림.
 - 2026-11-22 속도(버전 17): Gemini 생각 끄기(thinkingBudget 0, 못 받는 모델이면 빼고 다시) + 503이면 쉬지 않고 바로 다음 모델. → PDF 5.6초·사진 8.7초, 8개 모두 맞음.
+- 2026-11-24 AI 읽기 고장: Gemini가 thinkingConfig(생각 끄기)를 "400 invalid argument"(think라는 글자 없이)로 거절해 사진·PDF 모두 AI 실패 → 드라이브 OCR로 넘어가 숫자가 엉망. 이제 400이면 무조건 생각 끄기 빼고 다시 보냄(버전 18). "숫자 이상해" 하면 먼저 응답 ai 값부터 볼 것.
