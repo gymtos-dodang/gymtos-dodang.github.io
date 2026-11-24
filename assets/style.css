@@ -2936,6 +2936,28 @@ html.pump-on .pump-fab { display: none; }
 .pf-love .pf-eyes, .pf-wink .pf-eyes, .pf-tongue .pf-eyes, .pf-sleepy .pf-eyes { animation: none; }
 @media (prefers-reduced-motion: reduce) { .pf *, .pump-fab { animation: none !important; } }
 
+/* 2026-11-24 지난 영상과 비교 (복습지 01 아래 버튼 → 전체 화면 나란히 재생) */
+.cmp-open { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 420px; box-sizing: border-box; margin: 12px auto 0; padding: 12px 14px; border: 0; border-radius: 16px; background: linear-gradient(135deg, var(--hero, #1A1A1E), var(--hero2, #3a0d12)); color: #fff; font: inherit; text-align: left; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+.cmp-open .cmp-ic { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--primary, #E1141E); font-size: 20px; font-weight: 900; }
+.cmp-open > span:nth-child(2) { flex: 1 1 auto; min-width: 0; }
+.cmp-open b { display: block; font-size: 15px; font-weight: 900; } .cmp-open small { display: block; font-size: 12px; opacity: .8; margin-top: 2px; }
+.cmp-open i { flex: none; font-style: normal; font-size: 22px; opacity: .7; }
+html.cmp-lock, html.cmp-lock body { overflow: hidden; }
+.cmp-ov { position: fixed; inset: 0; z-index: 2000; background: #0E0E10; color: #fff; display: flex; flex-direction: column; padding: calc(env(safe-area-inset-top, 0px) + 10px) 10px calc(env(safe-area-inset-bottom, 0px) + 12px); box-sizing: border-box; overflow-y: auto; }
+.cmp-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 2px 4px 10px; }
+.cmp-top small { display: block; font-size: 12px; color: rgba(255,255,255,.6); font-weight: 700; } .cmp-top b { font-size: 18px; font-weight: 900; }
+.cmp-x { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.12); color: #fff; font-size: 26px; line-height: 1; cursor: pointer; }
+.cmp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex: 1 1 auto; min-height: 0; }
+.cmp-col { position: relative; min-width: 0; border-radius: 14px; overflow: hidden; background: #000; }
+.cmp-v { display: block; width: 100%; height: 100%; max-height: 66vh; aspect-ratio: 9 / 16; object-fit: contain; background: #000; }
+.cmp-tag { position: absolute; top: 8px; left: 8px; z-index: 1; font-size: 12px; font-weight: 900; padding: 4px 9px; border-radius: 99px; background: rgba(0,0,0,.6); color: #fff; pointer-events: none; }
+.cmp-tag.now { background: var(--primary, #E1141E); }
+.cmp-ov .vw-seg { background: rgba(255,255,255,.1); margin: 10px auto 0; } .cmp-ov .vw-b { color: #fff; }
+.cmp-vw { display: flex; align-items: center; gap: 10px; margin-top: 10px; } .cmp-vw > span { flex: none; font-size: 12px; font-weight: 700; color: rgba(255,255,255,.6); } .cmp-vw .vw-seg { margin: 0; flex: 1 1 auto; }
+.cmp-ctl { display: flex; gap: 6px; margin-top: 10px; } .cmp-ctl .btn { flex: 1 1 0; min-width: 0; padding: 10px 0; border: 0; border-radius: 12px; background: rgba(255,255,255,.12); color: #fff; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+.cmp-ctl .btn[aria-pressed="true"] { background: #fff; color: #111; }
+.cmp-hint { margin: 8px 0 0; text-align: center; font-size: 12px; color: rgba(255,255,255,.55); }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -3152,6 +3174,9 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) [data-sex="F"] .rl-fol { background: var(--seal); }
 :where(html:not([data-theme="light"])) .pump-in { border-top-color: var(--line); }
 :where(html:not([data-theme="light"])) .pump-in input { border-color: var(--line); }
+:where(html:not([data-theme="light"])) .cmp-open .cmp-ic { background: var(--seal); }
+:where(html:not([data-theme="light"])) .cmp-tag.now { background: var(--seal); }
+:where(html:not([data-theme="light"])) .cmp-ctl .btn[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -3477,6 +3502,9 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) [data-sex="F"] .rl-fol { background: var(--seal); }
 :where(html[data-theme="dark"]) .pump-in { border-top-color: var(--line); }
 :where(html[data-theme="dark"]) .pump-in input { border-color: var(--line); }
+:where(html[data-theme="dark"]) .cmp-open .cmp-ic { background: var(--seal); }
+:where(html[data-theme="dark"]) .cmp-tag.now { background: var(--seal); }
+:where(html[data-theme="dark"]) .cmp-ctl .btn[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {

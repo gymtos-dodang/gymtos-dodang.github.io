@@ -935,6 +935,8 @@
   }
   function findForm(id) {
     for (var i = 0; i < M.forms.length; i++) if (M.forms[i].id === id) return M.forms[i];
+    /* 2026-11-24 복습지를 새 영상으로 최신화하면 예전 주소(#form-예전id)도 새 복습지로 — data.js old_ids */
+    for (i = 0; i < M.forms.length; i++) if (M.forms[i].old_ids && M.forms[i].old_ids.indexOf(id) >= 0) return M.forms[i];
     return null;
   }
   /* 루틴 종목 → 자세 복습지 (2026-11-10): form을 정해 뒀으면 그것, 아니면 이름이 같은(띄어쓰기 무시) 가장 최근 복습지를 자동 연결.
@@ -3631,6 +3633,63 @@
     var id = (location.hash || "").replace(/^#form-/, ""), f = findForm(id);
     if (f) muSheet(f, b.getAttribute("data-mu"), b.getAttribute("data-mr"));
   });
+  /* ---- 2026-11-24 지난 영상과 비교 (장동욱 "기존 랫풀다운 영상이랑 비교할 수 있는 기능" → 나란히 동시 재생)
+     data.js 복습지에 compare:[{label:"11/11", date:"2026. 11. 11 (수)", dir:"media/form-<예전id>/", file:"form", view:"form"}]
+     → 01 영상 아래 .cmp-open 버튼 → 전체 화면 창 .cmp-ov: 왼쪽 예전·오른쪽 지금 영상을 같이 재생(같이 멈춤·0.5배·처음부터 같이).
+     view = 지금 복습지에서 같은 각도의 파일(views가 있으면 위에서 바꿀 수 있음). 예전 복습지 폴더는 지우지 말 것. */
+  function cmpLbl(d) { var m = String(d || "").match(/(\d+)\.\s*(\d+)\.\s*(\d+)/); return m ? (+m[2]) + "/" + (+m[3]) : String(d || ""); }
+  function cmpClose() {
+    var o = document.querySelector(".cmp-ov"); if (!o) return;
+    Array.prototype.forEach.call(o.querySelectorAll("video"), function (v) { try { v.pause(); v.removeAttribute("src"); v.load(); } catch (e) {} });
+    o.remove(); document.documentElement.classList.remove("cmp-lock");
+    var mv = document.getElementById("main"); if (mv && mv.dataset.cmpWas === "1") { delete mv.dataset.cmpWas; var p = mv.play(); if (p && p.catch) p.catch(function () {}); }
+  }
+  function cmpOpen(f, ci) {
+    cmpClose(); ci = ci || 0;
+    var c = f.compare[ci], vw = f.views && f.views.length > 1 ? f.views : null, cur = c.view || "form";
+    var mv = document.getElementById("main"); if (mv && !mv.paused) { mv.dataset.cmpWas = "1"; mv.pause(); }
+    var vtag = function (k) { return '<video class="cmp-v" data-k="' + k + '" muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback x-webkit-airplay="deny" preload="auto"></video>'; };
+    var o = document.createElement("div"); o.className = "cmp-ov"; o.setAttribute("role", "dialog"); o.setAttribute("aria-label", "지난 영상과 비교");
+    o.innerHTML = '<div class="cmp-top"><div><small>' + esc(f.exercise) + '</small><b>지난 영상과 비교</b></div><button type="button" class="cmp-x" aria-label="닫기">×</button></div>' +
+      (f.compare.length > 1 ? '<div class="vw-seg cmp-seg">' + f.compare.map(function (x, i) { return '<button type="button" class="vw-b" data-ci="' + i + '" aria-pressed="' + (i === ci) + '">' + esc(x.label) + '</button>'; }).join("") + '</div>' : '') +
+      '<div class="cmp-grid"><div class="cmp-col"><span class="cmp-tag old">이전 · ' + esc(c.label) + '</span>' + vtag("old") + '</div>' +
+      '<div class="cmp-col"><span class="cmp-tag now">지금 · ' + esc(cmpLbl(f.date)) + '</span>' + vtag("now") + '</div></div>' +
+      (vw ? '<div class="cmp-vw"><span>지금 영상 각도</span><div class="vw-seg">' + vw.map(function (w) { return '<button type="button" class="vw-b" data-vf="' + esc(w.file) + '" aria-pressed="' + (w.file === cur) + '">' + esc(w.label) + '</button>'; }).join("") + '</div></div>' : '') +
+      '<div class="cmp-ctl"><button type="button" class="btn" data-c="play">⏸ 같이 멈춤</button><button type="button" class="btn" data-c="0.5" aria-pressed="false">0.5배</button><button type="button" class="btn" data-c="1" aria-pressed="true">1배</button><button type="button" class="btn" data-c="re">⟲ 처음부터</button></div>' +
+      '<p class="cmp-hint">두 영상이 같이 시작해요. 영상을 누르면 둘 다 멈춰요</p>';
+    document.body.appendChild(o); document.documentElement.classList.add("cmp-lock");
+    var vo = o.querySelector('[data-k="old"]'), vn = o.querySelector('[data-k="now"]'), both = [vo, vn], rate = 1, playing = true;
+    var pb = o.querySelector('[data-c="play"]');
+    function poster(dir, fl) { return dir + (fl === "form" ? "poster" : fl + "-poster") + ".jpg"; }
+    function setSrc(v, dir, fl) { v.setAttribute("poster", poster(dir, fl)); v.src = dir + fl + ".mp4"; v.playbackRate = rate; }
+    function go() { both.forEach(function (v) { try { v.currentTime = 0; } catch (e) {} v.playbackRate = rate; var p = v.play(); if (p && p.catch) p.catch(function () {}); }); playing = true; pb.textContent = "⏸ 같이 멈춤"; }
+    function tog() { playing = !playing; both.forEach(function (v) { if (playing) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } else v.pause(); }); pb.textContent = playing ? "⏸ 같이 멈춤" : "▶ 같이 재생"; }
+    var ready = 0; both.forEach(function (v) { v.addEventListener("loadeddata", function () { if (++ready === 2) go(); }, { once: true }); });
+    setSrc(vo, c.dir, c.file || "form"); setSrc(vn, f.dir, cur);
+    setTimeout(function () { if (ready < 2) go(); }, 2500);
+    o.addEventListener("click", function (e) {
+      var t = e.target;
+      if (t.closest(".cmp-x")) return cmpClose();
+      if (t.closest(".cmp-v")) return tog();
+      var b = t.closest("[data-c]");
+      if (b) { var k = b.getAttribute("data-c");
+        if (k === "play") return tog(); if (k === "re") return go();
+        rate = +k; both.forEach(function (v) { v.playbackRate = rate; });
+        Array.prototype.forEach.call(o.querySelectorAll('[data-c="0.5"],[data-c="1"]'), function (x) { x.setAttribute("aria-pressed", String(x === b)); }); return; }
+      var ib = t.closest("[data-ci]"); if (ib) { if (+ib.getAttribute("data-ci") !== ci) cmpOpen(f, +ib.getAttribute("data-ci")); return; }
+      var vb = t.closest("[data-vf]"); if (vb && vb.getAttribute("aria-pressed") !== "true") {
+        cur = vb.getAttribute("data-vf");
+        Array.prototype.forEach.call(o.querySelectorAll(".cmp-vw .vw-b"), function (x) { x.setAttribute("aria-pressed", String(x === vb)); });
+        ready = 1; vn.addEventListener("loadeddata", function () { go(); }, { once: true }); setSrc(vn, f.dir, cur);
+      }
+    });
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest(".cmp-open"); if (!b) return;
+    var f = findForm(b.getAttribute("data-cmp")); if (f && f.compare) cmpOpen(f);
+  });
+  window.addEventListener("hashchange", cmpClose);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") cmpClose(); });
   function renderForm(f) {
     var D = f.dir;
     var h = '<a class="back" href="#forms">← 자세 복습지</a>';
@@ -3655,7 +3714,10 @@
       '<div class="controls" id="controls" role="group" aria-label="재생 속도"><button class="btn" id="playBtn" type="button">⏸ 멈춤</button>' +
       '<button class="btn" type="button" data-rate="0.5" aria-pressed="false">느리게 0.5배</button>' +
       '<button class="btn" type="button" data-rate="1" aria-pressed="true">보통 속도</button></div>' +
-      '<p class="hint" id="hint">영상을 누르면 멈추고, 다시 누르면 재생돼요</p></section>';
+      '<p class="hint" id="hint">영상을 누르면 멈추고, 다시 누르면 재생돼요</p>' +
+      (f.compare && f.compare.length ? '<button type="button" class="cmp-open" data-cmp="' + esc(f.id) + '"><span class="cmp-ic" aria-hidden="true">⇆</span><span><b>지난 영상과 비교</b><small>' +
+        esc(f.compare.map(function (c) { return c.label; }).join(" · ")) + ' vs 지금 ' + esc(cmpLbl(f.date)) + ' · 나란히 같이 재생</small></span><i aria-hidden="true">›</i></button>' : '') +
+      '</section>';
 
     h += '<section>' + head("02", "오늘 잘한 점", "이대로만 하면 돼요") + '<div class="cards3">' +
       f.good_points.map(function (g, i) {

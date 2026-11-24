@@ -41,7 +41,7 @@ _docs/RULES-*.md        작업별 자세한 규칙(위 표)
 ## 회원 목록
 | 회원 | 주소 | 성별 |
 |---|---|---|
-| 최지훈 | m/jihun-g9kgdo/ | M (11-23 복습지 스미스 벤치프레스·뉴텍 인클라인 프레스 머신 — 측면·정면 views) |
+| 최지훈 | m/jihun-g9kgdo/ | M (11-24 랫풀다운 최신화(측면·뒷모습 + 11/11 영상 비교)·뉴텍 엠토처 시티드 로우 · 11-23 복습지 스미스 벤치프레스·뉴텍 인클라인 프레스 머신 — 측면·정면 views) |
 | 서경진 | m/kyeongjin-bkwzy9/ | F (복습지 6개 — 11-13 핵프레스·힙쓰러스트·11-19 로우로우·11-23 고블릿 스쿼트·라잉 레그컬·레그프레스(정면·측면 views)) |
 | 김지수 | m/jisu-480xne/ | F (토롱이 테마 + 돌아다니는 토끼 pet:"bunny" · 복습지 20개 — 11-23 시티드 페이스풀·랫풀다운·어시스트 친업(측면·뒷모습 views)) |
 | 김태영 | m/taeyoung-k52qnx/ | M |
@@ -92,6 +92,7 @@ _docs/RULES-*.md        작업별 자세한 규칙(위 표)
 - PT 안내서(guide.html 폰 · intro.html 아이패드): 8장, 두 쪽 문구를 같게, 쪽마다 스크롤 없이 한 화면(390×844·375×667 확인), 숫자는 회원 data.js에서 자동 + 앱에서 만든 회원도(2026-11-22, coach-tqqnlh/guide/dynmembers.js PTDyn — 공개 목록 roster-list → 창고 노트 + m/dyn/forms.js, "보기 →"는 폴더 회원만), 회원 이름 가운데 O. 가격(VAT 포함, 2026-11-24): 10회 82,500·20회 77,000·30회 68,200·50회 62,700(11-24 3천원 인하)·100회 55,000, 문화비 소득공제는 카드·현금영수증만(계좌이체 제외), 30회부터 PT 노트 제공(2026-11-22). 손님에게 보이는 곳에 '세일즈' 쓰지 말 것. · 2쪽 체험 폰(2026-11-19, coach-tqqnlh/guide/try.js PTTry — 폰 guide.html은 아이패드처럼 페이지 안에 inline(#tpInline: 기능 칩 6개 → 고민 말풍선·해결 제목 → 왼쪽 실제 폰·오른쪽 설명·단계 버튼, 2쪽이 보일 때 iframe 불러옴), 다른 쪽 .go 버튼은 아래에서 올라오는 창 sheet, 아이패드는 왼쪽 빨간 칸 .tprow 누르면 오른쪽 폰 mount): 실제 노트를 iframe `?demo&try`로 띄우고 설명+단계 버튼(누르면 iframe 안 그 칸으로 스크롤+빨간 테두리). app.js TRY = 눌러 봐도 이 기기 저장은 메모리, 창고는 읽기만(쓰기 fetch는 막고 ok) · COACH_MODE 끔.
 - 움직이는 운동 아이콘 그림체(2026-11-18 리메이크, exicons.js shapes): 관절 구분선·이음새는 전부 뺌(직선·둥근 이음새·입체 빛줄 다 해 보고 뺌 — 다시 넣지 말 것) · 몸과 자극 부위는 위가 밝고 아래가 짙은 그라데이션(STY의 g, defs·stamp가 아이콘마다 다른 id로 넣음) · 자극 부위는 테두리 없이 진하게(opacity .8~1 — 테두리는 "옷 입은 것 같다"로 뺌) · 광배근은 등 가운데를 비우고 옆구리 쪽에 날개 두 장(latPolys — 가운데까지 덮으면 조끼처럼 보임, 안쪽 흰 결 선도 뺌, 다시 넣지 말 것) · 원판은 꽉 찬 원반+홈+허브(addEq: k "eq" 고리 r≥5.5는 자동으로 원판). · 유산소 움직이는 아이콘(2026-11-19 "기본 그림 말고 이름에 맞게"): treadmill(러닝머신·인터벌)·incline_walk(경사 걷기)·stair_mill(천국의 계단·스텝밀 — 계단이 돌아 내려옴)·my_mountain(마이마운틴 등산 머신, 작은 산)·bike·elliptical·rower — loop:1 + ex.at(t)(한 방향으로 계속 도는 움직임, gait·footAt·ik), 이름 연결은 app.js ICON_BY_NAME. 종이 루틴일지 PNG 아이콘은 그대로.
 - 복습지 영상 정면/측면(2026-11-19 "영상 측면 추가"): data.js 복습지에 `views:[{label:"정면",file:"form"},{label:"측면",file:"side"}]` + 폴더에 side.mp4·side.webp·side-poster.jpg → 영상 위 .vw-seg 버튼. 폰 회원 복습지(m/dyn/forms.js)는 이름이 조금 달라도(성 빼기·"님") 한 명만 맞으면 붙음(404.html).
+- 지난 영상과 비교(2026-11-24 "기존 랫풀다운 영상이랑 비교" → 나란히 동시 재생): 복습지를 새 영상으로 최신화할 때 새 id로 만들고 data.js에 `old_ids:["예전id"]`(예전 #form- 주소도 열림, findForm) + `compare:[{label:"11/11",date,dir:"media/form-<예전id>/",file:"form",view:"form"}]` → 01 영상 아래 .cmp-open → 전체 화면 .cmp-ov(왼쪽 이전·오른쪽 지금 같이 재생, 같이 멈춤·0.5배·처음부터, views 있으면 지금 각도 바꾸기). app.js cmpOpen·cmpClose·cmpLbl, 화면 떠나면 멈춤. **예전 복습지 미디어 폴더는 지우지 말 것**(비교에 씀).
 - 복습지 도구(2026-11-16): 기구 사진첩 `_tools/equip_album.py` → `_tools/equipment/sheet-<부위>.jpg`(기구 대조) · 관절 인식 `_tools/pose.py`(보조로만 — 2026-11-18부터 장면은 썸네일 시트 보고 직접, 벌리기·누운 종목엔 안 씀). 자세한 건 RULES-form.md.
 - 뼈대 키트: `python3 _tools/build_kit.py <출력 폴더>` — 회원 정보·개인 자료·JANG KAREDO 브랜드를 뺀 키트. 새 개인 정보 종류가 생기면 SECRETS·MEMBER_NAMES에 추가.
 
