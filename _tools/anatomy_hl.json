@@ -2126,5 +2126,18 @@
 "forearm_ext": "S",
 "rhomboid": "S"
 }
+},
+"m/dyn/seungwan/media/form-1124-db-lateral-raise/anatomy.png": {
+"sex": "M",
+"front": {
+"trap_up": "S",
+"delt_ant": "S",
+"delt_lat": "P"
+},
+"back": {
+"trap_up": "S",
+"delt_lat": "P",
+"supraspinatus": "S"
+}
 }
 }
