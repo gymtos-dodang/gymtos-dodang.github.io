@@ -5974,6 +5974,97 @@
   }
   document.addEventListener("visibilitychange", function () { if (!document.hidden) zoomReset(); });
   window.addEventListener("pageshow", zoomReset);
+  /* 2026-11-24 펌핑이 — 운동 질문 AI. 오른쪽 아래 떠 있는 버튼 → 아래에서 올라오는 대화창.
+     창고 POST a=pump {q, h(최근 대화 6개), ctx(회원 루틴 요약)} → {a, left}. 회원 한 명 하루 15개(창고에서 셈). 대화는 폰에 ptnote:<주소>:pump (최근 30개) */
+  function pumpFace(mood) {
+    var eyes = mood === "think" ? '<ellipse cx="-7" cy="-6" rx="3" ry="4.5" fill="#1A1A1A"/><ellipse cx="13" cy="-6" rx="3" ry="4.5" fill="#1A1A1A"/><circle cx="3" cy="11" r="3.5" fill="#1A1A1A"/>'
+      : mood === "cheer" ? '<path d="M-14 -2 Q-10 -8 -6 -2M6 -2 Q10 -8 14 -2" fill="none" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round"/><path d="M-9 7 Q0 21 9 7 Z" fill="#1A1A1A"/>'
+      : '<ellipse cx="-10" cy="-3" rx="3.5" ry="5" fill="#1A1A1A"/><ellipse cx="10" cy="-3" rx="3.5" ry="5" fill="#1A1A1A"/><circle cx="-8.7" cy="-5" r="1.3" fill="#fff"/><circle cx="11.3" cy="-5" r="1.3" fill="#fff"/><path d="M-8 9 Q0 16 8 9" fill="none" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round"/><path d="M3 12 L5 16.5 L7 11" fill="#fff"/>';
+    return '<svg viewBox="-58 -48 116 98" aria-hidden="true"><path d="M8 26 Q20 46 34 42" fill="none" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round"/><path d="M30 36 L42 40 L32 48 Z" fill="#1A1A1A"/>' +
+      '<rect x="-44" y="-6" width="88" height="9" rx="3" fill="#555"/><rect x="-54" y="-30" width="16" height="56" rx="4" fill="#1A1A1A"/><rect x="38" y="-30" width="16" height="56" rx="4" fill="#1A1A1A"/>' +
+      '<rect x="-54" y="-6" width="16" height="8" fill="#E1141E"/><rect x="38" y="-6" width="16" height="8" fill="#E1141E"/>' +
+      '<path d="M-18 -20 Q-28 -36 -15 -44 Q-15 -31 -7 -25 Z M18 -20 Q28 -36 15 -44 Q15 -31 7 -25 Z" fill="#1A1A1A"/>' +
+      '<circle r="28" fill="#E1141E"/><ellipse cx="-18" cy="6" rx="4.5" ry="2.5" fill="#F7A1A1"/><ellipse cx="18" cy="6" rx="4.5" ry="2.5" fill="#F7A1A1"/>' + eyes + '</svg>';
+  }
+  function pumpCtx() {
+    var r = M.routine || {}, out = ["이름: " + String(M.name || "").slice(-2) + "님", "성별: " + (M.sex === "F" ? "여" : "남")];
+    if (r.title) out.push("루틴: " + r.title);
+    if (r.plan && r.plan.length) out.push("방향: " + r.plan.join(" / "));
+    if (r.cardio) out.push("유산소: " + (r.cardio.minutes || "") + "분 " + (r.cardio.options || ""));
+    (r.days || []).forEach(function (d) {
+      out.push((d.day || "") + " " + (d.part || "") + ": " + (d.items || []).map(function (x) { return x.name + (x.tip ? "(" + x.tip + ")" : ""); }).join(", "));
+    });
+    var wd = "일월화수목금토".charAt(new Date().getDay());
+    out.push("오늘: " + wd + "요일");
+    return out.join("\n").slice(0, 1500);
+  }
+  function pumpInit() {
+    if (DEMO || document.querySelector(".pump-fab")) return;
+    var LS = "ptnote:" + SLUG + ":pump", log = [];
+    try { log = JSON.parse(localStorage.getItem(LS) || "[]") || []; } catch (e) { log = []; }
+    function save() { try { localStorage.setItem(LS, JSON.stringify(log.slice(-30))); } catch (e) {} }
+    var fab = document.createElement("button");
+    fab.className = "pump-fab"; fab.type = "button"; fab.setAttribute("aria-label", "펌핑이에게 운동 질문하기");
+    fab.innerHTML = pumpFace();
+    document.body.appendChild(fab);
+    var wrap = null, busy = false, left = null;
+    var EX = ["스쿼트 할 때 무릎이 아파요", "오늘 루틴 순서 알려줘", "단백질은 하루에 얼마나?", "근육통 있을 때 운동해도 돼?"];
+    function bubble(r, t) {
+      var b = document.createElement("div"); b.className = "pump-msg " + (r === "a" ? "is-a" : "is-q");
+      b.textContent = t; return b;
+    }
+    function draw() {
+      var box = wrap.querySelector(".pump-log"); box.innerHTML = "";
+      box.appendChild(bubble("a", "안녕하세요 " + String(M.name || "").slice(-2) + "님! 펌핑이예요 💪\n운동 자세, 루틴, 식단 뭐든 물어봐요. 아픈 곳은 꼭 장동욱 쌤께 먼저 말씀해 주세요!"));
+      log.forEach(function (x) { box.appendChild(bubble(x.r, x.t)); });
+      if (!log.length) {
+        var ex = document.createElement("div"); ex.className = "pump-ex";
+        EX.forEach(function (q) { var c = document.createElement("button"); c.type = "button"; c.textContent = q; c.onclick = function () { ask(q); }; ex.appendChild(c); });
+        box.appendChild(ex);
+      }
+      box.scrollTop = box.scrollHeight;
+      wrap.querySelector(".pump-left").textContent = left == null ? "하루 15개까지" : "오늘 " + left + "개 남음";
+    }
+    function face(m) { wrap.querySelector(".pump-face").innerHTML = pumpFace(m); }
+    function ask(q) {
+      q = String(q || "").trim(); if (!q || busy) return;
+      if (!ATT_API) return;
+      busy = true; var hist = log.slice(-6);
+      log.push({ r: "q", t: q }); draw(); face("think");
+      var box = wrap.querySelector(".pump-log"), wait = bubble("a", "펌핑이가 생각 중이에요…"); wait.classList.add("is-wait"); box.appendChild(wait); box.scrollTop = box.scrollHeight;
+      fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "pump", m: SLUG, q: q, h: hist, ctx: pumpCtx() }) })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          if (j && j.ok) { log.push({ r: "a", t: j.a }); left = j.left; face("cheer"); setTimeout(function () { if (wrap) face(); }, 2500); }
+          else {
+            log.pop();
+            var msg = j && j.error === "limit" ? "오늘 펌핑 끝! 질문은 하루 15개까지예요. 내일 또 물어봐요 🔥" : "앗, 펌핑이가 잠깐 쉬는 중이에요. 조금 뒤에 다시 물어봐 주세요!";
+            if (j && j.error === "limit") left = 0;
+            log.push({ r: "a", t: msg, sys: 1 }); face();
+          }
+        })
+        .catch(function () { log.pop(); log.push({ r: "a", t: "인터넷 연결을 확인하고 다시 물어봐 주세요!", sys: 1 }); face(); })
+        .then(function () { log = log.filter(function (x, i) { return !x.sys || i === log.length - 1; }); save(); busy = false; draw(); });
+    }
+    function open() {
+      if (wrap) return;
+      wrap = document.createElement("div"); wrap.className = "pump-wrap";
+      wrap.innerHTML = '<div class="pump-sheet" role="dialog" aria-label="펌핑이">' +
+        '<div class="pump-top"><span class="pump-face"></span><b>펌핑이</b><span class="pump-left"></span><button type="button" class="pump-x" aria-label="닫기">✕</button></div>' +
+        '<div class="pump-log"></div>' +
+        '<form class="pump-in"><input type="text" maxlength="300" placeholder="운동 궁금한 거 물어봐요" enterkeyhint="send"><button type="submit">보내기</button></form>' +
+        '<p class="pump-note">펌핑이는 AI라 틀릴 수 있어요. 아픈 곳·루틴 변경은 장동욱 쌤께!</p></div>';
+      document.body.appendChild(wrap); document.documentElement.classList.add("pump-on");
+      face(); draw();
+      wrap.addEventListener("click", function (e) { if (e.target === wrap) close(); });
+      wrap.querySelector(".pump-x").onclick = close;
+      wrap.querySelector(".pump-in").onsubmit = function (e) { e.preventDefault(); var i = this.querySelector("input"); var v = i.value; i.value = ""; ask(v); };
+      requestAnimationFrame(function () { wrap.classList.add("is-open"); });
+    }
+    function close() { if (!wrap) return; var w = wrap; wrap = null; w.classList.remove("is-open"); document.documentElement.classList.remove("pump-on"); setTimeout(function () { w.remove(); }, 250); }
+    fab.addEventListener("click", open);
+  }
+
   function route() {
     zoomReset();
     var hsh = (location.hash || "").replace(/^#/, "");
@@ -6162,6 +6253,7 @@
   if (!window.EXI) {   /* 옛 껍데기(index.html에 exicons.js 줄이 없는 회원)도 움직이는 아이콘이 나오게 */
     var exs = document.createElement("script"); exs.src = BASE + "exicons.js"; exs.onload = function () { route(); }; document.head.appendChild(exs);
   }
+  pumpInit();
   attSync(); ibSync();
   if (!ATT_API) setTimeout(badgeCheck, 1500);
   document.addEventListener("visibilitychange", function () { if (!document.hidden) { attSync(); ibSync(); } });

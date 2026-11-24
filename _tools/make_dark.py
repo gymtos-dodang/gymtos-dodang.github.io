@@ -40,7 +40,7 @@ def rules(text, media=None):
         i = k
     return out
 
-SKIP = re.compile(r"(\.thero|\.th-go|\.hero-|::-webkit|\.bgx|\.bg-|\.bxp|badge|\.exi|\.icn|\.petfx|\.rp-home|:root|^html$|^body$|\.toggle|knob|\.sw\b|\.on\b.*::|seal|\.dot|\.tapwave)", re.I)
+SKIP = re.compile(r"(\.thero|\.th-go|\.hero-|::-webkit|\.bgx|\.bg-|\.bxp|badge|\.exi|\.icn|\.petfx|\.rp-home|:root|^html$|^body$|\.toggle|knob|\.sw\b|\.on\b.*::|seal|\.dot|\.tapwave|\.pump-fab)", re.I)
 def gen(css_text):
     """CSS 글에서 흰·연한 바탕 규칙을 찾아 다크용 자동 규칙을 만듦"""
     t = re.sub(r"/\*.*?\*/", "", css_text, flags=re.S)

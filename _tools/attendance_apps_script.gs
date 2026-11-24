@@ -217,6 +217,49 @@ function mlItems_(arr) {
   }).filter(function (x) { return x.n; });
 }
 
+/* 2026-11-24 펌핑이: 글자만 주고받는 AI (Gemini 우선, sk-ant… 열쇠면 Claude) */
+const PUMP_SHEET = '펌핑이질문', PUMP_MAX = 15;
+const PUMP_PROMPT = '너는 JANG KAREDO PT노트의 운동 도우미 캐릭터 "펌핑이"야. 장동욱 트레이너(짐토스 도당점)의 PT 회원님 질문에 답해. ' +
+  '귀여운 악마 뿔 달린 덤벨 캐릭터라 밝고 힘나는 말투지만, 반드시 존댓말(~요)로 짧게(3~6문장, 필요하면 줄바꿈 목록) 답해. 이모지는 많아야 1개. ' +
+  '답하는 범위: 운동 자세·근육·루틴·세트/횟수/무게 올리기·분할·유산소·스트레칭·식단과 단백질 같은 기본 운동 지식, 그리고 아래 회원님 루틴에 대한 질문. ' +
+  '지킬 것: (1) 통증·부상·저림·질병·약·임신 같은 건 진단하거나 운동을 권하지 말고 "장동욱 쌤께 꼭 먼저 말씀해 주세요"라고 안내. 가슴 통증·숨참·어지러움이면 운동을 멈추고 병원에 가라고 해. ' +
+  '(2) 루틴·무게를 마음대로 바꾸라고 하지 말고, 바꾸고 싶으면 쌤과 상의하라고 해. (3) 모르는 건 지어내지 말고 쌤께 물어보라고 해. (4) 운동·건강과 상관없는 질문은 귀엽게 거절하고 운동 얘기로 돌려. ' +
+  '(5) 약물·극단적인 굶기·위험한 감량 방법은 알려 주지 마. (6) 다른 헬스장·트레이너 홍보 금지.';
+function pumpAi_(key, model, sys, hist, q) {
+  if (/^AIza|^AQ\./.test(key)) {
+    const contents = hist.map(function (x) { return { role: x.r === 'a' ? 'model' : 'user', parts: [{ text: x.t }] }; });
+    contents.push({ role: 'user', parts: [{ text: q }] });
+    const tried = {}, list = [model || 'gemini-flash-latest', 'gemini-2.5-flash', 'gemini-flash-lite-latest'];
+    let j = null, code = 0, noThink = false;
+    for (let k = 0; k < list.length && k < 5; k++) {
+      const mdl = list[k];
+      if (tried[mdl]) continue; tried[mdl] = 1;
+      const r = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + mdl + ':generateContent', {
+        method: 'post', contentType: 'application/json', muteHttpExceptions: true, headers: { 'x-goog-api-key': key },
+        payload: JSON.stringify({ systemInstruction: { parts: [{ text: sys }] }, contents: contents, generationConfig: noThink ? { temperature: 0.5 } : { temperature: 0.5, thinkingConfig: { thinkingBudget: 0 } } }) });
+      code = r.getResponseCode(); j = JSON.parse(r.getContentText());
+      if (j.candidates && j.candidates[0] && j.candidates[0].content) break;
+      if (code === 400 && !noThink) { noThink = true; delete tried[mdl]; k--; continue; }
+      const sug = /models\/(gemini[\w.\-]*)/.exec(String(j.error && j.error.message || '').replace('models/' + mdl, ''));
+      if (code === 404 && sug) list.splice(k + 1, 0, sug[1]);
+    }
+    if (!j || !j.candidates || !j.candidates[0].content) throw new Error('gemini ' + code + ' ' + String(j && j.error && j.error.message || '').slice(0, 160));
+    return j.candidates[0].content.parts.map(function (x) { return x.text || ''; }).join('');
+  }
+  if (/^sk-ant/.test(key)) {
+    const msgs = hist.map(function (x) { return { role: x.r === 'a' ? 'assistant' : 'user', content: x.t }; });
+    while (msgs.length && msgs[0].role !== 'user') msgs.shift();
+    msgs.push({ role: 'user', content: q });
+    const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+      method: 'post', contentType: 'application/json', muteHttpExceptions: true, headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+      payload: JSON.stringify({ model: model || 'claude-haiku-4-5', max_tokens: 700, system: sys, messages: msgs }) });
+    const j = JSON.parse(r.getContentText());
+    if (!j.content) throw new Error('claude ' + r.getResponseCode());
+    return j.content.map(function (x) { return x.text || ''; }).join('');
+  }
+  throw new Error('pump: 이 열쇠는 글 질문 미지원');
+}
+
 function memberOk_(m) { return /^[a-z0-9-]{3,40}$/.test(m); }
 
 /* ---------------- 루틴 (선생님이 폰에서 고친 것) */
@@ -455,6 +498,31 @@ function doPost(e) {
     c.put(ck, String(n + 1), 21600);
     try { return json_({ ok: true, ai: mealAiAll_(key.split(',').map(function (x) { return x.trim(); }).filter(String), P.getProperty('AI_MODEL'), String(b.img), String(b.hint || '')) }); }
     catch (err) { return json_({ ok: false, error: 'ai', msg: String(err) }); }
+  }
+  if (b.a === 'pump') {   // 2026-11-24 펌핑이(운동 질문 AI) — 회원 한 명 하루 15개, 질문·답은 시트 "펌핑이질문"에 쌓임
+    const q = String(b.q || '').trim().slice(0, 300);
+    if (!q) return json_({ ok: false, error: 'q' });
+    const P = PropertiesService.getScriptProperties(), key = P.getProperty('AI_KEY');
+    if (!key) return json_({ ok: false, error: 'nokey' });
+    const today = Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd'), pk = 'pq:' + m;
+    const was = String(P.getProperty(pk) || '').split('|'), used = was[0] === today ? Number(was[1] || 0) : 0;
+    if (used >= PUMP_MAX) return json_({ ok: false, error: 'limit', left: 0 });
+    P.setProperty(pk, today + '|' + (used + 1));
+    const hist = (Array.isArray(b.h) ? b.h : []).slice(-6).map(function (x) { return { r: x && x.r === 'a' ? 'a' : 'q', t: String(x && x.t || '').slice(0, 400) }; });
+    try {
+      const keys = key.split(',').map(function (x) { return x.trim(); }).filter(String);
+      let ans = '', last = null;
+      for (let i = 0; i < keys.length && !ans; i++) {
+        try { ans = pumpAi_(keys[i], i === 0 ? P.getProperty('AI_MODEL') : '', PUMP_PROMPT + '\n\n[이 회원님 정보]\n' + String(b.ctx || '').slice(0, 1500), hist, q); } catch (err) { last = err; }
+      }
+      if (!ans) throw last || new Error('empty');
+      ans = ans.trim().slice(0, 1200);
+      try { rtSheet_(PUMP_SHEET, ['기록시각', '회원주소', '질문', '답']).appendRow([new Date(), m, q, ans]); } catch (e) {}
+      return json_({ ok: true, a: ans, left: PUMP_MAX - used - 1 });
+    } catch (err) {
+      P.setProperty(pk, today + '|' + used);   // 실패한 질문은 개수에서 빼 줌
+      return json_({ ok: false, error: 'ai', msg: String(err).slice(0, 200) });
+    }
   }
   if (b.a === 'meal_add') {   // 새 기록 또는 고치기(id) — 회원·선생님 모두. 선생님 열쇠가 맞으면 쓴사람 c, 한마디(cm)도 저장
     const d = String(b.d || '');
