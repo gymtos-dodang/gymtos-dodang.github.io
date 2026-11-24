@@ -2956,6 +2956,9 @@ html.cmp-lock, html.cmp-lock body { overflow: hidden; }
 .cmp-vw { display: flex; align-items: center; gap: 10px; margin-top: 10px; } .cmp-vw > span { flex: none; font-size: 12px; font-weight: 700; color: rgba(255,255,255,.6); } .cmp-vw .vw-seg { margin: 0; flex: 1 1 auto; }
 .cmp-ctl { display: flex; gap: 6px; margin-top: 10px; } .cmp-ctl .btn { flex: 1 1 0; min-width: 0; padding: 10px 0; border: 0; border-radius: 12px; background: rgba(255,255,255,.12); color: #fff; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap; }
 .cmp-ctl .btn[aria-pressed="true"] { background: #fff; color: #111; }
+.cmp-ov .cmp-ctl .btn[aria-pressed="true"], .cmp-ov .cmp-ctl .btn[aria-pressed="true"]:hover { background: #fff; color: #111; }
+.cmp-ctl .btn { display: flex; align-items: center; justify-content: center; gap: 5px; text-align: center; line-height: 1; height: 42px; padding: 0 4px; }
+.cmp-ctl .btn svg { flex: none; width: 15px; height: 15px; fill: currentColor; } .cmp-ctl .btn svg.st { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 .cmp-hint { margin: 8px 0 0; text-align: center; font-size: 12px; color: rgba(255,255,255,.55); }
 
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
@@ -3177,6 +3180,7 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .cmp-open .cmp-ic { background: var(--seal); }
 :where(html:not([data-theme="light"])) .cmp-tag.now { background: var(--seal); }
 :where(html:not([data-theme="light"])) .cmp-ctl .btn[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+:where(html:not([data-theme="light"])) .cmp-ov .cmp-ctl .btn[aria-pressed="true"], :where(html:not([data-theme="light"])) .cmp-ov .cmp-ctl .btn[aria-pressed="true"]:hover { background: var(--paper); color: var(--ink); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -3505,6 +3509,7 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .cmp-open .cmp-ic { background: var(--seal); }
 :where(html[data-theme="dark"]) .cmp-tag.now { background: var(--seal); }
 :where(html[data-theme="dark"]) .cmp-ctl .btn[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+:where(html[data-theme="dark"]) .cmp-ov .cmp-ctl .btn[aria-pressed="true"], :where(html[data-theme="dark"]) .cmp-ov .cmp-ctl .btn[aria-pressed="true"]:hover { background: var(--paper); color: var(--ink); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {

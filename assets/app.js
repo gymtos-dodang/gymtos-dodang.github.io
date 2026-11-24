@@ -3644,6 +3644,7 @@
     o.remove(); document.documentElement.classList.remove("cmp-lock");
     var mv = document.getElementById("main"); if (mv && mv.dataset.cmpWas === "1") { delete mv.dataset.cmpWas; var p = mv.play(); if (p && p.catch) p.catch(function () {}); }
   }
+  var CMP_P = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>', CMP_Y = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>', CMP_R = '<svg viewBox="0 0 24 24" aria-hidden="true" class="st"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v5h5"/></svg>';
   function cmpOpen(f, ci) {
     cmpClose(); ci = ci || 0;
     var c = f.compare[ci], vw = f.views && f.views.length > 1 ? f.views : null, cur = c.view || "form";
@@ -3655,15 +3656,15 @@
       '<div class="cmp-grid"><div class="cmp-col"><span class="cmp-tag old">이전 · ' + esc(c.label) + '</span>' + vtag("old") + '</div>' +
       '<div class="cmp-col"><span class="cmp-tag now">지금 · ' + esc(cmpLbl(f.date)) + '</span>' + vtag("now") + '</div></div>' +
       (vw ? '<div class="cmp-vw"><span>지금 영상 각도</span><div class="vw-seg">' + vw.map(function (w) { return '<button type="button" class="vw-b" data-vf="' + esc(w.file) + '" aria-pressed="' + (w.file === cur) + '">' + esc(w.label) + '</button>'; }).join("") + '</div></div>' : '') +
-      '<div class="cmp-ctl"><button type="button" class="btn" data-c="play">⏸ 같이 멈춤</button><button type="button" class="btn" data-c="0.5" aria-pressed="false">0.5배</button><button type="button" class="btn" data-c="1" aria-pressed="true">1배</button><button type="button" class="btn" data-c="re">⟲ 처음부터</button></div>' +
+      '<div class="cmp-ctl"><button type="button" class="btn" data-c="play">' + CMP_P + '<span>같이 멈춤</span></button><button type="button" class="btn" data-c="0.5" aria-pressed="false">0.5배</button><button type="button" class="btn" data-c="1" aria-pressed="true">1배</button><button type="button" class="btn" data-c="re">' + CMP_R + '<span>처음부터</span></button></div>' +
       '<p class="cmp-hint">두 영상이 같이 시작해요. 영상을 누르면 둘 다 멈춰요</p>';
     document.body.appendChild(o); document.documentElement.classList.add("cmp-lock");
     var vo = o.querySelector('[data-k="old"]'), vn = o.querySelector('[data-k="now"]'), both = [vo, vn], rate = 1, playing = true;
     var pb = o.querySelector('[data-c="play"]');
     function poster(dir, fl) { return dir + (fl === "form" ? "poster" : fl + "-poster") + ".jpg"; }
     function setSrc(v, dir, fl) { v.setAttribute("poster", poster(dir, fl)); v.src = dir + fl + ".mp4"; v.playbackRate = rate; }
-    function go() { both.forEach(function (v) { try { v.currentTime = 0; } catch (e) {} v.playbackRate = rate; var p = v.play(); if (p && p.catch) p.catch(function () {}); }); playing = true; pb.textContent = "⏸ 같이 멈춤"; }
-    function tog() { playing = !playing; both.forEach(function (v) { if (playing) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } else v.pause(); }); pb.textContent = playing ? "⏸ 같이 멈춤" : "▶ 같이 재생"; }
+    function go() { both.forEach(function (v) { try { v.currentTime = 0; } catch (e) {} v.playbackRate = rate; var p = v.play(); if (p && p.catch) p.catch(function () {}); }); playing = true; pb.innerHTML = CMP_P + "<span>같이 멈춤</span>"; }
+    function tog() { playing = !playing; both.forEach(function (v) { if (playing) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } else v.pause(); }); pb.innerHTML = playing ? CMP_P + "<span>같이 멈춤</span>" : CMP_Y + "<span>같이 재생</span>"; }
     var ready = 0; both.forEach(function (v) { v.addEventListener("loadeddata", function () { if (++ready === 2) go(); }, { once: true }); });
     setSrc(vo, c.dir, c.file || "form"); setSrc(vn, f.dir, cur);
     setTimeout(function () { if (ready < 2) go(); }, 2500);
