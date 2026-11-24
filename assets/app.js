@@ -6000,6 +6000,7 @@
   }
   function pumpInit() {
     if (DEMO || document.querySelector(".pump-fab")) return;
+    if (!SITE.pump && !/[?&]pump=1/.test(location.search)) return;   /* 창고 배포 전까지 숨김 — 배포 후 site.js에 pump: true (2026-11-24) */
     var LS = "ptnote:" + SLUG + ":pump", log = [];
     try { log = JSON.parse(localStorage.getItem(LS) || "[]") || []; } catch (e) { log = []; }
     function save() { try { localStorage.setItem(LS, JSON.stringify(log.slice(-30))); } catch (e) {} }
