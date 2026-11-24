@@ -2877,7 +2877,7 @@ html.pump-on .pump-fab { display: none; }
 .pump-wrap.is-open .pump-sheet { transform: none; }
 .pump-top { display: flex; align-items: center; gap: 8px; padding: 12px 14px; background: #1A1A1E; color: #fff; border-radius: 20px 20px 0 0; }
 .pump-top b { font-size: 16px; }
-.pump-face { width: 54px; height: 46px; display: block; }
+.pump-face { width: 46px; height: 46px; display: block; border-radius: 50%; background: #fff; padding: 3px 2px 5px; box-sizing: border-box; flex: none; }   /* 검은 머리줄 위에서 원판·뿔이 묻혀서 흰 원 (2026-11-24) */
 .pump-face svg { width: 100%; height: 100%; display: block; }
 .pump-left { margin-left: auto; font-size: 12px; opacity: .75; }
 .pump-x { border: 0; background: rgba(255,255,255,.12); color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 15px; cursor: pointer; }
