@@ -1,4 +1,51 @@
 {
+ "와이드 풀다운": {
+  "part": "등",
+  "en": "Wide Pulldown",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "1124-wide-pulldown",
+    "img": "m/aeran-bsq16i/media/form-1124-wide-pulldown/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "wide-pulldown",
+    "img": "m/mikyung-7rq2vd/media/form-wide-pulldown/step1.jpg"
+   }
+  ]
+ },
+ "뉴텍 엠토처 시티드 로우": {
+  "part": "등",
+  "en": "Seated Row Machine",
+  "shots": [
+   {
+    "member": "임애란",
+    "id": "1124-mtorture-seated-row",
+    "img": "m/aeran-bsq16i/media/form-1124-mtorture-seated-row/step1.jpg"
+   },
+   {
+    "member": "이지환",
+    "id": "mtorture-seated-row",
+    "img": "m/jihwan-t7m4qe/media/form-mtorture-seated-row/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "mtorture-seated-row",
+    "img": "m/mikyung-7rq2vd/media/form-mtorture-seated-row/step1.jpg"
+   },
+   {
+    "member": "박민",
+    "id": "mtorture-seated-row",
+    "img": "m/dyn/parkmin/media/form-mtorture-seated-row/step1.jpg"
+   },
+   {
+    "member": "김수현",
+    "id": "1121-mtorture-seated-row",
+    "img": "m/dyn/suhyun/media/form-1121-mtorture-seated-row/step1.jpg"
+   }
+  ]
+ },
  "아웃타이 머신": {
   "part": "엉덩이",
   "en": "Outer Thigh (Abduction)",
@@ -850,32 +897,6 @@
    }
   ]
  },
- "뉴텍 엠토처 시티드 로우": {
-  "part": "등",
-  "en": "Seated Row Machine",
-  "shots": [
-   {
-    "member": "이지환",
-    "id": "mtorture-seated-row",
-    "img": "m/jihwan-t7m4qe/media/form-mtorture-seated-row/step1.jpg"
-   },
-   {
-    "member": "정미경",
-    "id": "mtorture-seated-row",
-    "img": "m/mikyung-7rq2vd/media/form-mtorture-seated-row/step1.jpg"
-   },
-   {
-    "member": "박민",
-    "id": "mtorture-seated-row",
-    "img": "m/dyn/parkmin/media/form-mtorture-seated-row/step1.jpg"
-   },
-   {
-    "member": "김수현",
-    "id": "1121-mtorture-seated-row",
-    "img": "m/dyn/suhyun/media/form-1121-mtorture-seated-row/step1.jpg"
-   }
-  ]
- },
  "클로즈그립 랫풀다운": {
   "part": "등",
   "en": "Close-grip Pulldown",
@@ -1030,17 +1051,6 @@
     "member": "정미경",
     "id": "behind-neck-press",
     "img": "m/mikyung-7rq2vd/media/form-behind-neck-press/step1.jpg"
-   }
-  ]
- },
- "와이드 풀다운": {
-  "part": "등",
-  "en": "Wide Pulldown",
-  "shots": [
-   {
-    "member": "정미경",
-    "id": "wide-pulldown",
-    "img": "m/mikyung-7rq2vd/media/form-wide-pulldown/step1.jpg"
    }
   ]
  },

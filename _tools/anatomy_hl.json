@@ -2139,5 +2139,43 @@
 "delt_lat": "P",
 "supraspinatus": "S"
 }
+},
+"m/aeran-bsq16i/media/form-1124-mtorture-seated-row/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "P",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "P"
+}
+},
+"m/aeran-bsq16i/media/form-1124-wide-pulldown/anatomy.png": {
+"sex": "F",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
 }
 }
