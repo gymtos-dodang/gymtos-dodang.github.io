@@ -2894,6 +2894,39 @@ html.pump-on .pump-fab { display: none; }
 .pump-in button { border: 0; background: #E1141E; color: #fff; border-radius: 12px; padding: 0 14px; font-size: 14px; font-weight: 700; cursor: pointer; }
 .pump-note { margin: 4px 14px 8px; font-size: 11.5px; color: var(--faint, #999); text-align: center; }
 
+/* 2026-11-24 펌핑이 살아 움직이기 — 눈 깜빡임·꼬리 흔들기·표정별 움직임, 터치 말풍선 */
+.pf .pf-eyes, .pf .pf-tail, .pf .pf-body, .pf .pf-bell, .pf .pf-horn, .pf .pf-chew, .pf .pf-sweat, .pf .pf-spark, .pf .pf-dots { transform-box: fill-box; }
+.pf .pf-eyes { transform-origin: center; animation: pfBlink 4.2s infinite; }
+.pf .pf-tail { transform-origin: 0% 0%; animation: pfTail 1.6s ease-in-out infinite; }
+@keyframes pfBlink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+@keyframes pfTail { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(14deg); } }
+.pf-cheer .pf-eyes, .pf-lift .pf-eyes, .pf-eat .pf-eyes, .pf-dizzy .pf-eyes, .pf-surprise .pf-eyes { animation: none; }
+.pf-lift .pf-body { transform-origin: center bottom; animation: pfLift .7s ease-in-out infinite; }
+@keyframes pfLift { 0%, 100% { transform: translateY(2px); } 50% { transform: translateY(-7px); } }
+.pf-cheer .pf-body { transform-origin: center bottom; animation: pfHop .55s ease-in-out 3; }
+@keyframes pfHop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-8px) scale(1.04); } }
+.pf .pf-spark { transform-origin: center; animation: pfSpark .9s ease-in-out infinite; }
+@keyframes pfSpark { 0%, 100% { opacity: .3; transform: scale(.7); } 50% { opacity: 1; transform: scale(1.1); } }
+.pf .pf-chew { transform-origin: center; animation: pfChew .35s ease-in-out infinite; }
+@keyframes pfChew { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(.35); } }
+.pf .pf-sweat { animation: pfSweat 1.4s ease-in infinite; }
+@keyframes pfSweat { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(10px); opacity: 0; } }
+.pf-no .pf-body { transform-origin: center; animation: pfShake .45s ease-in-out 3; }
+@keyframes pfShake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-9deg); } 75% { transform: rotate(9deg); } }
+.pf-dizzy .pf-body { transform-origin: center; animation: pfWobble .6s ease-in-out infinite; }
+@keyframes pfWobble { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg) translateX(2px); } }
+.pf-surprise .pf-body { transform-origin: center bottom; animation: pfJump .4s ease-out 1; }
+.pf-surprise .pf-horn { filter: drop-shadow(0 0 3px #FF2A35); }
+@keyframes pfJump { 0% { transform: scale(1); } 40% { transform: translateY(-6px) scale(1.08); } 100% { transform: scale(1); } }
+.pf .pf-dots { animation: pfSpark 1.2s ease-in-out infinite; }
+.pump-fab.is-dizzy { animation: pumpSpin .5s ease-in-out 2; }
+@keyframes pumpSpin { 50% { rotate: 20deg; } }
+.pump-tip { position: fixed; right: max(14px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 148px); z-index: 26;
+  background: #1A1A1E; color: #fff; font-size: 13px; font-weight: 700; padding: 7px 11px; border-radius: 12px; white-space: nowrap; animation: pumpTip .25s ease-out; pointer-events: none; }
+.pump-tip::after { content: ""; position: absolute; right: 24px; bottom: -6px; border: 6px solid transparent; border-bottom: 0; border-top-color: #1A1A1E; }
+@keyframes pumpTip { from { opacity: 0; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { .pf *, .pump-fab { animation: none !important; } }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -3102,7 +3135,6 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .tour-ul li { color: var(--ink); }
 :where(html:not([data-theme="light"])) .pfbtn .pfn { background: var(--seal); }
 :where(html:not([data-theme="light"])) .pfplus small { background: var(--paper); color: var(--ink); }
-:where(html:not([data-theme="light"])) .pf-food { background-image: repeating-linear-gradient(45deg, color-mix(in srgb, #FFF3DC 16%, var(--paper)) 0 10px, color-mix(in srgb, #FFEBC8 16%, var(--paper)) 10px 20px); }
 :where(html:not([data-theme="light"])) .pfbtn { background-image: linear-gradient(180deg, color-mix(in srgb, #FFF8EA 16%, var(--paper)), color-mix(in srgb, #FFE2B0 16%, var(--paper))); }
 :where(html:not([data-theme="light"])) .mu-map { background: var(--paper); }
 :where(html:not([data-theme="light"])) .mu-big { background: var(--paper); }
@@ -3428,7 +3460,6 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .tour-ul li { color: var(--ink); }
 :where(html[data-theme="dark"]) .pfbtn .pfn { background: var(--seal); }
 :where(html[data-theme="dark"]) .pfplus small { background: var(--paper); color: var(--ink); }
-:where(html[data-theme="dark"]) .pf-food { background-image: repeating-linear-gradient(45deg, color-mix(in srgb, #FFF3DC 16%, var(--paper)) 0 10px, color-mix(in srgb, #FFEBC8 16%, var(--paper)) 10px 20px); }
 :where(html[data-theme="dark"]) .pfbtn { background-image: linear-gradient(180deg, color-mix(in srgb, #FFF8EA 16%, var(--paper)), color-mix(in srgb, #FFE2B0 16%, var(--paper))); }
 :where(html[data-theme="dark"]) .mu-map { background: var(--paper); }
 :where(html[data-theme="dark"]) .mu-big { background: var(--paper); }

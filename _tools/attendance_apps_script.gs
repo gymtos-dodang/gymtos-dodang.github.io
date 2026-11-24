@@ -224,7 +224,8 @@ const PUMP_PROMPT = '너는 JANG KAREDO PT노트의 운동 도우미 캐릭터 "
   '답하는 범위: 운동 자세·근육·루틴·세트/횟수/무게 올리기·분할·유산소·스트레칭·식단과 단백질 같은 기본 운동 지식, 그리고 아래 회원님 루틴에 대한 질문. ' +
   '지킬 것: (1) 통증·부상·저림·질병·약·임신 같은 건 진단하거나 운동을 권하지 말고 "장동욱 쌤께 꼭 먼저 말씀해 주세요"라고 안내. 가슴 통증·숨참·어지러움이면 운동을 멈추고 병원에 가라고 해. ' +
   '(2) 루틴·무게를 마음대로 바꾸라고 하지 말고, 바꾸고 싶으면 쌤과 상의하라고 해. (3) 모르는 건 지어내지 말고 쌤께 물어보라고 해. (4) 운동·건강과 상관없는 질문은 귀엽게 거절하고 운동 얘기로 돌려. ' +
-  '(5) 약물·극단적인 굶기·위험한 감량 방법은 알려 주지 마. (6) 다른 헬스장·트레이너 홍보 금지.';
+  '(5) 약물·극단적인 굶기·위험한 감량 방법은 알려 주지 마. (6) 다른 헬스장·트레이너 홍보 금지. ' +
+  '(7) 답 맨 앞에 표정 하나를 [표정:걱정] 처럼 붙여: 통증·부상·불안=걱정, 식단·음식=냠냠, 자세·루틴·무게=덤벨, 칭찬·출석·잘했어요=응원, 운동과 상관없는 질문=절레, 그 밖=기본.';
 function pumpAi_(key, model, sys, hist, q) {
   if (/^AIza|^AQ\./.test(key)) {
     const contents = hist.map(function (x) { return { role: x.r === 'a' ? 'model' : 'user', parts: [{ text: x.t }] }; });
@@ -516,9 +517,13 @@ function doPost(e) {
         try { ans = pumpAi_(keys[i], i === 0 ? P.getProperty('AI_MODEL') : '', PUMP_PROMPT + '\n\n[이 회원님 정보]\n' + String(b.ctx || '').slice(0, 1500), hist, q); } catch (err) { last = err; }
       }
       if (!ans) throw last || new Error('empty');
-      ans = ans.trim().slice(0, 1200);
+      ans = ans.trim();
+      const MOODS = { '걱정': 'worry', '냠냠': 'eat', '덤벨': 'lift', '응원': 'cheer', '절레': 'no', '기본': 'base' }, mt = /^\s*\[표정:\s*([^\]]+)\]\s*/.exec(ans);
+      const mood = mt ? (MOODS[mt[1].trim()] || 'base') : '';
+      if (mt) ans = ans.slice(mt[0].length);
+      ans = ans.slice(0, 1200);
       try { rtSheet_(PUMP_SHEET, ['기록시각', '회원주소', '질문', '답']).appendRow([new Date(), m, q, ans]); } catch (e) {}
-      return json_({ ok: true, a: ans, left: PUMP_MAX - used - 1 });
+      return json_({ ok: true, a: ans, mood: mood, left: PUMP_MAX - used - 1 });
     } catch (err) {
       P.setProperty(pk, today + '|' + used);   // 실패한 질문은 개수에서 빼 줌
       return json_({ ok: false, error: 'ai', msg: String(err).slice(0, 200) });

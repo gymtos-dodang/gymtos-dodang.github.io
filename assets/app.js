@@ -5976,15 +5976,37 @@
   window.addEventListener("pageshow", zoomReset);
   /* 2026-11-24 펌핑이 — 운동 질문 AI. 오른쪽 아래 떠 있는 버튼 → 아래에서 올라오는 대화창.
      창고 POST a=pump {q, h(최근 대화 6개), ctx(회원 루틴 요약)} → {a, left}. 회원 한 명 하루 15개(창고에서 셈). 대화는 폰에 ptnote:<주소>:pump (최근 30개) */
-  function pumpFace(mood) {
-    var eyes = mood === "think" ? '<ellipse cx="-7" cy="-6" rx="3" ry="4.5" fill="#1A1A1A"/><ellipse cx="13" cy="-6" rx="3" ry="4.5" fill="#1A1A1A"/><circle cx="3" cy="11" r="3.5" fill="#1A1A1A"/>'
-      : mood === "cheer" ? '<path d="M-14 -2 Q-10 -8 -6 -2M6 -2 Q10 -8 14 -2" fill="none" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round"/><path d="M-9 7 Q0 21 9 7 Z" fill="#1A1A1A"/>'
-      : '<ellipse cx="-10" cy="-3" rx="3.5" ry="5" fill="#1A1A1A"/><ellipse cx="10" cy="-3" rx="3.5" ry="5" fill="#1A1A1A"/><circle cx="-8.7" cy="-5" r="1.3" fill="#fff"/><circle cx="11.3" cy="-5" r="1.3" fill="#fff"/><path d="M-8 9 Q0 16 8 9" fill="none" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round"/><path d="M3 12 L5 16.5 L7 11" fill="#fff"/>';
-    return '<svg viewBox="-58 -48 116 98" aria-hidden="true"><path d="M8 26 Q20 46 34 42" fill="none" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round"/><path d="M30 36 L42 40 L32 48 Z" fill="#1A1A1A"/>' +
-      '<rect x="-44" y="-6" width="88" height="9" rx="3" fill="#555"/><rect x="-54" y="-30" width="16" height="56" rx="4" fill="#1A1A1A"/><rect x="38" y="-30" width="16" height="56" rx="4" fill="#1A1A1A"/>' +
-      '<rect x="-54" y="-6" width="16" height="8" fill="#E1141E"/><rect x="38" y="-6" width="16" height="8" fill="#E1141E"/>' +
-      '<path d="M-18 -20 Q-28 -36 -15 -44 Q-15 -31 -7 -25 Z M18 -20 Q28 -36 15 -44 Q15 -31 7 -25 Z" fill="#1A1A1A"/>' +
-      '<circle r="28" fill="#E1141E"/><ellipse cx="-18" cy="6" rx="4.5" ry="2.5" fill="#F7A1A1"/><ellipse cx="18" cy="6" rx="4.5" ry="2.5" fill="#F7A1A1"/>' + eyes + '</svg>';
+  function pumpFace(mood) {   /* 2026-11-24 표정: base·think·cheer·worry·eat·no·dizzy·surprise·lift — 눈 깜빡임·꼬리 흔들기는 CSS(.pf-*) */
+    mood = mood || "base";
+    var K = "#1A1A1A", eyes, mouth = "", extra = "", face = "#E1141E";
+    var dot = '<ellipse cx="-10" cy="-3" rx="3.5" ry="5" fill="' + K + '"/><ellipse cx="10" cy="-3" rx="3.5" ry="5" fill="' + K + '"/><circle cx="-8.7" cy="-5" r="1.3" fill="#fff"/><circle cx="11.3" cy="-5" r="1.3" fill="#fff"/>';
+    var happy = '<path d="M-14 -2 Q-10 -8 -6 -2M6 -2 Q10 -8 14 -2" fill="none" stroke="' + K + '" stroke-width="2.5" stroke-linecap="round"/>';
+    var smile = '<path d="M-8 9 Q0 16 8 9" fill="none" stroke="' + K + '" stroke-width="2.5" stroke-linecap="round"/><path d="M3 12 L5 16.5 L7 11" fill="#fff"/>';
+    if (mood === "think") { eyes = '<ellipse cx="-7" cy="-6" rx="3" ry="4.5" fill="' + K + '"/><ellipse cx="13" cy="-6" rx="3" ry="4.5" fill="' + K + '"/>'; mouth = '<circle cx="3" cy="11" r="3.5" fill="' + K + '"/>';
+      extra = '<g class="pf-dots"><circle cx="30" cy="-36" r="2.5" fill="#9A9A9A"/><circle cx="37" cy="-43" r="3.5" fill="#9A9A9A"/></g>'; }
+    else if (mood === "cheer" || mood === "lift") { eyes = happy; mouth = '<path d="M-9 7 Q0 21 9 7 Z" fill="' + K + '"/><path d="M-3 7.5 L-1 11 L1 7.5 Z" fill="#fff"/>';
+      extra = '<path class="pf-spark" d="M-40 -44 L-38 -38 L-32 -36 L-38 -34 L-40 -28 L-42 -34 L-48 -36 L-42 -38 Z M44 -48 L45.5 -43 L50 -41.5 L45.5 -40 L44 -35 L42.5 -40 L38 -41.5 L42.5 -43 Z" fill="#FFC531"/>'; }
+    else if (mood === "worry") { eyes = dot + '<path d="M-15 -13 L-6 -10 M15 -13 L6 -10" stroke="' + K + '" stroke-width="2.2" stroke-linecap="round"/>'; mouth = '<path d="M-6 13 Q0 8 6 13" fill="none" stroke="' + K + '" stroke-width="2.5" stroke-linecap="round"/>';
+      extra = '<path class="pf-sweat" d="M24 -18 Q20 -10 24 -7 Q28 -10 24 -18 Z" fill="#6EC6FF"/>'; }
+    else if (mood === "eat") { eyes = happy; mouth = '<ellipse class="pf-chew" cx="0" cy="11" rx="5" ry="3.5" fill="' + K + '"/>'; }
+    else if (mood === "no") { eyes = dot; mouth = '<path d="M-6 11 H6" stroke="' + K + '" stroke-width="2.5" stroke-linecap="round"/>'; }
+    else if (mood === "dizzy") { face = "#B80D16"; eyes = '<path d="M-14 -7 L-6 1 M-6 -7 L-14 1 M6 -7 L14 1 M14 -7 L6 1" stroke="' + K + '" stroke-width="2.4" stroke-linecap="round"/>'; mouth = '<path d="M-8 12 Q-4 8 0 12 Q4 16 8 12" fill="none" stroke="' + K + '" stroke-width="2.3" stroke-linecap="round"/>'; }
+    else if (mood === "surprise") { eyes = '<circle cx="-10" cy="-4" r="5.5" fill="#fff" stroke="' + K + '" stroke-width="2"/><circle cx="10" cy="-4" r="5.5" fill="#fff" stroke="' + K + '" stroke-width="2"/><circle cx="-10" cy="-4" r="2.4" fill="' + K + '"/><circle cx="10" cy="-4" r="2.4" fill="' + K + '"/>'; mouth = '<ellipse cx="0" cy="12" rx="4" ry="5" fill="' + K + '"/>'; }
+    else { eyes = dot; mouth = smile; }
+    return '<svg class="pf pf-' + mood + '" viewBox="-58 -54 116 104" aria-hidden="true"><g class="pf-body">' +
+      '<g class="pf-tail"><path d="M8 26 Q20 46 34 42" fill="none" stroke="' + K + '" stroke-width="3" stroke-linecap="round"/><path d="M30 36 L42 40 L32 48 Z" fill="' + K + '"/></g>' +
+      '<g class="pf-bell"><rect x="-44" y="-6" width="88" height="9" rx="3" fill="#555"/><rect x="-54" y="-30" width="16" height="56" rx="4" fill="' + K + '"/><rect x="38" y="-30" width="16" height="56" rx="4" fill="' + K + '"/>' +
+      '<rect x="-54" y="-6" width="16" height="8" fill="#E1141E"/><rect x="38" y="-6" width="16" height="8" fill="#E1141E"/></g>' +
+      '<path class="pf-horn" d="M-18 -20 Q-28 -36 -15 -44 Q-15 -31 -7 -25 Z M18 -20 Q28 -36 15 -44 Q15 -31 7 -25 Z" fill="' + K + '"/>' +
+      '<circle r="28" fill="' + face + '"/><ellipse cx="-18" cy="6" rx="4.5" ry="2.5" fill="#F7A1A1"/><ellipse cx="18" cy="6" rx="4.5" ry="2.5" fill="#F7A1A1"/>' +
+      '<g class="pf-eyes">' + eyes + '</g>' + mouth + extra + '</g></svg>';
+  }
+  var PUMP_MOODS = { "걱정": "worry", "냠냠": "eat", "덤벨": "lift", "응원": "cheer", "절레": "no", "기본": "base" };
+  function pumpGuess(q) {   /* 창고가 표정을 안 보내 줄 때(예전 배포) 질문 글자로 짐작 */
+    if (/아프|아파|통증|부상|저림|저려|찌릿|시큰|다쳤|삐끗|디스크/.test(q)) return "worry";
+    if (/먹|식단|단백질|탄수|지방|칼로리|다이어트|음식|밥|간식|보충제/.test(q)) return "eat";
+    if (/자세|루틴|무게|세트|횟수|스쿼트|데드|벤치|프레스|로우|풀다운|런지|운동/.test(q)) return "lift";
+    return "cheer";
   }
   function pumpCtx() {
     var r = M.routine || {}, out = ["이름: " + String(M.name || "").slice(-2) + "님", "성별: " + (M.sex === "F" ? "여" : "남")];
@@ -6036,12 +6058,16 @@
       fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "pump", m: SLUG, q: q, h: hist, ctx: pumpCtx() }) })
         .then(function (r) { return r.json(); })
         .then(function (j) {
-          if (j && j.ok) { log.push({ r: "a", t: j.a }); left = j.left; face("cheer"); setTimeout(function () { if (wrap) face(); }, 2500); }
+          if (j && j.ok) {
+            var ans = String(j.a || ""), mt = /^\s*\[표정:\s*([^\]]+)\]\s*/.exec(ans), md = j.mood || (mt && PUMP_MOODS[mt[1].trim()]) || pumpGuess(q);
+            if (mt) ans = ans.slice(mt[0].length);
+            log.push({ r: "a", t: ans }); left = j.left; face(md); react(md, 0); setTimeout(function () { if (wrap) face(); }, 4000);
+          }
           else {
             log.pop();
             var msg = j && j.error === "limit" ? "오늘 펌핑 끝! 질문은 하루 15개까지예요. 내일 또 물어봐요 🔥" : "앗, 펌핑이가 잠깐 쉬는 중이에요. 조금 뒤에 다시 물어봐 주세요!";
             if (j && j.error === "limit") left = 0;
-            log.push({ r: "a", t: msg, sys: 1 }); face();
+            log.push({ r: "a", t: msg, sys: 1 }); face(j && j.error === "limit" ? "dizzy" : "worry");
           }
         })
         .catch(function () { log.pop(); log.push({ r: "a", t: "인터넷 연결을 확인하고 다시 물어봐 주세요!", sys: 1 }); face(); })
@@ -6063,7 +6089,25 @@
       requestAnimationFrame(function () { wrap.classList.add("is-open"); });
     }
     function close() { if (!wrap) return; var w = wrap; wrap = null; w.classList.remove("is-open"); document.documentElement.classList.remove("pump-on"); setTimeout(function () { w.remove(); }, 250); }
-    fab.addEventListener("click", open);
+    /* 터치 반응: 한 번 톡 = 깜짝 → 대화창, 연타 3번 = 어지러움, 꾹 = 알통 응원 */
+    var tapN = 0, tapT = null, holdT = null, held = false, moodT = null, tipEl = null;
+    function react(md, ms, say) {
+      fab.innerHTML = pumpFace(md); fab.className = "pump-fab is-" + md;
+      if (tipEl) { tipEl.remove(); tipEl = null; }
+      if (say) { tipEl = document.createElement("div"); tipEl.className = "pump-tip"; tipEl.textContent = say; document.body.appendChild(tipEl); }
+      clearTimeout(moodT);
+      moodT = setTimeout(function () { fab.innerHTML = pumpFace(); fab.className = "pump-fab"; if (tipEl) { tipEl.remove(); tipEl = null; } }, ms || 1600);
+    }
+    fab.addEventListener("pointerdown", function () { held = false; clearTimeout(holdT); holdT = setTimeout(function () { held = true; tapN = 0; clearTimeout(tapT); react("lift", 2200, ["오늘도 펌핑! 💪", "한 세트 더 가요!", "할 수 있어요!"][Math.floor(Math.random() * 3)]); if (navigator.vibrate) navigator.vibrate(30); }, 550); });
+    ["pointerup", "pointerleave", "pointercancel"].forEach(function (ev) { fab.addEventListener(ev, function () { clearTimeout(holdT); }); });
+    fab.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+    fab.addEventListener("click", function () {
+      if (held) { held = false; return; }
+      tapN++; clearTimeout(tapT);
+      if (tapN >= 3) { tapN = 0; react("dizzy", 2200, "그만~ 펌핑 과다예요! 😵"); return; }
+      react("surprise", 500);
+      tapT = setTimeout(function () { var n = tapN; tapN = 0; if (n === 1) open(); }, 380);
+    });
   }
 
   function route() {
