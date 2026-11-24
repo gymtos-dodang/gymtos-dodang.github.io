@@ -2177,5 +2177,34 @@
 "forearm_ext": "S",
 "rhomboid": "S"
 }
+},
+"m/inseok-02j3ia/media/form-1124-hammer-low-row/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "S",
+"biceps_long": "S",
+"forearm_flex": "S",
+"brachioradialis": "S"
+},
+"back": {
+"trap_mid": "S",
+"teres_major": "S",
+"delt_post": "S",
+"lat": "P",
+"brachioradialis": "S",
+"forearm_flex": "S",
+"forearm_ext": "S",
+"rhomboid": "S"
+}
+},
+"m/inseok-02j3ia/media/form-1124-preacher-curl-machine/anatomy.png": {
+"sex": "M",
+"front": {
+"biceps_short": "P",
+"biceps_long": "P",
+"brachialis": "S",
+"forearm_flex": "S"
+},
+"back": {}
 }
 }

@@ -113,6 +113,11 @@
     "img": "m/aeran-bsq16i/media/form-preacher-curl-machine/step1.jpg"
    },
    {
+    "member": "서인석",
+    "id": "1124-preacher-curl-machine",
+    "img": "m/inseok-02j3ia/media/form-1124-preacher-curl-machine/step1.jpg"
+   },
+   {
     "member": "염승완",
     "id": "preacher-curl-machine",
     "img": "m/dyn/seungwan/media/form-preacher-curl-machine/step1.jpg"
@@ -526,6 +531,11 @@
     "member": "박찬영",
     "id": "hammer-low-row",
     "img": "m/chanyoung-dvrara/media/form-hammer-low-row/step1.jpg"
+   },
+   {
+    "member": "서인석",
+    "id": "1124-hammer-low-row",
+    "img": "m/inseok-02j3ia/media/form-1124-hammer-low-row/step1.jpg"
    },
    {
     "member": "최지훈",
