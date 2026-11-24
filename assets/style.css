@@ -2925,6 +2925,15 @@ html.pump-on .pump-fab { display: none; }
   background: #1A1A1E; color: #fff; font-size: 13px; font-weight: 700; padding: 7px 11px; border-radius: 12px; white-space: nowrap; animation: pumpTip .25s ease-out; pointer-events: none; }
 .pump-tip::after { content: ""; position: absolute; right: 24px; bottom: -6px; border: 6px solid transparent; border-bottom: 0; border-top-color: #1A1A1E; }
 @keyframes pumpTip { from { opacity: 0; transform: translateY(6px); } }
+.pf .pf-heart, .pf .pf-zz, .pf .pf-tongue { transform-box: fill-box; transform-origin: center; }
+.pf .pf-heart { animation: pfFloat 1s ease-out infinite; }
+@keyframes pfFloat { 0% { transform: translateY(4px) scale(.6); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(-8px) scale(1.1); opacity: 0; } }
+.pf .pf-zz { animation: pfFloat 1.4s ease-out infinite; }
+.pf .pf-tongue { transform-origin: center top; animation: pfChew .5s ease-in-out infinite; }
+.pf-love .pf-body, .pf-wink .pf-body { transform-origin: center bottom; animation: pfJump .45s ease-out 1; }
+.pf-sleepy .pf-body { transform-origin: center bottom; animation: pfNod 1.2s ease-in-out infinite; }
+@keyframes pfNod { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-5deg) translateY(2px); } }
+.pf-love .pf-eyes, .pf-wink .pf-eyes, .pf-tongue .pf-eyes, .pf-sleepy .pf-eyes { animation: none; }
 @media (prefers-reduced-motion: reduce) { .pf *, .pump-fab { animation: none !important; } }
 
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */

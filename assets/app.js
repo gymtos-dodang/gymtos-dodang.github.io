@@ -5992,6 +5992,13 @@
     else if (mood === "no") { eyes = dot; mouth = '<path d="M-6 11 H6" stroke="' + K + '" stroke-width="2.5" stroke-linecap="round"/>'; }
     else if (mood === "dizzy") { face = "#B80D16"; eyes = '<path d="M-14 -7 L-6 1 M-6 -7 L-14 1 M6 -7 L14 1 M14 -7 L6 1" stroke="' + K + '" stroke-width="2.4" stroke-linecap="round"/>'; mouth = '<path d="M-8 12 Q-4 8 0 12 Q4 16 8 12" fill="none" stroke="' + K + '" stroke-width="2.3" stroke-linecap="round"/>'; }
     else if (mood === "surprise") { eyes = '<circle cx="-10" cy="-4" r="5.5" fill="#fff" stroke="' + K + '" stroke-width="2"/><circle cx="10" cy="-4" r="5.5" fill="#fff" stroke="' + K + '" stroke-width="2"/><circle cx="-10" cy="-4" r="2.4" fill="' + K + '"/><circle cx="10" cy="-4" r="2.4" fill="' + K + '"/>'; mouth = '<ellipse cx="0" cy="12" rx="4" ry="5" fill="' + K + '"/>'; }
+    else if (mood === "wink") { eyes = '<ellipse cx="-10" cy="-3" rx="3.5" ry="5" fill="' + K + '"/><circle cx="-8.7" cy="-5" r="1.3" fill="#fff"/><path d="M6 -3 Q10 -7 14 -3" fill="none" stroke="' + K + '" stroke-width="2.5" stroke-linecap="round"/>'; mouth = smile;
+      extra = '<path class="pf-spark" d="M30 -40 L31.5 -35 L36 -33.5 L31.5 -32 L30 -27 L28.5 -32 L24 -33.5 L28.5 -35 Z" fill="#FFC531"/>'; }
+    else if (mood === "love") { eyes = '<path d="M-10 2 C-17 -4 -15 -10 -10 -7 C-5 -10 -3 -4 -10 2 Z M10 2 C3 -4 5 -10 10 -7 C15 -10 17 -4 10 2 Z" fill="' + K + '"/>'; mouth = '<path d="M-8 9 Q0 17 8 9" fill="none" stroke="' + K + '" stroke-width="2.5" stroke-linecap="round"/>';
+      extra = '<path class="pf-heart" d="M34 -30 C27 -36 29 -43 34 -40 C39 -43 41 -36 34 -30 Z" fill="#FF6B8A"/>'; }
+    else if (mood === "tongue") { eyes = happy; mouth = '<path d="M-8 8 Q0 14 8 8" fill="none" stroke="' + K + '" stroke-width="2.5" stroke-linecap="round"/><path class="pf-tongue" d="M-1 11 Q-1 20 4 20 Q8 20 7 11 Z" fill="#FF8FA8"/>'; }
+    else if (mood === "sleepy") { eyes = '<path d="M-14 -3 H-6 M6 -3 H14" stroke="' + K + '" stroke-width="2.5" stroke-linecap="round"/>'; mouth = '<ellipse cx="0" cy="11" rx="3" ry="2.2" fill="' + K + '"/>';
+      extra = '<text class="pf-zz" x="26" y="-30" font-size="14" font-weight="800" fill="#9A9A9A">z</text>'; }
     else { eyes = dot; mouth = smile; }
     return '<svg class="pf pf-' + mood + '" viewBox="-58 -54 116 104" aria-hidden="true"><g class="pf-body">' +
       '<g class="pf-tail"><path d="M8 26 Q20 46 34 42" fill="none" stroke="' + K + '" stroke-width="3" stroke-linecap="round"/><path d="M30 36 L42 40 L32 48 Z" fill="' + K + '"/></g>' +
@@ -6105,8 +6112,10 @@
       if (held) { held = false; return; }
       tapN++; clearTimeout(tapT);
       if (tapN >= 3) { tapN = 0; react("dizzy", 2200, "그만~ 펌핑 과다예요! 😵"); return; }
-      react("surprise", 500);
-      tapT = setTimeout(function () { var n = tapN; tapN = 0; if (n === 1) open(); }, 380);
+      var TAPS = [["surprise", "앗! 깜짝이야"], ["wink", "궁금한 거 있죠? 😉"], ["love", "오늘도 와 줘서 고마워요!"], ["tongue", "메롱~ 질문 고고!"], ["cheer", "펌핑 준비 완료!"], ["sleepy", "졸았던 거 아니에요…"]];
+      var pick = TAPS[Math.floor(Math.random() * TAPS.length)];
+      if (tapN === 1) react(pick[0], 900, pick[1]);
+      tapT = setTimeout(function () { var n = tapN; tapN = 0; if (n === 1) open(); }, 650);
     });
   }
 
