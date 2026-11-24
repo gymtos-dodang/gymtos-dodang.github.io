@@ -1365,7 +1365,7 @@
   function attCall(q) {
     return fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + (q || ""), { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw new Error("save"); mlFlag(j); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); dbServer(j.kv); lgServer(j.kv); bgServer(j.kv); pfServer(j.kv); mvServer(j.kv); fvServer(j.kv); rkServer(j.kv); } return j; });
+      .then(function (j) { if (!j || !j.ok) throw new Error("save"); mlFlag(j); ebFlag(j); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); dbServer(j.kv); lgServer(j.kv); bgServer(j.kv); pfServer(j.kv); mvServer(j.kv); fvServer(j.kv); rkServer(j.kv); } return j; });
   }
   function attSync() {
     if (!ATT_API) return;
@@ -1768,6 +1768,179 @@
         var p = wrap.querySelector("p"); var im = document.createElement("img"); im.alt = "인바디 결과지"; im.src = j.data; p.replaceWith(im);
       })
       .catch(function () { var p = wrap.querySelector("p"); if (p) p.textContent = "사진을 못 불러왔어요"; });
+  }
+  /* ===== 눈바디 (2026-11-24 장동욱 "눈바디 비교 한번 만들어볼까" — 월별 줄 세우기 · 회원만 올림 · 정면만 · 잠금 없음)
+     기록 탭 인바디 아래 05. 창고 시트 "눈바디" + 드라이브 "PT노트 눈바디 사진"(작은 사진은 시트에) — a=eye / eye_add / eye_img / eye_del.
+     창고가 새 버전일 때만 보임(출석 응답 eye:1 → ebFlag). 그룹 PT 노트·PT 안내서 체험(DEMO·TRY·?demo)에서는 안 보임 — 몸 사진이라 손님·다른 회원에게 보이면 안 됨.
+     선생님 폰은 보기만(올리기·지우기 없음). */
+  var EB_OK = !/·/.test(M.name || "") && M.eyebody !== false && !DEMO && !TRY && !/[?&]demo\b/.test(location.search);
+  var EB_ON = false, EB = null, EB_ERR = false, EB_BUSY = false;
+  try { EB_ON = EB_OK && localStorage.getItem("ptnote:ebon") === "1"; } catch (e) {}
+  function ebFlag(j) {
+    if (!EB_OK || EB_ON || !j || !j.eye) return;
+    EB_ON = true; try { localStorage.setItem("ptnote:ebon", "1"); } catch (e) {}
+    if (/^#log/.test(location.hash)) rerender();
+  }
+  function ebRefresh() { var b = document.querySelector(".ebpanel"); if (b) { b.outerHTML = ebPanel(); setupEb(); } }
+  function ebSync() {
+    if (!ATT_API || EB_BUSY) return;
+    EB_BUSY = true;
+    fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + "&a=eye", { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (!j || !j.ok || !Array.isArray(j.eye)) throw new Error("eye"); EB = j.eye; EB_ERR = false; EB_BUSY = false; ebRefresh(); })
+      .catch(function () { EB_BUSY = false; EB_ERR = true; ebRefresh(); });
+  }
+  function ebTh(r) { return r.th && /^[A-Za-z0-9+\/=]+$/.test(r.th) ? "data:image/jpeg;base64," + r.th : ""; }
+  function ebLbl(d) { return +d.slice(5, 7) + "월 " + +d.slice(8, 10) + "일"; }
+  function ebPanel() {
+    if (!EB_OK || !EB_ON) return "";
+    var mine = !COACH_MODE;
+    if (EB === null && !EB_ERR) { setTimeout(ebSync, 0); return '<div class="panel ebpanel"><p class="eb-msg">사진을 불러오는 중이에요…</p></div>'; }
+    if (EB === null) return '<div class="panel ebpanel"><p class="eb-msg">지금은 사진을 못 불러왔어요 · 인터넷 연결을 확인해 주세요</p></div>';
+    var thisM = ymd(new Date()).slice(0, 7), has = EB.some(function (r) { return r.d.slice(0, 7) === thisM; });
+    var btn = mine ? '<button class="btn fill eb-add" type="button">' + (has ? "눈바디 한 장 더 올리기" : "이번 달 눈바디 올리기") + '</button>' : "";
+    if (!EB.length) {
+      return '<div class="panel ebpanel eb-empty"><div class="eb-ic" aria-hidden="true">' + ML_CAM + '</div><h3>' + (mine ? "눈바디를 남겨 보세요" : "아직 올린 눈바디가 없어요") + '</h3>' +
+        '<p>한 달에 한 번, 같은 자리에서 정면 사진 한 장.<br>달마다 나란히 세워서 변화를 보여 드려요</p>' + btn + '</div>';
+    }
+    var first = EB[0], last = EB[EB.length - 1], dw = first.w && last.w && EB.length > 1 ? Math.round((last.w - first.w) * 10) / 10 : null, pm = "";
+    var cards = EB.map(function (r, i) {
+      var m = r.d.slice(0, 7), newM = m !== pm; pm = m;
+      var tag = i === 0 && EB.length > 1 ? '<i class="eb-tag">처음</i>' : i === EB.length - 1 && EB.length > 1 ? '<i class="eb-tag now">최근</i>' : "";
+      var th = ebTh(r);
+      return '<button type="button" class="eb-card' + (newM ? " nm" : "") + '" data-eb="' + i + '" aria-label="' + ebLbl(r.d) + ' 눈바디 크게 보기">' +
+        '<span class="eb-ph">' + (th ? '<img alt="" src="' + th + '" loading="lazy">' : "") + tag + '</span>' +
+        '<b>' + (newM ? (m.slice(0, 4) !== String(new Date().getFullYear()) ? m.slice(2, 4) + "년 " : "") + +m.slice(5, 7) + "월" : "&nbsp;") + '</b>' +
+        '<small>' + +r.d.slice(8, 10) + '일' + (r.w ? " · " + r.w + "kg" : "") + '</small></button>';
+    }).join("");
+    return '<div class="panel ebpanel"><div class="eb-sum"><b>' + EB.length + '장</b><span>' + ebLbl(first.d) + ' 부터' + (dw !== null ? ' · 체중 <em>' + (dw > 0 ? "+" : "") + dw + 'kg</em>' : "") + '</span></div>' +
+      '<div class="eb-row" tabindex="0">' + cards + '</div>' + (EB.length > 2 ? '<p class="eb-hint">옆으로 밀어 달마다 비교해 보세요</p>' : "") + btn + '</div>';
+  }
+  function ebView(i) {
+    var wrap = document.createElement("div"), cache = {}, armed = 0;
+    wrap.className = "ebview";
+    wrap.innerHTML = '<button type="button" class="ibs-x" data-x aria-label="닫기">×</button><div class="ebv-img"><p>사진 불러오는 중…</p></div>' +
+      '<div class="ebv-bar"><button type="button" class="ebv-nav" data-go="-1" aria-label="이전 사진">‹</button><div class="ebv-cap"></div><button type="button" class="ebv-nav" data-go="1" aria-label="다음 사진">›</button></div>' +
+      (COACH_MODE ? "" : '<button type="button" class="ebv-del">이 사진 지우기</button>');
+    document.body.appendChild(wrap);
+    document.documentElement.classList.add("ib-lock");
+    function close() { wrap.remove(); document.documentElement.classList.remove("ib-lock"); }
+    function show() {
+      var r = EB[i], box = wrap.querySelector(".ebv-img"), del = wrap.querySelector(".ebv-del");
+      armed = 0; if (del) del.textContent = "이 사진 지우기";
+      wrap.querySelector(".ebv-cap").innerHTML = '<b>' + ebLbl(r.d) + '</b><small>' + (i + 1) + ' / ' + EB.length + (r.w ? " · " + r.w + "kg" : "") + (r.memo ? " · " + esc(r.memo) : "") + '</small>';
+      wrap.querySelector('[data-go="-1"]').disabled = i === 0; wrap.querySelector('[data-go="1"]').disabled = i === EB.length - 1;
+      var th = ebTh(r);
+      box.innerHTML = cache[r.id] ? '<img alt="눈바디 사진" src="' + cache[r.id] + '">' : (th ? '<img alt="눈바디 사진" class="lo" src="' + th + '">' : '<p>사진 불러오는 중…</p>');
+      if (cache[r.id]) return;
+      var id = r.id;
+      fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + "&a=eye_img&id=" + encodeURIComponent(id), { cache: "no-store" })
+        .then(function (x) { return x.json(); })
+        .then(function (j) {
+          if (!j || !j.ok || !/^data:image\//.test(j.data)) throw new Error("img");
+          cache[id] = j.data;
+          if (wrap.isConnected && EB[i] && EB[i].id === id) box.innerHTML = '<img alt="눈바디 사진" src="' + j.data + '">';
+        })
+        .catch(function () { if (wrap.isConnected && EB[i] && EB[i].id === id && !th) box.innerHTML = "<p>사진을 못 불러왔어요</p>"; });
+    }
+    wrap.addEventListener("click", function (e) {
+      var t = e.target;
+      if (t.closest("[data-x]")) return close();
+      var g = t.closest("[data-go]");
+      if (g) { var n = i + +g.getAttribute("data-go"); if (n >= 0 && n < EB.length) { i = n; show(); } return; }
+      if (t.closest(".ebv-del")) {
+        var del = wrap.querySelector(".ebv-del");
+        if (!armed) { armed = 1; del.textContent = "한 번 더 누르면 지워져요 (되돌릴 수 없어요)"; return; }
+        del.disabled = true; del.textContent = "지우는 중…";
+        fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + "&a=eye_del&id=" + encodeURIComponent(EB[i].id), { cache: "no-store" })
+          .then(function (x) { return x.json(); })
+          .then(function (j) { if (!j || !j.ok || !Array.isArray(j.eye)) throw new Error("del"); EB = j.eye; close(); ebRefresh(); attToast("사진을 지웠어요"); })
+          .catch(function () { del.disabled = false; armed = 0; del.textContent = "못 지웠어요 · 다시 눌러 주세요"; });
+      }
+    });
+    var sx = null;
+    wrap.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    wrap.addEventListener("touchend", function (e) {
+      if (sx === null) return;
+      var dx = e.changedTouches[0].clientX - sx; sx = null;
+      if (Math.abs(dx) < 50) return;
+      var n = i + (dx < 0 ? 1 : -1); if (n >= 0 && n < EB.length) { i = n; show(); }
+    });
+    show();
+  }
+  function ebThumb(b64) {   /* 줄 세우기용 작은 사진 3:4 (270×360) — 시트 한 칸에 들어가게 4만 자 안으로 */
+    return new Promise(function (res) {
+      var im = new Image();
+      im.onerror = function () { res(""); };
+      im.onload = function () {
+        var w = Math.min(im.width, im.height * 3 / 4), h = w * 4 / 3, c = document.createElement("canvas"); c.width = 270; c.height = 360;
+        c.getContext("2d").drawImage(im, (im.width - w) / 2, (im.height - h) / 2, w, h, 0, 0, 270, 360);
+        var q = 0.66, out = c.toDataURL("image/jpeg", q).split(",")[1];
+        while (out.length > 39000 && q > 0.3) { q -= 0.1; out = c.toDataURL("image/jpeg", q).split(",")[1]; }
+        res(out.length > 39000 ? "" : out);
+      };
+      im.src = "data:image/jpeg;base64," + b64;
+    });
+  }
+  function ebSheetOpen() {
+    var last = EB && EB.length ? EB[EB.length - 1] : null, lastTh = last ? ebTh(last) : "";
+    var wrap = document.createElement("div");
+    wrap.className = "ibsheet ebsheet";
+    wrap.innerHTML = '<div class="ibs-back" data-close></div><form class="ibs-card" novalidate>' +
+      '<div class="ibs-top"><h3>눈바디 올리기</h3><button type="button" class="ibs-x" data-close aria-label="닫기">×</button></div>' +
+      '<label class="ibs-file ebs-file"><input type="file" id="ebFile" accept="image/*"><span class="ibs-ph"><b>정면 사진 찍기 · 고르기</b><small>머리부터 무릎까지 나오게, 정면으로</small></span><span class="ebs-pv" hidden><img alt="" class="ebs-new">' + (lastTh ? '<img alt="" class="ebs-old" src="' + lastTh + '" hidden>' : "") + '</span></label>' +
+      (lastTh ? '<button type="button" class="ebs-ov" hidden>지난 사진(' + ebLbl(last.d) + ') 겹쳐 보기</button>' : "") +
+      '<ul class="ebs-tips"><li>같은 자리 · 같은 조명</li><li>같은 옷 · 같은 거리</li><li>아침 공복이 제일 정확해요</li></ul>' +
+      '<div class="ibs-nums"><label class="ibs-f"><span>찍은 날</span><input type="date" id="ebDate" value="' + ymd(new Date()) + '" max="' + ymd(new Date()) + '"></label>' +
+      '<label class="ibs-f"><span>체중 <em>kg · 안 적어도 돼요</em></span><input id="ebW" inputmode="decimal" placeholder="예 72.4" autocomplete="off"></label></div>' +
+      '<p class="ibs-hint">사진은 이 노트에 저장돼요. 노트 주소를 아는 사람과 선생님이 볼 수 있어요.</p><p class="ibs-msg" role="alert"></p>' +
+      '<button class="btn fill ibs-save" type="submit">저장하기</button></form>';
+    document.body.appendChild(wrap);
+    document.documentElement.classList.add("ib-lock");
+    var form = wrap.querySelector("form"), file = wrap.querySelector("#ebFile"), msg = wrap.querySelector(".ibs-msg"), ov = wrap.querySelector(".ebs-ov"), old = wrap.querySelector(".ebs-old");
+    var b64 = null, busy = false;
+    function close() { wrap.remove(); document.documentElement.classList.remove("ib-lock"); }
+    Array.prototype.forEach.call(wrap.querySelectorAll("[data-close]"), function (x) { x.addEventListener("click", close); });
+    if (ov) ov.addEventListener("click", function () { old.hidden = !old.hidden; ov.classList.toggle("on", !old.hidden); ov.textContent = old.hidden ? "지난 사진(" + ebLbl(last.d) + ") 겹쳐 보기" : "겹쳐 보기 끄기"; });
+    file.addEventListener("change", function () {
+      var f = file.files && file.files[0];
+      if (!f) return;
+      msg.className = "ibs-msg info"; msg.textContent = "사진 준비 중…";
+      ibShrink(f, 1280).then(function (d) {
+        b64 = d; msg.textContent = "";
+        wrap.querySelector(".ebs-new").src = "data:image/jpeg;base64," + d;
+        wrap.querySelector(".ebs-pv").hidden = false; wrap.querySelector(".ibs-ph").hidden = true;
+        if (ov) ov.hidden = false;
+      }).catch(function () { msg.className = "ibs-msg"; msg.textContent = "이 사진은 못 열었어요 · 다른 사진으로 해 주세요"; });
+    });
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (busy) return;
+      var d = wrap.querySelector("#ebDate").value, wv = wrap.querySelector("#ebW").value.replace(",", ".").trim(), w = wv ? +wv : null;
+      msg.className = "ibs-msg";
+      if (!b64) { msg.textContent = "사진을 먼저 골라 주세요"; return; }
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(d) || d > ymd(new Date())) { msg.textContent = "찍은 날을 확인해 주세요"; return; }
+      if (w !== null && !(w >= 20 && w <= 300)) { msg.textContent = "체중을 확인해 주세요"; return; }
+      busy = true; form.classList.add("saving"); msg.className = "ibs-msg info"; msg.textContent = "올리는 중… (몇 초 걸려요)";
+      ebThumb(b64).then(function (th) {
+        return fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "eye_add", m: SLUG, n: M.name || "", d: d, w: w, img: b64, th: th }) });
+      }).then(function (r) { return r.json(); })
+        .then(function (j) {
+          if (!j || !j.ok || !Array.isArray(j.eye)) throw new Error("save");
+          EB = j.eye; close(); ebRefresh(); attToast("눈바디를 저장했어요");
+          var row = document.querySelector(".eb-row"); if (row) row.scrollLeft = row.scrollWidth;
+        })
+        .catch(function () { busy = false; form.classList.remove("saving"); msg.className = "ibs-msg"; msg.textContent = "저장 못 했어요. 인터넷 연결을 확인하고 다시 눌러 주세요"; });
+    });
+  }
+  function setupEb() {
+    var add = document.querySelector(".eb-add");
+    if (add) add.addEventListener("click", ebSheetOpen);
+    var row = document.querySelector(".eb-row");
+    if (row) {
+      row.addEventListener("click", function (e) { var c = e.target.closest("[data-eb]"); if (c) ebView(+c.getAttribute("data-eb")); });
+      if (!row._s) { row._s = 1; row.scrollLeft = row.scrollWidth; }
+    }
   }
   function setupIb() {
     var add = document.querySelector(".ib-add");
@@ -3026,6 +3199,7 @@
       }).join("") + '</div>' : '') + '</section>';
     h += muscleSection("03");
     if (IB_ON) h += '<section id="inbody">' + head("04", "몸 변화 · 인바디", "지난달과 비교해요", '<a class="more" href="#body">흐름 보기</a>') + ibPanel() + '</section>';
+    if (EB_OK && EB_ON) h += '<section id="eyebody">' + head(IB_ON ? "05" : "04", "눈바디", "달마다 같은 자세로 한 장") + ebPanel() + '</section>';
     return h + remember();
   }
   function grServer(kv) {
@@ -6271,7 +6445,7 @@
     if (/^form-/.test(hsh) && !DEMO) { if (findForm(hsh.slice(5))) fvMark(hsh.slice(5)); lsAdd(FOPEN_KEY, [hsh.slice(5)]); }
     litApply(tab);
     setupFold(tab, jumpTo || (scrollDay ? "day" : null));
-    setupAttCheck(); setupCal(); setupIb(); setupBadges(); setupMuscle(); setupRtEdit();
+    setupAttCheck(); setupCal(); setupIb(); setupEb(); setupBadges(); setupMuscle(); setupRtEdit();
     if (after) after();
     var flashEl = null;
     if (tab === "notice") {

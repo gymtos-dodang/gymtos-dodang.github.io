@@ -20,6 +20,8 @@ const IB_FOLDER = 'PT노트 인바디 사진';
 //   사진 자동 분석(meal_ai)은 프로젝트 설정 → 스크립트 속성 AI_KEY가 있어야 동작. 열쇠는 코드에 넣지 말 것.
 //   AI_KEY: mi:<키> = Mistral(무료, Pixtral Large) / gsk_… = Groq(무료) / cf:<계정ID>:<토큰> = Cloudflare(무료) / sk-ant… = Claude / AIza…·AQ.… = Gemini. 쉼표로 여러 개 넣으면 앞에서부터 쓰고, 막히면 다음 것으로 (2026-11-20).
 const ML_SHEET = '식단기록';
+const EB_SHEET = '눈바디';   // 2026-11-24 눈바디 사진(월별 줄 세우기)
+const EB_FOLDER = 'PT노트 눈바디 사진';
 const ML_FOLDER = 'PT노트 식단 사진';
 
 function book_() {
@@ -96,6 +98,31 @@ function ibRow_(s, m, id) {
 function num_(x, lo, hi) {
   const n = Number(x);
   return isFinite(n) && n >= lo && n <= hi ? Math.round(n * 10) / 10 : null;
+}
+
+/* ---------------- 눈바디 (2026-11-24 "눈바디 비교" — 회원이 정면 사진을 올리면 월별로 줄 세움. 큰 사진은 드라이브, 작은 사진은 시트) */
+function ebSheet_() { return rtSheet_(EB_SHEET, ['회원주소', '이름', '날짜', '체중', '사진ID', '작은사진', '기록ID', '기록시각', '메모']); }
+function ebFolder_() {
+  const p = PropertiesService.getScriptProperties();
+  const id = p.getProperty('EBF');
+  if (id) { try { return DriveApp.getFolderById(id); } catch (e) {} }
+  const f = DriveApp.createFolder(EB_FOLDER);
+  p.setProperty('EBF', f.getId());
+  return f;
+}
+function ebList_(m) {
+  const v = ebSheet_().getDataRange().getValues(), out = [];
+  for (let i = 1; i < v.length; i++) {
+    if (v[i][0] !== m) continue;
+    out.push({ id: String(v[i][6]), d: txt_(v[i][2], 'yyyy-MM-dd').replace(/^'/, ''), w: Number(v[i][3]) || null, th: String(v[i][5] || ''), memo: String(v[i][8] || ''), at: txt_(v[i][7], "yyyy-MM-dd'T'HH:mm:ss") });
+  }
+  out.sort(function (a, b) { return a.d < b.d ? -1 : a.d > b.d ? 1 : a.at < b.at ? -1 : 1; });
+  return out;
+}
+function ebRow_(s, m, id) {
+  const v = s.getDataRange().getValues();
+  for (let i = 1; i < v.length; i++) if (v[i][0] === m && String(v[i][6]) === id) return { row: i + 1, photo: String(v[i][4] || '') };
+  return null;
 }
 
 /* ---------------- 먹은 기록 (2026-11-20) */
@@ -375,6 +402,28 @@ function doGet(e) {
       lock.releaseLock();
     }
   }
+  if (p.a === 'eye') return json_({ ok: true, eye: ebList_(m) });
+  if (p.a === 'eye_img') {
+    const r = ebRow_(ebSheet_(), m, String(p.id || ''));
+    if (!r || !r.photo) return json_({ ok: false, error: 'photo' });
+    const blob = DriveApp.getFileById(r.photo).getBlob();
+    return json_({ ok: true, data: 'data:' + blob.getContentType() + ';base64,' + Utilities.base64Encode(blob.getBytes()) });
+  }
+  if (p.a === 'eye_del') {
+    const lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      const s = ebSheet_();
+      const r = ebRow_(s, m, String(p.id || ''));
+      if (r) {
+        if (r.photo) { try { DriveApp.getFileById(r.photo).setTrashed(true); } catch (err) {} }
+        s.deleteRow(r.row);
+      }
+      return json_({ ok: true, eye: ebList_(m) });
+    } finally {
+      lock.releaseLock();
+    }
+  }
   if (p.a === 'inbody_img') {
     const r = ibRow_(ibSheet_(), m, String(p.id || ''));
     if (!r || !r.photo) return json_({ ok: false, error: 'photo' });
@@ -429,7 +478,7 @@ function doGet(e) {
   try { routine = rtGet_(m); } catch (err) {}
   try { bnotices = bnList_(); } catch (err) {}
   try { kv = kvFor_(m); } catch (err) {}
-  return json_({ ok: true, days: days, routine: routine, bnotices: bnotices, kv: kv, meal: 1 });   // meal: 1 = 먹은 기록을 쓸 수 있는 창고
+  return json_({ ok: true, days: days, routine: routine, bnotices: bnotices, kv: kv, meal: 1, eye: 1 });   // meal: 1 = 먹은 기록을 쓸 수 있는 창고
 }
 
 /* 선생님 페이지용: 회원 여러 명의 출석·폰 루틴·저장소를 시트 한 번씩만 읽어서 */
@@ -541,6 +590,23 @@ function doPost(e) {
     } catch (err) {
       P.setProperty(pk, today + '|' + used);   // 실패한 질문은 개수에서 빼 줌
       return json_({ ok: false, error: 'ai', msg: String(err).slice(0, 200) });
+    }
+  }
+  if (b.a === 'eye_add') {   // 2026-11-24 눈바디 사진 올리기 — 큰 사진(img)은 드라이브, 작은 사진(th)은 시트
+    const d = String(b.d || '');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return json_({ ok: false, error: 'date' });
+    if (!b.img || String(b.img).length >= 8000000) return json_({ ok: false, error: 'photo' });
+    const w = num_(b.w, 20, 300);
+    const lock = LockService.getScriptLock();
+    lock.waitLock(20000);
+    try {
+      const blob = Utilities.newBlob(Utilities.base64Decode(String(b.img)), 'image/jpeg', m + '_' + d + '_' + Date.now() + '.jpg');
+      const photo = ebFolder_().createFile(blob).getId();
+      ebSheet_().appendRow([m, String(b.n || ''), "'" + d, w === null ? '' : w, photo, String(b.th || '').slice(0, 40000), Utilities.getUuid().replace(/-/g, '').slice(0, 10), new Date(), String(b.memo || '').slice(0, 100)]);
+      SpreadsheetApp.flush();
+      return json_({ ok: true, eye: ebList_(m) });
+    } finally {
+      lock.releaseLock();
     }
   }
   if (b.a === 'meal_add') {   // 새 기록 또는 고치기(id) — 회원·선생님 모두. 선생님 열쇠가 맞으면 쓴사람 c, 한마디(cm)도 저장

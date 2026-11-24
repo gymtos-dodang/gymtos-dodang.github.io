@@ -2961,6 +2961,53 @@ html.cmp-lock, html.cmp-lock body { overflow: hidden; }
 .cmp-ctl .btn svg { flex: none; width: 15px; height: 15px; fill: currentColor; } .cmp-ctl .btn svg.st { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 .cmp-hint { margin: 8px 0 0; text-align: center; font-size: 12px; color: rgba(255,255,255,.55); }
 
+/* ===== 눈바디 (2026-11-24 "눈바디 비교" — 기록 탭 05, 월별 줄 세우기) */
+.ebpanel { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.eb-msg { margin: 0; text-align: center; color: var(--sub); font-size: 14px; padding: 18px 6px; }
+.eb-empty { align-items: center; text-align: center; }
+.eb-empty h3 { margin: 0; font-size: 17px; }
+.eb-empty p { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--sub); }
+.eb-ic { width: 54px; height: 54px; border-radius: 50%; background: var(--tint); color: var(--primary); display: flex; align-items: center; justify-content: center; }
+.eb-ic svg { width: 28px; height: 28px; }
+.eb-sum { display: flex; align-items: baseline; gap: 8px; }
+.eb-sum b { font-size: 20px; }
+.eb-sum span { font-size: 13px; color: var(--sub); }
+.eb-sum em { font-style: normal; font-weight: 800; color: var(--primary); }
+.eb-row { display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; padding: 2px 0 6px; margin: 0 -4px; padding-left: 4px; padding-right: 4px; scrollbar-width: none; }
+.eb-row::-webkit-scrollbar { display: none; }
+.eb-card { flex: 0 0 31%; max-width: 132px; min-width: 96px; scroll-snap-align: start; font: inherit; color: inherit; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+.eb-card.nm:not(:first-child) { margin-left: 6px; }
+.eb-ph { position: relative; display: block; width: 100%; aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden; background: var(--tint); }
+.eb-ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.eb-tag { position: absolute; left: 6px; top: 6px; font-style: normal; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 99px; background: rgba(20, 20, 24, .72); color: #fff; }
+.eb-tag.now { background: var(--primary); }
+.eb-card b { font-size: 13.5px; margin-top: 4px; }
+.eb-card small { font-size: 11.5px; color: var(--sub); font-variant-numeric: tabular-nums; }
+.eb-hint { margin: -4px 0 0; font-size: 12px; color: var(--faint); text-align: center; }
+.eb-add { width: 100%; justify-content: center; }
+.ebview { position: fixed; inset: 0; z-index: 70; background: rgba(8, 9, 14, .95); color: #fff; display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: calc(56px + env(safe-area-inset-top, 0px)) 14px calc(16px + env(safe-area-inset-bottom, 0px)); }
+.ebview .ibs-x { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: 12px; background: rgba(255, 255, 255, .15); color: #fff; }
+.ebv-img { flex: 1; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; }
+.ebv-img img { max-width: 100%; max-height: 100%; border-radius: 10px; object-fit: contain; }
+.ebv-img img.lo { height: 100%; filter: blur(3px); }
+.ebv-img p { margin: 0; color: rgba(255, 255, 255, .7); font-size: 14px; }
+.ebv-bar { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 420px; }
+.ebv-cap { flex: 1; text-align: center; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.ebv-cap b { font-size: 16px; }
+.ebv-cap small { font-size: 12.5px; color: rgba(255, 255, 255, .7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ebv-nav { font: inherit; font-size: 26px; line-height: 1; width: 46px; height: 46px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, .15); color: #fff; cursor: pointer; }
+.ebv-nav:disabled { opacity: .25; }
+.ebv-del { font: inherit; font-size: 12.5px; background: none; border: 0; color: rgba(255, 255, 255, .55); text-decoration: underline; padding: 6px 10px; cursor: pointer; }
+.ebs-file { min-height: 150px; }
+.ebs-pv { position: relative; display: block; line-height: 0; }
+.ebs-pv img.ebs-new { display: block; max-height: 300px; width: auto; max-width: 100%; }
+.ebs-pv img.ebs-old { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; object-fit: cover; opacity: .45; pointer-events: none; }
+.ebs-ov { font: inherit; font-size: 13px; font-weight: 700; align-self: center; padding: 7px 14px; border-radius: 99px; border: 1.5px solid var(--line); background: var(--paper); color: var(--sub); cursor: pointer; }
+.ebs-ov.on { border-color: var(--primary); color: var(--primary); }
+.ebs-tips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.ebs-tips li { font-size: 12px; font-weight: 700; color: var(--sub); background: var(--page); border-radius: 99px; padding: 4px 10px; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -3181,6 +3228,7 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .cmp-tag.now { background: var(--seal); }
 :where(html:not([data-theme="light"])) .cmp-ctl .btn[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
 :where(html:not([data-theme="light"])) .cmp-ov .cmp-ctl .btn[aria-pressed="true"], :where(html:not([data-theme="light"])) .cmp-ov .cmp-ctl .btn[aria-pressed="true"]:hover { background: var(--paper); color: var(--ink); }
+:where(html:not([data-theme="light"])) .eb-tag.now { background: var(--seal); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -3510,6 +3558,7 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .cmp-tag.now { background: var(--seal); }
 :where(html[data-theme="dark"]) .cmp-ctl .btn[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
 :where(html[data-theme="dark"]) .cmp-ov .cmp-ctl .btn[aria-pressed="true"], :where(html[data-theme="dark"]) .cmp-ov .cmp-ctl .btn[aria-pressed="true"]:hover { background: var(--paper); color: var(--ink); }
+:where(html[data-theme="dark"]) .eb-tag.now { background: var(--seal); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {
