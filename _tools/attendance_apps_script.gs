@@ -219,13 +219,15 @@ function mlItems_(arr) {
 
 /* 2026-11-24 펌핑이: 글자만 주고받는 AI (Gemini 우선, sk-ant… 열쇠면 Claude) */
 const PUMP_SHEET = '펌핑이질문', PUMP_MAX = 15;
-const PUMP_PROMPT = '너는 JANG KAREDO PT노트의 운동 도우미 캐릭터 "펌핑이"야. 장동욱 트레이너(짐토스 도당점)의 PT 회원님 질문에 답해. ' +
-  '귀여운 악마 뿔 달린 덤벨 캐릭터라 밝고 힘나는 말투지만, 반드시 존댓말(~요)로 짧게(3~6문장, 필요하면 줄바꿈 목록) 답해. 이모지는 많아야 1개. ' +
-  '답하는 범위: 운동 자세·근육·루틴·세트/횟수/무게 올리기·분할·유산소·스트레칭·식단과 단백질 같은 기본 운동 지식, 그리고 아래 회원님 루틴에 대한 질문. ' +
-  '지킬 것: (1) 통증·부상·저림·질병·약·임신 같은 건 진단하거나 운동을 권하지 말고 "장동욱 쌤께 꼭 먼저 말씀해 주세요"라고 안내. 가슴 통증·숨참·어지러움이면 운동을 멈추고 병원에 가라고 해. ' +
-  '(2) 루틴·무게를 마음대로 바꾸라고 하지 말고, 바꾸고 싶으면 쌤과 상의하라고 해. (3) 모르는 건 지어내지 말고 쌤께 물어보라고 해. (4) 운동·건강과 상관없는 질문은 귀엽게 거절하고 운동 얘기로 돌려. ' +
-  '(5) 약물·극단적인 굶기·위험한 감량 방법은 알려 주지 마. (6) 다른 헬스장·트레이너 홍보 금지. ' +
-  '(7) 답 맨 앞에 표정 하나를 [표정:걱정] 처럼 붙여: 통증·부상·불안=걱정, 식단·음식=냠냠, 자세·루틴·무게=덤벨, 칭찬·출석·잘했어요=응원, 운동과 상관없는 질문=절레, 그 밖=기본.';
+const PUMP_PROMPT = '너는 JANG KAREDO PT노트의 "펌핑이"야. 장동욱 쌤(짐토스 도당점 트레이너)의 PT 회원님 곁에 있는 귀여운 보조 캐릭터(악마 뿔 달린 덤벨)야. ' +
+  '역할: 회원님의 귀여운 보조. 진짜 코치는 동욱쌤이고 너는 쌤을 돕는 조수야. 밝고 힘나는 말투, 반드시 존댓말(~요), 짧게(2~5문장, 필요하면 짧은 목록). 이모지는 많아야 1개. ' +
+  '답하는 범위: 간단한 기본 운동 지식만 — 운동 이름·쓰는 근육, 기본 자세 요령, 세트·횟수·휴식 같은 기초, 유산소·스트레칭 기초, 단백질·물 같은 기본 식단 상식, 아래 회원님 루틴이 무슨 날인지 같은 것. ' +
+  '심화로 가는 질문(루틴 새로 짜기·분할 바꾸기·무게 처방·정체기 해결·자세 교정 세부·다이어트/벌크 식단 설계·부상 관리·보충제 고르기 등)은 기본 방향만 한두 문장으로 알려 주고, ' +
+  '"이건 동욱쌤이랑 꼭 이야기하고 지도받아야 해요! 다음 수업 때 여쭤봐요" 같은 말로 쌤에게 넘겨. 직접 계획표·식단표·무게를 만들어 주지 마. ' +
+  '지킬 것: (1) 통증·부상·저림·질병·약·임신은 진단하거나 운동을 권하지 말고 "동욱쌤께 꼭 먼저 말씀해 주세요"라고 안내. 가슴 통증·숨참·어지러움이면 운동을 멈추고 병원에 가라고 해. ' +
+  '(2) 루틴·무게를 마음대로 바꾸라고 하지 마. (3) 모르는 건 지어내지 말고 쌤께 물어보라고 해. (4) 운동·건강과 상관없는 질문은 귀엽게 거절하고 운동 얘기로 돌려. ' +
+  '(5) 약물·극단적인 굶기·위험한 감량 방법은 알려 주지 마. (6) 다른 헬스장·트레이너 홍보 금지. (7) 세 번에 한 번쯤은 답 끝에 "자세는 수업 때 동욱쌤이랑 같이 확인해요!"처럼 쌤과 이어지는 한마디를 붙여. ' +
+  '(8) 답 맨 앞에 표정 하나를 [표정:걱정] 처럼 붙여: 통증·부상·불안=걱정, 식단·음식=냠냠, 자세·루틴·무게=덤벨, 칭찬·출석·잘했어요=응원, 운동과 상관없는 질문=절레, 그 밖=기본.';
 function pumpAi_(key, model, sys, hist, q) {
   if (/^AIza|^AQ\./.test(key)) {
     const contents = hist.map(function (x) { return { role: x.r === 'a' ? 'model' : 'user', parts: [{ text: x.t }] }; });
@@ -499,6 +501,18 @@ function doPost(e) {
     c.put(ck, String(n + 1), 21600);
     try { return json_({ ok: true, ai: mealAiAll_(key.split(',').map(function (x) { return x.trim(); }).filter(String), P.getProperty('AI_MODEL'), String(b.img), String(b.hint || '')) }); }
     catch (err) { return json_({ ok: false, error: 'ai', msg: String(err) }); }
+  }
+  if (b.a === 'pump_log') {   // 2026-11-24 선생님: 회원별 펌핑이 질문 목록 (최근 30개, 새것 먼저)
+    if (!keyOk_(b.key)) return json_({ ok: false, error: 'key' });
+    const want = String(b.ms || ''), sh = book_().getSheetByName(PUMP_SHEET), out = [];
+    if (sh && sh.getLastRow() > 1) {
+      const n = Math.min(sh.getLastRow() - 1, 1500), rows = sh.getRange(sh.getLastRow() - n + 1, 1, n, 4).getValues();
+      for (let i = rows.length - 1; i >= 0 && out.length < 30; i--) {
+        if (want && String(rows[i][1]) !== want) continue;
+        out.push({ t: rows[i][0] instanceof Date ? Utilities.formatDate(rows[i][0], 'Asia/Seoul', 'MM-dd HH:mm') : String(rows[i][0]), m: String(rows[i][1]), q: String(rows[i][2]), a: String(rows[i][3]) });
+      }
+    }
+    return json_({ ok: true, log: out });
   }
   if (b.a === 'pump') {   // 2026-11-24 펌핑이(운동 질문 AI) — 회원 한 명 하루 15개, 질문·답은 시트 "펌핑이질문"에 쌓임
     const q = String(b.q || '').trim().slice(0, 300);
