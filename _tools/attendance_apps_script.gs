@@ -163,7 +163,7 @@ function mlOpenAi_(url, token, model, img, prompt) {   // Groq·Cloudflare (Open
     payload: JSON.stringify({ model: model, temperature: 0.2, max_tokens: 900,
       messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,' + img } }] }] }) });
   const j = JSON.parse(r.getContentText());
-  if (!j.choices) throw new Error('openai ' + r.getResponseCode());
+  if (!j.choices) throw new Error('openai ' + r.getResponseCode() + ' ' + String(j.message || (j.error && (j.error.message || j.error)) || j.detail && JSON.stringify(j.detail) || '').slice(0, 200));
   return String(j.choices[0].message.content || '');
 }
 function mealAiAll_(keys, model, img, hint) {   // 열쇠 여러 개면 차례로 (무료 한도가 막히면 다음 것)
@@ -202,7 +202,10 @@ function aiText_(key, model, img, prompt, mime) {   // 사진(또는 PDF) + 질�
   const pdf = mime === 'application/pdf';   // PDF는 Gemini·Claude만 읽음 (2026-11-21)
   if (pdf && /^mi:|^gsk_|^cf:/.test(key)) throw new Error('pdf: 이 열쇠는 PDF 못 읽음');
   if (/^mi:/.test(key)) {
-    text = mlOpenAi_('https://api.mistral.ai/v1/chat/completions', key.slice(3), model || 'pixtral-large-latest', img, prompt);
+    const ms = model ? [model] : ['mistral-medium-latest', 'pixtral-large-latest', 'mistral-small-latest'];   // 2026-11-26 pixtral-large가 400 → medium부터
+    let err = null;
+    for (let k = 0; k < ms.length && !text; k++) { try { text = mlOpenAi_('https://api.mistral.ai/v1/chat/completions', key.slice(3), ms[k], img, prompt); } catch (e) { err = e; if (!/ 400 | 404 /.test(String(e.message))) break; } }
+    if (!text) throw err || new Error('mistral');
   } else if (/^gsk_/.test(key)) {
     text = mlOpenAi_('https://api.groq.com/openai/v1/chat/completions', key, model || 'meta-llama/llama-4-scout-17b-16e-instruct', img, prompt);
   } else if (/^cf:/.test(key)) {
