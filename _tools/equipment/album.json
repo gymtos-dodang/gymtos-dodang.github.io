@@ -834,6 +834,11 @@
     "img": "m/jihun-g9kgdo/media/form-lateral-raise-machine/step1.jpg"
    },
    {
+    "member": "김지수",
+    "id": "1125-lateral-raise-machine",
+    "img": "m/jisu-480xne/media/form-1125-lateral-raise-machine/step1.jpg"
+   },
+   {
     "member": "어순래",
     "id": "lateral-raise-machine",
     "img": "m/sunrae-c7yvid/media/form-lateral-raise-machine/step1.jpg"
@@ -1040,17 +1045,6 @@
    }
   ]
  },
- "덤벨 사이드 레터럴 레이즈": {
-  "part": "어깨",
-  "en": "DB Lateral Raise",
-  "shots": [
-   {
-    "member": "김지수",
-    "id": "1125-db-lateral-raise",
-    "img": "m/jisu-480xne/media/form-1125-db-lateral-raise/step1.jpg"
-   }
-  ]
- },
  "페이스풀": {
   "part": "등",
   "en": "Face Pull",
@@ -1091,6 +1085,17 @@
     "member": "김지수",
     "id": "cable-chest-press",
     "img": "m/jisu-480xne/media/form-cable-chest-press/step1.jpg"
+   }
+  ]
+ },
+ "덤벨 사이드 레터럴 레이즈": {
+  "part": "어깨",
+  "en": "DB Lateral Raise",
+  "shots": [
+   {
+    "member": "김지수",
+    "id": "db-lateral-raise",
+    "img": "m/jisu-480xne/media/form-db-lateral-raise/step1.jpg"
    }
   ]
  },
