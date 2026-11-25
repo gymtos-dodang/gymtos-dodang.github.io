@@ -24,3 +24,4 @@
 - 2026-11-21 버전 16: Gemini 503(사람 많음)·429면 1.5초 쉬고 다음 모델(2.5-flash → flash-lite-latest). PDF 테스트(_tools/test/inbody_sample.pdf) 8개 모두 맞음, 단 Gemini 붐빌 땐 78초 걸림.
 - 2026-11-22 속도(버전 17): Gemini 생각 끄기(thinkingBudget 0, 못 받는 모델이면 빼고 다시) + 503이면 쉬지 않고 바로 다음 모델. → PDF 5.6초·사진 8.7초, 8개 모두 맞음.
 - 2026-11-24 AI 읽기 고장: Gemini가 thinkingConfig(생각 끄기)를 "400 invalid argument"(think라는 글자 없이)로 거절해 사진·PDF 모두 AI 실패 → 드라이브 OCR로 넘어가 숫자가 엉망. 이제 400이면 무조건 생각 끄기 빼고 다시 보냄(버전 18). "숫자 이상해" 하면 먼저 응답 ai 값부터 볼 것.
+- 2026-11-26 버전 19: 눈바디(a=eye·eye_add·eye_img·eye_del, 출석 응답 eye:1)만 배포. 시험 주소 zz-test-eye로 올리기→목록→큰 사진→지우기 모두 됨(드라이브 권한 그대로 씀). **펌핑이(pump·pump_log·pumpAi_)는 아직 배포 안 함** — 편집기 코드에는 눈바디만 넣었고 펌핑이 부분은 빠져 있음(편집기 길이 ≠ 저장소 길이). 다음에 저장소 코드를 통째로 붙이면 펌핑이도 같이 나가니, 그때는 장동욱에게 먼저 확인. 편집기에서 `new Function`은 막혀 있어(Trusted Types) 문법 확인은 monaco.editor.getModelMarkers로.
