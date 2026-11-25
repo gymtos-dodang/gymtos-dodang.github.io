@@ -28,3 +28,4 @@
 - 2026-11-26 버전 20: 장동욱 "펌핑이도 배포 가자" → 저장소 코드 통째로 붙여 펌핑이(pump·pump_log)까지 배포. 이제 편집기 = 저장소(38638자). 시험 주소 zz-test-pump로 질문 1개 → 6.4초에 답·표정(lift)·남은 14개 확인(시트 "펌핑이질문"에 시험 줄 1개 남음). 회원 화면은 아직 숨김 — `assets/site.js`에 `pump: true`를 넣어야 보임(장동욱 확인 뒤에).
 
 - 2026-11-26 Mistral 열쇠 추가: AI_KEY = Gemini(AQ.),mi:Mistral 순서(Groq는 사람 확인 체크가 안 돼 보류). meal_ai 시험용 {only:'mi:'}(그 앞글자 열쇠만 씀), 답 ai.by = 실제로 쓴 열쇠 앞 3글자. 시험 사진 _tools/test/meal_sample.jpg.
+- 2026-11-26 결론: Mistral은 API 켜려면 카드 등록 필요(Pay-as-you-go) → 안 씀, Groq는 사람 확인 체크 막힘 → 안 씀. 식단·인바디 AI는 Gemini 하나로(시험: 음식 4개·약 6초). AI_KEY 뒤 mi: 열쇠는 402로 실패하고 넘어가므로 둬도 무해. 예비가 필요하면 다음엔 Cloudflare(cf:).
