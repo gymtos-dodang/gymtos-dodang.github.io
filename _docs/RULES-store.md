@@ -26,3 +26,5 @@
 - 2026-11-24 AI 읽기 고장: Gemini가 thinkingConfig(생각 끄기)를 "400 invalid argument"(think라는 글자 없이)로 거절해 사진·PDF 모두 AI 실패 → 드라이브 OCR로 넘어가 숫자가 엉망. 이제 400이면 무조건 생각 끄기 빼고 다시 보냄(버전 18). "숫자 이상해" 하면 먼저 응답 ai 값부터 볼 것.
 - 2026-11-26 버전 19: 눈바디(a=eye·eye_add·eye_img·eye_del, 출석 응답 eye:1)만 배포. 시험 주소 zz-test-eye로 올리기→목록→큰 사진→지우기 모두 됨(드라이브 권한 그대로 씀). **펌핑이(pump·pump_log·pumpAi_)는 아직 배포 안 함** — 편집기 코드에는 눈바디만 넣었고 펌핑이 부분은 빠져 있음(편집기 길이 ≠ 저장소 길이). 다음에 저장소 코드를 통째로 붙이면 펌핑이도 같이 나가니, 그때는 장동욱에게 먼저 확인. 편집기에서 `new Function`은 막혀 있어(Trusted Types) 문법 확인은 monaco.editor.getModelMarkers로.
 - 2026-11-26 버전 20: 장동욱 "펌핑이도 배포 가자" → 저장소 코드 통째로 붙여 펌핑이(pump·pump_log)까지 배포. 이제 편집기 = 저장소(38638자). 시험 주소 zz-test-pump로 질문 1개 → 6.4초에 답·표정(lift)·남은 14개 확인(시트 "펌핑이질문"에 시험 줄 1개 남음). 회원 화면은 아직 숨김 — `assets/site.js`에 `pump: true`를 넣어야 보임(장동욱 확인 뒤에).
+
+- 2026-11-26 Mistral 열쇠 추가: AI_KEY = Gemini(AQ.),mi:Mistral 순서(Groq는 사람 확인 체크가 안 돼 보류). meal_ai 시험용 {only:'mi:'}(그 앞글자 열쇠만 씀), 답 ai.by = 실제로 쓴 열쇠 앞 3글자. 시험 사진 _tools/test/meal_sample.jpg.

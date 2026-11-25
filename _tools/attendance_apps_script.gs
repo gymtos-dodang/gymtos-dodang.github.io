@@ -169,7 +169,7 @@ function mlOpenAi_(url, token, model, img, prompt) {   // Groq·Cloudflare (Open
 function mealAiAll_(keys, model, img, hint) {   // 열쇠 여러 개면 차례로 (무료 한도가 막히면 다음 것)
   let last = null;
   for (let i = 0; i < keys.length; i++) {
-    try { return mealAi_(keys[i], i === 0 ? model : '', img, hint); } catch (err) { last = err; }
+    try { const r = mealAi_(keys[i], i === 0 ? model : '', img, hint); r.by = String(keys[i]).slice(0, 3); return r; } catch (err) { last = err; }
   }
   throw last || new Error('nokey');
 }
@@ -548,7 +548,7 @@ function doPost(e) {
     const c = CacheService.getScriptCache(), ck = 'mlai:' + m, n = Number(c.get(ck) || 0);
     if (n >= 20) return json_({ ok: false, error: 'limit' });   // 회원 한 명이 6시간에 20장까지
     c.put(ck, String(n + 1), 21600);
-    try { return json_({ ok: true, ai: mealAiAll_(key.split(',').map(function (x) { return x.trim(); }).filter(String), P.getProperty('AI_MODEL'), String(b.img), String(b.hint || '')) }); }
+    try { return json_({ ok: true, ai: mealAiAll_(key.split(',').map(function (x) { return x.trim(); }).filter(function (x) { return x && (!b.only || x.indexOf(String(b.only)) === 0); }), b.only ? '' : P.getProperty('AI_MODEL'), String(b.img), String(b.hint || '')) }); }
     catch (err) { return json_({ ok: false, error: 'ai', msg: String(err) }); }
   }
   if (b.a === 'pump_log') {   // 2026-11-24 선생님: 회원별 펌핑이 질문 목록 (최근 30개, 새것 먼저)
