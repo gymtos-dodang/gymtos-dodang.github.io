@@ -306,6 +306,9 @@
   EX.shoulder_press = ohp(function (P) { return db(P.haL, [1, 0], 7).concat(db(P.haR, [1, 0], 7)); });
   EX.smith_shoulder_press = ohp(function () { return []; }, function (P) {
     var y = P.haL[1] - 1; return [L("eq2", [[20, 4], [20, 93]], 2.6), L("eq2", [[80, 4], [80, 93]], 2.6), L("eq", [[14, y], [86, y]], 3.4), L("eq", [[14, y - 7], [14, y + 7]], 5), L("eq", [[86, y - 7], [86, y + 7]], 5)]; });
+  /* 바벨 숄더프레스 (2026-11-25 김지수님): 레일 없이 원판 달린 바벨을 머리 위로 */
+  EX.barbell_shoulder_press = ohp(function (P) {
+    var y = P.haL[1] - 1; return [L("eq", [[13, y], [87, y]], 3.4), L("eq", [[15, y - 8], [15, y + 8]], 5.5), L("eq", [[85, y - 8], [85, y + 8]], 5.5)]; });
   function raise(base, seated, machine) {
     function pads(P) {
       var nl = perp(P.elL, P.haL), nr = perp(P.haR, P.elR);

@@ -2320,5 +2320,36 @@
 "ham_bf": "S",
 "ham_st": "S"
 }
+},
+"m/jisu-480xne/media/form-1125-barbell-shoulder-press/anatomy.png": {
+"sex": "F",
+"front": {
+"trap_up": "S",
+"pec_clav": "S",
+"delt_ant": "P",
+"delt_lat": "P",
+"triceps_long": "S"
+},
+"back": {
+"trap_up": "S",
+"delt_lat": "P",
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/jisu-480xne/media/form-1125-db-lateral-raise/anatomy.png": {
+"sex": "F",
+"front": {
+"trap_up": "S",
+"delt_ant": "S",
+"delt_lat": "P"
+},
+"back": {
+"trap_up": "S",
+"delt_post": "S",
+"delt_lat": "P",
+"supraspinatus": "S"
+}
 }
 }

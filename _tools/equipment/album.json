@@ -1029,6 +1029,28 @@
    }
   ]
  },
+ "바벨 숄더프레스": {
+  "part": "어깨",
+  "en": "Barbell Shoulder Press",
+  "shots": [
+   {
+    "member": "김지수",
+    "id": "1125-barbell-shoulder-press",
+    "img": "m/jisu-480xne/media/form-1125-barbell-shoulder-press/step1.jpg"
+   }
+  ]
+ },
+ "덤벨 사이드 레터럴 레이즈": {
+  "part": "어깨",
+  "en": "DB Lateral Raise",
+  "shots": [
+   {
+    "member": "김지수",
+    "id": "1125-db-lateral-raise",
+    "img": "m/jisu-480xne/media/form-1125-db-lateral-raise/step1.jpg"
+   }
+  ]
+ },
  "페이스풀": {
   "part": "등",
   "en": "Face Pull",
@@ -1069,17 +1091,6 @@
     "member": "김지수",
     "id": "cable-chest-press",
     "img": "m/jisu-480xne/media/form-cable-chest-press/step1.jpg"
-   }
-  ]
- },
- "덤벨 사이드 레터럴 레이즈": {
-  "part": "어깨",
-  "en": "DB Lateral Raise",
-  "shots": [
-   {
-    "member": "김지수",
-    "id": "db-lateral-raise",
-    "img": "m/jisu-480xne/media/form-db-lateral-raise/step1.jpg"
    }
   ]
  },

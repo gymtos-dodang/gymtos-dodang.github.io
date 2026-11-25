@@ -69,6 +69,25 @@ def smith_shoulder_press(c):
     c.arrow((W[0] - 18, W[1] - 16), (W[0] - 18, W[1] - 1))
 
 
+# 바벨 숄더프레스 (2026-11-25 김지수님): 스미스 숄더 프레스에서 레일만 뺌
+def barbell_shoulder_press(c):
+    c.oy = -4
+    H = (56, 30)
+    S = fk(H, 90, TORSO)
+    floor(c, 6, 14, 86)
+    pill(c, (50, 25.4), (68, 25.4), 5.2)
+    pill(c, (66, 28), (66, 64), 5.2)
+    c.stroke([(60, 25), (60, 6)], 3, GRAY)
+    K = fk(H, 180, TH)
+    A = fk(K, -90, SH - 1)
+    E = fk(S, 128, UA)
+    W = fk(E, 78, FA)
+    p = {"H": H, "S": S, "head": fk(S, 92, NECKH), "arm": [E, W], "leg": [K, A, fk(A, 180, FT)]}
+    draw_side(c, p)
+    _bar(c, W)
+    c.arrow((W[0] - 18, W[1] - 16), (W[0] - 18, W[1] - 1))
+
+
 def smith_shrug(c):
     # 앞모습, 어깨를 귀 쪽으로 으쓱 (2026-11-05 다시 그림): 레일 2개 + 봉 + 원판, 팔은 쭉 편 채
     floor(c, 5, 6, 94)
@@ -327,7 +346,7 @@ def preacher_curl_machine(c):
     c.arc_arrow(E, 21, -40, 70)
 
 
-NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press,
+NEW = {"smith_bench_press": smith_bench_press, "smith_row": smith_row, "smith_shoulder_press": smith_shoulder_press, "barbell_shoulder_press": barbell_shoulder_press,
        "smith_shrug": smith_shrug, "band_push_up": band_push_up,
        "incline_db_curl": incline_db_curl, "assisted_chin_up": assisted_chin_up, "cable_chest_press": cable_chest_press, "mtorture_row": mtorture_row, "hack_press": hack_press, "spider_curl": spider_curl, "close_grip_pulldown": close_grip_pulldown, "standing_face_pull": standing_face_pull, "tbar_row": tbar_row, "wide_pulldown": wide_pulldown, "front_row": front_row, "preacher_curl_machine": preacher_curl_machine}
 
