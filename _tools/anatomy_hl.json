@@ -2244,5 +2244,81 @@
 "forearm_ext": "S",
 "rhomboid": "P"
 }
+},
+"m/mikyung-7rq2vd/media/form-1125-smith-incline-press/anatomy.png": {
+"sex": "F",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/dyn/donghyun/media/form-1125-smith-incline-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "S",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/dyn/donghyun/media/form-1125-smith-bench-press/anatomy.png": {
+"sex": "M",
+"front": {
+"pec_clav": "P",
+"pec_stern": "P",
+"delt_ant": "S",
+"triceps_long": "S"
+},
+"back": {
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S"
+}
+},
+"m/sunrae-c7yvid/media/form-1125-leg-press/anatomy.png": {
+"sex": "F",
+"front": {
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P",
+"pectineus": "S",
+"add_long": "S",
+"add_mag": "S",
+"gracilis": "S"
+},
+"back": {
+"glute_max": "S",
+"ham_bf": "S",
+"ham_st": "S"
+}
+},
+"m/sunrae-c7yvid/media/form-1125-hack-squat/anatomy.png": {
+"sex": "F",
+"front": {
+"rectus_fem": "P",
+"vastus_lat": "P",
+"vastus_med": "P",
+"pectineus": "S",
+"add_long": "S",
+"add_mag": "S",
+"gracilis": "S"
+},
+"back": {
+"glute_max": "S",
+"ham_bf": "S",
+"ham_st": "S"
+}
 }
 }
