@@ -573,3 +573,13 @@ _tools/anatomy_v4.py  인체모형 v4 (자극 부위 그림, 2026-11-16 — v3 �
 - 창고: 시트 "눈바디"(회원주소·이름·날짜·체중·사진ID·작은사진·기록ID·기록시각·메모), 드라이브 폴더 속성 EBF. 같은 날 여러 장 올릴 수 있음.
 - 안 보이는 곳: 그룹 PT 노트(이름에 ·), DEMO·TRY·?demo(PT 안내서 체험 — 상담 손님에게 회원 몸 사진이 보이면 안 됨). 선생님 폰은 보기만.
 - 코드 app.js EB_OK·EB_ON·ebFlag·ebSync·ebPanel·ebView·ebThumb·ebSheetOpen·setupEb, style.css "눈바디" 블록.
+
+## 2026-11-26 펌핑이 비서 버전 (장동욱 "CLAUDE.md '다음 할 일' 그대로, 다 되면 회원 화면에 켜줘")
+- 2026-11-24에 정한 "1·2번 조합 + 앱 쓰는 법, 회원의 비서 느낌"을 그대로 만듦. 창고 재배포 없이 되게 질문·답장은 범용 저장소(kv)로.
+- 질문: 회원 폰이 `mw:<주소>:ask` {n, q:[{id,t,at}]}를 통째로 덮어씀(폰 대화 기록 중 id 있는 질문 최근 6개, 4000자 제한 때문에 질문 200자). 새 폰이면 창고 것을 받아 대화창에 다시 채움.
+- 답장: 선생님 페이지 "회원 질문" 칸에서 쓰면 `pub:m:<주소>:ans` {a:{id:{t,at}}}(회원 노트가 받음) + `coach:ask:<주소>`(같은 내용 — pub:m: 전체를 안 읽으려고). 회원 폰에 남은 질문(최근 6개)의 답장만 들고 감.
+- 회원 폰: 본 답장 id는 `ptnote:<주소>:pumpans`. 안 본 답장이 있으면 버튼 빨간 점(.has-new)·말풍선, 톡 한 번에 바로 대화창.
+- AI: 예전엔 입력 = AI 질문이었는데, 이제 입력은 전부 쌤께 가고 마지막 질문 아래 버튼을 눌러야만 AI(a=pump)가 답함. AI가 막혀도 "질문은 동욱쌤께 전해 놨어요"로 안내.
+- 응원: 출석(att) > 종목 ✓(check) 우선, 배지(badge)는 배지 창(.bgpop-wrap)이 닫힌 뒤. 대화창·둘러보기 중엔 안 함.
+- 앱 쓰는 법: 출석 도장(#attBtn)·루틴 ✓(.week → .exchk)·복습지(.wkseg → tap으로 #forms → .flist .card-link)·식단 기록(#diet-log .ml-add, 없으면 #diet .db-tabs)·인바디(.ibpanel)·배지(.bggrid). ✓는 실제로 누르지 않음(기록·출석이 찍히므로).
+- 선생님 페이지 kv_get {prefix:"mw:", suffix:":ask"} — 창고 코드(_tools/attendance_apps_script.gs)에 suffix를 넣었고, 예전 배포면 mw: 전체가 와서 askLoad가 한 번 더 거름.

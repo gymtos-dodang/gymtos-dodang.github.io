@@ -5,6 +5,7 @@ window.SITE = {
   branch: "PT노트",                  /* 지점 이름 */
   site: "https://gymtos-dodang.github.io",   /* 사이트 주소 (og 미리보기 그림 등) */
   /* 2026-11-23 회원 홈 하단 "장동욱TR 운동 릴스" 줄 (시안 A) — 새 릴스를 올리면 맨 위에 한 줄 추가 (c: 커버 그림, 없으면 글자 카드) */
+  pump: true,                        /* 2026-11-26 펌핑이 비서(오른쪽 아래 버튼)를 모든 회원 화면에 켬 — 끄려면 false */
   ig: "jangkaredo_970",
   reels: [
     { t: "사이드 레터럴", u: "https://www.instagram.com/reel/DgDIXFWDN1a/", c: "/assets/reels/DgDIXFWDN1a.jpg" },

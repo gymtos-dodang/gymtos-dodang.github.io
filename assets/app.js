@@ -48,7 +48,18 @@
   }
   function wnMuOpen() { return !!document.querySelector(".rtsheet .mu-map"); }
   function wnMuClose() { var b = document.querySelector(".rtsheet-bg .rts-x"); if (b && b.closest(".rtsheet-bg").querySelector(".mu-map")) b.click(); }
+  function wnPump() { return !!document.querySelector(".pump-fab, .pump-wrap"); }   /* 2026-11-26 펌핑이 비서 소식 */
+  function wnPumpOpen() { return typeof PUMP !== "undefined" && PUMP && PUMP.isOpen(); }
+  function wnPumpClose() { if (typeof PUMP !== "undefined" && PUMP) PUMP.close(); }
   var WN = [
+    { id: "2026-11-26", t: "펌핑이 비서 업데이트",
+      items: ["😈 오른쪽 아래 펌핑이가 회원님 비서가 됐어요", "📮 궁금한 걸 남기면 동욱쌤께 전해 드리고 답장이 오면 알려 줘요", "📱 '앱 어떻게 써요?'를 누르면 쓰는 법을 화면에서 보여 줘요", "💪 출석·종목 ✓ 때 응원하고 오늘 할 운동·새 소식도 챙겨 줘요"],
+      steps: [
+        { h: "#home", need: wnPump, s: ".pump-fab", t: "😈 펌핑이가 회원님 비서가 됐어요", b: "오른쪽 아래 펌핑이를 누르면 대화창이 열려요.\n제가 한번 눌러 볼게요!" },
+        { h: "#home", need: wnPump, tap: ".pump-fab", skipIf: wnPumpOpen, leave: wnPumpClose, s: ".pump-in", t: "📮 동욱쌤께 질문 남기기", b: "궁금한 걸 적어 보내면 동욱쌤께 전해 드려요.\n답장이 오면 펌핑이가 \"쌤 답장 왔어요!\" 하고 알려 줘요." },
+        { h: "#home", need: wnPump, leave: wnPumpClose, s: ".pump-ex .is-help", t: "📱 앱 쓰는 법도 알려 줘요", b: "출석 도장·루틴 ✓·복습지·식단 기록·인바디·배지 중\n궁금한 걸 누르면 그 화면으로 데려가 보여 줘요." },
+        { h: "#home", need: wnPump, leave: wnPumpClose, s: ".pump-brief", t: "📋 오늘의 한마디", b: "오늘 할 운동·새 공지·새 복습지를 챙겨 드려요.\n출석하거나 종목을 ✓하면 응원도 해요!" }
+      ] },
     { id: "2026-11-22", t: "자세 복습지 업데이트",
       items: ["🫀 03 자극 부위가 해부도 그림으로 바뀌었어요", "👆 근육 이름을 누르면 몸 어디인지 보여 줘요", "🔍 그 근육만 깜빡이며 크게 확대돼요"],
       steps: [
@@ -1365,7 +1376,7 @@
   function attCall(q) {
     return fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + (q || ""), { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw new Error("save"); mlFlag(j); ebFlag(j); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); dbServer(j.kv); lgServer(j.kv); bgServer(j.kv); pfServer(j.kv); mvServer(j.kv); fvServer(j.kv); rkServer(j.kv); } return j; });
+      .then(function (j) { if (!j || !j.ok) throw new Error("save"); mlFlag(j); ebFlag(j); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); dbServer(j.kv); lgServer(j.kv); bgServer(j.kv); pfServer(j.kv); mvServer(j.kv); fvServer(j.kv); rkServer(j.kv); pumpServer(j.kv); } return j; });
   }
   function attSync() {
     if (!ATT_API) return;
@@ -1390,6 +1401,7 @@
       attSave(a);
       attRefresh();
       var nb = document.getElementById("attBtn");
+      if (turnOn) pumpCheer("att");
       if (nb && turnOn) { nb.classList.add("pop"); try { navigator.vibrate && navigator.vibrate([18, 40, 26]); } catch (e) {} }
       if (!ATT_API || TRY) return;
       if (nb) nb.classList.add("saving");
@@ -2754,6 +2766,7 @@
     showBadgePop(fresh[0], fresh.length - 1, L);
   }
   function showBadgePop(b, extra, L) {
+    pumpCheer("badge");
     var got = L.filter(function (x) { return x.on; }).length, prev = Math.max(0, got - 1 - extra), conf = "", pal = ["#FFE48A", "#E4B544", "#FFFFFF", "#E1141E", "#FFF4C2"];
     for (var i = 0; i < 22; i++) {
       conf += '<i style="left:' + (3 + (i * 37) % 94) + '%;background:' + pal[i % 5] + ';animation-delay:' + (0.9 + (i * 0.11) % 1.5).toFixed(2) + 's;animation-duration:' + (2.4 + (i % 4) * 0.4).toFixed(2) + 's' +
@@ -3074,6 +3087,7 @@
     if (i >= 0) { t.splice(i, 1); if (!t.length) delete o.d[k]; }
     else { t.push([it.name, kg || null, (it.sets || []).length]); if (kg > 0 && !(o.f[it.name] > 0)) o.f[it.name] = kg; }
     lgSave();
+    if (i < 0 && k === ymd(new Date())) pumpCheer("check");
     return i < 0;
   }
   function lgServer(kv) {
@@ -3106,6 +3120,7 @@
     var a = attLoad().slice(); if (attHas(a, dk)) return false;
     var now = new Date(), tm = dk === ymd(now) ? pad2(now.getHours()) + ":" + pad2(now.getMinutes()) : "운동기록";
     a.push(dk); attTimes[dk] = tm; attSave(a);
+    if (dk === ymd(now)) pumpCheer("att");
     try { localStorage.setItem(ATT_KEY_T(), JSON.stringify(attTimes)); } catch (e) {}
     if (!ATT_API) return true;
     var go = function () { return attCall("&a=check&d=" + dk + "&t=" + encodeURIComponent(tm) + "&n=" + encodeURIComponent(M._real || M.name)); };
@@ -6264,40 +6279,128 @@
     out.push("오늘: " + wd + "요일");
     return out.join("\n").slice(0, 1500);
   }
+  /* 2026-11-26 펌핑이 비서 버전 ("1·2번 조합 + 앱 쓰는 법, 회원의 비서 느낌")
+     ① 대화창 기본 = 동욱쌤께 질문 남기기: 질문은 mw:<주소>:ask {n, q:[{id,t,at}]}(최근 6개, 회원 폰이 씀) · 쌤 답장은 pub:m:<주소>:ans {a:{id:{t,at}}}(선생님 페이지가 씀)
+        → 출석 GET kv로 받아 pumpServer. AI 즉답(a=pump)은 "간단한 건 펌핑이가 먼저 알려 드릴까요?" 버튼으로만.
+     ② 응원: pumpCheer("att"|"check"|"badge") — 출석·종목 ✓·배지 때. 4일 넘게 안 오면 졸린 얼굴.
+     ③ 앱 쓰는 법: 기능 버튼 → tourStart(단계) · ④ 비서 한마디: brief() — 오늘 운동·새 복습지·새 공지 */
+  var PUMP = null, PUMP_KV = null;
+  function pumpCheer(kind) { if (PUMP) PUMP.cheer(kind); }
+  function pumpServer(kv) { if (kv) PUMP_KV = kv; if (PUMP) PUMP.server(); }
   function pumpInit() {
     if (DEMO || document.querySelector(".pump-fab")) return;
-    if (!SITE.pump && !/[?&]pump=1/.test(location.search)) return;   /* 창고 배포 전까지 숨김 — 배포 후 site.js에 pump: true (2026-11-24) */
-    var LS = "ptnote:" + SLUG + ":pump", log = [];
+    if (!SITE.pump && !/[?&]pump=1/.test(location.search)) return;   /* site.js pump: true 면 모든 회원에게 보임 */
+    var LS = "ptnote:" + SLUG + ":pump", LS_A = "ptnote:" + SLUG + ":pumpans", LS_D = "ptnote:" + SLUG + ":pumpday", log = [];
     try { log = JSON.parse(localStorage.getItem(LS) || "[]") || []; } catch (e) { log = []; }
     function save() { try { localStorage.setItem(LS, JSON.stringify(log.slice(-30))); } catch (e) {} }
+    function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+    var nick = String(M.name || "").slice(-2), ANS = {}, idle = "base", told = {};
     var fab = document.createElement("button");
-    fab.className = "pump-fab"; fab.type = "button"; fab.setAttribute("aria-label", "펌핑이에게 운동 질문하기");
-    fab.innerHTML = pumpFace();
+    fab.type = "button"; fab.setAttribute("aria-label", "펌핑이 비서 열기");
     document.body.appendChild(fab);
-    var wrap = null, busy = false, left = null;
-    var EX = ["스쿼트 할 때 무릎이 아파요", "오늘 루틴 순서 알려줘", "단백질은 하루에 얼마나?", "근육통 있을 때 운동해도 돼?"];
-    function bubble(r, t) {
-      var b = document.createElement("div"); b.className = "pump-msg " + (r === "a" ? "is-a" : "is-q");
-      b.textContent = t; return b;
+    var wrap = null, busy = false, left = null, helpOn = false;
+    var EX = ["스쿼트 할 때 무릎이 불편해요", "이번 주 하루 빠져도 될까요?", "단백질은 하루에 얼마나 먹어요?"];
+    function unread() { var s = lsArr(LS_A); return Object.keys(ANS).filter(function (id) { return s.indexOf(id) < 0 && log.some(function (x) { return x.id === id; }); }); }
+    function fabSet(md) { fab.innerHTML = pumpFace(md || idle); fab.className = "pump-fab" + (md ? " is-" + md : "") + (unread().length ? " has-new" : ""); }
+    function awayDays() {
+      var a = (attLoad() || []).slice().sort(), last = a[a.length - 1]; if (!last) return 0;
+      var d = Math.round((new Date(ymd(new Date())) - new Date(last)) / 86400000); return d > 0 ? d : 0;
+    }
+    fabSet();
+    function bubble(r, t, who) {
+      var b = document.createElement("div"); b.className = "pump-msg " + (r === "a" ? "is-a" : r === "c" ? "is-c" : "is-q");
+      if (who) { var w = document.createElement("small"); w.className = "pump-who"; w.textContent = who; b.appendChild(w); }
+      b.appendChild(document.createTextNode(t)); return b;
+    }
+    function btn(cls, t, fn) { var c = document.createElement("button"); c.type = "button"; c.className = cls; c.textContent = t; c.onclick = fn; return c; }
+    function go(h) { close(); LINKAT = Date.now(); location.hash = h; }
+    /* ④ 비서 한마디 */
+    function brief() {
+      var out = [], tip = "", mood = "cheer", d = null;
+      try { d = dayByKey(todayKey()); } catch (e) {}
+      if (d && (d.items || []).length) { out.push({ t: "💪 오늘은 " + (d.part || "운동") + " 하는 날이에요 · " + d.items.length + "종목", h: "#routine" }); tip = "오늘은 " + String(d.part || "운동").slice(0, 8) + " 날! 💪"; mood = "lift"; }
+      else if ((M.routine || {}).days) out.push({ t: "😴 오늘은 쉬는 날이에요. 푹 쉬어요!" });
+      var nf = (M.forms || []).filter(formNew);
+      if (nf.length) { out.push({ t: "🎬 새 자세 복습지가 올라왔어요" + (nf.length > 1 ? " (" + nf.length + "개)" : ""), h: "#form-" + nf[0].id }); tip = "새 복습지가 올라왔어요! 🎬"; mood = "surprise"; }
+      var nn = nUnseen().length;
+      if (nn) { out.push({ t: "📣 안 읽은 공지가 " + nn + "개 있어요", h: "#notice" }); tip = "새 공지가 있어요! 📣"; mood = "surprise"; }
+      return { list: out, tip: tip, mood: mood };
+    }
+    /* ③ 앱 쓰는 법 — 버튼을 누르면 그 화면으로 데려가 칸을 비춰 줌(tourStart) */
+    function helpList() {
+      var L = [
+        ["✅ 출석 도장", [{ h: "#home", s: "#attBtn", t: "✅ 출석 도장", b: "헬스장에 오면 여기를 한 번 눌러요.\n운동한 날이 달력과 출석률에 쌓여요.", ok: "알겠어요!" }]],
+        ["💪 루틴 ✓", [{ h: "#routine", s: ".week", t: "💪 내 루틴", b: "요일을 누르면 그날 할 종목이 아래에 나와요.\n종목을 누르면 세트·무게·자세 팁이 보여요." },
+          { h: "#routine", s: ".exchk", t: "✓ 끝난 종목은 체크", b: "한 종목이 끝나면 ✓를 눌러요.\n기록 탭에 쌓이고 출석도 같이 찍혀요.", ok: "알겠어요!" }]],
+        ["🎬 복습지", [{ h: "#routine", s: ".wkseg", t: "🎬 자세 복습지", b: "운동 탭 위 칸에서 '복습지'를 누르면\n수업 때 찍은 내 영상이 모여 있어요." },
+          { tap: '.wkseg a[href="#forms"]', skipIf: function () { return location.hash === "#forms"; }, s: ".flist .card-link", t: "🎬 영상으로 복습", b: "종목을 누르면 내 영상 · 잘한 점 ·\n자극 부위 · 동작 순서를 다시 볼 수 있어요.", ok: "알겠어요!" }]],
+        ML_ON ? ["📸 식단 기록", [{ h: "#diet-log", s: ".ml-add", t: "📸 식단 기록", b: "먹기 전에 사진 한 장 찍어 올리면\n음식·양·탄단지·칼로리를 읽어 줘요.\n동욱쌤도 같이 보고 한마디 남겨요.", ok: "알겠어요!" }]]
+          : ["🍚 식단", [{ h: "#diet", s: ".db-tabs", t: "🍚 식단", b: "내 몸에 맞는 하루 칼로리와\n끼니별 음식 양을 짜 볼 수 있어요.", ok: "알겠어요!" }]],
+        ["📊 인바디", [{ h: "#body", s: ".ibpanel", t: "📊 인바디", b: "결과지를 사진으로 올리면 숫자를 읽어서\n골격근·체지방 변화를 그래프로 보여 줘요.", ok: "알겠어요!" }]],
+        ["🏅 배지", [{ h: "#goal", s: ".bggrid", t: "🏅 배지", b: "출석·운동 기록이 쌓이면 배지를 받아요.\n눌러 보면 받는 방법이 나와요.", ok: "알겠어요!" }]]
+      ];
+      return L;
+    }
+    function helpGo(steps) {
+      close();
+      setTimeout(function () { tourStart(steps, { skip: "그만 볼게요", done: function () { setTimeout(function () { react("wink", 2600, "또 궁금하면 불러 줘요! 😉"); }, 500); } }); }, 300);
     }
     function draw() {
       var box = wrap.querySelector(".pump-log"); box.innerHTML = "";
-      box.appendChild(bubble("a", "안녕하세요 " + String(M.name || "").slice(-2) + "님! 펌핑이예요 💪\n운동 자세, 루틴, 식단 뭐든 물어봐요. 아픈 곳은 꼭 장동욱 쌤께 먼저 말씀해 주세요!"));
-      log.forEach(function (x) { box.appendChild(bubble(x.r, x.t)); });
-      if (!log.length) {
-        var ex = document.createElement("div"); ex.className = "pump-ex";
-        EX.forEach(function (q) { var c = document.createElement("button"); c.type = "button"; c.textContent = q; c.onclick = function () { ask(q); }; ex.appendChild(c); });
-        box.appendChild(ex);
+      box.appendChild(bubble("a", "안녕하세요 " + nick + "님! 회원님 비서 펌핑이예요 💪\n궁금한 걸 남겨 주시면 동욱쌤께 바로 전해 드릴게요."));
+      var bf = brief();
+      if (bf.list.length) {
+        var bb = document.createElement("div"); bb.className = "pump-msg is-a pump-brief";
+        var bh = document.createElement("small"); bh.className = "pump-who"; bh.textContent = "📋 오늘의 한마디"; bb.appendChild(bh);
+        bf.list.forEach(function (x) { bb.appendChild(x.h ? btn("pump-bl", x.t + " ›", function () { go(x.h); }) : (function () { var p = document.createElement("span"); p.className = "pump-bl"; p.textContent = x.t; return p; })()); });
+        box.appendChild(bb);
       }
+      var lastQ = null; log.forEach(function (x) { if (x.r === "q" && x.id) lastQ = x; });
+      log.forEach(function (x) {
+        if (x.r === "a") { box.appendChild(bubble("a", x.t, x.sys ? "" : "펌핑이 (AI)")); return; }
+        box.appendChild(bubble("q", x.t));
+        if (!x.id) return;
+        if (ANS[x.id]) { box.appendChild(bubble("c", String(ANS[x.id].t || ""), "장동욱 쌤 답장")); return; }
+        var st = document.createElement("div"); st.className = "pump-st";
+        if (x.fail) { st.textContent = "앗, 전달이 안 됐어요. "; st.appendChild(btn("pump-re", "다시 보내기", function () { x.fail = 0; post(x); draw(); })); }
+        else st.textContent = x.ok ? "📮 동욱쌤께 전했어요 · 답장 오면 알려 드릴게요" : "동욱쌤께 전하는 중…";
+        box.appendChild(st);
+        if (x === lastQ && !x.ai && !x.fail && !busy) box.appendChild(btn("pump-offer", "💡 간단한 건 펌핑이가 먼저 알려 드릴까요?", function () { askAi(x); }));
+      });
+      var chips = document.createElement("div"); chips.className = "pump-ex";
+      if (helpOn) {
+        var hh = document.createElement("p"); hh.className = "pump-hh"; hh.textContent = "뭐가 궁금해요? 누르면 그 화면으로 데려가서 보여 드려요!"; box.appendChild(hh);
+        helpList().forEach(function (it) { chips.appendChild(btn("", it[0], function () { helpGo(it[1]); })); });
+      } else {
+        if (!log.length) EX.forEach(function (q) { chips.appendChild(btn("", q, function () { send(q); })); });
+        chips.appendChild(btn("is-help", "📱 앱 어떻게 써요?", function () { helpOn = true; draw(); }));
+      }
+      box.appendChild(chips);
       box.scrollTop = box.scrollHeight;
-      wrap.querySelector(".pump-left").textContent = left == null ? "하루 15개까지" : "오늘 " + left + "개 남음";
+      wrap.querySelector(".pump-left").textContent = left == null ? "" : "AI 답변 오늘 " + left + "개 남음";
+      var ids = Object.keys(ANS); if (ids.length) lsAdd(LS_A, ids);
     }
-    function face(m) { wrap.querySelector(".pump-face").innerHTML = pumpFace(m); }
-    function ask(q) {
-      q = String(q || "").trim(); if (!q || busy) return;
-      if (!ATT_API) return;
-      busy = true; var hist = log.slice(-6);
-      log.push({ r: "q", t: q }); draw(); face("think");
+    function face(m) { if (wrap) wrap.querySelector(".pump-face").innerHTML = pumpFace(m); }
+    /* ① 동욱쌤께 질문 남기기 */
+    function post(e) {
+      if (!ATT_API) { e.fail = 1; return; }
+      busy = true;
+      var list = log.filter(function (x) { return x.r === "q" && x.id; }).slice(-6).map(function (x) { return { id: x.id, t: x.t, at: x.at }; });
+      rtPost({ a: "kv_set", k: "mw:" + SLUG + ":ask", v: { n: M._real || M.name, q: list } })
+        .then(function (j) { if (!j || !j.ok) throw new Error("save"); e.ok = 1; })
+        .catch(function () { e.fail = 1; })
+        .then(function () { busy = false; save(); if (wrap) { draw(); face(e.fail ? "worry" : "cheer"); setTimeout(function () { face(); }, 3000); } });
+    }
+    function send(q) {
+      q = String(q || "").trim().slice(0, 200); if (!q || busy) return;
+      if (COACH_MODE) { log.push({ r: "a", t: "선생님 보기에서는 질문을 남길 수 없어요.", sys: 1 }); draw(); log.pop(); return; }
+      var e = { r: "q", t: q, id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), at: Date.now() };
+      helpOn = false; log.push(e); save(); post(e); draw(); face("think");
+    }
+    function askAi(e) {
+      if (busy || !ATT_API) return;
+      busy = true; e.ai = 1; var q = e.t, hist = log.filter(function (x) { return !x.sys; }).slice(-6).map(function (x) { return { r: x.r, t: x.t }; });
+      draw(); face("think");
       var box = wrap.querySelector(".pump-log"), wait = bubble("a", "펌핑이가 생각 중이에요…"); wait.classList.add("is-wait"); box.appendChild(wait); box.scrollTop = box.scrollHeight;
       fetch(ATT_API, { method: "POST", body: JSON.stringify({ a: "pump", m: SLUG, q: q, h: hist, ctx: pumpCtx() }) })
         .then(function (r) { return r.json(); })
@@ -6305,53 +6408,102 @@
           if (j && j.ok) {
             var ans = String(j.a || ""), mt = /^\s*\[표정:\s*([^\]]+)\]\s*/.exec(ans), md = j.mood || (mt && PUMP_MOODS[mt[1].trim()]) || pumpGuess(q);
             if (mt) ans = ans.slice(mt[0].length);
-            log.push({ r: "a", t: ans }); left = j.left; face(md); react(md, 0); setTimeout(function () { if (wrap) face(); }, 4000);
+            log.push({ r: "a", t: ans }); left = j.left; face(md); setTimeout(function () { face(); }, 4000);
           }
           else {
-            log.pop();
-            var msg = j && j.error === "limit" ? "오늘 펌핑 끝! 질문은 하루 15개까지예요. 내일 또 물어봐요 🔥" : "앗, 펌핑이가 잠깐 쉬는 중이에요. 조금 뒤에 다시 물어봐 주세요!";
-            if (j && j.error === "limit") left = 0;
-            log.push({ r: "a", t: msg, sys: 1 }); face(j && j.error === "limit" ? "dizzy" : "worry");
+            var lim = j && j.error === "limit"; if (lim) left = 0; else e.ai = 0;
+            log.push({ r: "a", t: lim ? "오늘 펌핑이 답변은 끝! (하루 15개) 질문은 동욱쌤께 전해 놨어요 🔥" : "앗, 펌핑이가 잠깐 쉬는 중이에요. 질문은 동욱쌤께 전해 놨으니 걱정 마세요!", sys: 1 }); face(lim ? "dizzy" : "worry");
           }
         })
-        .catch(function () { log.pop(); log.push({ r: "a", t: "인터넷 연결을 확인하고 다시 물어봐 주세요!", sys: 1 }); face(); })
-        .then(function () { log = log.filter(function (x, i) { return !x.sys || i === log.length - 1; }); save(); busy = false; draw(); });
+        .catch(function () { e.ai = 0; log.push({ r: "a", t: "인터넷 연결을 확인하고 다시 눌러 주세요!", sys: 1 }); face(); })
+        .then(function () { busy = false; if (wrap) draw(); log = log.filter(function (x) { return !x.sys; }); save(); });
     }
     function open() {
       if (wrap) return;
+      if (tipEl) { tipEl.remove(); tipEl = null; }
       wrap = document.createElement("div"); wrap.className = "pump-wrap";
       wrap.innerHTML = '<div class="pump-sheet" role="dialog" aria-label="펌핑이">' +
-        '<div class="pump-top"><span class="pump-face"></span><b>펌핑이</b><span class="pump-left"></span><button type="button" class="pump-x" aria-label="닫기">✕</button></div>' +
+        '<div class="pump-top"><span class="pump-face"></span><b>펌핑이 <small>회원님 비서</small></b><span class="pump-left"></span><button type="button" class="pump-x" aria-label="닫기">✕</button></div>' +
         '<div class="pump-log"></div>' +
-        '<form class="pump-in"><input type="text" maxlength="300" placeholder="운동 궁금한 거 물어봐요" enterkeyhint="send"><button type="submit">보내기</button></form>' +
-        '<p class="pump-note">펌핑이는 AI라 틀릴 수 있어요. 아픈 곳·루틴 변경은 장동욱 쌤께!</p></div>';
+        '<form class="pump-in"><input type="text" maxlength="200" placeholder="동욱쌤께 궁금한 걸 남겨요" enterkeyhint="send"><button type="submit">쌤께 보내기</button></form>' +
+        '<p class="pump-note">질문은 장동욱 쌤께 전달돼요. 아픈 곳은 수업 때 꼭 먼저 말씀해 주세요!</p></div>';
       document.body.appendChild(wrap); document.documentElement.classList.add("pump-on");
-      face(); draw();
+      helpOn = false; face(); draw(); fabSet();
       wrap.addEventListener("click", function (e) { if (e.target === wrap) close(); });
       wrap.querySelector(".pump-x").onclick = close;
-      wrap.querySelector(".pump-in").onsubmit = function (e) { e.preventDefault(); var i = this.querySelector("input"); var v = i.value; i.value = ""; ask(v); };
-      requestAnimationFrame(function () { wrap.classList.add("is-open"); });
+      wrap.querySelector(".pump-in").onsubmit = function (e) { e.preventDefault(); var i = this.querySelector("input"); var v = i.value; i.value = ""; send(v); };
+      requestAnimationFrame(function () { if (wrap) wrap.classList.add("is-open"); });
     }
     function close() { if (!wrap) return; var w = wrap; wrap = null; w.classList.remove("is-open"); document.documentElement.classList.remove("pump-on"); setTimeout(function () { w.remove(); }, 250); }
     /* 터치 반응: 한 번 톡 = 깜짝 → 대화창, 연타 3번 = 어지러움, 꾹 = 알통 응원 */
     var tapN = 0, tapT = null, holdT = null, held = false, moodT = null, tipEl = null;
     function react(md, ms, say) {
-      fab.innerHTML = pumpFace(md); fab.className = "pump-fab is-" + md;
+      fabSet(md);
       if (tipEl) { tipEl.remove(); tipEl = null; }
       if (say) { tipEl = document.createElement("div"); tipEl.className = "pump-tip"; tipEl.textContent = say; document.body.appendChild(tipEl); }
       clearTimeout(moodT);
-      moodT = setTimeout(function () { fab.innerHTML = pumpFace(); fab.className = "pump-fab"; if (tipEl) { tipEl.remove(); tipEl = null; } }, ms || 1600);
+      moodT = setTimeout(function () { fabSet(); if (tipEl) { tipEl.remove(); tipEl = null; } }, ms || 1600);
     }
+    /* ② 응원 마스코트 — 출석(att) > 종목 ✓(check), 배지(badge)는 배지 창이 닫힌 뒤 */
+    var cheerT = null, cheerP = 0, PR = { check: 1, att: 2, badge: 3 };
+    function cheer(kind) {
+      if (COACH_MODE || wrap) return;
+      if ((PR[kind] || 0) < cheerP) return;
+      cheerP = PR[kind] || 0; clearTimeout(cheerT);
+      var n = 0;
+      (function run() {
+        cheerT = setTimeout(function () {
+          if (kind === "badge" && document.querySelector(".bgpop-wrap") && n++ < 120) return run();
+          cheerP = 0; if (wrap || TOUR_ON) return;
+          if (kind === "badge") react("love", 3000, "새 배지 축하해요! 🏅");
+          else if (kind === "att") { idle = "base"; var s = attStreak(attLoad()); react("cheer", 3000, s >= 2 ? s + "번 연속 출석! 🔥" : pick(["출석 완료! 오늘도 펌핑 💪", "와 줘서 고마워요! 😆"])); }
+          else react("lift", 2400, pick(["한 종목 끝! 💪", "좋아요, 다음 종목 가요!", "오늘 폼 좋아요! 🔥"]));
+        }, kind === "badge" ? 500 : 300);
+      })();
+    }
+    /* 하루 한 번 먼저 말 걸기: 쌤 답장 > 오래 안 옴 > 새 공지·새 복습지·오늘 운동 */
+    var helloDone = false;
+    function hello() {
+      if (helloDone || COACH_MODE) return;
+      if (wrap || TOUR_ON || TOUR_WANT || WN_WANT || document.querySelector(".npop-wrap, .bgpop-wrap, .ibsheet, .tour")) { setTimeout(hello, 5000); return; }
+      helloDone = true;
+      var today = ymd(new Date()), was = null; try { was = localStorage.getItem(LS_D); } catch (e) {}
+      if (unread().length || was === today) return;
+      try { localStorage.setItem(LS_D, today); } catch (e) {}
+      if (awayDays() >= 4) { react("sleepy", 6000, "보고 싶었어요… 오늘 운동 가요? 🥺"); return; }
+      var b = brief(); if (b.tip) react(b.mood, 6000, b.tip);
+    }
+    function server() {
+      var kv = PUMP_KV; if (!kv) return;
+      var a = kv["mw:" + SLUG + ":ask"], s = kv["pub:m:" + SLUG + ":ans"];
+      if (a && Array.isArray(a.q)) a.q.forEach(function (x) {
+        if (!x || !x.id) return;
+        var mine = log.filter(function (y) { return y.id === x.id; })[0];
+        if (mine) { if (!mine.fail) mine.ok = 1; } else log.push({ r: "q", t: String(x.t || ""), id: x.id, at: x.at, ok: 1 });
+      });
+      ANS = s && s.a && typeof s.a === "object" ? s.a : {};
+      idle = awayDays() >= 4 ? "sleepy" : "base";
+      save();
+      if (wrap) draw();
+      var nu = unread().filter(function (id) { return !told[id]; });
+      if (nu.length && !wrap) { nu.forEach(function (id) { told[id] = 1; }); helloDone = true; react("love", 7000, "동욱쌤 답장 왔어요! 📮"); }
+      else if (!tipEl) fabSet();
+      setTimeout(hello, 1200);
+    }
+    PUMP = { cheer: cheer, server: server, close: close, isOpen: function () { return !!wrap; } };
+    if (PUMP_KV) server();
+    setTimeout(hello, 4000);
     fab.addEventListener("pointerdown", function () { held = false; clearTimeout(holdT); holdT = setTimeout(function () { held = true; tapN = 0; clearTimeout(tapT); react("lift", 2200, ["오늘도 펌핑! 💪", "한 세트 더 가요!", "할 수 있어요!"][Math.floor(Math.random() * 3)]); if (navigator.vibrate) navigator.vibrate(30); }, 550); });
     ["pointerup", "pointerleave", "pointercancel"].forEach(function (ev) { fab.addEventListener(ev, function () { clearTimeout(holdT); }); });
     fab.addEventListener("contextmenu", function (e) { e.preventDefault(); });
     fab.addEventListener("click", function () {
       if (held) { held = false; return; }
+      if (unread().length) { tapN = 0; clearTimeout(tapT); clearTimeout(moodT); open(); return; }
       tapN++; clearTimeout(tapT);
       if (tapN >= 3) { tapN = 0; react("dizzy", 2200, "그만~ 펌핑 과다예요! 😵"); return; }
-      var TAPS = [["surprise", "앗! 깜짝이야"], ["wink", "궁금한 거 있죠? 😉"], ["love", "오늘도 와 줘서 고마워요!"], ["tongue", "메롱~ 질문 고고!"], ["cheer", "펌핑 준비 완료!"], ["sleepy", "졸았던 거 아니에요…"]];
-      var pick = TAPS[Math.floor(Math.random() * TAPS.length)];
-      if (tapN === 1) react(pick[0], 900, pick[1]);
+      var TAPS = [["surprise", "앗! 깜짝이야"], ["wink", "궁금한 거 있죠? 😉"], ["love", "오늘도 와 줘서 고마워요!"], ["tongue", "메롱~ 질문 고고!"], ["cheer", "비서 펌핑이 대기 중!"], ["sleepy", "졸았던 거 아니에요…"]];
+      var pk = TAPS[Math.floor(Math.random() * TAPS.length)];
+      if (tapN === 1) react(pk[0], 900, pk[1]);
       tapT = setTimeout(function () { var n = tapN; tapN = 0; if (n === 1) open(); }, 650);
     });
   }

@@ -641,8 +641,8 @@ function doPost(e) {
   }
   if (b.a === 'kv_get') {   // 선생님: 이름 앞부분(prefix)으로 읽기
     if (!keyOk_(b.key)) return json_({ ok: false, error: 'key' });
-    const all = kvAll_(), pre = String(b.prefix || ''), o = {};
-    Object.keys(all).forEach(function (k) { if (k.indexOf(pre) === 0) o[k] = all[k]; });
+    const all = kvAll_(), pre = String(b.prefix || ''), suf = String(b.suffix || ''), o = {};   // suffix(2026-11-26): 이름 끝으로도 거름 — 선생님 페이지 "회원 질문"(mw:*:ask)만 가볍게 받기
+    Object.keys(all).forEach(function (k) { if (k.indexOf(pre) === 0 && (!suf || k.slice(-suf.length) === suf)) o[k] = all[k]; });
     return json_({ ok: true, kv: o });
   }
   if (b.a === 'kv_set') {   // {k, v} 또는 {items:{k:v,…}} — v가 null이면 지움

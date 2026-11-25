@@ -3008,6 +3008,22 @@ html.cmp-lock, html.cmp-lock body { overflow: hidden; }
 .ebs-tips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .ebs-tips li { font-size: 12px; font-weight: 700; color: var(--sub); background: var(--page); border-radius: 99px; padding: 4px 10px; }
 
+/* 2026-11-26 펌핑이 비서 버전 — 쌤 답장 말풍선·전달 상태·먼저 알려 드릴까요 버튼·오늘의 한마디·앱 쓰는 법 칩·새 답장 빨간 점 */
+.pump-top b small { font-size: 11.5px; font-weight: 600; opacity: .7; margin-left: 4px; }
+.pump-who { display: block; font-size: 11.5px; font-weight: 800; margin-bottom: 3px; opacity: .75; }
+.pump-msg.is-c { align-self: flex-start; background: #1A1A1E; color: #fff; border: 1px solid #E1141E66; border-left: 4px solid #E1141E; border-top-left-radius: 4px; }
+.pump-msg.is-c .pump-who { color: #FF8A8F; opacity: 1; }
+.pump-st { align-self: flex-end; font-size: 12px; color: var(--faint, #999); margin-top: -4px; }
+.pump-re { border: 0; background: none; color: #E1141E; font-weight: 800; font-size: 12px; padding: 0; text-decoration: underline; cursor: pointer; }
+.pump-offer { align-self: flex-end; max-width: 92%; border: 1.5px dashed #E1141E; background: transparent; color: #E1141E; border-radius: 14px; padding: 8px 12px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+.pump-brief { display: flex; flex-direction: column; gap: 5px; max-width: 92%; }
+.pump-bl { display: block; width: 100%; text-align: left; border: 0; background: var(--paper, #fff); color: var(--ink, #1A1A1E); border-radius: 10px; padding: 8px 10px; font-size: 13.5px; line-height: 1.4; font-weight: 600; white-space: normal; box-sizing: border-box; }
+button.pump-bl { cursor: pointer; }
+.pump-hh { margin: 6px 0 0; font-size: 13px; font-weight: 700; color: var(--ink, #1A1A1E); }
+.pump-ex button.is-help { background: var(--tint); border-color: transparent; color: var(--ink, #1A1A1E); font-weight: 700; }
+.pump-fab.has-new::after { content: ""; position: absolute; top: 0; right: 0; width: 16px; height: 16px; border-radius: 50%; background: #E1141E; border: 2.5px solid #fff; box-sizing: border-box; animation: pumpBlink 1s ease-in-out infinite; }
+.pump-tip { max-width: calc(100vw - 28px); overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
