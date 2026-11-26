@@ -44,6 +44,11 @@
     "member": "정미경",
     "id": "wide-pulldown",
     "img": "m/mikyung-7rq2vd/media/form-wide-pulldown/step1.jpg"
+   },
+   {
+    "member": "이준서",
+    "id": "1126-wide-pulldown",
+    "img": "m/dyn/junseo/media/form-1126-wide-pulldown/step1.jpg"
    }
   ]
  },
@@ -457,6 +462,11 @@
     "member": "정미경",
     "id": "lat-pulldown",
     "img": "m/mikyung-7rq2vd/media/form-lat-pulldown/step1.jpg"
+   },
+   {
+    "member": "이준서",
+    "id": "1126-lat-pulldown",
+    "img": "m/dyn/junseo/media/form-1126-lat-pulldown/step1.jpg"
    }
   ]
  },
