@@ -772,6 +772,27 @@
    }
   ]
  },
+ "사이드 레터럴 레이즈 머신": {
+  "part": "어깨",
+  "en": "Standing Lateral Raise Machine",
+  "shots": [
+   {
+    "member": "최지훈",
+    "id": "1126-lateral-raise-machine",
+    "img": "m/jihun-g9kgdo/media/form-1126-lateral-raise-machine/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "1125-lateral-raise-machine",
+    "img": "m/jisu-480xne/media/form-1125-lateral-raise-machine/step1.jpg"
+   },
+   {
+    "member": "어순래",
+    "id": "lateral-raise-machine",
+    "img": "m/sunrae-c7yvid/media/form-lateral-raise-machine/step1.jpg"
+   }
+  ]
+ },
  "스미스 벤치프레스": {
   "part": "가슴",
   "en": "Smith Bench Press",
@@ -853,27 +874,6 @@
     "member": "어순래",
     "id": "1125-leg-press",
     "img": "m/sunrae-c7yvid/media/form-1125-leg-press/step1.jpg"
-   }
-  ]
- },
- "사이드 레터럴 레이즈 머신": {
-  "part": "어깨",
-  "en": "Standing Lateral Raise Machine",
-  "shots": [
-   {
-    "member": "최지훈",
-    "id": "lateral-raise-machine",
-    "img": "m/jihun-g9kgdo/media/form-lateral-raise-machine/step1.jpg"
-   },
-   {
-    "member": "김지수",
-    "id": "1125-lateral-raise-machine",
-    "img": "m/jisu-480xne/media/form-1125-lateral-raise-machine/step1.jpg"
-   },
-   {
-    "member": "어순래",
-    "id": "lateral-raise-machine",
-    "img": "m/sunrae-c7yvid/media/form-lateral-raise-machine/step1.jpg"
    }
   ]
  },

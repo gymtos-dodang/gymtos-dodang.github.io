@@ -2377,5 +2377,18 @@
 "rhomboid": "S",
 "teres_minor": "S"
 }
+},
+"m/jihun-g9kgdo/media/form-1126-lateral-raise-machine/anatomy.png": {
+"sex": "M",
+"front": {
+"trap_up": "S",
+"delt_ant": "S",
+"delt_lat": "P"
+},
+"back": {
+"trap_up": "S",
+"delt_lat": "P",
+"supraspinatus": "S"
+}
 }
 }
