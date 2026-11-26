@@ -2351,5 +2351,31 @@
 "delt_lat": "P",
 "supraspinatus": "S"
 }
+},
+"m/aeran-bsq16i/media/form-1126-smith-shoulder-press/anatomy.png": {
+"sex": "F",
+"front": {
+"delt_ant": "P",
+"delt_lat": "P",
+"pec_clav": "S"
+},
+"back": {
+"delt_lat": "P",
+"triceps_long": "S",
+"triceps_med": "S",
+"triceps_lat": "S",
+"trap_up": "S"
+}
+},
+"m/aeran-bsq16i/media/form-1126-reverse-pec-deck/anatomy.png": {
+"sex": "F",
+"front": {},
+"back": {
+"trap_mid": "S",
+"infraspinatus": "S",
+"delt_post": "P",
+"rhomboid": "S",
+"teres_minor": "S"
+}
 }
 }
