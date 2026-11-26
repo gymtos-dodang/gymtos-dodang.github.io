@@ -51,7 +51,21 @@
   function wnPump() { return !!document.querySelector(".pump-fab, .pump-wrap"); }   /* 2026-11-26 펌핑이 비서 소식 */
   function wnPumpOpen() { return typeof PUMP !== "undefined" && PUMP && PUMP.isOpen(); }
   function wnPumpClose() { if (typeof PUMP !== "undefined" && PUMP) PUMP.close(); }
+  function wnMlOpen() { return !!document.querySelector(".mlsheet"); }   /* 2026-11-26 식단 기록 완성 · 눈바디 소식 */
+  function wnMlClose() { var b = document.querySelector(".mlsheet .ibs-x"); if (b) b.click(); }
+  function wnEbNeed() { return EB_OK && EB_ON; }
+  function wnEbOpen() { return !!document.querySelector(".ebsheet"); }
+  function wnEbClose() { var b = document.querySelector(".ebsheet .ibs-x"); if (b) b.click(); }
   var WN = [
+    { id: "2026-11-26b", t: "식단 기록 완성 · 눈바디 새 기능",
+      items: ["📸 식단 기록이 완성됐어요 — 사진 한 장이면 음식·양·탄단지·칼로리까지", "✏️ 양(g)을 고치면 탄단지·칼로리가 같이 바뀌어요", "🪞 새 기능 '눈바디' — 달마다 같은 자세로 한 장씩 모아 봐요", "👀 지난 사진을 겹쳐 보며 같은 자세로 찍을 수 있어요"],
+      steps: [
+        { h: "#diet-log", need: function () { return ML_ON; }, s: ".ml-add", t: "📸 식단 기록이 완성됐어요", b: "시험판이 끝났어요!\n먹기 전에 사진 한 장만 찍어 올리면 돼요.\n제가 한번 눌러 볼게요!" },
+        { h: "#diet-log", need: function () { return ML_ON; }, tap: ".ml-add", skipIf: wnMlOpen, leave: wnMlClose, s: ".mlsheet .ibs-file", t: "🍽️ 사진을 올리면 알아서 읽어요", b: "음식·양·순탄수·단백질·지방·칼로리를\n자동으로 채워 줘요." },
+        { h: "#diet-log", need: function () { return ML_ON; }, leave: wnMlClose, s: ".mlsheet .ml-plus", t: "✏️ 틀리면 바로 고쳐요", b: "양(g)을 고치면 탄단지·칼로리가 같이 바뀌고\n음식을 직접 추가할 수도 있어요.\n동욱쌤도 같이 보고 한마디 남겨요." },
+        { h: "#log", need: wnEbNeed, s: "#eyebody .ebpanel", t: "🪞 새 기능 · 눈바디", b: "기록 탭 인바디 아래에 생겼어요.\n달마다 같은 자세로 한 장씩 올리면\n몸 변화가 한 줄로 보여요." },
+        { h: "#log", need: wnEbNeed, tap: "#eyebody .eb-add", skipIf: wnEbOpen, leave: wnEbClose, s: ".ebsheet .ebs-file", t: "📷 정면으로 한 장", b: "머리부터 무릎까지 나오게 찍어요.\n지난 사진을 겹쳐 보며 같은 자세로 맞출 수 있어요." }
+      ] },
     { id: "2026-11-26", t: "펌핑이 비서 업데이트",
       items: ["😈 오른쪽 아래 펌핑이가 회원님 비서가 됐어요", "📮 궁금한 걸 남기면 동욱쌤께 전해 드리고 답장이 오면 알려 줘요", "📱 '앱 어떻게 써요?'를 누르면 쓰는 법을 화면에서 보여 줘요", "💪 출석·종목 ✓ 때 응원하고 오늘 할 운동·새 소식도 챙겨 줘요"],
       steps: [
