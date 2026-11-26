@@ -3022,7 +3022,20 @@ button.pump-bl { cursor: pointer; }
 .pump-hh { margin: 6px 0 0; font-size: 13px; font-weight: 700; color: var(--ink, #1A1A1E); }
 .pump-ex button.is-help { background: var(--tint); border-color: transparent; color: var(--ink, #1A1A1E); font-weight: 700; }
 .pump-fab.has-new::after { content: ""; position: absolute; top: 0; right: 0; width: 16px; height: 16px; border-radius: 50%; background: #E1141E; border: 2.5px solid #fff; box-sizing: border-box; animation: pumpBlink 1s ease-in-out infinite; }
-.pump-tip { max-width: calc(100vw - 28px); overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
+.pump-tip { max-width: calc(100vw - 28px); box-sizing: border-box; }
+
+/* 2026-11-26 펌핑이 알림이 — 챙길 것 목록 창(.pump-card)·누를 수 있는 말풍선(.pump-tip.is-act). 예전 대화창(.pump-wrap·.pump-sheet…)은 이제 안 씀 */
+.pump-card { position: fixed; right: 14px; bottom: calc(env(safe-area-inset-bottom, 0px) + 158px); z-index: 27; width: min(300px, calc(100vw - 28px)); box-sizing: border-box; padding: 12px; border-radius: 18px; background: var(--paper, #fff); color: var(--ink, #1A1A1E); border: 1px solid #E1141E33; box-shadow: 0 12px 34px rgba(0,0,0,.22); opacity: 0; translate: 0 8px; transition: opacity .16s, translate .16s; }
+.pump-card.is-open { opacity: 1; translate: 0 0; }
+.pump-ch { margin: 2px 4px 8px; font-size: 14px; font-weight: 800; }
+.pump-ce { margin: 0 4px 4px; font-size: 13px; color: var(--faint, #8A8F9C); line-height: 1.5; }
+.pump-ci { display: flex; align-items: center; gap: 9px; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 10px 11px; border: 0; border-radius: 12px; background: var(--tint, #F4F4F6); color: inherit; font: inherit; font-size: 13.5px; font-weight: 600; line-height: 1.4; text-align: left; }
+button.pump-ci { cursor: pointer; }
+.pump-ci i { font-style: normal; font-size: 17px; flex: none; }
+.pump-ci span { flex: 1; min-width: 0; word-break: keep-all; overflow-wrap: anywhere; }
+.pump-ci em { display: block; margin-top: 3px; font-style: normal; font-weight: 500; white-space: pre-wrap; }
+.pump-ci b { flex: none; color: #E1141E; font-size: 18px; line-height: 1; }
+.pump-tip.is-act { pointer-events: auto; cursor: pointer; }
 
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
