@@ -3225,6 +3225,10 @@ html.pump-off .pump-fab, html.pump-off .pump-tip, html.pump-off .pump-card { dis
 .pump-bug-r button.on { background: #E1141E; border-color: #E1141E; color: #fff; }
 .pump-bug-r button:disabled { opacity: .5; }
 
+/* 2026-11-27 겹침 고치기 — ① 먹이주머니 창·아래 창·팝업이 떠 있으면 펌핑이는 잠깐 숨김 ② 운동 탭 플랜카드(.w2-hero) 오른쪽 위 숫자(끝낸 종목)가 스킨 마스코트(.bny-hero, 경진님 양·지수님 토롱이)와 겹쳐서 숫자를 마스코트 왼쪽으로 */
+html:has(.pfbag, .xsheet, .ibs-card, .bgpop-wrap, .npop-wrap, .frpop, .tour.on, .w2-body, .bc-card, .cmp-ov) .pump-fab { opacity: 0 !important; pointer-events: none; }
+.hero.w2-hero:has(> .bny-hero) .w2-hn { margin-right: 54px; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
