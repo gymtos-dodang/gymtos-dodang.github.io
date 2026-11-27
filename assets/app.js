@@ -4605,6 +4605,9 @@
      고치는 중(RT_EDIT)이고 WK2면 종목 카드가 .w2e로: 세트 줄을 누르면 카드 안에서 −/+·직접 입력·빠른 세트, ⋯ 하나에 나머지(비슷한 종목으로 바꾸기·위아래·자세히·복제/옮기기·삭제).
      종목 추가는 rtPicker 맨 위 "추천"(w2Rec — 이날 부위에서 회원님이 했던 종목, 오래 안 한 것부터) → 누르면 바로 들어감. 꾹 눌러 끌기·저장은 예전 것 그대로(.ex.rtdr·rtSaveSheet) */
   var W2E_OPEN = -1, W2E_DAY = null;
+  /* 팔은 이두·삼두로 나눠 같은 쪽끼리만 바꿈 (2026-11-27 "나눠서") */
+  function w2Sub(n) { n = String(n || ""); return /푸쉬다운|익스텐션|삼두|딥스|킥백/.test(n) ? "삼두" : /컬|이두/.test(n) ? "이두" : ""; }
+  function w2Same(a, b) { var x = w2Cat(a) === "팔" ? w2Sub(a) : ""; return !x || w2Sub(b) === x; }
   function w2Cat(n) {
     var n0 = String(n || ""); n = n0.replace(/\s*\(.*\)\s*$/, "");
     for (var i = 0; i < RT_CAT.length; i++) if (RT_CAT[i][1].indexOf(n) >= 0) return RT_CAT[i][0];
@@ -4684,6 +4687,7 @@
       var c = w2Cat(it.name); if (!c) { used[it.name] = 1; return; }
       var all = []; RT_CAT.forEach(function (x) { if (x[0] === c) all = x[1].filter(function (nm) { return !used[nm] && !now[nm]; }); });
       var done = Object.keys(m).filter(function (nm) { return !used[nm] && !now[nm] && w2Cat(nm) === c; });
+      all = all.filter(function (x) { return w2Same(it.name, x); }); done = done.filter(function (x) { return w2Same(it.name, x); });
       if (it.tag === "메인" && W2E_BIG[c]) {   /* 메인 자리는 큰 종목에서만 (2026-11-27 "ㅇㅋ") — 없으면 아무 종목 */
         var bigA = all.filter(function (x) { return W2E_BIG[c].test(x); }), bigD = done.filter(function (x) { return W2E_BIG[c].test(x); });
         if (bigA.length || bigD.length) { all = bigA; done = bigD; }
@@ -4716,9 +4720,9 @@
     });
   }
   function w2eSwap(d, i, cats) {
-    var it = d.items[i], rec = w2Rec(d, cats, it.name), recN = {}; rec.forEach(function (r) { recN[r.n] = 1; });
+    var it = d.items[i], rec = w2Rec(d, cats, it.name).filter(function (r) { return w2Same(it.name, r.n); }), recN = {}; rec.forEach(function (r) { recN[r.n] = 1; });
     var has = {}; d.items.forEach(function (x) { has[x.name] = 1; });
-    var rest = []; RT_CAT.forEach(function (c) { if (cats.indexOf(c[0]) >= 0) c[1].forEach(function (n) { if (!has[n] && !recN[n]) rest.push(n); }); });
+    var rest = []; RT_CAT.forEach(function (c) { if (cats.indexOf(c[0]) >= 0) c[1].forEach(function (n) { if (!has[n] && !recN[n] && w2Same(it.name, n)) rest.push(n); }); });
     function row(n, s) { return '<button type="button" class="rtp-t" data-n="' + esc(n) + '"><span class="rtp-ic">' + img(iconOf({ name: n }), "", true) + '</span><span class="rtp-n">' + esc(n) + (s ? '<small class="w2e-s">' + esc(s) + '</small>' : '') + '</span></button>'; }
     var sh = rtSheet(it.name + " → 바꾸기", '<div class="rtp-list">' + (rec.length ? '<div class="rtp-sec"><h4>회원님이 했던 종목 · 오래 안 한 것부터</h4><div class="rtp-grid">' + rec.map(function (r) { return row(r.n, r.s); }).join("") + '</div></div>' : '') +
       (rest.length ? '<div class="rtp-sec"><h4>' + esc(cats.join(" · ")) + ' 다른 종목</h4><div class="rtp-grid">' + rest.map(function (n) { return row(n, ""); }).join("") + '</div></div>' : '') + '</div>', null, false);
