@@ -4348,7 +4348,7 @@
     its.forEach(function (it, i) { ns += it.sets.length; if (ckD && nxt < 0 && !lgDone(it.name, ckD)) nxt = i; });
     var all = !!ckD && nd >= its.length, card = d.cardio && R.cardio ? R.cardio.minutes : 0;
     var nEd = its.filter(function (it) { return rxHit(it); }).length, fl = ckD && FL && FL.d && FL.d[ckD];
-    var h = '<div class="hero w2-hero"><img class="w2-lg" src="' + BASE + 'logo-white.png" alt="" aria-hidden="true"><div class="w2-ht"><div><small>' + (sel === tk ? (ROT ? '오늘 할 차례 · ' : '오늘 · ') : '') + esc(dayName(sel)) + (d.mvFrom ? ' · ' + DAY_KO[d.mvFrom] + '요일에서 옮김' : '') + '</small><h2>' + esc(d.part) + '</h2>' +
+    var h = '<div class="hero w2-hero"><div class="w2-ht"><div><small>' + (sel === tk ? (ROT ? '오늘 할 차례 · ' : '오늘 · ') : '') + esc(dayName(sel)) + (d.mvFrom ? ' · ' + DAY_KO[d.mvFrom] + '요일에서 옮김' : '') + '</small><h2>' + esc(d.part) + '</h2>' +
       '<p>' + its.length + '종목 · ' + ns + '세트' + (card ? ' · 유산소 ' + card + '분' : '') + '</p></div>' +
       (ckD ? '<div class="w2-hn"><b>' + nd + '<i> / ' + its.length + '</i></b><span>끝낸 종목</span></div>' : '') + '</div>' +
       (ckD ? '<div class="w2-bar"><i style="width:' + Math.round(nd / its.length * 100) + '%"></i></div>' : '') +
@@ -4553,7 +4553,7 @@
     });
     var min = Math.round((Date.now() - (S.t0 || 0)) / 60000), showMin = date === ymd(new Date()) && min >= 3 && min <= 240, fl = FL && FL.d && FL.d[date] || 0;
     function html() {
-      return '<div class="hero w2f-top"><img class="w2-lg" src="' + BASE + 'logo-white.png" alt="" aria-hidden="true"><span class="w2f-ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg></span><small>' + lgMd(date) + '</small><h2>' + esc(d.part) + (done.length >= d.items.length ? ' 끝!' : ' ' + done.length + '종목 했어요') + '</h2><p>' + (attHas(attLoad(), date) ? '출석 도장도 찍혀 있어요' : '기록에 저장했어요') + '</p></div><div class="w2-body">' +
+      return '<div class="hero w2f-top"><span class="w2f-ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg></span><small>' + lgMd(date) + '</small><h2>' + esc(d.part) + (done.length >= d.items.length ? ' 끝!' : ' ' + done.length + '종목 했어요') + '</h2><p>' + (attHas(attLoad(), date) ? '출석 도장도 찍혀 있어요' : '기록에 저장했어요') + '</p></div><div class="w2-body">' +
         '<div class="w2f-st"><div><b>' + done.length + '</b><span>종목</span></div><div><b>' + ns + '</b><span>세트</span></div>' + (showMin ? '<div><b>' + min + '<i>분</i></b><span>운동 시간</span></div>' : d.cardio && R.cardio ? '<div><b>' + R.cardio.minutes + '<i>분</i></b><span>유산소 남음</span></div>' : '') + '</div>' +
         prs.map(function (p) { return '<div class="w2f-pr"><span>최고</span><div><b>' + esc(p[0]) + ' 최고 기록</b><p>' + p[1] + 'kg → ' + p[2] + 'kg</p></div></div>'; }).join("") +
         (d.cardio && R.cardio && showMin ? '<div class="w2f-cd"><b>마무리 유산소 ' + R.cardio.minutes + '분</b><span>' + esc(R.cardio.options || "") + '</span></div>' : '') +
