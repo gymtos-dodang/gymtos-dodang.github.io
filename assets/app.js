@@ -6909,26 +6909,39 @@
       if (PK.m !== "el") { fab.classList.remove("pk-el", "pk-hide"); fab.style.left = fab.style.top = ""; fab.style.bottom = PK.y + "px"; return; }
       var el = PK.el; if (!el || !el.isConnected) { PK = { m: "edge", y: 210 }; pkPlace(); return; }
       var r = el.getBoundingClientRect(), bar = document.querySelector(".bar"), bt = bar ? bar.getBoundingClientRect().bottom : 0, W = 58;
+      /* 2026-11-27 "스크롤하면 부자연스럽게" — fixed+스크롤 때마다 옮기던 걸 문서 기준 absolute(.pk-el)로: 페이지와 같이 저절로 스크롤됨 */
       fab.classList.add("pk-el"); fab.style.bottom = "";
-      fab.style.left = Math.round(r.left + PK.fx * Math.max(0, r.width - W)) + "px"; fab.style.top = Math.round(r.top - PK_V) + "px";
+      fab.style.left = Math.round(r.left + window.scrollX + PK.fx * Math.max(0, r.width - W)) + "px"; fab.style.top = Math.round(r.top + window.scrollY - PK_V) + "px";
+      pkVis(r, bt);
+    }
+    function pkVis(r, bt) {
+      if (PK.m !== "el" || !PK.el) return;
+      if (!r) { r = PK.el.getBoundingClientRect(); var bar = document.querySelector(".bar"); bt = bar ? bar.getBoundingClientRect().bottom : 0; }
       fab.classList.toggle("pk-hide", r.top - PK_V < bt || r.top > window.innerHeight - 110 || r.width < 10);
     }
-    function pkNear(el) {   /* 말풍선·목록 창을 펌핑이 옆에 */
-      var f = fab.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight, top, bot, x;
-      if (PK.m === "el" && !fab.classList.contains("pk-hide")) { top = parseFloat(fab.style.top) - 30; bot = parseFloat(fab.style.top) + PK_V; x = f.left; }
+    function pkNear(el) {   /* 말풍선·목록 창을 펌핑이 옆에 — 2026-11-27 "누르면 챙겨봤어요 칸에 가려진다" → 펌핑이(쏙 나온 모습까지)와 안 겹치게 위·아래 중 넓은 쪽, 모자라면 창 높이를 줄이고 안에서 스크롤 */
+      el.style.maxHeight = ""; el.style.overflowY = "";
+      var f = fab.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight, top, bot, x, TOPM = 64, BOTM = window.innerHeight - 84;
+      if (PK.m === "el" && !fab.classList.contains("pk-hide")) { top = f.top - 28; bot = f.top + PK_V; x = f.left; }
       else { top = f.top; bot = f.bottom; x = 10; }
-      var y = top - h - 10, below = false; if (y < 64) { y = bot + 10; below = true; }
-      el.style.left = Math.round(Math.max(8, Math.min(window.innerWidth - w - 8, x - 6))) + "px"; el.style.top = Math.round(Math.min(y, window.innerHeight - h - 90)) + "px";
+      var up = top - 10 - TOPM, dn = BOTM - (bot + 10), below, y;
+      if (h <= up) { below = false; y = top - 10 - h; }
+      else if (h <= dn) { below = true; y = bot + 10; }
+      else { below = dn > up; var room = Math.max(120, below ? dn : up); el.style.maxHeight = room + "px"; el.style.overflowY = "auto"; h = Math.min(h, room); y = below ? bot + 10 : top - 10 - h; }
+      el.style.left = Math.round(Math.max(8, Math.min(window.innerWidth - w - 8, x - 6))) + "px"; el.style.top = Math.round(y) + "px";
       el.style.right = "auto"; el.style.bottom = "auto"; el.classList.toggle("pk-below", below);
+      el.setAttribute("data-sy", window.scrollY);
     }
     window.addEventListener("scroll", function () {
-      if (PK.m === "el" && !pkRaf) pkRaf = requestAnimationFrame(pkPlace);
+      if (PK.m === "el" && !pkRaf) pkRaf = requestAnimationFrame(function () { pkRaf = 0; pkVis(); });
+      var op = card || tipEl; if (op && Math.abs(window.scrollY - (+op.getAttribute("data-sy") || 0)) > 60) { if (card) closeCard(); if (tipEl) { tipEl.remove(); tipEl = null; } }   /* 스크롤하면 떠 있던 창은 닫음 */
       clearTimeout(pkST); pkST = setTimeout(function () { if (fab.classList.contains("pk-hide")) pkPick(); }, 800);
     }, { passive: true });
     window.addEventListener("resize", function () { pkPlace(); });
     window.addEventListener("hashchange", function () { setTimeout(pkPick, 750); });
     setTimeout(pkPick, 1200);
     setInterval(function () { if (!document.hidden && !card && !tipEl) pkPick(); }, 40000);
+    setInterval(function () { if (!document.hidden && PK.m === "el" && !card && !tipEl) pkPlace(); }, 1500);   /* 사진이 늦게 떠서 칸이 밀려도 따라감 */
     function awayDays() {
       var a = (attLoad() || []).slice().sort(), last = a[a.length - 1]; if (!last) return 0;
       var d = dayGap(last, ymd(new Date())); return d > 0 ? d : 0;

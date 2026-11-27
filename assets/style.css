@@ -3183,7 +3183,7 @@ html.rt-editing .pump-fab, html.rt-editing .pump-tip { display: none !important;
   transition: left .38s cubic-bezier(.3, 1.45, .5, 1), rotate .38s cubic-bezier(.3, 1.45, .5, 1); animation: pumpPeek 6s ease-in-out infinite; }
 .pump-fab.is-out { left: calc(10px + env(safe-area-inset-left, 0px)); rotate: 0deg; animation: none; }
 .pump-fab.is-dizzy.is-out { animation: pumpSpin .5s ease-in-out 2; }
-@keyframes pumpPeek { 0%, 70%, 100% { translate: 0 0; } 78%, 88% { translate: 9px 0; } 83% { translate: 9px -2px; } }
+@keyframes pumpPeek { 0%, 100% { translate: 0 0; rotate: 22deg; } 15% { translate: 2px 0; rotate: 16deg; } 30% { translate: 0 0; rotate: 26deg; } 45% { translate: 1px 0; rotate: 20deg; } 70% { translate: 0 0; rotate: 22deg; } 78%, 88% { translate: 10px 0; rotate: 10deg; } 83% { translate: 10px -2px; rotate: 6deg; } }
 .pump-fab.has-new::after { right: 2px; }
 .pump-tip { right: auto; left: calc(14px + env(safe-area-inset-left, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 284px); }
 .pump-tip::after { right: auto; left: 26px; }
@@ -3197,8 +3197,16 @@ html.rt-editing .pump-fab, html.rt-editing .pump-tip { display: none !important;
 .pump-fab { transition: left .38s cubic-bezier(.3, 1.45, .5, 1), rotate .38s cubic-bezier(.3, 1.45, .5, 1), opacity .2s; }
 .pump-fab.pk-el { rotate: 0deg; width: 58px; height: 52px; animation: none; translate: 0 0; clip-path: inset(-20px -20px calc(100% - 30px) -20px);
   transition: clip-path .32s cubic-bezier(.3, 1.4, .5, 1), translate .32s cubic-bezier(.3, 1.4, .5, 1), opacity .2s; }
-.pump-fab.pk-el svg { animation: pkDuck 5.5s ease-in-out infinite; }
-@keyframes pkDuck { 0%, 60%, 100% { translate: 0 0; } 68%, 80% { translate: 0 -7px; } 88% { translate: 0 3px; } }
+.pump-fab.pk-el { position: absolute; }
+/* 2026-11-27 "숨을 때도 살짝씩 움직여 생동감 있게" — 숨어서도 고개 갸웃·두리번·쏙 올라왔다 쏙 들어감 */
+.pump-fab.pk-el svg { transform-origin: 50% 90%; animation: pkDuck 7s ease-in-out infinite; }
+@keyframes pkDuck {
+  0%, 100% { translate: 0 1px; rotate: 0deg; }
+  10% { translate: -2px 0; rotate: -7deg; } 20% { translate: -2px 1px; rotate: -5deg; }
+  30% { translate: 2px 0; rotate: 7deg; } 40% { translate: 1px 1px; rotate: 4deg; }
+  50% { translate: 0 3px; rotate: 0deg; }
+  58%, 70% { translate: 0 -8px; rotate: -3deg; } 64% { translate: 0 -8px; rotate: 3deg; }
+  78% { translate: 0 4px; rotate: 0deg; } 88% { translate: 1px 0; rotate: -4deg; } }
 .pump-fab.pk-el.is-out { clip-path: inset(-20px); translate: 0 -26px; }
 .pump-fab.pk-el.is-out svg { animation: none; }
 .pump-fab.pk-el.is-dizzy.is-out { animation: pumpSpin .5s ease-in-out 2; }
