@@ -2951,6 +2951,27 @@
       '<button type="button" data-m="prev" aria-pressed="' + (mmWhich === "prev") + '"' + (canPrev ? '' : ' disabled') + '>지난달 ' + (+prevYm.slice(5)) + '월</button></div>' +
       '<div class="mm-body">' + muscleBody() + '</div></div></section>';
   }
+  function muscleInner() {   /* 기록 탭 '운동 기록' 칸의 근육 지도 칸 (2026-11-27) */
+    var now = new Date(), st = startDate(), prevYm = ymAdd(ymOf(now), -1), canPrev = st && ymOf(st) <= prevYm;
+    if (!canPrev) mmWhich = "cur";
+    return '<div class="mm-seg" role="group" aria-label="달 고르기">' +
+      '<button type="button" data-m="cur" aria-pressed="' + (mmWhich === "cur") + '">이번 달 ' + (now.getMonth() + 1) + '월</button>' +
+      '<button type="button" data-m="prev" aria-pressed="' + (mmWhich === "prev") + '"' + (canPrev ? '' : ' disabled') + '>지난달 ' + (+prevYm.slice(5)) + '월</button></div>' +
+      '<div class="mm-body">' + muscleBody() + '</div>';
+  }
+  var LG_TAB = "today";
+  function setupLgTabs() {
+    Array.prototype.forEach.call(document.querySelectorAll(".lg-seg button"), function (b) {
+      b.addEventListener("click", function () {
+        LG_TAB = b.getAttribute("data-lt");
+        Array.prototype.forEach.call(document.querySelectorAll(".lg-seg button"), function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        Array.prototype.forEach.call(document.querySelectorAll(".lg-pane"), function (p) { p.hidden = p.getAttribute("data-lp") !== LG_TAB; });
+        var sb = document.querySelector(".lgwork .head p");
+        if (sb) sb.textContent = LG_TAB === "grow" ? "✓한 무게로 자동으로 채워져요" : LG_TAB === "mus" ? "✓한 종목 · 출석한 날 부위가 칠해져요" : (sb.getAttribute("data-t") || sb.textContent);
+      });
+    });
+    var sb0 = document.querySelector(".lgwork .head p"); if (sb0 && LG_TAB === "today") sb0.setAttribute("data-t", sb0.textContent);
+  }
   function setupMuscle() {
     Array.prototype.forEach.call(document.querySelectorAll(".mm-seg button"), function (b) {
       b.addEventListener("click", function () {
@@ -3256,18 +3277,24 @@
       var a = L[k], top = a.slice().sort(function (x, y) { return (y[1] || 0) - (x[1] || 0); })[0];
       return '<li><span>' + lgMd(k) + '</span><b>' + a.length + '종목</b><em>' + esc(top[0]) + (top[1] ? ' ' + top[1] + 'kg' : '') + '</em></li>';
     }).join("");
-    h += '<section id="lgtoday">' + head("01", "오늘 한 운동", T.length ? T.length + "종목 완료" : "운동 탭에서 ✓하면 여기 쌓여요") +
-      '<div class="panel lglist">' + (T.length ? '<ul class="lg-today">' + rows + '</ul>' :
+    /* 2026-11-27 장동욱 "기록탭 1,2,3항목 조화롭게 합쳐" — 오늘 한 운동·첫날 vs 오늘·근육 지도를 한 칸(01 운동 기록)에 세 칸 전환(LG_TAB)으로 */
+    var gl = G.lifts.length ? G.lifts : G.top, tb = LG_TAB;
+    var pToday = '<div class="lglist">' + (T.length ? '<ul class="lg-today">' + rows + '</ul>' :
         '<div class="lg-empty"><p>아직 오늘 ✓한 종목이 없어요</p><a class="btn fill" href="#routine-' + todayKey() + '">오늘 운동하러 가기 →</a></div>') +
-      (past ? '<div class="lg-past"><h4>지난 기록</h4><ul>' + past + '</ul></div>' : '') + '</div></section>';
-    var gl = G.lifts.length ? G.lifts : G.top;
-    h += '<section id="lggrow">' + head("02", "첫날 vs 오늘", "✓한 무게로 자동으로 채워져요") + grLink() +
-      (gl.length ? '<div class="panel lg-grow"><h4>' + (G.lifts.length ? '처음 무게 → 지금 무게' : '지금 나의 무게 · ✓할수록 처음 무게가 쌓여요') + '</h4>' + gl.map(function (l) {
+      (past ? '<div class="lg-past"><h4>지난 기록</h4><ul>' + past + '</ul></div>' : '') + '</div>';
+    var pGrow = '<div class="lg-grow">' + (gl.length ? '<h4>' + (G.lifts.length ? '처음 무게 → 지금 무게' : '지금 나의 무게 · ✓할수록 처음 무게가 쌓여요') + '</h4>' + gl.map(function (l) {
         return '<div class="lg-g"><b>' + esc(l.name) + '</b>' + (l.a != null ? '<span><i>' + grKg(l.a) + '</i> → <em>' + grKg(l.b) + 'kg</em></span><u>+' + grKg(l.up) + '</u>' : '<span><em>' + grKg(l.b) + 'kg</em></span>') + '</div>';
-      }).join("") + '</div>' : '') + '</section>';
-    h += muscleSection("03");
-    if (IB_ON) h += '<section id="inbody">' + head("04", "몸 변화 · 인바디", "지난달과 비교해요", '<a class="more" href="#body">흐름 보기</a>') + ibPanel() + '</section>';
-    if (EB_OK && EB_ON) h += '<section id="eyebody">' + head(IB_ON ? "05" : "04", "눈바디", "달마다 같은 자세로 한 장") + ebPanel() + '</section>';
+      }).join("") : '<div class="lg-empty"><p>✓한 무게가 쌓이면 여기서 비교돼요</p></div>') + grLink() + '</div>';
+    var subs = { today: T.length ? "오늘 " + T.length + "종목 완료" : "운동 탭에서 ✓하면 여기 쌓여요", grow: "✓한 무게로 자동으로 채워져요", mus: "✓한 종목 · 출석한 날 부위가 칠해져요" };
+    var tbtn = function (k, lab, n) { return '<button type="button" data-lt="' + k + '" aria-pressed="' + (tb === k) + '">' + lab + (n ? '<i>' + n + '</i>' : '') + '</button>'; };
+    h += '<section id="muscle" class="lgwork">' + head("01", "운동 기록", subs[tb], '<a class="more" href="#report">' + (now.getMonth() + 1) + '월 리포트</a>') +
+      '<div class="panel lgw"><div class="lg-seg" role="group" aria-label="운동 기록 보기">' +
+      tbtn("today", "오늘 운동", T.length) + tbtn("grow", "무게 변화", G.lifts.length) + tbtn("mus", "근육 지도") + '</div>' +
+      '<div class="lg-pane" data-lp="today"' + (tb === "today" ? '' : ' hidden') + '>' + pToday + '</div>' +
+      '<div class="lg-pane" data-lp="grow"' + (tb === "grow" ? '' : ' hidden') + '>' + pGrow + '</div>' +
+      '<div class="lg-pane mmap" data-lp="mus"' + (tb === "mus" ? '' : ' hidden') + '>' + muscleInner() + '</div></div></section>';
+    if (IB_ON) h += '<section id="inbody">' + head("02", "몸 변화 · 인바디", "지난달과 비교해요", '<a class="more" href="#body">흐름 보기</a>') + ibPanel() + '</section>';
+    if (EB_OK && EB_ON) h += '<section id="eyebody">' + head(IB_ON ? "03" : "02", "눈바디", "달마다 같은 자세로 한 장") + ebPanel() + '</section>';
     return h + remember();
   }
   function grServer(kv) {
@@ -7214,8 +7241,8 @@
     else if (hsh === "goal" || hsh === "journey") { html = renderGoal(); tab = "goal"; }
     else if (hsh === "goal-badges" || hsh === "badges") { html = renderGoal(); tab = "goal"; jumpTo = "badges"; }
     else if (hsh === "goal-rank") { html = renderGoal(); tab = "goal"; jumpTo = "rank"; }
-    else if (hsh === "log") { html = renderLog(); tab = "log"; }
-    else if (hsh === "muscle") { html = renderLog(); tab = "log"; jumpTo = "muscle"; }
+    else if (hsh === "log") { LG_TAB = "today"; html = renderLog(); tab = "log"; }
+    else if (hsh === "muscle") { LG_TAB = "mus"; html = renderLog(); tab = "log"; jumpTo = "muscle"; }
     else if (hsh === "growth") { html = renderGrowth(); tab = "log"; after = setupGrowth; }
     else if (hsh === "app") { html = renderInstall(); tab = "home"; after = setupInstall; }
     else if (hsh === "report" || /^report-\d{4}-\d{2}$/.test(hsh)) { html = renderReport(hsh.slice(7)); tab = "log"; after = setupReport; }
@@ -7243,7 +7270,7 @@
     if (/^form-/.test(hsh) && !DEMO) { if (findForm(hsh.slice(5))) fvMark(hsh.slice(5)); lsAdd(FOPEN_KEY, [hsh.slice(5)]); }
     litApply(tab);
     setupFold(tab, jumpTo || (scrollDay ? "day" : null));
-    setupAttCheck(); setupCal(); setupIb(); setupEb(); setupBadges(); setupMuscle(); setupRtEdit();
+    setupAttCheck(); setupCal(); setupIb(); setupEb(); setupBadges(); setupMuscle(); setupLgTabs(); setupRtEdit();
     if (after) after();
     var flashEl = null;
     if (tab === "notice") {
