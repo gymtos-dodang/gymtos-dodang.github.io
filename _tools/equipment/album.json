@@ -121,6 +121,11 @@
     "member": "김지수",
     "id": "outer-thigh",
     "img": "m/jisu-480xne/media/form-outer-thigh/step1.jpg"
+   },
+   {
+    "member": "염승완",
+    "id": "1127-outer-thigh",
+    "img": "m/dyn/seungwan/media/form-1127-outer-thigh/step1.jpg"
    }
   ]
  },
@@ -758,6 +763,11 @@
     "member": "정미경",
     "id": "inner-thigh",
     "img": "m/mikyung-7rq2vd/media/form-inner-thigh/step1.jpg"
+   },
+   {
+    "member": "염승완",
+    "id": "1127-inner-thigh",
+    "img": "m/dyn/seungwan/media/form-1127-inner-thigh/step1.jpg"
    }
   ]
  },
@@ -884,6 +894,11 @@
     "member": "어순래",
     "id": "1125-leg-press",
     "img": "m/sunrae-c7yvid/media/form-1125-leg-press/step1.jpg"
+   },
+   {
+    "member": "염승완",
+    "id": "1127-leg-press",
+    "img": "m/dyn/seungwan/media/form-1127-leg-press/step1.jpg"
    }
   ]
  },
