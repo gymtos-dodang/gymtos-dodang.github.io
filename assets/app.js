@@ -4605,7 +4605,17 @@
      고치는 중(RT_EDIT)이고 WK2면 종목 카드가 .w2e로: 세트 줄을 누르면 카드 안에서 −/+·직접 입력·빠른 세트, ⋯ 하나에 나머지(비슷한 종목으로 바꾸기·위아래·자세히·복제/옮기기·삭제).
      종목 추가는 rtPicker 맨 위 "추천"(w2Rec — 이날 부위에서 회원님이 했던 종목, 오래 안 한 것부터) → 누르면 바로 들어감. 꾹 눌러 끌기·저장은 예전 것 그대로(.ex.rtdr·rtSaveSheet) */
   var W2E_OPEN = -1, W2E_DAY = null;
-  function w2Cat(n) { n = String(n || "").replace(/\s*\(.*\)\s*$/, ""); for (var i = 0; i < RT_CAT.length; i++) if (RT_CAT[i][1].indexOf(n) >= 0) return RT_CAT[i][0]; return ""; }
+  function w2Cat(n) {
+    var n0 = String(n || ""); n = n0.replace(/\s*\(.*\)\s*$/, "");
+    for (var i = 0; i < RT_CAT.length; i++) if (RT_CAT[i][1].indexOf(n) >= 0) return RT_CAT[i][0];
+    /* 2026-11-27 "종목을 배우면(자세 복습지) 추천 루틴에도 순환되게": 종목 목록에 없는 이름이라도 복습지가 있으면 그 복습지의 부위(part)로 분류 */
+    var fs = M.forms || [], k = fnorm(n0);
+    for (i = 0; i < fs.length; i++) if ([fs[i].exercise].concat(fs[i].also || []).some(function (x) { return fnorm(x) === k; })) {
+      var p = String(fs[i].part || "").replace(/힙/g, "엉덩이");
+      for (var j = 0; j < RT_CAT.length; j++) if (RT_CAT[j][0] !== "유산소" && p.indexOf(RT_CAT[j][0]) >= 0) return RT_CAT[j][0];
+    }
+    return "";
+  }
   function w2DayCats(d) {
     var p = String((d && d.part) || "").replace(/힙/g, "엉덩이"), out = RT_CAT.map(function (c) { return c[0]; }).filter(function (c) { return c !== "유산소" && p.indexOf(c) >= 0; });
     if (!out.length) (d.items || []).forEach(function (it) { var c = w2Cat(it.name); if (c && c !== "유산소" && out.indexOf(c) < 0) out.push(c); });
@@ -4678,7 +4688,8 @@
         var bigA = all.filter(function (x) { return W2E_BIG[c].test(x); }), bigD = done.filter(function (x) { return W2E_BIG[c].test(x); });
         if (bigA.length || bigD.length) { all = bigA; done = bigD; }
       }
-      var nm = done.length && (Math.random() < .67 || !all.length) ? pick(done) : all.length ? pick(all) : null;
+      var pool = done.slice(); done.forEach(function (x) { if (m[x].form) { pool.push(x); pool.push(x); } });   /* 복습지로 배운 종목은 3배로 자주 뽑힘 */
+      var nm = done.length && (Math.random() < .67 || !all.length) ? pick(pool) : all.length ? pick(all) : null;
       if (!nm) { used[it.name] = 1; return; }
       used[nm] = 1;
       var o = m[nm] || {}, src = o.mine, out = { name: nm, en: (src && src.en) || rtEnOf(nm), tip: src ? src.tip || "" : "", sets: clone(it.sets) };
