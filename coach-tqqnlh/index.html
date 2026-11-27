@@ -18,8 +18,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <script>/* 페이지 넘어갈 때 부드럽게 (2026-11-12) */try{if(localStorage.getItem("ptcoach")||sessionStorage.getItem("ptcoach"))document.documentElement.classList.add("nosp")}catch(e){}addEventListener("pagereveal",function(e){if(!e.viewTransition)return;var d=null;try{d=sessionStorage.getItem("vtdir");sessionStorage.removeItem("vtdir")}catch(x){}var n=window.navigation&&navigation.activation;if(d==="back"||(d!=="fwd"&&n&&n.navigationType==="traverse"))document.documentElement.classList.add("vt-back");e.viewTransition.finished.then(function(){document.documentElement.classList.remove("vt-back")},function(){})});</script>
 <script>try{var _t=localStorage.getItem("ptnote:theme");if(_t==="dark"||_t==="light")document.documentElement.setAttribute("data-theme",_t)}catch(e){}</script>
-<link rel="stylesheet" href="/assets/style.css?v=2611271710">
-<script src="/assets/site.js?v=2611271710"></script>
+<link rel="stylesheet" href="/assets/style.css?v=2611271602">
+<script src="/assets/site.js?v=2611271602"></script>
 <style>
 .wrap { padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
 .sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -371,7 +371,7 @@ body.pad #list.mlist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .csh-sec .head p { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .csh-x { order: 9; margin-left: auto; flex: none; width: 34px; height: 34px; border: 0; border-radius: 50%; background: #fff; color: var(--sub); font-size: 14px; cursor: pointer; box-shadow: 0 1px 3px rgba(20, 20, 30, .1); }
 @media (prefers-reduced-motion: reduce) { .csh-p, .csh-bg { transition: none; } }
-/* 2026-11-26 빼꼼 비서: 회원 질문 칸(답장 쓰기) */
+/* 2026-11-26 펌핑이 비서: 회원 질문 칸(답장 쓰기) */
 .askl { display: grid; gap: 10px; }
 .askc { padding: 12px 14px; border-radius: 14px; background: #fff; border: 1px solid #E1141E33; font-size: 14px; color: #1E2330; }
 .askc .ak-h { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
@@ -554,7 +554,7 @@ html[data-theme="dark"] .msh-p, html[data-theme="dark"] .csh-p { background: rgb
 
 
   <section id="askSec" hidden>
-    <div class="head"><h2>회원 질문 <span id="askN"></span></h2><p>빼꼼이 받아 온 질문 · 답장하면 회원님 폰에 "쌤 답장 왔어요!"</p></div>
+    <div class="head"><h2>회원 질문 <span id="askN"></span></h2><p>펌핑이가 받아 온 질문 · 답장하면 회원님 폰에 "쌤 답장 왔어요!"</p></div>
     <div id="askBox"></div>
   </section>
 
@@ -643,7 +643,7 @@ html[data-theme="dark"] .msh-p, html[data-theme="dark"] .csh-p { background: rgb
   </div>
 </aside>
 <script src="members.js"></script>
-<script src="/assets/memo.js?v=2611271710"></script>
+<script src="/assets/memo.js?v=2611271602"></script>
 <script>
 (function () {
   "use strict";
@@ -703,29 +703,29 @@ html[data-theme="dark"] .msh-p, html[data-theme="dark"] .csh-p { background: rgb
     for (var i = 0; i < R.days.length; i++) if (R.days[i].day === key) return !!R.days[i].rest;
     return false;
   }
-  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611271710) */
+  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611271602) */
   var MEMO = null;
   function memoRow(slug, name) {
     if (!window.PTMemo || !bnKey()) return "";
     var l = MEMO ? window.PTMemo.line(MEMO[slug]) : "";
     return '<button type="button" class="mmemo' + (l ? '' : ' empty') + '" data-memo="' + esc(slug) + '" data-mname="' + esc(name) + '">📝 <span>' + esc(l || (MEMO ? "메모 남기기" : "메모 불러오는 중…")) + '</span>' + (MEMO && MEMO[slug] && MEMO[slug].length > 1 ? '<small>' + MEMO[slug].length + '</small>' : '') + '</button>';
   }
-  /* 2026-11-24 빼꼼 질문 보기: 회원 칸 "빼꼼" 버튼 → 그 회원이 빼꼼에게 물은 최근 30개(창고 a=pump_log, 선생님 열쇠) — 수업 소재로 */
+  /* 2026-11-24 펌핑이 질문 보기: 회원 칸 "펌핑이" 버튼 → 그 회원이 펌핑이에게 물은 최근 30개(창고 a=pump_log, 선생님 열쇠) — 수업 소재로 */
   document.addEventListener("click", function (e) {
     var b = e.target.closest("[data-pump]"); if (!b) return;
     var box = b.closest(".msh-p") || b.closest(".mcard") || b.parentNode, slug = b.getAttribute("data-pump");
     var d = box.querySelector(".pumplog"); if (d) { d.remove(); return; }
-    d = document.createElement("div"); d.className = "pumplog"; d.textContent = "빼꼼 질문 불러오는 중…"; box.appendChild(d);
+    d = document.createElement("div"); d.className = "pumplog"; d.textContent = "펌핑이 질문 불러오는 중…"; box.appendChild(d);
     if (!bnKey()) { d.textContent = "선생님 열쇠를 먼저 넣어 주세요"; return; }
     nmPost({ a: "pump_log", ms: slug }).then(function (j) {
-      if (!j || !j.ok) { d.textContent = j && j.error === "key" ? "선생님 열쇠가 맞지 않아요" : "아직 창고가 빼꼼 질문 보기를 몰라요(배포 전)"; return; }
-      if (!j.log.length) { d.textContent = "아직 빼꼼에게 물어본 게 없어요"; return; }
-      d.innerHTML = '<b class="pl-h">빼꼼에게 물어본 것 (최근 ' + j.log.length + '개)</b>' + j.log.map(function (x) {
+      if (!j || !j.ok) { d.textContent = j && j.error === "key" ? "선생님 열쇠가 맞지 않아요" : "아직 창고가 펌핑이 질문 보기를 몰라요(배포 전)"; return; }
+      if (!j.log.length) { d.textContent = "아직 펌핑이에게 물어본 게 없어요"; return; }
+      d.innerHTML = '<b class="pl-h">펌핑이에게 물어본 것 (최근 ' + j.log.length + '개)</b>' + j.log.map(function (x) {
         return '<details class="pl-i"><summary><small>' + esc(x.t) + '</small> ' + esc(x.q) + '</summary><p>' + esc(x.a) + '</p></details>';
       }).join("");
     }).catch(function () { d.textContent = "불러오지 못했어요. 다시 눌러 주세요"; });
   });
-  /* 2026-11-26 빼꼼 비서 — 회원 질문 받기·답장. 질문 = mw:<주소>:ask {n, q:[{id,t,at}]}(회원 폰이 씀), 답장 = pub:m:<주소>:ans {a:{id:{t,at}}}(회원 노트가 받음)
+  /* 2026-11-26 펌핑이 비서 — 회원 질문 받기·답장. 질문 = mw:<주소>:ask {n, q:[{id,t,at}]}(회원 폰이 씀), 답장 = pub:m:<주소>:ans {a:{id:{t,at}}}(회원 노트가 받음)
      + 같은 내용을 coach:ask:<주소>에도(선생님 페이지가 가볍게 읽으려고). 창고가 suffix를 모르는 예전 배포면 mw: 전체가 와서 여기서 한 번 더 거름 */
   var ASKS = {}, ASKA = {};
   function askName(slug) { var r = ROWS[slug], n = r && r.M && r.M.name; if (!n) NM.forEach(function (d) { if (d.slug === slug) n = d.name; }); return n || (ASKS[slug] && ASKS[slug].n) || slug; }
@@ -735,7 +735,7 @@ html[data-theme="dark"] .msh-p, html[data-theme="dark"] .csh-p { background: rgb
     return '<div class="askc" data-ask="' + esc(x.slug) + '" data-aid="' + esc(x.id) + '"><div class="ak-h"><a href="../m/' + esc(x.slug) + '/">' + esc(askName(x.slug)) + ' 님</a><small>' + esc(askWhen(x.at)) + '</small></div>' +
       '<p class="ak-q">' + esc(x.t) + '</p>' +
       (a && !open ? '<p class="ak-a">' + esc(a.t) + '</p><div class="ak-b"><span>' + esc(askWhen(a.at)) + ' 답장함</span><button type="button" class="ak-e" data-ask-edit>고치기</button></div>'
-        : '<textarea rows="2" maxlength="300" placeholder="답장을 적어 주세요 (회원님 폰 빼꼼이 전해 줘요)">' + esc(a ? a.t : "") + '</textarea><div class="ak-b"><span role="status"></span><button type="button" data-ask-send>답장 보내기</button></div>') + '</div>';
+        : '<textarea rows="2" maxlength="300" placeholder="답장을 적어 주세요 (회원님 폰 펌핑이가 전해 줘요)">' + esc(a ? a.t : "") + '</textarea><div class="ak-b"><span role="status"></span><button type="button" data-ask-send>답장 보내기</button></div>') + '</div>';
   }
   function askDraw() {
     var all = [];
@@ -1240,7 +1240,7 @@ html[data-theme="dark"] .msh-p, html[data-theme="dark"] .csh-p { background: rgb
       var M = r.M, sex = M.sex === "F" ? "F" : "M", base = "/m/" + r.slug + "/", R = M.routine || {};
       return '<div class="tr' + (i === 0 ? ' new' : '') + '"><a class="tr-l" href="' + base + '#home"><span class="av ' + sex + '">' + esc(M.name.charAt(0)) + '<i class="ok"></i></span>' +
         '<span class="tr-t"><b>' + esc(M.name) + '</b><small>' + (r.days[today] ? esc(r.days[today]) + ' 출석' : '오늘 출석') + (R.version ? ' · 루틴 ' + esc(R.version) + (M._rted ? ' ✎' : '') : ' · 루틴 없음') + '</small></span></a>' +
-        '<div class="tr-b"><a href="' + base + '#routine" class="tb">루틴</a><button type="button" class="tb" data-memo="' + esc(r.slug) + '" data-mname="' + esc(M.name) + '">메모</button><button type="button" class="tb" data-pump="' + esc(r.slug) + '">빼꼼</button></div></div>';
+        '<div class="tr-b"><a href="' + base + '#routine" class="tb">루틴</a><button type="button" class="tb" data-memo="' + esc(r.slug) + '" data-mname="' + esc(M.name) + '">메모</button><button type="button" class="tb" data-pump="' + esc(r.slug) + '">펌핑이</button></div></div>';
     }).join("");
   }
   /* 회원 목록 = 아이콘 칸 (2026-11-13 "회원목록 앞에, 아이콘으로 — 밑에 쭉 있어서 어지러움"): 누르면 그 회원 정보 창(폰) / 아이패드는 오른쪽에 바로 노트 */

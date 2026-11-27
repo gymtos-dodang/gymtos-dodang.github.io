@@ -13,7 +13,7 @@
 - 확인: github.io 탭에서 fetch(ATT_API+"?m=jihun-g9kgdo") 응답 키(ok·days·routine·bnotices·kv). 컴퓨터가 꺼져 있거나 로그인이 풀렸으면 그때만 장동욱에게 부탁.
 
 - 창고 주소(ATT_API)는 assets/site.js·app.js·coach-tqqnlh/index.html에 있음 — 바꾸면 전부. 선생님 열쇠는 저장소에 넣지 말 것(RT_KEY_HASH 지문만).
-- 지금 쓰는 저장소 키: `mw:<주소>:log`(운동 기록) · `mw:<주소>:mv`(요일 옮기기) · `mw:<주소>:diet`(내 식단 짜기) · `pub:m:<주소>:growth`(처음 무게) · `pub:m:<주소>:member`(폰에서 만든 회원) · `pub:m:roster-list:members`(공개 회원 목록) · `pub:all:rank`(출석 순위) · `coach:members` · `coach:memo:<주소>` · `mw:<주소>:ask`(빼꼼: 쌤께 남긴 질문) · `pub:m:<주소>:ans`(쌤 답장) · `coach:ask:<주소>`(답장 사본, 선생님 페이지용).
+- 지금 쓰는 저장소 키: `mw:<주소>:log`(운동 기록) · `mw:<주소>:mv`(요일 옮기기) · `mw:<주소>:diet`(내 식단 짜기) · `pub:m:<주소>:growth`(처음 무게) · `pub:m:<주소>:member`(폰에서 만든 회원) · `pub:m:roster-list:members`(공개 회원 목록) · `pub:all:rank`(출석 순위) · `coach:members` · `coach:memo:<주소>` · `mw:<주소>:ask`(펌핑이: 쌤께 남긴 질문) · `pub:m:<주소>:ans`(쌤 답장) · `coach:ask:<주소>`(답장 사본, 선생님 페이지용).
 - kv_get은 `suffix`도 받음(2026-11-26, 이름 끝으로 거름 — 예전 배포는 무시하고 prefix 전체를 보내므로 받는 쪽에서 한 번 더 거를 것).
 
 
@@ -25,8 +25,8 @@
 - 2026-11-21 버전 16: Gemini 503(사람 많음)·429면 1.5초 쉬고 다음 모델(2.5-flash → flash-lite-latest). PDF 테스트(_tools/test/inbody_sample.pdf) 8개 모두 맞음, 단 Gemini 붐빌 땐 78초 걸림.
 - 2026-11-22 속도(버전 17): Gemini 생각 끄기(thinkingBudget 0, 못 받는 모델이면 빼고 다시) + 503이면 쉬지 않고 바로 다음 모델. → PDF 5.6초·사진 8.7초, 8개 모두 맞음.
 - 2026-11-24 AI 읽기 고장: Gemini가 thinkingConfig(생각 끄기)를 "400 invalid argument"(think라는 글자 없이)로 거절해 사진·PDF 모두 AI 실패 → 드라이브 OCR로 넘어가 숫자가 엉망. 이제 400이면 무조건 생각 끄기 빼고 다시 보냄(버전 18). "숫자 이상해" 하면 먼저 응답 ai 값부터 볼 것.
-- 2026-11-26 버전 19: 눈바디(a=eye·eye_add·eye_img·eye_del, 출석 응답 eye:1)만 배포. 시험 주소 zz-test-eye로 올리기→목록→큰 사진→지우기 모두 됨(드라이브 권한 그대로 씀). **빼꼼(pump·pump_log·pumpAi_)는 아직 배포 안 함** — 편집기 코드에는 눈바디만 넣었고 빼꼼 부분은 빠져 있음(편집기 길이 ≠ 저장소 길이). 다음에 저장소 코드를 통째로 붙이면 빼꼼도 같이 나가니, 그때는 장동욱에게 먼저 확인. 편집기에서 `new Function`은 막혀 있어(Trusted Types) 문법 확인은 monaco.editor.getModelMarkers로.
-- 2026-11-26 버전 20: 장동욱 "빼꼼도 배포 가자" → 저장소 코드 통째로 붙여 빼꼼(pump·pump_log)까지 배포. 이제 편집기 = 저장소(38638자). 시험 주소 zz-test-pump로 질문 1개 → 6.4초에 답·표정(lift)·남은 14개 확인(시트 "펌핑이질문"에 시험 줄 1개 남음). 회원 화면은 아직 숨김 — `assets/site.js`에 `pump: true`를 넣어야 보임(장동욱 확인 뒤에).
+- 2026-11-26 버전 19: 눈바디(a=eye·eye_add·eye_img·eye_del, 출석 응답 eye:1)만 배포. 시험 주소 zz-test-eye로 올리기→목록→큰 사진→지우기 모두 됨(드라이브 권한 그대로 씀). **펌핑이(pump·pump_log·pumpAi_)는 아직 배포 안 함** — 편집기 코드에는 눈바디만 넣었고 펌핑이 부분은 빠져 있음(편집기 길이 ≠ 저장소 길이). 다음에 저장소 코드를 통째로 붙이면 펌핑이도 같이 나가니, 그때는 장동욱에게 먼저 확인. 편집기에서 `new Function`은 막혀 있어(Trusted Types) 문법 확인은 monaco.editor.getModelMarkers로.
+- 2026-11-26 버전 20: 장동욱 "펌핑이도 배포 가자" → 저장소 코드 통째로 붙여 펌핑이(pump·pump_log)까지 배포. 이제 편집기 = 저장소(38638자). 시험 주소 zz-test-pump로 질문 1개 → 6.4초에 답·표정(lift)·남은 14개 확인(시트 "펌핑이질문"에 시험 줄 1개 남음). 회원 화면은 아직 숨김 — `assets/site.js`에 `pump: true`를 넣어야 보임(장동욱 확인 뒤에).
 
 - 2026-11-26 Mistral 열쇠 추가: AI_KEY = Gemini(AQ.),mi:Mistral 순서(Groq는 사람 확인 체크가 안 돼 보류). meal_ai 시험용 {only:'mi:'}(그 앞글자 열쇠만 씀), 답 ai.by = 실제로 쓴 열쇠 앞 3글자. 시험 사진 _tools/test/meal_sample.jpg.
 - 2026-11-26 결론: Mistral은 API 켜려면 카드 등록 필요(Pay-as-you-go) → 안 씀, Groq는 사람 확인 체크 막힘 → 안 씀. 식단·인바디 AI는 Gemini 하나로(시험: 음식 4개·약 6초). AI_KEY 뒤 mi: 열쇠는 402로 실패하고 넘어가므로 둬도 무해. 예비가 필요하면 다음엔 Cloudflare(cf:).

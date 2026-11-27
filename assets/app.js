@@ -56,7 +56,7 @@
   function wnW2Close() { var b = document.querySelector(".w2ov.w2d [data-w2x]"); if (b) b.click(); }
   function wnMuOpen() { return !!document.querySelector(".rtsheet .mu-map"); }
   function wnMuClose() { var b = document.querySelector(".rtsheet-bg .rts-x"); if (b && b.closest(".rtsheet-bg").querySelector(".mu-map")) b.click(); }
-  function wnPump() { return !!document.querySelector(".pump-fab"); }   /* 2026-11-26 빼꼼 알림이 소식 */
+  function wnPump() { return !!document.querySelector(".pump-fab"); }   /* 2026-11-26 펌핑이 알림이 소식 */
   function wnPumpOpen() { return typeof PUMP !== "undefined" && PUMP && PUMP.isOpen(); }
   function wnPumpClose() { if (typeof PUMP !== "undefined" && PUMP) PUMP.close(); }
   function wnMlOpen() { return !!document.querySelector(".mlsheet"); }   /* 2026-11-26 식단 기록 완성 · 눈바디 소식 */
@@ -73,11 +73,11 @@
         { get h() { return wnW2H(); }, need: wnW2, tap: ".w2-list .w2c .w2b", skipIf: wnW2Open, leave: wnW2Close, s: ".w2ov.w2d .w2-card", t: "👆 종목을 누르면 한 곳에", b: "내 영상 · 처방 · 자극 부위 · 무게 기록이 다 있어요.\n'무게 · 횟수 고치기'로 숫자를 직접 바꿀 수 있고\n선생님도 같이 봐요." },
         { h: "#routine", need: wnW2Today, s: ".w2-go", t: "▶ 운동 시작", b: "세트를 끝낼 때마다 ✓ → 쉬는 시간을 재 줘요.\n다 끝나면 오늘 요약과 최고 기록이 나오고\n몸 상태를 선생님께 전할 수 있어요." }
       ] },
-    { id: "2026-11-26c", t: "빼꼼 알림이 업데이트",
-      items: ["😈 오른쪽 아래 빼꼼이 빠진 걸 먼저 챙겨 줘요", "📸 식단 사진 · 🪞 눈바디 · 📊 인바디 · 🔥 이번 주 남은 운동을 말풍선으로 알려 줘요", "👆 빼꼼을 누르면 오늘 챙길 것 목록이 나와요", "🎉 출석 · 종목 ✓ · 새 배지 땐 응원도 해요"],
+    { id: "2026-11-26c", t: "펌핑이 알림이 업데이트",
+      items: ["😈 오른쪽 아래 펌핑이가 빠진 걸 먼저 챙겨 줘요", "📸 식단 사진 · 🪞 눈바디 · 📊 인바디 · 🔥 이번 주 남은 운동을 말풍선으로 알려 줘요", "👆 펌핑이를 누르면 오늘 챙길 것 목록이 나와요", "🎉 출석 · 종목 ✓ · 새 배지 땐 응원도 해요"],
       steps: [
-        { h: "#home", need: wnPump, s: ".pump-fab", t: "😈 빼꼼이 챙겨 드려요", b: "식단 사진·눈바디·인바디·이번 주 운동처럼\n빠진 게 있으면 말풍선으로 먼저 알려 줘요.\n제가 한번 눌러 볼게요!" },
-        { h: "#home", need: wnPump, tap: ".pump-fab", skipIf: wnPumpOpen, leave: wnPumpClose, s: ".pump-card", t: "👆 오늘 챙길 것 목록", b: "빼꼼을 누르면 챙길 것이 한눈에 보여요.\n누르면 바로 그 화면으로 데려가요." }
+        { h: "#home", need: wnPump, s: ".pump-fab", t: "😈 펌핑이가 챙겨 드려요", b: "식단 사진·눈바디·인바디·이번 주 운동처럼\n빠진 게 있으면 말풍선으로 먼저 알려 줘요.\n제가 한번 눌러 볼게요!" },
+        { h: "#home", need: wnPump, tap: ".pump-fab", skipIf: wnPumpOpen, leave: wnPumpClose, s: ".pump-card", t: "👆 오늘 챙길 것 목록", b: "펌핑이를 누르면 챙길 것이 한눈에 보여요.\n누르면 바로 그 화면으로 데려가요." }
       ] },
     { id: "2026-11-26b", t: "식단 기록 완성 · 눈바디 새 기능",
       items: ["📸 식단 기록이 완성됐어요 — 사진 한 장이면 음식·양·탄단지·칼로리까지", "✏️ 양(g)을 고치면 탄단지·칼로리가 같이 바뀌어요", "🪞 새 기능 '눈바디' — 달마다 같은 자세로 한 장씩 모아 봐요", "👀 지난 사진을 겹쳐 보며 같은 자세로 찍을 수 있어요"],
@@ -4133,7 +4133,7 @@
     if (!R) return (CAN_EDIT ? '<div class="rtbar"><div><b>선생님만 보여요</b><span>여기서 바로 루틴을 만들 수 있어요</span></div><div class="rtbar-b"><button type="button" class="rtb" data-rt="createcopy">다른 회원 루틴 복사</button><button type="button" class="rtb fill" data-rt="create">✎ 새 루틴 만들기</button></div></div>' : '') +
       '<section>' + head("", "주간 루틴", "") + '<div class="panel empty"><h3>루틴이 아직 없어요</h3><p>선생님이 곧 올려드릴게요</p></div></section>' + remember();
     var tk = todayKey(), ED = !!RT_EDIT;
-    document.documentElement.classList.toggle("rt-editing", ED);   /* 고치는 중엔 빼꼼 버튼이 저장 버튼을 가려서 숨김 (2026-11-27) */
+    document.documentElement.classList.toggle("rt-editing", ED);   /* 고치는 중엔 펌핑이 버튼이 저장 버튼을 가려서 숨김 (2026-11-27) */
     sel = sel || tk;
     view.setAttribute("data-day", sel);
     var h = wkSeg("routine") + rtTopBar() + '<div class="hero"><div class="hero-main split"><div class="hero-l">' +
@@ -6770,7 +6770,7 @@
   }
   document.addEventListener("visibilitychange", function () { if (!document.hidden) zoomReset(); });
   window.addEventListener("pageshow", zoomReset);
-  /* 2026-11-24 빼꼼 — 운동 질문 AI. 오른쪽 아래 떠 있는 버튼 → 아래에서 올라오는 대화창.
+  /* 2026-11-24 펌핑이 — 운동 질문 AI. 오른쪽 아래 떠 있는 버튼 → 아래에서 올라오는 대화창.
      창고 POST a=pump {q, h(최근 대화 6개), ctx(회원 루틴 요약)} → {a, left}. 회원 한 명 하루 15개(창고에서 셈). 대화는 폰에 ptnote:<주소>:pump (최근 30개) */
   function pumpFace(mood) {   /* 2026-11-24 표정: base·think·cheer·worry·eat·no·dizzy·surprise·lift — 눈 깜빡임·꼬리 흔들기는 CSS(.pf-*) */
     mood = mood || "base";
@@ -6823,10 +6823,10 @@
     out.push("오늘: " + wd + "요일");
     return out.join("\n").slice(0, 1500);
   }
-  /* 2026-11-26 빼꼼 = 빠진 것 챙기는 알림이 (장동욱 "빼꼼 필요없는 거 같은데 → 1번으로 가자")
+  /* 2026-11-26 펌핑이 = 빠진 것 챙기는 알림이 (장동욱 "펌핑이 필요없는 거 같은데 → 1번으로 가자")
      대화창·쌤께 질문 남기기·AI 답변·앱 쓰는 법은 뺌(다시 넣지 말 것 — 질문은 카톡으로 하심). 묻지 않아도 먼저 챙겨 주는 역할만:
      todo() = 쌤 답장(아침에 남긴 질문이 있던 회원만) · 오늘 운동 · 식단 사진(12시 이후) · 이번 달 눈바디 · 인바디 30일 · 이번 주 남은 운동(목요일부터) · 새 복습지 · 새 공지
-     접속하면 제일 급한 것 하나를 말풍선으로(항목마다 cd일에 한 번, ptnote:<주소>:pumpn) → 말풍선·빼꼼을 누르면 챙길 것 목록(.pump-card) → 누르면 그 화면으로.
+     접속하면 제일 급한 것 하나를 말풍선으로(항목마다 cd일에 한 번, ptnote:<주소>:pumpn) → 말풍선·펌핑이를 누르면 챙길 것 목록(.pump-card) → 누르면 그 화면으로.
      응원 pumpCheer("att"|"check"|"badge")와 4일 넘게 안 오면 졸린 얼굴은 그대로. */
   var PUMP = null, PUMP_KV = null;
   function pumpCheer(kind) { if (PUMP) PUMP.cheer(kind); }
@@ -6841,7 +6841,7 @@
     function lsObj(k) { try { return JSON.parse(localStorage.getItem(k) || "{}") || {}; } catch (e) { return {}; } }
     function dayGap(a, b) { return Math.round((new Date(b) - new Date(a)) / 86400000); }
     var fab = document.createElement("button");
-    fab.type = "button"; fab.setAttribute("aria-label", "빼꼼 — 오늘 챙길 것 보기");
+    fab.type = "button"; fab.setAttribute("aria-label", "펌핑이 — 오늘 챙길 것 보기");
     document.body.appendChild(fab);
     function awayDays() {
       var a = (attLoad() || []).slice().sort(), last = a[a.length - 1]; if (!last) return 0;
@@ -6894,13 +6894,13 @@
       closeCard(); LINKAT = Date.now(); location.hash = it.h;
       if (it.to) { var n = 0; (function f() { var e = document.getElementById(it.to); if (e) e.scrollIntoView({ block: "start", behavior: "smooth" }); else if (n++ < 20) setTimeout(f, 150); })(); }
     }
-    /* 챙길 것 목록 창 — 빼꼼을 누르면 */
+    /* 챙길 것 목록 창 — 펌핑이를 누르면 */
     function openCard() {
       if (card) return;
       if (tipEl) { tipEl.remove(); tipEl = null; }
       var L = todo();
-      card = document.createElement("div"); card.className = "pump-card"; card.setAttribute("role", "dialog"); card.setAttribute("aria-label", "빼꼼이 챙겨 본 것");
-      var h = document.createElement("p"); h.className = "pump-ch"; h.textContent = L.length ? "빼꼼이 챙겨 봤어요 👀" : "오늘은 다 챙겼어요! 👍"; card.appendChild(h);
+      card = document.createElement("div"); card.className = "pump-card"; card.setAttribute("role", "dialog"); card.setAttribute("aria-label", "펌핑이가 챙겨 본 것");
+      var h = document.createElement("p"); h.className = "pump-ch"; h.textContent = L.length ? "펌핑이가 챙겨 봤어요 👀" : "오늘은 다 챙겼어요! 👍"; card.appendChild(h);
       if (!L.length) { var e = document.createElement("p"); e.className = "pump-ce"; e.textContent = "빠진 게 생기면 제가 먼저 알려 드릴게요."; card.appendChild(e); }
       L.forEach(function (it) {
         var b = document.createElement(it.h ? "button" : "div"); b.className = "pump-ci"; if (it.h) b.type = "button";
