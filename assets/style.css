@@ -3153,6 +3153,28 @@ button.pump-ci { cursor: pointer; }
 .w2f-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; } .w2f-row b { font-size: 12px; color: var(--sub); flex: none; }
 .w2f-fl { display: flex; gap: 8px; } .w2f-fl button { flex: 1; border: 0; border-radius: 12px; min-height: 46px; font: 700 13px var(--font); background: var(--tint); color: var(--ink); cursor: pointer; } .w2f-fl button[aria-pressed="true"] { background: var(--primary); color: #fff; }
 
+/* WK2 선생님 루틴 고치기 (2026-11-27) */
+.w2e-hint { margin: 10px 2px 8px; font-size: 12px; color: var(--sub); }
+.w2-list.ed .ex.w2e { display: block; background: var(--paper); border: 0; border-radius: 16px; padding: 10px; margin: 0; min-height: 0; box-shadow: none; }
+.w2-list.ed .ex.w2e.open { box-shadow: inset 0 0 0 2px var(--w2a); } .w2-list.ed .ex.w2e.rt-press { background: var(--tint); }
+.w2e-top { display: flex; align-items: center; gap: 9px; } .w2e-top .rtgrip { position: static; flex: none; } .w2e-top .w2t { width: 46px; height: 46px; } .w2e-top .w2t.ico .icn { width: 40px; height: 40px; }
+.w2e-more { flex: none; width: 44px; height: 44px; border: 0; border-radius: 12px; background: var(--tint); color: var(--ink); font: 900 20px var(--font); cursor: pointer; }
+.w2e-sets { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; width: 100%; border: 0; background: none; padding: 9px 0 0; margin: 0; font-family: var(--font); cursor: pointer; text-align: left; min-height: 44px; }
+.w2e-sets span { background: var(--tint); border-radius: 10px; padding: 6px 9px; font-size: 12px; color: var(--ink); } .w2e-sets span b { margin-right: 4px; font-weight: 900; }
+.w2e.main .w2e-sets span { background: var(--gold-bg); color: #5C3F00; }
+.w2e-sets i { font-style: normal; margin-left: auto; font-size: 12px; font-weight: 700; color: var(--w2a); }
+.w2e-ed { display: grid; gap: 8px; padding-top: 10px; } .w2e-ed .w2-er { grid-template-columns: 38px 1fr 1fr 36px; gap: 6px; }
+.w2e-ed .w2-st input { flex: 1; min-width: 0; width: 0; border: 0; background: none; text-align: right; font: 900 16px var(--font); color: var(--ink); padding: 0 2px 0 0; -webkit-user-select: text; user-select: text; } .w2e-ed .w2-st input:only-child { text-align: center; }
+.w2e-ed .w2-st small { flex: none; padding-right: 2px; color: var(--sub); } .w2e-ed .w2-st button { width: 38px; flex: none; }
+.w2e-x { width: 36px; height: 46px; border: 0; border-radius: 12px; background: none; color: var(--faint); font: 700 20px var(--font); cursor: pointer; } .w2e-x:disabled { opacity: .3; }
+.w2e-row { display: flex; gap: 6px; } .w2e-row button { flex: 1; min-height: 44px; border: 0; border-radius: 12px; background: var(--tint); color: var(--ink); font: 700 13px var(--font); cursor: pointer; }
+.w2e-pre { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; } .w2e-pre small { font-size: 11px; font-weight: 700; color: var(--sub); width: 52px; flex: none; }
+.w2e-pre button { min-height: 38px; padding: 0 11px; border: 0; border-radius: 19px; background: var(--tint); color: var(--ink); font: 700 12px var(--font); cursor: pointer; } .w2e-pre button[aria-pressed="true"] { background: var(--primary); color: #fff; }
+.mv-opt.w2e-del b { color: var(--bad); } .w2e-s { display: block; font-size: 10px; font-weight: 500; color: var(--sub); }
+.w2-list.ed .rtadd { margin: 0; }
+
+html.rt-editing .pump-fab, html.rt-editing .pump-tip { display: none !important; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -3384,6 +3406,8 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .w2-ed { color: var(--ink); }
 :where(html:not([data-theme="light"])) .w2f-pr { color: var(--ink); }
 :where(html:not([data-theme="light"])) .w2f-fl button[aria-pressed="true"] { background: var(--seal); }
+:where(html:not([data-theme="light"])) .w2e.main .w2e-sets span { color: var(--ink); }
+:where(html:not([data-theme="light"])) .w2e-pre button[aria-pressed="true"] { background: var(--seal); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -3724,6 +3748,8 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .w2-ed { color: var(--ink); }
 :where(html[data-theme="dark"]) .w2f-pr { color: var(--ink); }
 :where(html[data-theme="dark"]) .w2f-fl button[aria-pressed="true"] { background: var(--seal); }
+:where(html[data-theme="dark"]) .w2e.main .w2e-sets span { color: var(--ink); }
+:where(html[data-theme="dark"]) .w2e-pre button[aria-pressed="true"] { background: var(--seal); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {

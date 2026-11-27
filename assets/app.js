@@ -4117,6 +4117,7 @@
     if (!R) return (CAN_EDIT ? '<div class="rtbar"><div><b>선생님만 보여요</b><span>여기서 바로 루틴을 만들 수 있어요</span></div><div class="rtbar-b"><button type="button" class="rtb" data-rt="createcopy">다른 회원 루틴 복사</button><button type="button" class="rtb fill" data-rt="create">✎ 새 루틴 만들기</button></div></div>' : '') +
       '<section>' + head("", "주간 루틴", "") + '<div class="panel empty"><h3>루틴이 아직 없어요</h3><p>선생님이 곧 올려드릴게요</p></div></section>' + remember();
     var tk = todayKey(), ED = !!RT_EDIT;
+    document.documentElement.classList.toggle("rt-editing", ED);   /* 고치는 중엔 펌핑이 버튼이 저장 버튼을 가려서 숨김 (2026-11-27) */
     sel = sel || tk;
     view.setAttribute("data-day", sel);
     var h = wkSeg("routine") + rtTopBar() + '<div class="hero"><div class="hero-main split"><div class="hero-l">' +
@@ -4126,6 +4127,7 @@
       R.plan.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join("") + '</ul></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + esc(R.key_point) + '</p></div></div>';
     var W2 = WK2 && !ED;   /* 2026-11-27 운동 탭 리메이크(시험 중) */
+    if (WK2 && ED) h = '<div class="w2-top"><h1>루틴 고치기</h1><span>' + esc(R.title) + ' · ' + esc(R.version) + '</span></div>' + rtTopBar();
     if (W2) h = '<div class="w2-top"><h1>운동</h1><span>' + esc(R.title) + ' · ' + esc(R.version) + '</span></div>' + rtTopBar();
 
     /* 2026-11-14 장동욱 "1·2 항목 합치기, 종목은 스크롤 없이 한눈에": 일주일 줄을 그날 운동 칸 안 맨 위로, 종목 카드는 작게(.ex-list.cmp) */
@@ -4168,6 +4170,8 @@
         (d.cardio && R.cardio ? '<div class="ex-list" style="margin-top:12px"><div class="ex cardio"><div class="ex-top"><span class="ex-ic">' + img("treadmill") + '</span><div><h3>마무리 유산소 ' + R.cardio.minutes + '분</h3><div class="tip">' + esc(R.cardio.options) + '</div></div></div></div></div>' : '');
     } else if (W2) {
       h += w2List(d, sel, chkDate(sel), tk);
+    } else if (WK2 && ED) {
+      h += w2EditList(d, sel);
     } else {
       h += '<div class="flow1"><span><b>①</b> 스트레칭 10분</span><i>›</i><span><b>②</b> 웨이트 ' + d.items.length + '종목</span><i>›</i><span><b>③</b> 유산소 ' + (d.cardio && R.cardio ? R.cardio.minutes + '분' : '없음') + '</span></div>';
       var ckD = ED ? null : chkDate(sel);
@@ -4579,6 +4583,134 @@
   }, true);
   document.addEventListener("keydown", function (e) {
     if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".w2c[data-w2i]")) { e.preventDefault(); e.target.click(); }
+  });
+
+  /* ---- WK2 선생님 루틴 고치기 (2026-11-27 장동욱 "선생님 루틴 고치기도 편하게 리메이크 — 무게·횟수 넣기, 종목 찾기, 버튼 많음, 순서 옮기기 + 회원님이 했던 종목 위주 추천 로테이션")
+     고치는 중(RT_EDIT)이고 WK2면 종목 카드가 .w2e로: 세트 줄을 누르면 카드 안에서 −/+·직접 입력·빠른 세트, ⋯ 하나에 나머지(비슷한 종목으로 바꾸기·위아래·자세히·복제/옮기기·삭제).
+     종목 추가는 rtPicker 맨 위 "추천"(w2Rec — 이날 부위에서 회원님이 했던 종목, 오래 안 한 것부터) → 누르면 바로 들어감. 꾹 눌러 끌기·저장은 예전 것 그대로(.ex.rtdr·rtSaveSheet) */
+  var W2E_OPEN = -1, W2E_DAY = null;
+  function w2Cat(n) { n = String(n || "").replace(/\s*\(.*\)\s*$/, ""); for (var i = 0; i < RT_CAT.length; i++) if (RT_CAT[i][1].indexOf(n) >= 0) return RT_CAT[i][0]; return ""; }
+  function w2DayCats(d) {
+    var p = String((d && d.part) || "").replace(/힙/g, "엉덩이"), out = RT_CAT.map(function (c) { return c[0]; }).filter(function (c) { return c !== "유산소" && p.indexOf(c) >= 0; });
+    if (!out.length) (d.items || []).forEach(function (it) { var c = w2Cat(it.name); if (c && c !== "유산소" && out.indexOf(c) < 0) out.push(c); });
+    return out;
+  }
+  function w2DoneMap() {   /* 회원님이 했던 종목: {이름: {n: ✓한 횟수, last: 마지막 날짜, kg: 마지막 무게, src}} — ✓ 기록 + 복습지 + 지금 루틴 */
+    var m = {};
+    if (LG && LG.d) Object.keys(LG.d).sort().forEach(function (k) { LG.d[k].forEach(function (x) { var o = m[x[0]] = m[x[0]] || { n: 0 }; o.n++; o.last = k; if (x[1]) o.kg = x[1]; }); });
+    (M.forms || []).forEach(function (f) { var o = m[f.exercise] = m[f.exercise] || { n: 0 }; o.form = 1; });
+    rtMine().forEach(function (it) { var o = m[it.name] = m[it.name] || { n: 0 }; o.mine = it; });
+    return m;
+  }
+  function w2Rec(d, cats, skip) {
+    var m = w2DoneMap(), has = {}; (d.items || []).forEach(function (it) { has[it.name] = 1; }); if (skip) has[skip] = 1;
+    var out = Object.keys(m).filter(function (n) { return !has[n] && cats.indexOf(w2Cat(n)) >= 0; }).map(function (n) {
+      var o = m[n], p = o.last ? o.last.split("-") : null;
+      return { n: n, last: o.last || "", s: o.n ? o.n + "번 · 마지막 " + (+p[1]) + "/" + (+p[2]) : o.form ? "복습지 있음" : "다른 요일 루틴", o: o };
+    });
+    out.sort(function (a, b) { return (a.last ? 0 : 1) - (b.last ? 0 : 1) || (a.last < b.last ? -1 : a.last > b.last ? 1 : 0); });   /* 오래 안 한 것부터 */
+    return out.slice(0, 8);
+  }
+  function w2NewItem(e) {
+    var o = w2DoneMap()[e.name] || {}, k = o.kg || null;
+    return { name: e.name, en: e.en || rtEnOf(e.name), tip: e.tip || "", sets: e.sets && e.sets.length ? clone(e.sets) : isCardio(e.name) ? [["20분", null]] : [[15, k], [12, k], [10, k]] };
+  }
+  function w2EditList(d, sel) {
+    if (W2E_DAY !== sel) { W2E_DAY = sel; W2E_OPEN = -1; }
+    var R = M.routine;
+    var h = '<p class="w2e-hint">세트 줄을 누르면 바로 고쳐요 · 카드를 <b>꾹</b> 눌러 끌면 순서·요일이 바뀌어요</p><div class="w2-list ed">';
+    h += d.items.map(function (it, i) {
+      var open = i === W2E_OPEN, step = w2Step(it) || 5;
+      var chips = it.sets.map(function (s) { return '<span><b>' + (typeof s[0] === "string" ? esc(s[0]) : s[0] + '회') + '</b>' + (s[1] == null ? (isCardio(it.name) ? '' : '맨몸') : s[1] + 'kg') + '</span>'; }).join("");
+      var ed = !open ? '' : '<div class="w2e-ed">' + it.sets.map(function (s, j) {
+        var rOk = typeof s[0] === "number";
+        return '<div class="w2-er"><span>' + (j + 1) + '세트</span>' +
+          '<div class="w2-st">' + (rOk ? '<button type="button" data-w2a="r-" data-i="' + i + '" data-j="' + j + '" aria-label="횟수 줄이기">−</button><input data-w2n="r" data-i="' + i + '" data-j="' + j + '" inputmode="numeric" value="' + s[0] + '" aria-label="' + (j + 1) + '세트 횟수"><small>회</small><button type="button" data-w2a="r+" data-i="' + i + '" data-j="' + j + '" aria-label="횟수 늘리기">+</button>' :
+            '<input data-w2n="r" data-i="' + i + '" data-j="' + j + '" value="' + esc(s[0]) + '" aria-label="' + (j + 1) + '세트 횟수·시간">') + '</div>' +
+          '<div class="w2-st"><button type="button" data-w2a="k-" data-i="' + i + '" data-j="' + j + '" aria-label="무게 줄이기">−</button><input data-w2n="k" data-i="' + i + '" data-j="' + j + '" inputmode="decimal" value="' + (s[1] == null ? '' : s[1]) + '" placeholder="맨몸" aria-label="' + (j + 1) + '세트 무게"><small>kg</small><button type="button" data-w2a="k+" data-i="' + i + '" data-j="' + j + '" aria-label="무게 늘리기">+</button></div>' +
+          '<button type="button" class="w2e-x" data-w2a="sx" data-i="' + i + '" data-j="' + j + '" aria-label="' + (j + 1) + '세트 빼기"' + (it.sets.length > 1 ? '' : ' disabled') + '>×</button></div>';
+      }).join("") +
+        '<div class="w2e-row"><button type="button" data-w2a="sadd" data-i="' + i + '">+ 세트</button><button type="button" data-w2a="ak-" data-i="' + i + '">전체 −' + step + 'kg</button><button type="button" data-w2a="ak+" data-i="' + i + '">전체 +' + step + 'kg</button></div>' +
+        '<div class="w2e-pre"><small>빠른 세트</small>' + [["15·12·10·8", "15,12,10,8"], ["12 × 3", "12,12,12"], ["12 × 4", "12,12,12,12"], ["15 × 3", "15,15,15"], ["20·15", "20,15"]].map(function (p) { return '<button type="button" data-w2a="pre" data-i="' + i + '" data-p="' + p[1] + '">' + p[0] + '</button>'; }).join("") + '</div>' +
+        '<div class="w2e-pre"><small>구분</small>' + [["", "없음"], ["워밍업", "워밍업"], ["선행", "선행"], ["메인", "메인"]].map(function (t) { return '<button type="button" data-w2a="tag" data-i="' + i + '" data-v="' + t[0] + '" aria-pressed="' + ((it.tag || "") === t[0]) + '">' + t[1] + '</button>'; }).join("") + '</div></div>';
+      return '<div class="ex rtdr w2e' + (open ? ' open' : '') + (it.tag === "메인" ? ' main' : '') + '" data-di="' + i + '"><div class="w2e-top"><span class="rtgrip" aria-hidden="true"><i></i><i></i><i></i></span>' + w2Tile(it, i) +
+        '<div class="w2b"><h3><span>' + esc(it.name) + '</span>' + tagChip(it.tag) + '</h3><p class="w2l">' + esc(it.tip || "팁 없음") + '</p></div>' +
+        '<button type="button" class="w2e-more" data-w2a="more" data-i="' + i + '" aria-label="' + esc(it.name) + ' 더보기">⋯</button></div>' +
+        '<button type="button" class="w2e-sets" data-w2a="open" data-i="' + i + '" aria-expanded="' + open + '">' + chips + '<i>' + (open ? '접기' : '고치기') + '</i></button>' + ed + '</div>';
+    }).join("");
+    h += '<button type="button" class="rtadd" data-w2a="add">+ 종목 추가</button>';
+    if (d.cardio && R.cardio) h += '<div class="w2c cardio"><span class="w2t ico">' + img("treadmill", "icn", true) + '</span><div class="w2b"><h3><span>마무리 유산소 ' + R.cardio.minutes + '분</span></h3><p class="w2l">' + esc(R.cardio.options || "") + ' · "이날 정보"에서 켜고 꺼요</p></div></div>';
+    return h + '</div>';
+  }
+  function w2eNum(v) { v = String(v).trim().replace(",", "."); return v === "" || isNaN(+v) ? null : Math.max(0, Math.round(+v * 10) / 10); }
+  function w2eMenu(d, dk, i) {
+    var it = d.items[i], cats = [w2Cat(it.name)].filter(Boolean), n = d.items.length;
+    var O = [["swap", "비슷한 종목으로 바꾸기", "회원님이 했던 종목부터 · 세트는 그대로"], ["up", "위로 한 칸", ""], ["down", "아래로 한 칸", ""], ["item", "자세히 고치기", "이름 · 팁 · 복습지 연결"], ["mv", "복제 · 다른 날로 옮기기", ""], ["del", "삭제", "이날에서 빼요"]]
+      .filter(function (o) { return !(o[0] === "up" && !i) && !(o[0] === "down" && i >= n - 1) && !(o[0] === "swap" && !cats.length); });
+    var sh = rtSheet(it.name, '<div class="mv-opts">' + O.map(function (o) { return '<button type="button" class="mv-opt' + (o[0] === "del" ? ' w2e-del' : '') + '" data-o="' + o[0] + '"><b>' + o[1] + '</b>' + (o[2] ? '<small>' + o[2] + '</small>' : '') + '</button>'; }).join("") + '</div>', function () {}, false);
+    sh.addEventListener("click", function (e) {
+      var b = e.target.closest(".mv-opt"); if (!b) return;
+      var a = b.getAttribute("data-o"); sh.close();
+      if (a === "up" || a === "down") { var j = a === "up" ? i - 1 : i + 1, t = d.items[i]; d.items[i] = d.items[j]; d.items[j] = t; if (W2E_OPEN === i) W2E_OPEN = j; else if (W2E_OPEN === j) W2E_OPEN = i; rtDirty(); }
+      else if (a === "del") { d.items.splice(i, 1); W2E_OPEN = -1; rtDirty(); attToast(it.name + " 뺐어요 · 취소하려면 아래 '취소'"); }
+      else if (a === "item") rtItemSheet(dk, i);
+      else if (a === "mv") rtMoreSheet(dk, i);
+      else if (a === "swap") w2eSwap(d, i, cats);
+    });
+  }
+  function w2eSwap(d, i, cats) {
+    var it = d.items[i], rec = w2Rec(d, cats, it.name), recN = {}; rec.forEach(function (r) { recN[r.n] = 1; });
+    var has = {}; d.items.forEach(function (x) { has[x.name] = 1; });
+    var rest = []; RT_CAT.forEach(function (c) { if (cats.indexOf(c[0]) >= 0) c[1].forEach(function (n) { if (!has[n] && !recN[n]) rest.push(n); }); });
+    function row(n, s) { return '<button type="button" class="rtp-t" data-n="' + esc(n) + '"><span class="rtp-ic">' + img(iconOf({ name: n }), "", true) + '</span><span class="rtp-n">' + esc(n) + (s ? '<small class="w2e-s">' + esc(s) + '</small>' : '') + '</span></button>'; }
+    var sh = rtSheet(it.name + " → 바꾸기", '<div class="rtp-list">' + (rec.length ? '<div class="rtp-sec"><h4>회원님이 했던 종목 · 오래 안 한 것부터</h4><div class="rtp-grid">' + rec.map(function (r) { return row(r.n, r.s); }).join("") + '</div></div>' : '') +
+      (rest.length ? '<div class="rtp-sec"><h4>' + esc(cats.join(" · ")) + ' 다른 종목</h4><div class="rtp-grid">' + rest.map(function (n) { return row(n, ""); }).join("") + '</div></div>' : '') + '</div>', null, false);
+    sh.classList.add("rtp");
+    sh.querySelector(".rtp-list").addEventListener("click", function (e) {
+      var t = e.target.closest(".rtp-t"); if (!t) return;
+      var n = t.getAttribute("data-n"), o = w2DoneMap()[n] || {}, src = o.mine;
+      var out = { name: n, en: (src && src.en) || rtEnOf(n), tip: src ? src.tip || "" : "", sets: clone(it.sets) };
+      if (it.tag) out.tag = it.tag;
+      if (o.kg && !isCardio(n)) out.sets = out.sets.map(function (s) { return [s[0], s[1] == null ? null : o.kg]; });
+      d.items[i] = out; W2E_OPEN = i; sh.close(); rtDirty();
+      attToast(n + "(으)로 바꿨어요 · " + (o.kg ? "무게는 지난 기록 " + o.kg + "kg" : "무게를 확인해 주세요"));
+    });
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-w2a]");
+    if (!b || b.disabled || !RT_EDIT || !WK2) return;
+    var a = b.getAttribute("data-w2a"), i = +b.getAttribute("data-i"), j = +b.getAttribute("data-j"), dk = view.getAttribute("data-day"), d = dk && dayByKey(dk);
+    if (!d || !d.items) return;
+    if (a === "add") {
+      var cats = w2DayCats(d);
+      rtPicker(dayName(dk) + " · 종목 추가", function (x) {
+        if (!x) { rtItemSheet(dk, -1, null); return; }
+        d.items.push(w2NewItem(x)); W2E_OPEN = d.items.length - 1; rtDirty(); attToast(x.name + " 넣었어요 · 세트를 확인해 주세요");
+      }, true, w2Rec(d, cats));
+      return;
+    }
+    var it = d.items[i]; if (!it) return;
+    if (a === "open") { W2E_OPEN = W2E_OPEN === i ? -1 : i; rerender(); return; }
+    if (a === "more") { w2eMenu(d, dk, i); return; }
+    var step = w2Step(it) || 5, s = it.sets[j];
+    if (a === "tag") { var v = b.getAttribute("data-v"); if (v) it.tag = v; else delete it.tag; }
+    else if (a === "r-" || a === "r+") s[0] = Math.max(1, Math.min(100, s[0] + (a === "r+" ? 1 : -1)));
+    else if (a === "k-" || a === "k+") { var k = (s[1] || 0) + (a === "k+" ? step : -step); s[1] = k <= 0 ? null : Math.round(k * 10) / 10; }
+    else if (a === "sx") it.sets.splice(j, 1);
+    else if (a === "sadd") { var l = it.sets[it.sets.length - 1]; it.sets.push([l[0], l[1]]); }
+    else if (a === "ak-" || a === "ak+") it.sets.forEach(function (x) { if (x[1] != null || a === "ak+") { var k2 = (x[1] || 0) + (a === "ak+" ? step : -step); x[1] = k2 <= 0 ? null : Math.round(k2 * 10) / 10; } });
+    else if (a === "pre") { var k0 = it.sets.map(function (x) { return x[1]; }), rp = b.getAttribute("data-p").split(","); it.sets = rp.map(function (r, q) { return [+r, k0[q] !== undefined ? k0[q] : (k0.length ? k0[k0.length - 1] : null)]; }); }
+    else return;
+    rtDirty();
+  });
+  document.addEventListener("change", function (e) {
+    var n = e.target.closest && e.target.closest("input[data-w2n]");
+    if (!n || !RT_EDIT || !WK2) return;
+    var d = dayByKey(view.getAttribute("data-day")), it = d && d.items && d.items[+n.getAttribute("data-i")], s = it && it.sets[+n.getAttribute("data-j")];
+    if (!s) return;
+    if (n.getAttribute("data-w2n") === "k") s[1] = w2eNum(n.value) || null;
+    else { var v = n.value.trim(); if (!v) return; s[0] = /^\d+$/.test(v) ? +v : v; }
+    rtDirty();
   });
 
   /* ---------------- 식단 */
@@ -5436,7 +5568,7 @@
     ((M.routine && M.routine.days) || []).forEach(function (d) { (d.items || []).forEach(function (it) { if (it.name && !seen[it.name]) { seen[it.name] = 1; out.push(it); } }); });
     return out;
   }
-  function rtPicker(title, onPick, allowFree) {
+  function rtPicker(title, onPick, allowFree, rec) {
     var mine = rtMine(), mineBy = {};
     mine.forEach(function (it) { mineBy[it.name] = it; });
     function tile(n) {
@@ -5446,6 +5578,8 @@
     var body = '<input class="rtp-q" type="search" placeholder="이름으로 찾기 (예: 로우, 레터럴)" aria-label="종목 이름으로 찾기">' +
       '<div class="rts-chips rtp-f">' + chips.map(function (c, i) { return '<button type="button" data-g="' + c[0] + '" aria-pressed="' + (i === 0) + '">' + c[1] + '</button>'; }).join("") + '</div>' +
       '<div class="rtp-list">' +
+      (rec && rec.length ? '<div class="rtp-sec" data-g="rec"><h4>추천 · 회원님이 했던 종목 (오래 안 한 것부터)</h4><div class="rtp-grid">' + rec.map(function (r) {
+        return '<button type="button" class="rtp-t" data-n="' + esc(r.n) + '"><span class="rtp-ic">' + img(iconOf({ name: r.n }), "", true) + '</span><span class="rtp-n">' + esc(r.n) + '<small class="w2e-s">' + esc(r.s) + '</small></span></button>'; }).join("") + '</div></div>' : '') +
       (mine.length ? '<div class="rtp-sec" data-g="mine"><h4>이 회원님 루틴에 있는 종목</h4><div class="rtp-grid">' + mine.map(function (it) { return tile(it.name); }).join("") + '</div></div>' : '') +
       RT_CAT.map(function (c) { return '<div class="rtp-sec" data-g="' + c[0] + '"><h4>' + c[0] + '</h4><div class="rtp-grid">' + c[1].map(tile).join("") + '</div></div>'; }).join("") +
       '<p class="rtp-none" hidden>찾는 종목이 없어요. 아래 "직접 입력"으로 넣어 주세요</p></div>' +
@@ -5457,7 +5591,7 @@
       var k = fnorm(q.value), any = false;
       Array.prototype.forEach.call(sh.querySelectorAll(".rtp-sec"), function (sec) {
         var gs = sec.getAttribute("data-g"), vis = 0;
-        var secOn = k ? gs !== "mine" : (!g || g === gs);
+        var secOn = k ? gs !== "mine" && gs !== "rec" : (!g || g === gs);
         Array.prototype.forEach.call(sec.querySelectorAll(".rtp-t"), function (t) {
           var on = secOn && (!k || fnorm(t.getAttribute("data-n")).indexOf(k) >= 0);
           t.hidden = !on; if (on) vis++;
