@@ -106,3 +106,5 @@ D .mu-c { background: var(--card2); color: var(--ink); }
 D .mu-z button { background: var(--card2); color: var(--ink); }
 D .mu-z button.on { background: var(--ink); color: var(--page); }
 D .mu-bt { background: #3A3A42; }
+  /* 2026-11-27 펌핑이 흰 원 뺀 뒤 — 다크에서 검은 덤벨·뿔이 바탕에 묻혀서 얇은 밝은 테두리 */
+  D .pump-fab .pf-bell rect, D .pump-fab .pf-horn, D .pump-fab .pf-tail path:last-child { stroke: rgba(255, 255, 255, .6); stroke-width: 1.6; paint-order: stroke; }
