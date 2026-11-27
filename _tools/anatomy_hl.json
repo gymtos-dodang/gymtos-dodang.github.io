@@ -2428,5 +2428,29 @@
 "forearm_ext": "S",
 "rhomboid": "S"
 }
+},
+"m/kyeongjin-bkwzy9/media/form-1127-monster-glute/anatomy.png": {
+"sex": "F",
+"front": {},
+"back": {
+"glute_max": "P",
+"glute_med": "S",
+"ham_bf": "S",
+"ham_st": "S"
+}
+},
+"m/kyeongjin-bkwzy9/media/form-1127-hip-thrust/anatomy.png": {
+"sex": "F",
+"front": {
+"rectus_fem": "S",
+"vastus_lat": "S",
+"vastus_med": "S"
+},
+"back": {
+"glute_med": "S",
+"glute_max": "P",
+"ham_bf": "S",
+"ham_st": "S"
+}
 }
 }
