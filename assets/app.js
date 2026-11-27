@@ -4646,6 +4646,7 @@
   /* 추천 루틴 (2026-11-27 장동욱 "추천루틴 버튼 하나 만들어서 누르면 하체 루틴을 아예 랜덤으로"): 이날 종목을 같은 부위의 다른 종목으로 한 번에 바꿈.
      워밍업·선행은 그대로(레그 익스텐션·이너/아웃타이 규칙), 메인·나머지만 바꿈 · 세트·구분은 자리 그대로 · 회원님이 했던 종목을 먼저(3번 중 2번) 뽑고 모자라면 종목 목록에서 · 무게는 ✓ 기록이 있으면 그 무게, 없으면 그대로 두고 확인하라고 알림 */
   function w2eKeep(it) { return it.tag === "워밍업" || /이너타이|아웃타이/.test(it.name) || isCardio(it.name); }   /* 워밍업·이너/아웃타이 선행·유산소는 안 바꿈 */
+  var W2E_BIG = { "가슴": /프레스/, "등": /풀다운|로우|친업/, "어깨": /프레스/, "하체": /스쿼트|레그프레스|핵프레스/, "엉덩이": /힙쓰러스트/ };
   function w2eShuffle(d) {
     var m = w2DoneMap(), used = {}, n = 0, noKg = 0;
     d.items.forEach(function (it) { if (w2eKeep(it)) used[it.name] = 1; });
@@ -4656,6 +4657,10 @@
       var c = w2Cat(it.name); if (!c) { used[it.name] = 1; return; }
       var all = []; RT_CAT.forEach(function (x) { if (x[0] === c) all = x[1].filter(function (nm) { return !used[nm] && !now[nm]; }); });
       var done = Object.keys(m).filter(function (nm) { return !used[nm] && !now[nm] && w2Cat(nm) === c; });
+      if (it.tag === "메인" && W2E_BIG[c]) {   /* 메인 자리는 큰 종목에서만 (2026-11-27 "ㅇㅋ") — 없으면 아무 종목 */
+        var bigA = all.filter(function (x) { return W2E_BIG[c].test(x); }), bigD = done.filter(function (x) { return W2E_BIG[c].test(x); });
+        if (bigA.length || bigD.length) { all = bigA; done = bigD; }
+      }
       var nm = done.length && (Math.random() < .67 || !all.length) ? pick(done) : all.length ? pick(all) : null;
       if (!nm) { used[it.name] = 1; return; }
       used[nm] = 1;
