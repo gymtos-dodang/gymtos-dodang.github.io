@@ -3037,6 +3037,109 @@ button.pump-ci { cursor: pointer; }
 .pump-ci b { flex: none; color: #E1141E; font-size: 18px; line-height: 1; }
 .pump-tip.is-act { pointer-events: auto; cursor: pointer; }
 
+/* ===== 운동 탭 리메이크 WK2 (2026-11-27 장동욱 "운동 항목 대 리메이크" — 시험 중: site.js wk2 또는 ?wk2=1) */
+:root { --w2a: #E1141E; --w2a-ink: #fff; } :root[data-sex="F"] { --w2a: #D6204F; }
+.w2-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 2px 2px 12px; }
+.w2-top h1 { margin: 0; font-size: 24px; font-weight: 900; color: var(--ink); }
+.w2-top span { font-size: 12px; color: var(--sub); font-weight: 500; text-align: right; }
+.w2-hero { background: var(--hero); color: #fff; border-radius: 20px; padding: 16px; display: grid; gap: 12px; margin-top: 12px; box-shadow: 0 14px 28px -18px var(--hero-sh, rgba(0,0,0,.4)); }
+.w2-ht { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.w2-ht small { font-size: 11px; font-weight: 700; color: var(--hero-eye); letter-spacing: .3px; }
+.w2-ht h2 { margin: 2px 0; font-size: 22px; font-weight: 900; color: #fff; }
+.w2-ht p { margin: 0; font-size: 12px; color: var(--hero-sub); }
+.w2-hn { text-align: right; flex: none; } .w2-hn b { font-size: 22px; font-weight: 900; } .w2-hn b i { font-style: normal; font-size: 13px; font-weight: 500; color: var(--hero-sub); }
+.w2-hn span { display: block; font-size: 11px; color: var(--hero-sub); }
+.w2-bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,.2); overflow: hidden; } .w2-bar i { display: block; height: 100%; background: var(--hero-go); border-radius: 3px; transition: width .4s ease; }
+.w2-go { border: 0; border-radius: 14px; min-height: 48px; background: var(--hero-go); color: var(--hero-go-ink); font: 700 15px var(--font); cursor: pointer; }
+.w2-hint { margin: 0; font-size: 12px; color: var(--hero-sub); }
+.w2-kp { background: var(--paper); border-radius: 14px; padding: 10px 12px; margin-top: 8px; display: flex; gap: 10px; align-items: baseline; }
+.w2-kp small { font-size: 10px; font-weight: 900; color: var(--w2a); flex: none; letter-spacing: .4px; } .w2-kp p { margin: 0; font-size: 13px; font-weight: 500; color: var(--ink); }
+.w2-coach { background: var(--gold-bg); color: #5C3F00; border-radius: 14px; padding: 10px 12px; margin-top: 8px; display: grid; gap: 2px; font-size: 12px; } .w2-coach b { font-size: 11px; }
+.w2-lh { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 16px 2px 8px; } .w2-lh b { font-size: 14px; color: var(--ink); } .w2-lh span { font-size: 11px; color: var(--sub); }
+.w2-list { display: grid; gap: 8px; }
+.w2c { background: var(--paper); border-radius: 16px; padding: 10px; display: flex; gap: 11px; align-items: center; min-height: 74px; box-sizing: border-box; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.w2c.cardio { cursor: default; min-height: 0; } .w2c.done { background: var(--good-tint); } .w2c.next { box-shadow: inset 0 0 0 2px var(--w2a); }
+.w2t { width: 54px; height: 54px; border-radius: 12px; background: var(--primary) center/cover no-repeat; color: #fff; display: flex; align-items: center; justify-content: center; flex: none; position: relative; overflow: hidden; }
+.w2t b { font-size: 20px; font-weight: 900; line-height: 1; }
+.w2t.vid b { position: absolute; left: 0; top: 0; font-size: 11px; padding: 3px 6px; background: rgba(14,14,20,.72); border-radius: 0 0 8px 0; }
+.w2t.vid i { width: 22px; height: 22px; border-radius: 11px; background: rgba(14,14,20,.55); position: relative; }
+.w2t.vid i::after { content: ""; position: absolute; left: 8px; top: 6px; border: 5px solid transparent; border-left: 8px solid #fff; border-right: 0; }
+.w2c.done .w2t:not(.vid) { background-color: var(--good); } .w2c.cardio .w2t { background: var(--tint2); color: var(--ink); }
+.w2b { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.w2b h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px; min-width: 0; } .w2b h3 > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; } .w2b h3 .tagc { flex: none; }
+.w2rx { margin: 0; font-size: 12px; font-weight: 500; color: var(--ink); } .w2rx em { font-style: normal; font-size: 10px; font-weight: 700; color: #5C3F00; background: var(--gold-bg); border-radius: 6px; padding: 1px 6px; margin-left: 2px; }
+.w2l { margin: 0; font-size: 11px; color: var(--sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.w2ar { flex: none; font-size: 20px; color: var(--faint); padding: 0 4px; }
+.w2-list .exchk.w2k { position: static; transform: none; flex: none; width: 44px; height: 44px; border-radius: 22px; padding: 0; cursor: pointer; border: 2px solid #D0D0D6; background: var(--paper); display: flex; align-items: center; justify-content: center; }
+.w2-list .exchk.w2k svg { width: 20px; height: 20px; fill: none; stroke: #B4B4BC; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.w2-list .exchk.w2k[aria-pressed="true"] { border: 0; background: #1E9E55; } .w2-list .exchk.w2k[aria-pressed="true"] svg { stroke: #fff; } .w2-list .exchk.w2k.pop { animation: chkPop .32s ease both; }
+.w2-forms { display: flex; justify-content: space-between; align-items: center; background: var(--paper); border-radius: 16px; padding: 14px; margin-top: 14px; text-decoration: none; color: var(--ink); min-height: 48px; box-sizing: border-box; }
+.w2-forms b { font-size: 14px; } .w2-forms span { font-size: 13px; color: var(--sub); font-weight: 700; }
+/* 겹쳐 뜨는 화면 */
+.w2ov { position: fixed; inset: 0; z-index: 90; background: var(--page); color: var(--ink); display: flex; flex-direction: column; opacity: 0; translate: 0 14px; transition: opacity .22s ease, translate .22s ease; padding-top: env(safe-area-inset-top); font-family: var(--font); }
+.w2ov.on { opacity: 1; translate: 0 0; }
+.w2-body { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 4px 16px 18px; display: flex; flex-direction: column; gap: 11px; } .w2-body > * { flex: none; }
+.w2-dh { display: flex; align-items: center; gap: 6px; padding: 8px 12px 8px 6px; }
+.w2-dh h2 { margin: 0; font-size: 19px; font-weight: 900; } .w2-dh small { font-size: 11px; color: var(--sub); }
+.w2-x { width: 44px; height: 44px; border: 0; background: none; display: flex; align-items: center; justify-content: center; cursor: pointer; flex: none; }
+.w2-x svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; color: var(--ink); }
+.w2-vid { position: relative; border-radius: 18px; overflow: hidden; background: #0E0E12; } .w2-vid video { display: block; width: 100%; max-height: 46vh; object-fit: contain; background: #0E0E12; }
+.w2-ang { position: absolute; left: 10px; bottom: 10px; display: flex; gap: 6px; }
+.w2-ang button { border: 0; border-radius: 10px; min-height: 34px; padding: 0 12px; font: 700 12px var(--font); background: rgba(40,40,48,.85); color: #fff; cursor: pointer; } .w2-ang button[aria-pressed="true"] { background: #fff; color: #1A1A1E; }
+.w2-full { position: absolute; right: 10px; bottom: 10px; font-size: 11px; font-weight: 700; color: #fff; background: rgba(40,40,48,.85); border-radius: 10px; padding: 9px 11px; text-decoration: none; }
+.w2-novid { background: var(--paper); border-radius: 18px; padding: 14px; display: flex; align-items: center; gap: 14px; } .w2-novid .icn { width: 84px; height: 84px; flex: none; } .w2-novid p { margin: 0; font-size: 14px; font-weight: 700; } .w2-novid small { font-size: 12px; font-weight: 400; color: var(--sub); }
+.w2-card { background: var(--paper); border-radius: 16px; padding: 12px; display: grid; gap: 9px; }
+.w2-ch { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; } .w2-ch b { font-size: 13px; flex: none; } .w2-ch span { text-align: right; } .w2-ch span { font-size: 11px; color: var(--sub); }
+.w2-sets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; } .w2-sets.many { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.w2-sets > div { background: var(--tint); border-radius: 12px; padding: 8px 0; text-align: center; display: grid; gap: 1px; }
+.w2-sets small { font-size: 10px; font-weight: 700; color: var(--sub); } .w2-sets b { font-size: 20px; font-weight: 900; line-height: 1.15; } .w2-sets b i { font-style: normal; font-size: 11px; } .w2-sets em { font-style: normal; font-size: 12px; font-weight: 700; }
+.w2-sets.main > div { background: var(--gold-bg); } .w2-sets.main small, .w2-sets.main b { color: #7A5200; } .w2-sets.main em { color: #3D2A00; }
+.w2-ed { margin: 0; font-size: 11px; color: #5C3F00; background: var(--gold-bg); border-radius: 10px; padding: 7px 10px; }
+.w2-eb { display: flex; gap: 8px; } .w2-eb > * { flex: 1; }
+.w2-b1, .w2-b2, .w2-b3 { border: 0; border-radius: 14px; min-height: 48px; font: 700 15px var(--font); cursor: pointer; padding: 0 12px; }
+.w2-b1 { background: var(--w2a); color: #fff; } .w2-b2 { background: var(--tint); color: var(--ink); font-size: 13px; min-height: 44px; } .w2-b3 { background: rgba(255,255,255,.12); color: #fff; flex: 0 0 96px !important; font-size: 13px; }
+.w2-tip { font-size: 12px; background: var(--tint); border-radius: 10px; padding: 8px 10px; line-height: 1.5; } .w2-tip b { color: var(--w2a); margin-right: 6px; }
+.w2-edit { display: grid; gap: 8px; } .w2-er { display: grid; grid-template-columns: 40px 1fr 1fr; gap: 8px; align-items: center; } .w2-er > span { font-size: 12px; font-weight: 700; color: var(--sub); }
+.w2-st { display: flex; align-items: center; justify-content: space-between; background: var(--tint); border-radius: 12px; min-height: 46px; }
+.w2-st button { width: 44px; height: 46px; border: 0; background: none; font: 900 20px var(--font); color: var(--ink); cursor: pointer; } .w2-st b { font-size: 16px; font-weight: 900; flex: 1; text-align: center; } .w2-st small { font-size: 11px; font-weight: 500; }
+.w2-en, .w2-no { margin: 0; font-size: 11px; color: var(--sub); } .w2-no { font-size: 12px; padding: 6px 0; }
+.w2-mu { display: flex; gap: 12px; align-items: center; } .w2-mu img { width: 96px; border-radius: 10px; flex: none; } .w2-mu p { margin: 0 0 6px; font-size: 12px; line-height: 1.5; }
+.w2-mu em { font-style: normal; font-size: 11px; font-weight: 700; background: var(--tint2); color: var(--ink); border-radius: 6px; padding: 2px 7px; margin-right: 6px; } .w2-mu em.p { background: var(--w2a); color: #fff; } .w2-mu .fg { color: var(--sub); }
+.w2-chart { display: flex; gap: 8px; align-items: flex-end; height: 92px; } .w2-chart > div { flex: 1; max-width: 56px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; height: 100%; }
+.w2-chart b { font-size: 11px; } .w2-chart i { width: 100%; border-radius: 6px 6px 2px 2px; background: var(--muted); } .w2-chart .now i { background: var(--w2a); } .w2-chart small { font-size: 10px; color: var(--sub); }
+.w2-up { margin: 0; font-size: 12px; font-weight: 700; color: var(--good); }
+.w2-foot { padding: 10px 16px calc(14px + env(safe-area-inset-bottom)); display: grid; gap: 8px; } .w2-foot p { margin: 0; font-size: 12px; color: #B9B9C2; text-align: center; }
+/* 오늘 운동 모드 (늘 어두운 화면) */
+.w2ov.w2s { background: #16161A; color: #fff; }
+.w2s-top { display: flex; align-items: center; justify-content: space-between; padding: 6px 16px; font-size: 13px; } .w2s-top button { border: 0; background: none; color: #B9B9C2; font: 500 13px var(--font); min-height: 44px; padding: 0; cursor: pointer; } .w2s-top span { color: #B9B9C2; }
+.w2s-seg { display: flex; gap: 5px; padding: 0 16px 10px; } .w2s-seg i { flex: 1; height: 5px; border-radius: 3px; background: #3A3A42; } .w2s-seg i.ok { background: #2E8B57; } .w2s-seg i.on { background: var(--w2a); }
+.w2s .w2-body { gap: 12px; } .w2s-nm h2 { margin: 0; font-size: 25px; font-weight: 900; color: #fff; } .w2s-nm p { margin: 4px 0 0; font-size: 13px; color: #B9B9C2; }
+.w2s-vb { border: 0; background: #26262D; border-radius: 16px; padding: 10px 12px; display: flex; align-items: center; gap: 12px; color: #fff; font-family: var(--font); text-align: left; cursor: pointer; }
+.w2s-vb .w2t { width: 46px; height: 46px; } .w2s-vb b { display: block; font-size: 13px; } .w2s-vb small { font-size: 11px; color: #B9B9C2; }
+.w2s-sets { display: grid; gap: 8px; }
+.w2s-set { background: #26262D; border-radius: 16px; padding: 10px 12px; display: flex; align-items: center; gap: 12px; min-height: 68px; box-sizing: border-box; }
+.w2s-set > span { font-size: 12px; font-weight: 700; color: #B9B9C2; width: 38px; flex: none; } .w2s-set > div { flex: 1; display: grid; gap: 2px; }
+.w2s-set b { font-size: 20px; font-weight: 900; } .w2s-set b i { font-style: normal; font-size: 14px; font-weight: 500; } .w2s-set small { font-size: 11px; color: #B9B9C2; }
+.w2s-set button { width: 48px; height: 48px; border-radius: 24px; border: 2px solid #6B6B76; background: none; display: flex; align-items: center; justify-content: center; cursor: pointer; flex: none; }
+.w2s-set button svg, .w2f-ok svg { width: 22px; height: 22px; fill: none; stroke: #6B6B76; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.w2s-set.ok { background: #1F3B2C; } .w2s-set.ok small, .w2s-set.ok > span { color: #9FD9B8; } .w2s-set.ok button { background: #2E8B57; border-color: #2E8B57; } .w2s-set.ok button svg { stroke: #fff; }
+.w2s-fix { border: 0; background: none; color: #B9B9C2; font: 500 12px var(--font); text-decoration: underline; min-height: 44px; cursor: pointer; }
+.w2s-rest { background: #26262D; border-radius: 16px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; } .w2s-rest b { font-size: 13px; flex: 1; }
+.w2s-clk { min-width: 62px; height: 44px; border-radius: 12px; border: 3px solid #3A3A42; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; flex: none; } .w2s-rest.on .w2s-clk { border-color: var(--w2a); }
+.w2s-rest button { border: 0; border-radius: 10px; min-height: 44px; padding: 0 12px; background: #3A3A42; color: #fff; font: 700 12px var(--font); cursor: pointer; flex: none; }
+.w2s .tagc { vertical-align: middle; }
+/* 끝 화면 */
+.w2f-top { background: var(--hero); color: #fff; padding: 26px 20px 22px; border-radius: 0 0 28px 28px; display: grid; gap: 6px; justify-items: center; text-align: center; margin-top: calc(-1 * env(safe-area-inset-top)); padding-top: calc(26px + env(safe-area-inset-top)); }
+.w2f-ok { width: 64px; height: 64px; border-radius: 32px; background: var(--hero-go); display: flex; align-items: center; justify-content: center; } .w2f-ok svg { width: 30px; height: 30px; stroke: var(--hero-go-ink); }
+.w2f-top small { font-size: 12px; font-weight: 700; color: var(--hero-eye); } .w2f-top h2 { margin: 0; font-size: 25px; font-weight: 900; color: #fff; } .w2f-top p { margin: 0; font-size: 13px; color: var(--hero-sub); }
+.w2f .w2-body { padding-top: 14px; }
+.w2f-st { display: flex; gap: 8px; } .w2f-st > div { flex: 1; background: var(--paper); border-radius: 16px; padding: 12px 0; text-align: center; } .w2f-st b { display: block; font-size: 22px; font-weight: 900; } .w2f-st b i { font-style: normal; font-size: 12px; } .w2f-st span { font-size: 11px; color: var(--sub); }
+.w2f-pr { background: var(--gold-bg); border-radius: 16px; padding: 12px 14px; display: flex; gap: 12px; align-items: center; color: #5C3F00; }
+.w2f-pr > span { width: 44px; height: 44px; border-radius: 22px; background: #8A5F00; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; flex: none; } .w2f-pr b { font-size: 14px; } .w2f-pr p { margin: 2px 0 0; font-size: 12px; }
+.w2f-cd { background: var(--paper); border-radius: 16px; padding: 12px 14px; display: grid; gap: 2px; box-shadow: inset 0 0 0 2px var(--w2a); } .w2f-cd b { font-size: 14px; } .w2f-cd span { font-size: 12px; color: var(--sub); }
+.w2f-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; } .w2f-row b { font-size: 12px; color: var(--sub); flex: none; }
+.w2f-fl { display: flex; gap: 8px; } .w2f-fl button { flex: 1; border: 0; border-radius: 12px; min-height: 46px; font: 700 13px var(--font); background: var(--tint); color: var(--ink); cursor: pointer; } .w2f-fl button[aria-pressed="true"] { background: var(--primary); color: #fff; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -3258,6 +3361,15 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .cmp-ctl .btn[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
 :where(html:not([data-theme="light"])) .cmp-ov .cmp-ctl .btn[aria-pressed="true"], :where(html:not([data-theme="light"])) .cmp-ov .cmp-ctl .btn[aria-pressed="true"]:hover { background: var(--paper); color: var(--ink); }
 :where(html:not([data-theme="light"])) .eb-tag.now { background: var(--seal); }
+:where(html:not([data-theme="light"])) .w2-coach { color: var(--ink); }
+:where(html:not([data-theme="light"])) .w2rx em { color: var(--ink); }
+:where(html:not([data-theme="light"])) .w2-list .exchk.w2k { border-color: var(--line); }
+:where(html:not([data-theme="light"])) .w2-ang button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+:where(html:not([data-theme="light"])) .w2-sets.main small, :where(html:not([data-theme="light"])) .w2-sets.main b { color: var(--ink); }
+:where(html:not([data-theme="light"])) .w2-sets.main em { color: var(--ink); }
+:where(html:not([data-theme="light"])) .w2-ed { color: var(--ink); }
+:where(html:not([data-theme="light"])) .w2f-pr { color: var(--ink); }
+:where(html:not([data-theme="light"])) .w2f-fl button[aria-pressed="true"] { background: var(--seal); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -3588,6 +3700,15 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .cmp-ctl .btn[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
 :where(html[data-theme="dark"]) .cmp-ov .cmp-ctl .btn[aria-pressed="true"], :where(html[data-theme="dark"]) .cmp-ov .cmp-ctl .btn[aria-pressed="true"]:hover { background: var(--paper); color: var(--ink); }
 :where(html[data-theme="dark"]) .eb-tag.now { background: var(--seal); }
+:where(html[data-theme="dark"]) .w2-coach { color: var(--ink); }
+:where(html[data-theme="dark"]) .w2rx em { color: var(--ink); }
+:where(html[data-theme="dark"]) .w2-list .exchk.w2k { border-color: var(--line); }
+:where(html[data-theme="dark"]) .w2-ang button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+:where(html[data-theme="dark"]) .w2-sets.main small, :where(html[data-theme="dark"]) .w2-sets.main b { color: var(--ink); }
+:where(html[data-theme="dark"]) .w2-sets.main em { color: var(--ink); }
+:where(html[data-theme="dark"]) .w2-ed { color: var(--ink); }
+:where(html[data-theme="dark"]) .w2f-pr { color: var(--ink); }
+:where(html[data-theme="dark"]) .w2f-fl button[aria-pressed="true"] { background: var(--seal); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {

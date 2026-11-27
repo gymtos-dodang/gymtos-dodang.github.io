@@ -18,8 +18,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <script>/* 페이지 넘어갈 때 부드럽게 (2026-11-12) */try{if(localStorage.getItem("ptcoach")||sessionStorage.getItem("ptcoach"))document.documentElement.classList.add("nosp")}catch(e){}addEventListener("pagereveal",function(e){if(!e.viewTransition)return;var d=null;try{d=sessionStorage.getItem("vtdir");sessionStorage.removeItem("vtdir")}catch(x){}var n=window.navigation&&navigation.activation;if(d==="back"||(d!=="fwd"&&n&&n.navigationType==="traverse"))document.documentElement.classList.add("vt-back");e.viewTransition.finished.then(function(){document.documentElement.classList.remove("vt-back")},function(){})});</script>
 <script>try{var _t=localStorage.getItem("ptnote:theme");if(_t==="dark"||_t==="light")document.documentElement.setAttribute("data-theme",_t)}catch(e){}</script>
-<link rel="stylesheet" href="/assets/style.css?v=2611261400">
-<script src="/assets/site.js?v=2611261400"></script>
+<link rel="stylesheet" href="/assets/style.css?v=2611271053">
+<script src="/assets/site.js?v=2611271053"></script>
 <style>
 .wrap { padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
 .sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -643,7 +643,7 @@ html[data-theme="dark"] .msh-p, html[data-theme="dark"] .csh-p { background: rgb
   </div>
 </aside>
 <script src="members.js"></script>
-<script src="/assets/memo.js?v=2611261400"></script>
+<script src="/assets/memo.js?v=2611271053"></script>
 <script>
 (function () {
   "use strict";
@@ -703,7 +703,7 @@ html[data-theme="dark"] .msh-p, html[data-theme="dark"] .csh-p { background: rgb
     for (var i = 0; i < R.days.length; i++) if (R.days[i].day === key) return !!R.days[i].rest;
     return false;
   }
-  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611261400) */
+  /* 회원 메모 (2026-11-12): 카드마다 📝 한 줄(고정 또는 최신 메모) — 누르면 메모 창(assets/memo.js?v=2611271053) */
   var MEMO = null;
   function memoRow(slug, name) {
     if (!window.PTMemo || !bnKey()) return "";
@@ -798,7 +798,7 @@ html[data-theme="dark"] .msh-p, html[data-theme="dark"] .csh-p { background: rgb
       info = '<span>이번 달 출석 <b>' + cnt + '회</b></span><span>마지막 <b>' + (last ? (+last.slice(5, 7)) + "/" + (+last.slice(8)) : "없음") + '</b></span>';
     }
     var R = M.routine || {};
-    info += '<span>루틴 <b>' + esc(R.version || "–") + (M._rted ? ' ✎' : '') + '</b></span><span>복습지 <b>' + (M.forms || []).length + '개</b>' + fvCount(slug, M, kv) + '</span>';
+    info += '<span>루틴 <b>' + esc(R.version || "–") + (M._rted ? ' ✎' : '') + '</b>' + rxCount(slug, kv) + '</span><span>복습지 <b>' + (M.forms || []).length + '개</b>' + fvCount(slug, M, kv) + '</span>';
     var jt = journeyText(M);
     var stKey = !days ? "wait" : on ? "on" : rest ? "rest" : "off";
     return '<div class="mcard ' + sex + '" data-name="' + esc(M.name) + '" data-cho="' + esc(cho(M.name)) + '" data-st="' + stKey + '"><a class="mtop" href="' + base + '#home"><span class="av ' + sex + '">' + esc(M.name.charAt(0)) + '</span>' +
@@ -808,6 +808,12 @@ html[data-theme="dark"] .msh-p, html[data-theme="dark"] .csh-p { background: rgb
       '<a class="' + sex + '" href="' + base + '#routine">루틴</a><a class="' + sex + '" href="' + base + '#growth">성장</a>' + (M._dyn ? '<a class="' + sex + '" href="#" data-nmedit="' + esc(slug) + '">✎ 정보</a>' : '<a class="' + sex + '" href="' + base + '#forms">복습지</a>') + '</div></div>';
   }
   /* 2026-11-19 복습지 본 기록: 회원 폰이 창고 mw:<주소>:fv 에 올림(app.js fvMark) → "· 봄 3" (다 봤으면 초록, 안 본 게 있으면 빨강) */
+  /* 2026-11-27 운동 탭 리메이크: 회원이 무게·횟수를 고친 종목 수(mw:<주소>:rx) · 최근 4일 안에 '힘들었어요'(mw:<주소>:feel)를 누른 회원 표시 */
+  function rxCount(slug, kv) {
+    var v = kv && kv["mw:" + slug + ":rx"], n = v && v.o ? Object.keys(v.o).length : 0, f = kv && kv["mw:" + slug + ":feel"], t = "";
+    if (f && f.d) { var ds = Object.keys(f.d).sort(), l = ds[ds.length - 1]; if (l && f.d[l] === 3 && Date.now() - new Date(l).getTime() < 4 * 864e5) t = ' <i class="fvc no">· 최근 힘들었어요</i>'; }
+    return (n ? ' <i class="fvc no">· 무게 고침 ' + n + '</i>' : '') + t;
+  }
   function fvCount(slug, M, kv) {
     var fs = M.forms || [], v = kv && kv["mw:" + slug + ":fv"];
     if (!fs.length || !kv) return "";

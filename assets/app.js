@@ -1388,7 +1388,7 @@
   function attCall(q) {
     return fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + (q || ""), { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw new Error("save"); mlFlag(j); ebFlag(j); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); dbServer(j.kv); lgServer(j.kv); bgServer(j.kv); pfServer(j.kv); mvServer(j.kv); fvServer(j.kv); rkServer(j.kv); pumpServer(j.kv); } return j; });
+      .then(function (j) { if (!j || !j.ok) throw new Error("save"); mlFlag(j); ebFlag(j); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); dbServer(j.kv); lgServer(j.kv); rxServer(j.kv); flServer(j.kv); bgServer(j.kv); pfServer(j.kv); mvServer(j.kv); fvServer(j.kv); rkServer(j.kv); pumpServer(j.kv); } return j; });
   }
   function attSync() {
     if (!ATT_API) return;
@@ -3095,9 +3095,9 @@
     k = k || ymd(new Date());
     var o = lgObj(), t = o.d[k] = o.d[k] || [];
     var i = -1; t.forEach(function (x, j) { if (x[0] === it.name) i = j; });
-    var kg = 0; (it.sets || []).forEach(function (s) { if (s[1] != null && +s[1] > kg) kg = +s[1]; });
+    var kg = 0; rxOf(it).forEach(function (s) { if (s[1] != null && +s[1] > kg) kg = +s[1]; });
     if (i >= 0) { t.splice(i, 1); if (!t.length) delete o.d[k]; }
-    else { t.push([it.name, kg || null, (it.sets || []).length]); if (kg > 0 && !(o.f[it.name] > 0)) o.f[it.name] = kg; }
+    else { t.push([it.name, kg || null, rxOf(it).length]); if (kg > 0 && !(o.f[it.name] > 0)) o.f[it.name] = kg; }
     lgSave();
     if (i < 0 && k === ymd(new Date())) pumpCheer("check");
     return i < 0;
@@ -4125,11 +4125,13 @@
       '<div class="hero-r"><div class="eyebrow">이번 주 계획</div><ul class="dots small">' +
       R.plan.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join("") + '</ul></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + esc(R.key_point) + '</p></div></div>';
+    var W2 = WK2 && !ED;   /* 2026-11-27 운동 탭 리메이크(시험 중) */
+    if (W2) h = '<div class="w2-top"><h1>운동</h1><span>' + esc(R.title) + ' · ' + esc(R.version) + '</span></div>' + rtTopBar();
 
     /* 2026-11-14 장동욱 "1·2 항목 합치기, 종목은 스크롤 없이 한눈에": 일주일 줄을 그날 운동 칸 안 맨 위로, 종목 카드는 작게(.ex-list.cmp) */
     var d = dayByKey(sel);
-    h += '<section id="day">' + head("01", dayName(sel) + " " + (d ? d.part : "휴식"), sel === tk ? (ROT ? "오늘 할 차례" : "오늘") : (d && !d.rest ? d.en : ""),
-      ED && d && !d.rest ? '<button type="button" class="rtb sm" data-rt="day">✎ 이날 정보</button>' : '');
+    h += '<section id="day"' + (W2 ? ' class="w2"' : '') + '>' + (W2 && d && d.items && !d.rest && !d.cardio_only && !d.pick ? '' : head(W2 ? "" : "01", dayName(sel) + " " + (d ? d.part : "휴식"), sel === tk ? (ROT ? "오늘 할 차례" : "오늘") : (d && !d.rest ? d.en : ""),
+      ED && d && !d.rest ? '<button type="button" class="rtb sm" data-rt="day">✎ 이날 정보</button>' : ''));
     h += '<div class="week wk-cmp" role="tablist">';
     if (ROT) {
       rotKeys().forEach(function (k) {
@@ -4164,6 +4166,8 @@
     } else if (d.pick) {
       h += '<p class="note" style="margin:0 0 12px">' + esc(d.note || "이번 주에 아쉬웠던 부위 하나를 골라 그 요일 루틴 그대로 해요") + '</p>' + pickList(d) +
         (d.cardio && R.cardio ? '<div class="ex-list" style="margin-top:12px"><div class="ex cardio"><div class="ex-top"><span class="ex-ic">' + img("treadmill") + '</span><div><h3>마무리 유산소 ' + R.cardio.minutes + '분</h3><div class="tip">' + esc(R.cardio.options) + '</div></div></div></div></div>' : '');
+    } else if (W2) {
+      h += w2List(d, sel, chkDate(sel), tk);
     } else {
       h += '<div class="flow1"><span><b>①</b> 스트레칭 10분</span><i>›</i><span><b>②</b> 웨이트 ' + d.items.length + '종목</span><i>›</i><span><b>③</b> 유산소 ' + (d.cardio && R.cardio ? R.cardio.minutes + '분' : '없음') + '</span></div>';
       var ckD = ED ? null : chkDate(sel);
@@ -4190,6 +4194,7 @@
       h += '</div>' + (R.note ? '<p class="note">' + esc(R.note) + '</p>' : '');
     }
     h += '</section>';
+    if (W2) h += w2FormsLink();
     /* 근육 지도는 2026-11-14 기록 탭으로 옮김 */
     return h + remember();
   }
@@ -4247,6 +4252,326 @@
   });
   document.addEventListener("keydown", function (e) {
     if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".ex-list.cmp .ex[data-exi]")) { e.preventDefault(); e.target.click(); }
+  });
+
+  /* ===== 운동 탭 리메이크 WK2 (2026-11-27 장동욱 "운동 항목 대 리메이크 — 종목 중심 통합(C) + 오늘 운동 모드(A) + 가벼운 기록(B) + 영상 컷 타일(D), 무게·횟수는 회원도 수정")
+     시험 중: assets/site.js wk2: true 또는 주소 ?wk2=1 일 때만 보임. 꺼져 있으면 예전 운동 탭 그대로.
+     - 종목 카드(.w2c): 영상 컷 타일(복습지 poster.jpg, 없으면 번호) + 처방 한 줄 + 지난 기록. 누르면 종목 한 곳에 화면(w2Detail)
+     - 회원 무게·횟수 수정: 창고 mw:<주소>:rx = { o: {"요일|종목": {b: 선생님 처방 표시, s: [[횟수, kg]…], at}}, at } — 선생님이 그 종목 처방을 바꾸면(b가 달라지면) 저절로 꺼짐. 종목·순서는 못 바꿈
+     - 오늘 운동 모드(w2Session): 세트 ✓ + 쉬는 시간 → 종목 끝나면 예전 기록(lgToggle)에 그대로 저장 → 끝 화면(요약·최고 기록·몸 상태 mw:<주소>:feel = {d:{날짜:1 가벼움|2 딱 좋음|3 힘듦}, at}) */
+  var WK2 = !!SITE.wk2 || /[?&]wk2=1/.test(location.search);
+  try { if (/[?&]wk2=1/.test(location.search)) sessionStorage.setItem("ptnote:wk2", "1"); else if (/[?&]wk2=0/.test(location.search)) { sessionStorage.removeItem("ptnote:wk2"); WK2 = !!SITE.wk2; } else if (sessionStorage.getItem("ptnote:wk2")) WK2 = true; } catch (e) {}
+  var RX_LS = "ptnote:" + SLUG + ":rx", RX = null, RX_PEND = false, RX_T = 0;
+  try { RX = JSON.parse(localStorage.getItem(RX_LS) || "null"); RX_PEND = !!(RX && RX.pend); } catch (e) {}
+  var FL_LS = "ptnote:" + SLUG + ":feel", FL = null;
+  try { FL = JSON.parse(localStorage.getItem(FL_LS) || "null"); } catch (e) {}
+  function rxKey(it) {
+    var days = (M.routine && M.routine.days) || [];
+    for (var i = 0; i < days.length; i++) if ((days[i].items || []).indexOf(it) >= 0) return (ROT ? "d" + (i + 1) : KO_KEY[days[i].day] || i) + "|" + it.name;
+    return "|" + it.name;
+  }
+  function rxSig(sets) { return (sets || []).map(function (s) { return s[0] + "," + (s[1] == null ? "" : s[1]); }).join(";"); }
+  function rxHit(it) {
+    if (!it || !it.sets || !RX || !RX.o) return null;
+    var o = RX.o[rxKey(it)];
+    return o && o.b === rxSig(it.sets) && Array.isArray(o.s) && o.s.length === it.sets.length ? o : null;
+  }
+  function rxOf(it) { var o = rxHit(it); return o ? o.s : (it && it.sets) || []; }
+  function rxPush() {
+    clearTimeout(RX_T);
+    RX_T = setTimeout(function () {
+      if (!ATT_API || !RX) return;
+      rtPost({ a: "kv_set", k: "mw:" + SLUG + ":rx", v: { o: RX.o, at: RX.at } }).then(function (j) {
+        if (j && j.ok) { RX_PEND = false; delete RX.pend; try { localStorage.setItem(RX_LS, JSON.stringify(RX)); } catch (e) {} }
+      }).catch(function () {});
+    }, 700);
+  }
+  function rxSet(it, sets) {   /* sets = null 이면 선생님 처방으로 되돌림 */
+    if (!RX || typeof RX !== "object") RX = { o: {}, at: 0 };
+    RX.o = RX.o || {};
+    /* 선생님이 처방을 바꿔서 더는 안 맞는 예전 수정은 같이 치움 */
+    var live = {};
+    ((M.routine && M.routine.days) || []).forEach(function (d) { (d.items || []).forEach(function (x) { if (rxHit(x)) live[rxKey(x)] = RX.o[rxKey(x)]; }); });
+    RX.o = live;
+    var k = rxKey(it);
+    if (!sets || rxSig(sets) === rxSig(it.sets)) delete RX.o[k];
+    else RX.o[k] = { b: rxSig(it.sets), s: sets, at: Date.now() };
+    RX.at = Date.now(); RX.pend = 1; RX_PEND = true;
+    try { localStorage.setItem(RX_LS, JSON.stringify(RX)); } catch (e) {}
+    rxPush();
+  }
+  function rxServer(kv) {
+    var v = kv && kv["mw:" + SLUG + ":rx"] || null;
+    if (RX_PEND && RX && (!v || (RX.at || 0) >= (v.at || 0))) { rxPush(); return; }
+    if (!v || (RX && (RX.at || 0) >= (v.at || 0))) return;
+    RX = v; RX_PEND = false;
+    try { localStorage.setItem(RX_LS, JSON.stringify(v)); } catch (e) {}
+    if (WK2 && /^#routine/.test(location.hash) && !document.querySelector(".w2ov")) rerender();
+  }
+  function flServer(kv) {
+    var v = kv && kv["mw:" + SLUG + ":feel"] || null;
+    if (!v || (FL && (FL.at || 0) >= (v.at || 0))) return;
+    FL = v; try { localStorage.setItem(FL_LS, JSON.stringify(v)); } catch (e) {}
+  }
+  var W2_FEEL = ["", "가벼웠어요", "딱 좋았어요", "힘들었어요"];
+  function flSet(date, n) {
+    if (!FL || typeof FL !== "object") FL = { d: {}, at: 0 };
+    FL.d = FL.d || {}; FL.d[date] = n; FL.at = Date.now();
+    var ds = Object.keys(FL.d).sort(); while (ds.length > 40) delete FL.d[ds.shift()];
+    try { localStorage.setItem(FL_LS, JSON.stringify(FL)); } catch (e) {}
+    if (ATT_API) rtPost({ a: "kv_set", k: "mw:" + SLUG + ":feel", v: FL }).catch(function () {});
+  }
+  function w2Hist(name) {
+    var out = [];
+    if (LG && LG.d) Object.keys(LG.d).sort().forEach(function (k) { LG.d[k].forEach(function (x) { if (x[0] === name) out.push([k, x[1], x[2]]); }); });
+    return out;
+  }
+  function w2Last(name, before) { var h = w2Hist(name).filter(function (x) { return x[0] < before; }); return h.length ? h[h.length - 1] : null; }
+  function w2Top(sets) { var kg = 0; (sets || []).forEach(function (s) { if (s[1] != null && +s[1] > kg) kg = +s[1]; }); return kg; }
+  function w2Rx(it) {
+    var s = rxOf(it), n = s.length; if (!n) return "";
+    var r0 = s[0][0], r1 = s[n - 1][0], k0 = s[0][1], k1 = s[n - 1][1];
+    var sameR = s.every(function (x) { return x[0] === r0; }), sameK = s.every(function (x) { return x[1] === k0; });
+    var u = function (x) { return typeof x === "string" ? x : x + "회"; };
+    var rs = sameR ? u(r0) : (typeof r0 === "string" ? r0 : r0) + "→" + u(r1);
+    var ks = k0 == null && k1 == null ? (isCardio(it.name) ? "유산소" : "맨몸") : sameK ? k0 + "kg" : (k0 == null ? 0 : k0) + "→" + k1 + "kg";
+    return n + "세트 · " + rs + " · " + ks;
+  }
+  function w2Tile(it, i) {
+    var f = itemForm(it);
+    return '<span class="w2t' + (f ? ' vid' : '') + '"' + (f ? ' style="background-image:url(\'' + esc(f.dir) + 'poster.jpg\')"' : '') + '><b>' + (i + 1) + '</b>' +
+      (f ? '<i aria-hidden="true"></i>' : '') + '</span>';
+  }
+  function w2List(d, sel, ckD, tk) {
+    var its = d.items, R = M.routine, today = ymd(new Date());
+    var nd = ckD ? its.filter(function (it) { return lgDone(it.name, ckD); }).length : 0, ns = 0, nxt = -1;
+    its.forEach(function (it, i) { ns += it.sets.length; if (ckD && nxt < 0 && !lgDone(it.name, ckD)) nxt = i; });
+    var all = !!ckD && nd >= its.length, card = d.cardio && R.cardio ? R.cardio.minutes : 0;
+    var nEd = its.filter(function (it) { return rxHit(it); }).length, fl = ckD && FL && FL.d && FL.d[ckD];
+    var h = '<div class="w2-hero"><div class="w2-ht"><div><small>' + (sel === tk ? (ROT ? '오늘 할 차례 · ' : '오늘 · ') : '') + esc(dayName(sel)) + (d.mvFrom ? ' · ' + DAY_KO[d.mvFrom] + '요일에서 옮김' : '') + '</small><h2>' + esc(d.part) + '</h2>' +
+      '<p>' + its.length + '종목 · ' + ns + '세트' + (card ? ' · 유산소 ' + card + '분' : '') + '</p></div>' +
+      (ckD ? '<div class="w2-hn"><b>' + nd + '<i> / ' + its.length + '</i></b><span>끝낸 종목</span></div>' : '') + '</div>' +
+      (ckD ? '<div class="w2-bar"><i style="width:' + Math.round(nd / its.length * 100) + '%"></i></div>' : '') +
+      (ckD && !DEMO ? '<button type="button" class="w2-go" data-w2go="' + (all ? 'done' : 'run') + '">' + (all ? '오늘 운동 끝! · 요약 보기' : nd ? '▶ 이어서 운동하기' : '▶ 운동 시작') + '</button>' :
+        '<p class="w2-hint">' + (DEMO ? '예시 화면이에요' : '운동 시작은 그날이 되면 열려요 · 종목을 눌러 미리 볼 수 있어요') + '</p>') + '</div>';
+    if (R.key_point) h += '<div class="w2-kp"><small>KEY POINT</small><p>' + esc(R.key_point) + '</p></div>';
+    if (COACH_MODE && (nEd || fl)) h += '<div class="w2-coach"><b>선생님만 보여요</b>' + (nEd ? '<span>회원님이 무게·횟수를 고친 종목 ' + nEd + '개 (카드에 표시)</span>' : '') + (fl ? '<span>이날 몸 상태: ' + W2_FEEL[fl] + '</span>' : '') + '</div>';
+    h += '<div class="w2-lh"><b>' + (sel === tk ? '오늘 종목' : dayName(sel) + ' 종목') + '</b><span>종목을 누르면 자세·기록까지 한 번에</span></div><div class="w2-list">';
+    h += its.map(function (it, i) {
+      var dn = !!ckD && lgDone(it.name, ckD), last = w2Last(it.name, ckD || today), ed = rxHit(it);
+      return '<div class="w2c' + (dn ? ' done' : '') + (i === nxt && nd ? ' next' : '') + (it.tag === "메인" ? ' main' : '') + '" data-w2i="' + i + '" role="button" tabindex="0" aria-label="' + esc(it.name) + ' 자세히 보기">' + w2Tile(it, i) +
+        '<div class="w2b"><h3><span>' + esc(it.name) + '</span>' + tagChip(it.tag) + '</h3><p class="w2rx">' + esc(w2Rx(it)) + (ed ? ' <em>' + (COACH_MODE ? '회원이 고침' : '내가 고침') + '</em>' : '') + '</p>' +
+        '<p class="w2l">' + (last && last[1] ? '지난번 ' + lgMd(last[0]) + ' · ' + last[1] + 'kg' : esc(it.tip || "")) + '</p></div>' +
+        (ckD ? '<button type="button" class="exchk w2k" data-chk="' + i + '" data-date="' + ckD + '" aria-pressed="' + dn + '" aria-label="' + esc(it.name) + ' 끝, 기록에 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg></button>' : '<span class="w2ar" aria-hidden="true">›</span>') + '</div>';
+    }).join("");
+    if (card) h += '<div class="w2c cardio"><span class="w2t"><b>+</b></span><div class="w2b"><h3><span>마무리 유산소 ' + card + '분</span></h3><p class="w2l">' + esc(R.cardio.options || "") + '</p></div></div>';
+    h += '</div>' + (R.note ? '<p class="note">' + esc(R.note) + '</p>' : '');
+    return h;
+  }
+  function w2FormsLink() {
+    var n = (M.forms || []).length, nNew = (M.forms || []).filter(function (f) { return formNew(f); }).length;
+    return n ? '<a class="w2-forms" href="#forms"><b>자세 복습지 모음</b><span>' + (nNew ? '<i class="wk-new">NEW</i> ' : '') + n + '개 ›</span></a>' : '';
+  }
+  /* ---- 겹쳐 뜨는 화면 */
+  function w2Open(cls, html) {
+    var ov = document.createElement("div");
+    ov.className = "w2ov " + cls; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true");
+    ov.innerHTML = html; document.body.appendChild(ov);
+    document.documentElement.classList.add("rts-open");
+    requestAnimationFrame(function () { ov.classList.add("on"); });
+    return ov;
+  }
+  function w2Close(ov, cb) {
+    if (!ov || ov.w2off) return; ov.w2off = 1;
+    if (ov.w2tm) clearInterval(ov.w2tm);
+    Array.prototype.forEach.call(ov.querySelectorAll("video"), function (v) { try { v.pause(); } catch (e) {} });
+    ov.classList.remove("on");
+    setTimeout(function () { ov.remove(); if (!document.querySelector(".rtsheet-bg, .xsheet-bg, .w2ov")) document.documentElement.classList.remove("rts-open"); if (cb) cb(); }, 230);
+  }
+  window.addEventListener("hashchange", function () { Array.prototype.forEach.call(document.querySelectorAll(".w2ov"), function (o) { w2Close(o); }); });
+  function w2Step(it) {
+    var ks = it.sets.map(function (s) { return s[1]; }).filter(function (k) { return k != null; });
+    if (!ks.length) return 0;
+    if (ks.some(function (k) { return k % 1; })) return ks.every(function (k) { return (k * 2) % 5 === 0; }) ? 2.5 : .5;
+    return ks.every(function (k) { return k % 5 === 0; }) ? 5 : ks.every(function (k) { return k % 2 === 0; }) ? 2 : 1;
+  }
+  function w2Video(f, vi) {
+    var D = f.dir, vs = f.views && f.views.length ? f.views : [{ label: "", file: "form" }], v = vs[vi] || vs[0];
+    return '<div class="w2-vid"><video poster="' + esc(D) + 'poster.jpg" src="' + esc(D) + esc(v.file) + '.mp4" autoplay muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback x-webkit-airplay="deny" preload="metadata"></video>' +
+      (vs.length > 1 ? '<div class="w2-ang">' + vs.map(function (x, j) { return '<button type="button" data-w2v="' + j + '" aria-pressed="' + (j === vi) + '">' + esc(x.label) + '</button>'; }).join("") + '</div>' : '') +
+      '<a class="w2-full" href="#form-' + esc(f.id) + '">복습지 전체 보기</a></div>';
+  }
+  function w2Detail(it, no, sel, from) {
+    var f = itemForm(it), vi = 0, ES = null, ckD = chkDate(sel), today = ymd(new Date());
+    function sets() {
+      var cur = rxOf(it), ed = rxHit(it), step = w2Step(it);
+      if (ES) return '<div class="w2-edit">' + ES.map(function (s, j) {
+        var rOk = typeof s[0] === "number", kOk = s[1] != null;
+        return '<div class="w2-er"><span>' + (j + 1) + '세트</span>' +
+          '<div class="w2-st">' + (rOk ? '<button type="button" data-w2e="r-' + j + '" aria-label="횟수 줄이기">−</button><b>' + s[0] + '<small>회</small></b><button type="button" data-w2e="r+' + j + '" aria-label="횟수 늘리기">+</button>' : '<b>' + esc(s[0]) + '</b>') + '</div>' +
+          '<div class="w2-st">' + (kOk ? '<button type="button" data-w2e="k-' + j + '" aria-label="무게 줄이기">−</button><b>' + s[1] + '<small>kg</small></b><button type="button" data-w2e="k+' + j + '" aria-label="무게 늘리기">+</button>' : '<b>' + (isCardio(it.name) ? '유산소' : '맨몸') + '</b>') + '</div></div>';
+      }).join("") + '<p class="w2-en">무게는 ' + (step || 1) + 'kg씩 바뀌어요 · 종목과 순서는 선생님이 정해요</p>' +
+        '<div class="w2-eb"><button type="button" class="w2-b2" data-w2e="cancel">취소</button><button type="button" class="w2-b1" data-w2e="save">저장</button></div></div>';
+      return '<div class="w2-sets' + (cur.length >= 5 ? ' many' : '') + (it.tag === "메인" ? ' main' : '') + '">' + cur.map(function (s, j) {
+        return '<div><small>' + (j + 1) + '세트</small><b>' + (typeof s[0] === "string" ? esc(s[0]) : s[0] + '<i>회</i>') + '</b><em>' + (s[1] == null ? (isCardio(it.name) ? '유산소' : '맨몸') : s[1] + 'kg') + '</em></div>';
+      }).join("") + '</div>' +
+        (ed ? '<p class="w2-ed">' + (COACH_MODE ? '회원님이 고친 숫자예요' : '내가 고친 숫자예요') + ' · 선생님 처방 ' + esc(it.sets.map(function (s) { return s[0] + (typeof s[0] === "string" ? "" : "회") + (s[1] == null ? "" : " " + s[1] + "kg"); }).join(" / ")) + '</p>' : '') +
+        (DEMO ? '' : '<div class="w2-eb">' + (ed ? '<button type="button" class="w2-b2" data-w2e="reset">선생님 처방으로 되돌리기</button>' : '') + '<button type="button" class="w2-b2" data-w2e="open">무게 · 횟수 고치기</button></div>');
+    }
+    function hist() {
+      var hs = w2Hist(it.name).filter(function (x) { return x[1] > 0; }).slice(-6);
+      if (!hs.length) return '<p class="w2-no">아직 기록이 없어요 · 운동을 끝내면 여기에 무게가 쌓여요</p>';
+      var mx = Math.max.apply(null, hs.map(function (x) { return x[1]; })), f0 = LG && LG.f && LG.f[it.name], cur = hs[hs.length - 1][1];
+      return '<div class="w2-chart">' + hs.map(function (x, j) {
+        var p = x[0].split("-");
+        return '<div' + (j === hs.length - 1 ? ' class="now"' : '') + '><b>' + x[1] + '</b><i style="height:' + Math.max(8, Math.round(x[1] / mx * 56)) + 'px"></i><small>' + (x[0] === today ? '오늘' : (+p[1]) + '/' + (+p[2])) + '</small></div>';
+      }).join("") + '</div>' + (f0 > 0 && cur > f0 ? '<p class="w2-up">처음보다 +' + (Math.round((cur - f0) * 10) / 10) + 'kg</p>' : '');
+    }
+    function html() {
+      var h = '<div class="w2-dh"><button type="button" class="w2-x" data-w2x aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div><h2>' + esc(it.name) + ' ' + tagChip(it.tag) + '</h2><small>' + esc(dayName(sel)) + ' · ' + no + '번째 종목' + (it.en ? ' · ' + esc(it.en) : '') + '</small></div></div><div class="w2-body">';
+      h += f ? w2Video(f, vi) : '<div class="w2-novid">' + img(iconOf(it)) + '<p>아직 내 자세 영상이 없어요<br><small>수업 때 찍으면 여기에 내 영상이 들어와요</small></p></div>';
+      h += '<div class="w2-card"><div class="w2-ch"><b>' + (ckD === today ? '오늘 처방' : '처방') + '</b>' + (R0().note ? '<span>' + esc(R0().note) + '</span>' : '') + '</div>' + sets() +
+        (it.tip || (f && f.key_point) ? '<div class="w2-tip"><b>선생님 한마디</b>' + esc(f && f.key_point ? f.key_point : it.tip) + '</div>' : '') + '</div>';
+      if (f) h += '<div class="w2-card"><div class="w2-ch"><b>자극 부위</b></div><div class="w2-mu"><img src="' + esc(f.dir) + 'anatomy.png" alt="자극 부위 인체 그림" loading="lazy" onerror="this.remove()"><div>' +
+        '<p><em class="p">주동근</em>' + esc((f.primary_muscles || []).map(function (m) { return m.name; }).join(" · ") || (f.targets || [])[0] || "") + '</p>' +
+        (f.secondary_muscles ? '<p><em>협력근</em>' + esc(f.secondary_muscles) + '</p>' : '') + (f.feel_good ? '<p class="fg">' + esc(f.feel_good) + '</p>' : '') + '</div></div></div>';
+      h += '<div class="w2-card"><div class="w2-ch"><b>내 기록</b><span>그날 가장 무거운 세트</span></div>' + hist() + '</div></div>';
+      if (ckD && !DEMO && !ES) h += '<div class="w2-foot"><button type="button" class="w2-b1" data-w2run>' + (lgDone(it.name, ckD) ? '이 종목 다시 하기' : '이 종목 시작하기') + '</button></div>';
+      return h;
+    }
+    function R0() { return M.routine || {}; }
+    var ov = w2Open("w2d", html());
+    function draw() { var y = (ov.querySelector(".w2-body") || {}).scrollTop || 0; ov.innerHTML = html(); var b = ov.querySelector(".w2-body"); if (b) b.scrollTop = y; play(); }
+    function play() { var v = ov.querySelector("video"); if (v) try { var p = v.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+    play();
+    ov.addEventListener("click", function (e) {
+      var t = e.target;
+      if (t.closest("[data-w2x]")) { w2Close(ov, function () { if (from) from(); else if (/^#routine/.test(location.hash)) rerender(); }); return; }
+      var a = t.closest("[data-w2v]"); if (a) { vi = +a.getAttribute("data-w2v"); draw(); return; }
+      if (t.closest("[data-w2run]")) { w2Close(ov, function () { w2Session(sel, no - 1); }); return; }
+      var b = t.closest("[data-w2e]"); if (!b) return;
+      var c = b.getAttribute("data-w2e");
+      if (c === "open") ES = rxOf(it).map(function (s) { return [s[0], s[1]]; });
+      else if (c === "cancel") ES = null;
+      else if (c === "reset") { rxSet(it, null); attToast("선생님 처방으로 되돌렸어요"); }
+      else if (c === "save") { rxSet(it, ES); ES = null; attToast(COACH_MODE ? "저장했어요" : "저장했어요 · 선생님도 볼 수 있어요"); }
+      else if (ES) {
+        var j = +c.slice(2), up = c.charAt(1) === "+", step = w2Step(it) || 1;
+        if (c.charAt(0) === "r") ES[j][0] = Math.max(1, Math.min(60, ES[j][0] + (up ? 1 : -1)));
+        else { var mxk = Math.max(20, (it.sets[j][1] || 0) * 2 + 10); ES[j][1] = Math.max(0, Math.min(mxk, Math.round((ES[j][1] + (up ? step : -step)) * 10) / 10)); }
+      }
+      draw();
+    });
+    return ov;
+  }
+  /* ---- 오늘 운동 모드 */
+  var W2S_KEY = "ptnote:" + SLUG + ":w2s";
+  function w2State(date) {
+    var s = null; try { s = JSON.parse(localStorage.getItem(W2S_KEY) || "null"); } catch (e) {}
+    if (!s || s.date !== date) s = { date: date, t0: Date.now(), c: {} };
+    s.c = s.c || {}; return s;
+  }
+  function w2Keep(s) { try { localStorage.setItem(W2S_KEY, JSON.stringify(s)); } catch (e) {} }
+  function w2Session(sel, start) {
+    var d = dayByKey(sel), date = chkDate(sel);
+    if (!d || !d.items || !d.items.length || !date) return;
+    var its = d.items, S = w2State(date), i = start, vid = false, restEnd = 0, R = M.routine || {};
+    if (i == null) { i = 0; while (i < its.length && lgDone(its[i].name, date)) i++; }
+    if (i >= its.length) { w2Done(sel); return; }
+    w2Keep(S);
+    function chk(it) { var a = S.c[it.name] = S.c[it.name] || []; while (a.length < it.sets.length) a.push(0); return a; }
+    function clock() { var l = Math.max(0, Math.ceil((restEnd - Date.now()) / 1000)); return Math.floor(l / 60) + ":" + pad2(l % 60); }
+    function html() {
+      var it = its[i], f = itemForm(it), cur = rxOf(it), c = chk(it), last = w2Last(it.name, date), nx = its[i + 1];
+      var nd = its.filter(function (x) { return lgDone(x.name, date); }).length, allSet = c.every(function (x) { return x; });
+      var h = '<div class="w2s-top"><button type="button" data-w2x>나가기</button><b>' + esc(dayName(sel)) + ' ' + esc(d.part) + '</b><span>' + (i + 1) + ' / ' + its.length + ' 종목</span></div>' +
+        '<div class="w2s-seg">' + its.map(function (x, j) { return '<i class="' + (lgDone(x.name, date) ? 'ok' : j === i ? 'on' : '') + '"></i>'; }).join("") + '</div><div class="w2-body">' +
+        '<div class="w2s-nm"><h2>' + esc(it.name) + ' ' + tagChip(it.tag) + '</h2>' + (it.tip ? '<p>' + esc(it.tip) + '</p>' : '') + '</div>';
+      if (f) h += vid ? w2Video(f, 0) : '<button type="button" class="w2s-vb" data-w2vid><span class="w2t vid" style="background-image:url(\'' + esc(f.dir) + 'poster.jpg\')"><i aria-hidden="true"></i></span><span><b>내 자세 영상 다시 보기</b><small>헷갈리면 세트 전에 10초만</small></span></button>';
+      h += '<div class="w2s-sets">' + cur.map(function (s, j) {
+        return '<div class="w2s-set' + (c[j] ? ' ok' : '') + '"><span>' + (j + 1) + '세트</span><div><b>' + (s[1] == null ? (isCardio(it.name) ? '유산소' : '맨몸') : s[1] + 'kg') + ' <i>× ' + (typeof s[0] === "string" ? esc(s[0]) : s[0] + '회') + '</i></b>' +
+          (last && last[1] ? '<small>지난번 ' + lgMd(last[0]) + ' · ' + last[1] + 'kg</small>' : '') + '</div>' +
+          '<button type="button" data-w2set="' + j + '" aria-pressed="' + !!c[j] + '" aria-label="' + (j + 1) + '세트 끝"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg></button></div>';
+      }).join("") + '</div><button type="button" class="w2s-fix" data-w2fix>무게나 횟수가 달랐나요? 숫자 고치기</button></div>' +
+        '<div class="w2-foot dark"><div class="w2s-rest' + (restEnd > Date.now() ? ' on' : '') + '"><div class="w2s-clk" data-w2clk>' + (restEnd ? clock() : '0:00') + '</div><b data-w2rt>' + (restEnd > Date.now() ? '쉬는 시간' : restEnd ? '다음 세트 시작!' : '세트 끝나면 ✓ → 쉬는 시간') + '</b>' +
+        (restEnd > Date.now() ? '<button type="button" data-w2r="30">+30초</button><button type="button" data-w2r="0">건너뛰기</button>' : '') + '</div><p>' + (nx ? '다음 종목 · ' + esc(nx.name) + ' ' + esc(w2Rx(nx).split(" · ").slice(1).join(" · ")) : d.cardio && R.cardio ? '마지막 종목이에요 · 끝나면 유산소 ' + R.cardio.minutes + '분' : '마지막 종목이에요') + '</p>' +
+        '<div class="w2-eb"><button type="button" class="w2-b3" data-w2skip>건너뛰기</button><button type="button" class="w2-b1" data-w2next>' + (allSet ? (nx ? '다음 종목으로' : '운동 끝내기') : (nx ? '이 종목 끝내고 다음' : '이 종목 끝내고 마치기')) + '</button></div></div>';
+      return h;
+    }
+    var ov = w2Open("w2s", html());
+    function draw() { var y = (ov.querySelector(".w2-body") || {}).scrollTop || 0; ov.innerHTML = html(); var b = ov.querySelector(".w2-body"); if (b) b.scrollTop = y; var v = ov.querySelector("video"); if (v) try { var p = v.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+    ov.w2tm = setInterval(function () {
+      if (!restEnd) return;
+      var el = ov.querySelector("[data-w2clk]"), rt = ov.querySelector("[data-w2rt]"), left = restEnd - Date.now();
+      if (el) el.textContent = clock();
+      if (left <= 0 && ov.querySelector(".w2s-rest.on")) {
+        draw();
+        try { navigator.vibrate && navigator.vibrate([120, 80, 120]); } catch (e) {}
+      }
+    }, 500);
+    function next(log) {
+      var it = its[i];
+      if (log && !lgDone(it.name, date)) { lgToggle(it, date); attAuto(date); }
+      restEnd = 0; vid = false; i++;
+      while (i < its.length && lgDone(its[i].name, date)) i++;
+      if (i >= its.length) { w2Close(ov, function () { rerender(); w2Done(sel); }); return; }
+      draw();
+    }
+    ov.addEventListener("click", function (e) {
+      var t = e.target;
+      if (t.closest("[data-w2x]")) { w2Close(ov, rerender); return; }
+      if (t.closest("[data-w2vid]")) { vid = true; draw(); return; }
+      if (t.closest("[data-w2v]") || t.closest("a")) return;
+      var b = t.closest("[data-w2set]");
+      if (b) {
+        var it = its[i], c = chk(it), j = +b.getAttribute("data-w2set"); c[j] = c[j] ? 0 : 1; w2Keep(S);
+        if (c[j]) { restEnd = Date.now() + (it.tag === "메인" ? 90 : 60) * 1000; try { navigator.vibrate && navigator.vibrate(18); } catch (x) {} }
+        draw(); return;
+      }
+      b = t.closest("[data-w2r]");
+      if (b) { if (+b.getAttribute("data-w2r")) restEnd = Math.max(restEnd, Date.now()) + 30000; else restEnd = restEnd ? Date.now() - 1 : 0; draw(); return; }
+      if (t.closest("[data-w2fix]")) { var at = i; w2Close(ov, function () { w2Detail(its[at], at + 1, sel, function () { w2Session(sel, at); }); }); return; }
+      if (t.closest("[data-w2skip]")) { next(false); return; }
+      if (t.closest("[data-w2next]")) next(true);
+    });
+  }
+  function w2Done(sel) {
+    var d = dayByKey(sel), date = chkDate(sel);
+    if (!d || !d.items || !date) return;
+    var S = w2State(date), R = M.routine || {}, done = d.items.filter(function (it) { return lgDone(it.name, date); }), ns = 0, prs = [];
+    done.forEach(function (it) {
+      ns += it.sets.length;
+      var kg = w2Top(rxOf(it)), prev = w2Hist(it.name).filter(function (x) { return x[0] < date && x[1] > 0; }).map(function (x) { return x[1]; });
+      if (kg > 0 && prev.length && kg > Math.max.apply(null, prev)) prs.push([it.name, Math.max.apply(null, prev), kg]);
+    });
+    var min = Math.round((Date.now() - (S.t0 || 0)) / 60000), showMin = date === ymd(new Date()) && min >= 3 && min <= 240, fl = FL && FL.d && FL.d[date] || 0;
+    function html() {
+      return '<div class="w2f-top"><span class="w2f-ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg></span><small>' + lgMd(date) + '</small><h2>' + esc(d.part) + (done.length >= d.items.length ? ' 끝!' : ' ' + done.length + '종목 했어요') + '</h2><p>' + (attHas(attLoad(), date) ? '출석 도장도 찍혀 있어요' : '기록에 저장했어요') + '</p></div><div class="w2-body">' +
+        '<div class="w2f-st"><div><b>' + done.length + '</b><span>종목</span></div><div><b>' + ns + '</b><span>세트</span></div>' + (showMin ? '<div><b>' + min + '<i>분</i></b><span>운동 시간</span></div>' : d.cardio && R.cardio ? '<div><b>' + R.cardio.minutes + '<i>분</i></b><span>유산소 남음</span></div>' : '') + '</div>' +
+        prs.map(function (p) { return '<div class="w2f-pr"><span>최고</span><div><b>' + esc(p[0]) + ' 최고 기록</b><p>' + p[1] + 'kg → ' + p[2] + 'kg</p></div></div>'; }).join("") +
+        (d.cardio && R.cardio && showMin ? '<div class="w2f-cd"><b>마무리 유산소 ' + R.cardio.minutes + '분</b><span>' + esc(R.cardio.options || "") + '</span></div>' : '') +
+        '<div class="w2-card"><div class="w2-ch"><b>오늘 한 운동</b></div>' + (done.length ? done.map(function (it) { var kg = w2Top(rxOf(it)); return '<div class="w2f-row"><span>' + esc(it.name) + '</span><b>' + it.sets.length + '세트' + (kg ? ' · ' + kg + 'kg' : '') + '</b></div>'; }).join("") : '<p class="w2-no">끝낸 종목이 아직 없어요</p>') + '</div>' +
+        '<div class="w2-card"><div class="w2-ch"><b>오늘 몸 상태는 어땠어요?</b><span>선생님한테 전달돼요</span></div><div class="w2f-fl">' + [1, 2, 3].map(function (n) { return '<button type="button" data-w2fl="' + n + '" aria-pressed="' + (fl === n) + '">' + W2_FEEL[n] + '</button>'; }).join("") + '</div></div></div>' +
+        '<div class="w2-foot"><button type="button" class="w2-b1" data-w2x>끝내기</button></div>';
+    }
+    var ov = w2Open("w2f", html());
+    ov.addEventListener("click", function (e) {
+      if (e.target.closest("[data-w2x]")) { w2Close(ov, rerender); return; }
+      var b = e.target.closest("[data-w2fl]");
+      if (b) { fl = +b.getAttribute("data-w2fl"); flSet(date, fl); ov.innerHTML = html(); attToast("선생님한테 전달했어요"); }
+    });
+  }
+  document.addEventListener("click", function (e) {
+    if (!WK2 || !e.target.closest) return;
+    var k = e.target.closest(".exchk.w2k"); if (k) { setTimeout(function () { if (!document.querySelector(".w2ov")) rerender(); }, 450); return; }
+    var sel = view.getAttribute("data-day"), g = e.target.closest("[data-w2go]");
+    if (g) { if (g.getAttribute("data-w2go") === "done") w2Done(sel); else w2Session(sel); return; }
+    var c = e.target.closest(".w2c[data-w2i]"); if (!c || e.target.closest("a, button")) return;
+    var d = dayByKey(sel), it = d && d.items && d.items[+c.getAttribute("data-w2i")];
+    if (it) w2Detail(it, +c.getAttribute("data-w2i") + 1, sel);
+  }, true);
+  document.addEventListener("keydown", function (e) {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".w2c[data-w2i]")) { e.preventDefault(); e.target.click(); }
   });
 
   /* ---------------- 식단 */
