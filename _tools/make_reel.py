@@ -7,8 +7,9 @@ SPEC = json.load(open(sys.argv[1]))
 OUT = sys.argv[2]
 PREVIEW = "--preview" in sys.argv
 SRC = SPEC["video"]
-ANAT = SPEC.get("anatomy_dir", "/home/claude/repo/_tools")
-LOGO = SPEC.get("logo", "/home/claude/repo/assets/logo.png")
+_HERE = os.path.dirname(os.path.abspath(__file__))   # 저장소 _tools/
+ANAT = SPEC.get("anatomy_dir", _HERE)
+LOGO = SPEC.get("logo", os.path.join(_HERE, "..", "assets", "logo.png"))
 TMP = os.path.dirname(os.path.abspath(OUT))
 W, H, FPS = 1440, 2560, 60
 
