@@ -2862,7 +2862,7 @@ html.pet-off .petwalk, html.pet-off .pfbtn, html.pet-off .pfbag, html.pet-off .p
 .rl-fol svg { width: 17px; height: 17px; }
 [data-sex="F"] .rl-fol { background: var(--primary); }
 
-/* 2026-11-24 펌핑이(운동 질문 AI) — 오른쪽 아래 떠 있는 버튼 + 아래에서 올라오는 대화창. 남녀 같은 블랙·레드 */
+/* 2026-11-24 빼꼼(운동 질문 AI) — 오른쪽 아래 떠 있는 버튼 + 아래에서 올라오는 대화창. 남녀 같은 블랙·레드 */
 .pump-fab { position: fixed; right: max(14px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 74px); z-index: 25;
   width: 66px; height: 66px; border-radius: 50%; border: 2px solid #E1141E; padding: 3px 2px 6px; background: #fff; box-shadow: 0 6px 16px rgba(0,0,0,.25); cursor: pointer; box-sizing: border-box;
   animation: pumpBob 3.2s ease-in-out infinite; -webkit-tap-highlight-color: transparent; }
@@ -2894,7 +2894,7 @@ html.pump-on .pump-fab { display: none; }
 .pump-in button { border: 0; background: #E1141E; color: #fff; border-radius: 12px; padding: 0 14px; font-size: 14px; font-weight: 700; cursor: pointer; }
 .pump-note { margin: 4px 14px 8px; font-size: 11.5px; color: var(--faint, #999); text-align: center; }
 
-/* 2026-11-24 펌핑이 살아 움직이기 — 눈 깜빡임·꼬리 흔들기·표정별 움직임, 터치 말풍선 */
+/* 2026-11-24 빼꼼 살아 움직이기 — 눈 깜빡임·꼬리 흔들기·표정별 움직임, 터치 말풍선 */
 .pf .pf-eyes, .pf .pf-tail, .pf .pf-body, .pf .pf-bell, .pf .pf-horn, .pf .pf-chew, .pf .pf-sweat, .pf .pf-spark, .pf .pf-dots { transform-box: fill-box; }
 .pf .pf-eyes { transform-origin: center; animation: pfBlink 4.2s infinite; }
 .pf .pf-tail { transform-origin: 0% 0%; animation: pfTail 1.6s ease-in-out infinite; }
@@ -3008,7 +3008,7 @@ html.cmp-lock, html.cmp-lock body { overflow: hidden; }
 .ebs-tips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .ebs-tips li { font-size: 12px; font-weight: 700; color: var(--sub); background: var(--page); border-radius: 99px; padding: 4px 10px; }
 
-/* 2026-11-26 펌핑이 비서 버전 — 쌤 답장 말풍선·전달 상태·먼저 알려 드릴까요 버튼·오늘의 한마디·앱 쓰는 법 칩·새 답장 빨간 점 */
+/* 2026-11-26 빼꼼 비서 버전 — 쌤 답장 말풍선·전달 상태·먼저 알려 드릴까요 버튼·오늘의 한마디·앱 쓰는 법 칩·새 답장 빨간 점 */
 .pump-top b small { font-size: 11.5px; font-weight: 600; opacity: .7; margin-left: 4px; }
 .pump-who { display: block; font-size: 11.5px; font-weight: 800; margin-bottom: 3px; opacity: .75; }
 .pump-msg.is-c { align-self: flex-start; background: #1A1A1E; color: #fff; border: 1px solid #E1141E66; border-left: 4px solid #E1141E; border-top-left-radius: 4px; }
@@ -3024,7 +3024,7 @@ button.pump-bl { cursor: pointer; }
 .pump-fab.has-new::after { content: ""; position: absolute; top: 0; right: 0; width: 16px; height: 16px; border-radius: 50%; background: #E1141E; border: 2.5px solid #fff; box-sizing: border-box; animation: pumpBlink 1s ease-in-out infinite; }
 .pump-tip { max-width: calc(100vw - 28px); box-sizing: border-box; }
 
-/* 2026-11-26 펌핑이 알림이 — 챙길 것 목록 창(.pump-card)·누를 수 있는 말풍선(.pump-tip.is-act). 예전 대화창(.pump-wrap·.pump-sheet…)은 이제 안 씀 */
+/* 2026-11-26 빼꼼 알림이 — 챙길 것 목록 창(.pump-card)·누를 수 있는 말풍선(.pump-tip.is-act). 예전 대화창(.pump-wrap·.pump-sheet…)은 이제 안 씀 */
 .pump-card { position: fixed; right: 14px; bottom: calc(env(safe-area-inset-bottom, 0px) + 158px); z-index: 27; width: min(300px, calc(100vw - 28px)); box-sizing: border-box; padding: 12px; border-radius: 18px; background: var(--paper, #fff); color: var(--ink, #1A1A1E); border: 1px solid #E1141E33; box-shadow: 0 12px 34px rgba(0,0,0,.22); opacity: 0; translate: 0 8px; transition: opacity .16s, translate .16s; }
 .pump-card.is-open { opacity: 1; translate: 0 0; }
 .pump-ch { margin: 2px 4px 8px; font-size: 14px; font-weight: 800; }
