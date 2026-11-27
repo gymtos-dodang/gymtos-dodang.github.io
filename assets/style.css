@@ -3208,6 +3208,15 @@ html.rt-editing .pump-fab, html.rt-editing .pump-tip { display: none !important;
 html.pump-off .pump-fab, html.pump-off .pump-tip, html.pump-off .pump-card { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .pump-fab.pk-el svg { animation: none !important; } }
 
+/* 2026-11-27 펌핑이 오류 제보 (.pump-bug-*) */
+.pump-ci em { display: block; font-style: normal; font-size: 11.5px; color: var(--sub, #777); margin-top: 1px; }
+.pump-bug-t { display: block; width: 100%; box-sizing: border-box; margin-top: 8px; padding: 10px 11px; border: 1px solid var(--line, #E5E5EA); border-radius: 12px; background: var(--tint, #F4F4F6); color: inherit; font: inherit; font-size: 14px; resize: none; }
+.pump-bug-s { display: block; margin-top: 6px; font-size: 11.5px; color: var(--sub, #777); }
+.pump-bug-r { display: flex; gap: 8px; margin-top: 10px; }
+.pump-bug-r button { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid var(--line, #E5E5EA); background: none; color: inherit; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.pump-bug-r button.on { background: #E1141E; border-color: #E1141E; color: #fff; }
+.pump-bug-r button:disabled { opacity: .5; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -3442,6 +3451,8 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .w2e.main .w2e-sets span { color: var(--ink); }
 :where(html:not([data-theme="light"])) .w2e-pre button[aria-pressed="true"] { background: var(--seal); }
 :where(html:not([data-theme="light"])) .pump-off-b { border-top-color: var(--line); }
+:where(html:not([data-theme="light"])) .pump-bug-t { border-color: var(--line); }
+:where(html:not([data-theme="light"])) .pump-bug-r button { border-color: var(--line); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -3787,6 +3798,8 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .w2e.main .w2e-sets span { color: var(--ink); }
 :where(html[data-theme="dark"]) .w2e-pre button[aria-pressed="true"] { background: var(--seal); }
 :where(html[data-theme="dark"]) .pump-off-b { border-top-color: var(--line); }
+:where(html[data-theme="dark"]) .pump-bug-t { border-color: var(--line); }
+:where(html[data-theme="dark"]) .pump-bug-r button { border-color: var(--line); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {

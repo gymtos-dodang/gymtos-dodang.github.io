@@ -6997,6 +6997,11 @@
         if (it.h) { var ar = document.createElement("b"); ar.textContent = "›"; b.appendChild(ar); b.onclick = function () { go(it); }; }
         card.appendChild(b);
       });
+      if (!COACH_MODE && !DEMO && !TRY && ATT_API) {   /* 2026-11-27 "펌핑이한테 오류제보 기능 — 펌핑이가 동욱쌤한테 제보해드려요" */
+        var bb = document.createElement("button"); bb.type = "button"; bb.className = "pump-ci pump-bug-b";
+        bb.innerHTML = '<i>🐞</i><span>앱이 이상해요? 오류 제보하기<em>펌핑이가 동욱쌤한테 바로 전해 드려요</em></span><b>›</b>';
+        bb.onclick = function (ev) { ev.stopPropagation(); bugForm(); }; card.appendChild(bb);
+      }
       var off = document.createElement("button"); off.type = "button"; off.className = "pump-off-b"; off.textContent = "🙈 펌핑이 숨기기 (⚙️ 설정에서 다시 부를 수 있어요)";
       off.onclick = function (ev) { ev.stopPropagation(); pumpOffSet(true); }; card.appendChild(off);
       document.body.appendChild(card); pkNear(card);
@@ -7007,6 +7012,39 @@
       setTimeout(function () { document.addEventListener("click", outside, true); }, 0);
     }
     function outside(e) { if (card && !card.contains(e.target) && !fab.contains(e.target)) closeCard(); }
+    /* 오류 제보 — mw:<주소>:bug {q:[{id,t,at,h,ua}]} 최근 8개(회원 쓰기 4000자 제한), 선생님 페이지 "오류 제보" 칸이 읽고 확인하면 coach:bug:<주소> */
+    var BUG_LS = "ptnote:" + SLUG + ":bug", bugFrom = "";
+    function bugForm() {
+      if (!card) return;
+      bugFrom = (location.hash || "#home").slice(0, 40);
+      card.innerHTML = "";
+      var h = document.createElement("p"); h.className = "pump-ch"; h.textContent = "펌핑이가 동욱쌤한테 제보해 드려요 📮"; card.appendChild(h);
+      var ta = document.createElement("textarea"); ta.className = "pump-bug-t"; ta.rows = 4; ta.maxLength = 300;
+      ta.placeholder = "어디서 뭐가 이상했는지 적어 주세요\n예) 식단 사진을 올렸는데 안 보여요"; card.appendChild(ta);
+      var st = document.createElement("small"); st.className = "pump-bug-s"; st.setAttribute("role", "status"); st.textContent = "보고 있던 화면·폰 종류도 같이 전해져요"; card.appendChild(st);
+      var row = document.createElement("div"); row.className = "pump-bug-r";
+      var no = document.createElement("button"); no.type = "button"; no.textContent = "취소"; no.onclick = function (ev) { ev.stopPropagation(); closeCard(); };
+      var go2 = document.createElement("button"); go2.type = "button"; go2.className = "on"; go2.textContent = "제보 보내기";
+      go2.onclick = function (ev) {
+        ev.stopPropagation();
+        var t = ta.value.trim(); if (t.length < 2) { st.textContent = "내용을 조금만 적어 주세요 🙏"; ta.focus(); return; }
+        go2.disabled = true; st.textContent = "전하는 중…";
+        var mine = []; try { mine = JSON.parse(localStorage.getItem(BUG_LS) || "[]") || []; } catch (e3) {}
+        var sv = PUMP_KV && PUMP_KV["mw:" + SLUG + ":bug"]; if (sv && Array.isArray(sv.q)) sv.q.forEach(function (x) { if (x && x.id && !mine.some(function (y) { return y.id === x.id; })) mine.push(x); });
+        mine.sort(function (x, y) { return (x.at || 0) - (y.at || 0); });
+        var ua = navigator.userAgent, dev = /iPhone|iPad/.test(ua) ? "아이폰" : /Android/.test(ua) ? "안드로이드" : "PC";
+        mine.push({ id: "b" + Date.now().toString(36), t: t, at: Date.now(), h: bugFrom, ua: dev + (window.matchMedia && matchMedia("(display-mode: standalone)").matches ? " 앱" : " 브라우저") });
+        mine = mine.slice(-8);
+        rtPost({ a: "kv_set", k: "mw:" + SLUG + ":bug", v: { q: mine } }).then(function (j) {
+          if (!j || !j.ok) throw new Error("x");
+          try { localStorage.setItem(BUG_LS, JSON.stringify(mine)); } catch (e4) {}
+          if (PUMP_KV) PUMP_KV["mw:" + SLUG + ":bug"] = { q: mine };
+          closeCard(); react("love", 3000, "동욱쌤한테 꼭 전해 드릴게요! 📮");
+        }).catch(function () { go2.disabled = false; st.textContent = "앗, 못 보냈어요. 잠시 뒤에 다시 눌러 주세요 😵"; });
+      };
+      row.appendChild(no); row.appendChild(go2); card.appendChild(row);
+      pkNear(card); setTimeout(function () { ta.focus(); }, 60);
+    }
     function closeCard() { if (!card) return; var c = card; card = null; document.removeEventListener("click", outside, true); c.classList.remove("is-open"); setTimeout(function () { c.remove(); }, 180); fabSet(); }
     /* 말풍선 + 표정 */
     var tapN = 0, tapT = null, holdT = null, held = false, moodT = null, tipEl = null;
