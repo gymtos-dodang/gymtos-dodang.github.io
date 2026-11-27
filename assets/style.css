@@ -3876,3 +3876,6 @@ html[data-theme="dark"] .mu-bt { background: #3A3A42; }
 .pump-tip::after { right: auto; left: 26px; }
 .pump-card { right: auto; left: calc(14px + env(safe-area-inset-left, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 284px); }
 @media (prefers-reduced-motion: reduce) { .pump-fab { animation: none !important; transition: none; } }
+/* 2026-11-27 "펌핑이 하얀원 없애버리자" — 둥근 흰 바탕·빨간 테두리·그림자 없이 캐릭터만(배경과 구분되게 그림에만 옅은 그림자) */
+.pump-fab { background: none !important; border: 0 !important; border-radius: 0; box-shadow: none !important; padding: 0; }
+.pump-fab svg { filter: drop-shadow(0 3px 5px rgba(0,0,0,.28)); }
