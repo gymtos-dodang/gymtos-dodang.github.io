@@ -4143,8 +4143,8 @@
       R.plan.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join("") + '</ul></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + esc(R.key_point) + '</p></div></div>';
     var W2 = WK2 && !ED;   /* 2026-11-27 운동 탭 리메이크(시험 중) */
-    if (WK2 && ED) h = '<div class="w2-top"><h1>루틴 고치기</h1><span>' + esc(R.title) + ' · ' + esc(R.version) + '</span></div>' + rtTopBar();
-    if (W2) h = '<div class="w2-top"><h1>운동</h1><span>' + esc(R.title) + ' · ' + esc(R.version) + '</span></div>' + rtTopBar();
+    if (WK2 && ED) h = wkSeg("routine") + '<div class="w2-top"><h1>루틴 고치기</h1><span>' + esc(R.title) + ' · ' + esc(R.version) + '</span></div>' + rtTopBar();
+    if (W2) h = wkSeg("routine") + '<div class="w2-top"><h1>운동</h1><span>' + esc(R.title) + ' · ' + esc(R.version) + '</span></div>' + rtTopBar();
 
     /* 2026-11-14 장동욱 "1·2 항목 합치기, 종목은 스크롤 없이 한눈에": 일주일 줄을 그날 운동 칸 안 맨 위로, 종목 카드는 작게(.ex-list.cmp) */
     var d = dayByKey(sel);
@@ -4214,7 +4214,6 @@
       h += '</div>' + (R.note ? '<p class="note">' + esc(R.note) + '</p>' : '');
     }
     h += '</section>';
-    if (W2) h += w2FormsLink();
     /* 근육 지도는 2026-11-14 기록 탭으로 옮김 */
     return h + remember();
   }
