@@ -616,9 +616,27 @@
     try { i = (ibData || []).length; } catch (e) {}
     var cut = new Date(); cut.setDate(cut.getDate() - 14); cut = ymd(cut);
     try { var o = (LG && LG.d) || {}; for (var k in o) if (k >= cut && Array.isArray(o[k])) d[k] = o[k].length; } catch (e) {}
-    return { a: a, b: b, i: i, d: d, cut: cut };
+    var md = [], wk = false, t = ymd(new Date());
+    try { if (Array.isArray(ML)) ML.forEach(function (r) { if (r && r.d && md.indexOf(r.d) < 0) md.push(r.d); }); md.sort(); } catch (e) {}
+    try { var dd = dayByKey(todayKey()), its = (dd && dd.items) || []; wk = its.length > 0 && its.every(function (x) { return lgDone(x.name, t); }); } catch (e) {}
+    return { a: a, b: b, i: i, d: d, cut: cut, md: md, wk: wk, t: t };
   }
-  function pfEarned(o) { var s = 0, k; for (k in (o.cd || {})) s += o.cd[k]; return 2 * (o.am || 0) + 2 * ((o.cb || 0) + s) + 4 * (o.bm || 0) + 3 * (o.im || 0); }
+  /* 2026-11-27 장동욱 먹이 규칙 바꿈: 종목 ✓ 1개당 1개(예전 2개) · 펌핑이 누르면 1개(하루 1번, pk·pl) · 식단 기록한 날 4개(하루 1번, mm·md) · 오늘 운동 다 끝낸 날 4개(wc·wl)
+     ✓ 계수를 바꿔도 지금 가진 먹이가 줄지 않게 r2 표시가 없는 기록은 pfMig가 기준선 b0를 ✓ 수만큼 내림. 날짜 칸(md·wl)은 r2d(바꾼 날)부터만 셈 */
+  function pfEarned(o) { var s = 0, k; for (k in (o.cd || {})) s += o.cd[k]; return 2 * (o.am || 0) + ((o.cb || 0) + s) + 4 * (o.bm || 0) + 3 * (o.im || 0) + (o.pk || 0) + 4 * (o.mm || 0) + 4 * (o.wc || 0); }
+  function pfMig(o) {
+    if (!o || typeof o !== "object" || o.b0 == null || o.r2) return o;
+    var s = o.cb || 0, k; for (k in (o.cd || {})) s += o.cd[k];
+    o.b0 -= s; o.r2 = 1; o.r2d = o.r2d || ymd(new Date()); return o;
+  }
+  pfMig(PF);
+  function pfPumpTap() {   /* 펌핑이 누르면 먹이 1개 — 하루 1번 */
+    if (!PF_ON || !PF || COACH_MODE || DEMO || TRY) return;
+    var t = ymd(new Date()); if ((PF.pl || "") >= t) return;
+    var before = pfStock(); PF.pl = t; PF.pk = (PF.pk || 0) + 1; pfSave(true);
+    if (PF_VIS && !PF.vp) return;
+    var got = pfStock() - before; if (got > 0) pfGain(got, "펌핑이가 " + pfFood() + " 1개 줬어요! 😈"); pfBtnDraw();
+  }
   function pfStock() { return PF ? Math.max(0, pfEarned(PF) - (PF.b0 || 0) - (PF.sp || 0)) : 0; }
   function pfSave(push) {
     if (!PF) return; PF.at = Date.now();
@@ -635,6 +653,9 @@
     PF.cd = PF.cd || {};
     for (k in PF.cd) if (k < n.cut) { PF.cb = (PF.cb || 0) + PF.cd[k]; delete PF.cd[k]; ch = true; }   /* 14일 지난 날은 합계로 접음 */
     for (k in n.d) if (n.d[k] > (PF.cd[k] || 0)) { PF.cd[k] = n.d[k]; ch = true; }
+    if (!PF.r2) pfMig(PF);
+    n.md.forEach(function (d) { if (d >= (PF.r2d || n.t) && d > (PF.md || "") && d <= n.t) { PF.mm = (PF.mm || 0) + 1; PF.md = d; ch = true; } });   /* 식단 기록한 날 */
+    if (n.wk && (PF.wl || "") < n.t) { PF.wc = (PF.wc || 0) + 1; PF.wl = n.t; ch = true; }   /* 오늘 운동 다 끝낸 날 */
     if (PF_VIS && !PF.vp) { if (ch) pfSave(true); pvCheck(); return; }
     if (!ch) return;
     pfSave(true);
@@ -646,7 +667,7 @@
     if (PF_ON || !(M.pet === "bunny" || M.pet === "cat" || PF_VIS) || DEMO || TRY || COACH_MODE) return;
     PF_ON = true;
     if (!PF || typeof PF !== "object" || PF.b0 == null) {
-      var n = pfNow(); PF = { am: n.a, bm: n.b, im: n.i, cb: 0, cd: n.d, sp: 0, xp: (PF && PF.xp) || {}, at: 0 };
+      var n = pfNow(); PF = { am: n.a, bm: n.b, im: n.i, cb: 0, cd: n.d, sp: 0, xp: (PF && PF.xp) || {}, at: 0, r2: 1, r2d: n.t };
       if (PF_VIS) { PF.b0 = pfEarned(PF); PF.a0 = n.a; pfSave(true); }   /* 찾아오는 동물: 지금부터 쌓이는 활동으로 셈(선물은 찾아올 때) */
       else { PF.b0 = pfEarned(PF) - 10; pfSave(true);
         setTimeout(function () { pfGain(10, pfFood() + " 10개 선물! 운동하면 더 모여요"); }, 2500); }
@@ -659,12 +680,16 @@
   function pfServer(kv) {
     if (!(M.pet === "bunny" || M.pet === "cat" || PF_VIS) || DEMO || TRY) return;
     var v = kv && kv["mw:" + SLUG + ":pet"];
+    pfMig(v);
     if (COACH_MODE) { if (v && v.b0 != null) { PF = v; PETS.forEach(function (p) { p.dress(); }); } if (PF_VIS) { if (PF && PF.vp) pvArrive(PF.vp, 1); return; } pfBtn(); pfBtnDraw(); return; }   /* 선생님 폰: 주머니는 보기만(2026-11-20 "보기만") — 회원님 먹이 개수·레벨, 저장·뿌리기 없음 */
     if (v && typeof v === "object" && v.b0 != null) {
       if (!PF || PF.b0 == null) PF = JSON.parse(JSON.stringify(v));
       else {   /* 두 폰 기록 합치기 — 값마다 큰 쪽 */
         var o = PF, k, more = false;
-        ["am", "bm", "im", "cb", "sp"].forEach(function (f) { if ((v[f] || 0) > (o[f] || 0)) o[f] = v[f]; else if ((o[f] || 0) > (v[f] || 0)) more = true; });
+        pfMig(o);
+        ["pl", "md", "wl"].forEach(function (f) { if ((v[f] || "") > (o[f] || "")) o[f] = v[f]; else if ((o[f] || "") > (v[f] || "")) more = true; });
+        if (v.r2d && (!o.r2d || v.r2d < o.r2d)) o.r2d = v.r2d;
+        ["am", "bm", "im", "cb", "sp", "pk", "mm", "wc"].forEach(function (f) { if ((v[f] || 0) > (o[f] || 0)) o[f] = v[f]; else if ((o[f] || 0) > (v[f] || 0)) more = true; });
         if ((v.b0 || 0) > (o.b0 || 0)) o.b0 = v.b0; else if (o.b0 > v.b0) more = true;
         o.cd = o.cd || {}; o.xp = o.xp || {};
         for (k in (v.cd || {})) if (v.cd[k] > (o.cd[k] || 0)) o.cd[k] = v.cd[k];
@@ -6731,6 +6756,7 @@
     var m = document.createElement("div"); m.id = "gearMenu"; m.className = "gmenu"; m.setAttribute("role", "menu");
     m.innerHTML = '<a href="#home" role="menuitem" data-tour="1"><span>🧭</span><b>앱 사용법 다시 보기</b></a>' +
       (WN.length ? '<a href="#home" role="menuitem" data-wn="1"><span>🆕</span><b>새 기능 둘러보기</b></a>' : '') +   /* 2026-11-20 "상단 설정 아이콘에도 새 기능 둘러보기" — 최신 업데이트 소식 */
+      (document.querySelector(".pump-fab") ? '<a href="#" role="menuitem" data-pumpoff="1"><span>' + (pumpOff() ? '😈' : '🙈') + '</span><b>' + (pumpOff() ? '펌핑이 다시 부르기' : '펌핑이 숨기기') + '</b></a>' : '') +   /* 2026-11-27 펌핑이 끄기 */
       ((M.pet || PF_VIS) && !DEMO && !TRY ? '<a href="#" role="menuitem" data-petoff="1"><span>' + (petOff() ? '🐾' : '🏠') + '</span><b>' + (petOff() ? '펫 다시 꺼내기' : '펫 집어넣기') + '</b></a>' : '') +   /* 2026-11-20 펫 집어넣기 옵션 */
       '<a href="#app" role="menuitem"><span>📲</span><b>' + (E.standalone ? '홈 화면 앱 설치 안내' : '홈 화면에 앱으로 추가하기') + '</b></a>' +
       '<div class="gm-theme" role="group" aria-label="다크 모드"><span>🌙</span><b>다크 모드</b><i>' +
@@ -6756,6 +6782,8 @@
   document.addEventListener("click", function (e) {
     var po = e.target.closest("[data-petoff]");
     if (po) { e.preventDefault(); petOffSet(!petOff()); return; }
+    var pmo = e.target.closest("[data-pumpoff]");
+    if (pmo) { e.preventDefault(); pumpOffSet(!pumpOff()); var gm = document.getElementById("gearMenu"); if (gm) gm.remove(); return; }
     var wa = e.target.closest("[data-wn]");
     if (wa) { e.preventDefault(); if (location.hash && location.hash !== "#home") { LINKAT = Date.now(); location.hash = "#home"; } window.scrollTo(0, 0); var wid = wa.getAttribute("data-wn"); setTimeout(function () { wnStart(wid === "1" ? true : wid); }, 500); return; }
     var a = e.target.closest("[data-tour]"); if (!a) return;
@@ -6831,6 +6859,14 @@
   var PUMP = null, PUMP_KV = null;
   function pumpCheer(kind) { if (PUMP) PUMP.cheer(kind); }
   function pumpServer(kv) { if (kv) PUMP_KV = kv; if (PUMP) PUMP.server(); }
+  var PUMP_OFF_K = "ptnote:" + RT_SLUG + ":pumpoff";   /* 2026-11-27 "끄는 옵션" — ⚙️ 설정 · 목록 창 맨 아래 */
+  function pumpOff() { try { return localStorage.getItem(PUMP_OFF_K) === "1"; } catch (e) { return false; } }
+  function pumpOffSet(on) {
+    try { if (on) localStorage.setItem(PUMP_OFF_K, "1"); else localStorage.removeItem(PUMP_OFF_K); } catch (e) {}
+    document.documentElement.classList.toggle("pump-off", !!on);
+    if (PUMP) { PUMP.close(); if (!on) PUMP.repick(); }
+  }
+  if (pumpOff()) document.documentElement.classList.add("pump-off");
   function pumpInit() {
     if (DEMO || document.querySelector(".pump-fab")) return;
     if (!SITE.pump && !/[?&]pump=1/.test(location.search)) return;   /* site.js pump: true 면 모든 회원에게 보임 */
@@ -6843,6 +6879,56 @@
     var fab = document.createElement("button");
     fab.type = "button"; fab.setAttribute("aria-label", "펌핑이 — 오늘 챙길 것 보기");
     document.body.appendChild(fab);
+    /* 2026-11-27 "빼꼼 위치도 랜덤(플랜카드에 숨는다던지 아이콘에 숨는다던지)" — 화면이 바뀔 때·40초마다 숨을 곳을 새로 고름:
+       edge = 왼쪽 화면 끝 / el = 플랜카드(.hero·.thero·.rp-home)나 아이콘 칸 위 모서리 뒤에서 머리만(.pk-el, 아래는 clip-path로 가림, 스크롤 따라감).
+       숨은 칸이 화면 밖으로 나가면 잠깐 숨었다가 스크롤이 멈추면 다른 곳으로. 말풍선·목록 창은 pkNear로 펌핑이 옆에 */
+    var PK = { m: "edge", y: 210 }, pkRaf = 0, pkST = 0, PK_V = 30;
+    function pkCands() {
+      var v = document.getElementById("view"), out = [], bar = document.querySelector(".bar"), bt = bar ? bar.getBoundingClientRect().bottom : 0;
+      if (!v) return out;
+      [[".hero, .thero, .rp-home", "hero"], [".th-tile, .w2c, .hatt, .hib > *, .hi-vid", "icon"]].forEach(function (g) {
+        [].forEach.call(v.querySelectorAll(g[0]), function (e) {
+          var r = e.getBoundingClientRect();
+          if (r.width >= 64 && r.height >= 44 && r.top > bt + PK_V + 16 && r.top < window.innerHeight - 160) out.push({ el: e, k: g[1] });
+        });
+      });
+      return out;
+    }
+    function pkPick() {
+      if (card || tipEl) return;
+      var c = pkCands(), hs = c.filter(function (x) { return x.k === "hero"; }), ic = c.filter(function (x) { return x.k === "icon"; }), r = Math.random(), ch = null;
+      if (r < .4 && hs.length) ch = pick(hs); else if (r < .8 && ic.length) ch = pick(ic); else if (r >= .8 && c.length && Math.random() < .5) ch = pick(c);
+      fab.classList.add("pk-move");
+      setTimeout(function () {
+        PK = ch ? { m: "el", el: ch.el, fx: ch.k === "hero" ? .12 + Math.random() * .76 : .2 + Math.random() * .6 } : { m: "edge", y: 150 + Math.round(Math.random() * Math.max(40, window.innerHeight * .5 - 150)) };
+        pkPlace(); setTimeout(function () { fab.classList.remove("pk-move"); }, 30);
+      }, 220);
+    }
+    function pkPlace() {
+      pkRaf = 0;
+      if (PK.m !== "el") { fab.classList.remove("pk-el", "pk-hide"); fab.style.left = fab.style.top = ""; fab.style.bottom = PK.y + "px"; return; }
+      var el = PK.el; if (!el || !el.isConnected) { PK = { m: "edge", y: 210 }; pkPlace(); return; }
+      var r = el.getBoundingClientRect(), bar = document.querySelector(".bar"), bt = bar ? bar.getBoundingClientRect().bottom : 0, W = 58;
+      fab.classList.add("pk-el"); fab.style.bottom = "";
+      fab.style.left = Math.round(r.left + PK.fx * Math.max(0, r.width - W)) + "px"; fab.style.top = Math.round(r.top - PK_V) + "px";
+      fab.classList.toggle("pk-hide", r.top - PK_V < bt || r.top > window.innerHeight - 110 || r.width < 10);
+    }
+    function pkNear(el) {   /* 말풍선·목록 창을 펌핑이 옆에 */
+      var f = fab.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight, top, bot, x;
+      if (PK.m === "el" && !fab.classList.contains("pk-hide")) { top = parseFloat(fab.style.top) - 30; bot = parseFloat(fab.style.top) + PK_V; x = f.left; }
+      else { top = f.top; bot = f.bottom; x = 10; }
+      var y = top - h - 10, below = false; if (y < 64) { y = bot + 10; below = true; }
+      el.style.left = Math.round(Math.max(8, Math.min(window.innerWidth - w - 8, x - 6))) + "px"; el.style.top = Math.round(Math.min(y, window.innerHeight - h - 90)) + "px";
+      el.style.right = "auto"; el.style.bottom = "auto"; el.classList.toggle("pk-below", below);
+    }
+    window.addEventListener("scroll", function () {
+      if (PK.m === "el" && !pkRaf) pkRaf = requestAnimationFrame(pkPlace);
+      clearTimeout(pkST); pkST = setTimeout(function () { if (fab.classList.contains("pk-hide")) pkPick(); }, 800);
+    }, { passive: true });
+    window.addEventListener("resize", function () { pkPlace(); });
+    window.addEventListener("hashchange", function () { setTimeout(pkPick, 750); });
+    setTimeout(pkPick, 1200);
+    setInterval(function () { if (!document.hidden && !card && !tipEl) pkPick(); }, 40000);
     function awayDays() {
       var a = (attLoad() || []).slice().sort(), last = a[a.length - 1]; if (!last) return 0;
       var d = dayGap(last, ymd(new Date())); return d > 0 ? d : 0;
@@ -6887,7 +6973,8 @@
     function fresh() { var s = null; try { s = localStorage.getItem(LS_S); } catch (e) {} return s === ymd(new Date()); }
     function fabSet(md) {
       var dot = !COACH_MODE && !card && !fresh() && todo().length > 0;
-      fab.innerHTML = pumpFace(md || idle); fab.className = "pump-fab" + (md ? " is-" + md : "") + (dot ? " has-new" : "") + (md || card ? " is-out" : "");   /* 2026-11-27 빼꼼: 반응·목록 열릴 때만 쏙 나옴 */
+      fab.innerHTML = pumpFace(md || idle); var pkc = ["pk-el", "pk-hide", "pk-move"].filter(function (c) { return fab.classList.contains(c); }).join(" ");
+      fab.className = "pump-fab" + (md ? " is-" + md : "") + (dot ? " has-new" : "") + (md || card ? " is-out" : "") + (pkc ? " " + pkc : "");   /* 2026-11-27 빼꼼: 반응·목록 열릴 때만 쏙 나옴 */
     }
     fabSet();
     function go(it) {
@@ -6910,7 +6997,9 @@
         if (it.h) { var ar = document.createElement("b"); ar.textContent = "›"; b.appendChild(ar); b.onclick = function () { go(it); }; }
         card.appendChild(b);
       });
-      document.body.appendChild(card);
+      var off = document.createElement("button"); off.type = "button"; off.className = "pump-off-b"; off.textContent = "🙈 펌핑이 숨기기 (⚙️ 설정에서 다시 부를 수 있어요)";
+      off.onclick = function (ev) { ev.stopPropagation(); pumpOffSet(true); }; card.appendChild(off);
+      document.body.appendChild(card); pkNear(card);
       var ans = L.filter(function (x) { return x.ans; }).map(function (x) { return x.ans; }); if (ans.length && !COACH_MODE) lsAdd(LS_A, ans);
       if (!COACH_MODE) try { localStorage.setItem(LS_S, ymd(new Date())); } catch (e2) {}
       fabSet(L.length ? "wink" : "cheer");
@@ -6922,12 +7011,13 @@
     /* 말풍선 + 표정 */
     var tapN = 0, tapT = null, holdT = null, held = false, moodT = null, tipEl = null;
     function react(md, ms, say, act) {
+      if (pumpOff()) return;
       fabSet(md);
       if (tipEl) { tipEl.remove(); tipEl = null; }
       if (say) {
         tipEl = document.createElement("div"); tipEl.className = "pump-tip" + (act ? " is-act" : ""); tipEl.textContent = say;
         if (act) tipEl.onclick = function () { clearTimeout(moodT); if (tipEl) { tipEl.remove(); tipEl = null; } act(); };
-        document.body.appendChild(tipEl);
+        document.body.appendChild(tipEl); pkNear(tipEl);
       }
       clearTimeout(moodT);
       moodT = setTimeout(function () { fabSet(); if (tipEl) { tipEl.remove(); tipEl = null; } }, ms || 1600);
@@ -6974,7 +7064,7 @@
       if (!tipEl) fabSet();
       load(); setTimeout(nudge, 4000);
     }
-    PUMP = { cheer: cheer, server: server, close: closeCard, isOpen: function () { return !!card; } };
+    PUMP = { cheer: cheer, server: server, close: closeCard, repick: pkPick, isOpen: function () { return !!card; } };
     if (PUMP_KV) server();
     setTimeout(function () { load(); setTimeout(nudge, 4500); }, 2500);
     /* 터치: 한 번 = 챙길 것 목록, 연타 3번 = 어지러움, 꾹 = 알통 응원 */
@@ -6985,7 +7075,7 @@
       if (held) { held = false; return; }
       tapN++; clearTimeout(tapT); tapT = setTimeout(function () { tapN = 0; }, 650);
       if (tapN >= 3) { tapN = 0; closeCard(); react("dizzy", 2200, "그만~ 펌핑 과다예요! 😵"); return; }
-      if (card) closeCard(); else { clearTimeout(moodT); openCard(); }
+      if (card) closeCard(); else { clearTimeout(moodT); openCard(); pfPumpTap(); }
     });
   }
 

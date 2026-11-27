@@ -3193,6 +3193,21 @@ html.rt-editing .pump-fab, html.rt-editing .pump-tip { display: none !important;
 .pump-fab { background: none !important; border: 0 !important; border-radius: 0; box-shadow: none !important; padding: 0; }
 .pump-fab svg { filter: drop-shadow(0 3px 5px rgba(0,0,0,.28)); }
 
+/* 2026-11-27 펌핑이 빼꼼 위치 랜덤 — .pk-el: 플랜카드·아이콘 칸 위 모서리 뒤에서 머리만(아래는 clip-path로 가림, 위치는 app.js pkPlace가 inline left·top) · 끄기 html.pump-off */
+.pump-fab { transition: left .38s cubic-bezier(.3, 1.45, .5, 1), rotate .38s cubic-bezier(.3, 1.45, .5, 1), opacity .2s; }
+.pump-fab.pk-el { rotate: 0deg; width: 58px; height: 52px; animation: none; translate: 0 0; clip-path: inset(-20px -20px calc(100% - 30px) -20px);
+  transition: clip-path .32s cubic-bezier(.3, 1.4, .5, 1), translate .32s cubic-bezier(.3, 1.4, .5, 1), opacity .2s; }
+.pump-fab.pk-el svg { animation: pkDuck 5.5s ease-in-out infinite; }
+@keyframes pkDuck { 0%, 60%, 100% { translate: 0 0; } 68%, 80% { translate: 0 -7px; } 88% { translate: 0 3px; } }
+.pump-fab.pk-el.is-out { clip-path: inset(-20px); translate: 0 -26px; }
+.pump-fab.pk-el.is-out svg { animation: none; }
+.pump-fab.pk-el.is-dizzy.is-out { animation: pumpSpin .5s ease-in-out 2; }
+.pump-fab.pk-move, .pump-fab.pk-hide { opacity: 0 !important; pointer-events: none; }
+.pump-tip.pk-below::after { bottom: auto; top: -6px; border-top: 0; border-bottom: 6px solid #1A1A1E; }
+.pump-off-b { display: block; width: 100%; margin-top: 8px; padding: 8px 4px 2px; border: 0; border-top: 1px solid var(--line, #eee); background: none; color: var(--faint, #999); font: inherit; font-size: 11.5px; cursor: pointer; }
+html.pump-off .pump-fab, html.pump-off .pump-tip, html.pump-off .pump-card { display: none !important; }
+@media (prefers-reduced-motion: reduce) { .pump-fab.pk-el svg { animation: none !important; } }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -3426,6 +3441,7 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .w2f-fl button[aria-pressed="true"] { background: var(--seal); }
 :where(html:not([data-theme="light"])) .w2e.main .w2e-sets span { color: var(--ink); }
 :where(html:not([data-theme="light"])) .w2e-pre button[aria-pressed="true"] { background: var(--seal); }
+:where(html:not([data-theme="light"])) .pump-off-b { border-top-color: var(--line); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -3770,6 +3786,7 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .w2f-fl button[aria-pressed="true"] { background: var(--seal); }
 :where(html[data-theme="dark"]) .w2e.main .w2e-sets span { color: var(--ink); }
 :where(html[data-theme="dark"]) .w2e-pre button[aria-pressed="true"] { background: var(--seal); }
+:where(html[data-theme="dark"]) .pump-off-b { border-top-color: var(--line); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {
