@@ -251,6 +251,11 @@
     "member": "어순래",
     "id": "1125-hack-squat",
     "img": "m/sunrae-c7yvid/media/form-1125-hack-squat/step1.jpg"
+   },
+   {
+    "member": "이준서",
+    "id": "1127-hack-squat",
+    "img": "m/dyn/junseo/media/form-1127-hack-squat/step1.jpg"
    }
   ]
  },
@@ -496,6 +501,57 @@
    }
   ]
  },
+ "스미스 인클라인 프레스": {
+  "part": "가슴",
+  "en": "Smith Incline Press",
+  "shots": [
+   {
+    "member": "박찬영",
+    "id": "1127-smith-incline-press",
+    "img": "m/chanyoung-dvrara/media/form-1127-smith-incline-press/step1.jpg"
+   },
+   {
+    "member": "조혜영",
+    "id": "smith-incline-press",
+    "img": "m/hyeyoung-d74063/media/form-smith-incline-press/step1.jpg"
+   },
+   {
+    "member": "서인석",
+    "id": "smith-incline-press",
+    "img": "m/inseok-02j3ia/media/form-smith-incline-press/step1.jpg"
+   },
+   {
+    "member": "최지훈",
+    "id": "smith-incline-press",
+    "img": "m/jihun-g9kgdo/media/form-smith-incline-press/step1.jpg"
+   },
+   {
+    "member": "이지환",
+    "id": "smith-incline-press",
+    "img": "m/jihwan-t7m4qe/media/form-smith-incline-press/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "smith-incline-press",
+    "img": "m/jisu-480xne/media/form-smith-incline-press/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "1125-smith-incline-press",
+    "img": "m/mikyung-7rq2vd/media/form-1125-smith-incline-press/step1.jpg"
+   },
+   {
+    "member": "최용민 · 고은성",
+    "id": "smith-incline-press",
+    "img": "m/yongmin-eunseong-1mwau5/media/form-smith-incline-press/step1.jpg"
+   },
+   {
+    "member": "한동현",
+    "id": "1125-smith-incline-press",
+    "img": "m/dyn/donghyun/media/form-1125-smith-incline-press/step1.jpg"
+   }
+  ]
+ },
  "벤치프레스": {
   "part": "가슴",
   "en": "Bench Press",
@@ -649,52 +705,6 @@
     "member": "전용준",
     "id": "1121-leg-extension",
     "img": "m/dyn/yongjun/media/form-1121-leg-extension/step1.jpg"
-   }
-  ]
- },
- "스미스 인클라인 프레스": {
-  "part": "가슴",
-  "en": "Smith Incline Press",
-  "shots": [
-   {
-    "member": "조혜영",
-    "id": "smith-incline-press",
-    "img": "m/hyeyoung-d74063/media/form-smith-incline-press/step1.jpg"
-   },
-   {
-    "member": "서인석",
-    "id": "smith-incline-press",
-    "img": "m/inseok-02j3ia/media/form-smith-incline-press/step1.jpg"
-   },
-   {
-    "member": "최지훈",
-    "id": "smith-incline-press",
-    "img": "m/jihun-g9kgdo/media/form-smith-incline-press/step1.jpg"
-   },
-   {
-    "member": "이지환",
-    "id": "smith-incline-press",
-    "img": "m/jihwan-t7m4qe/media/form-smith-incline-press/step1.jpg"
-   },
-   {
-    "member": "김지수",
-    "id": "smith-incline-press",
-    "img": "m/jisu-480xne/media/form-smith-incline-press/step1.jpg"
-   },
-   {
-    "member": "정미경",
-    "id": "1125-smith-incline-press",
-    "img": "m/mikyung-7rq2vd/media/form-1125-smith-incline-press/step1.jpg"
-   },
-   {
-    "member": "최용민 · 고은성",
-    "id": "smith-incline-press",
-    "img": "m/yongmin-eunseong-1mwau5/media/form-smith-incline-press/step1.jpg"
-   },
-   {
-    "member": "한동현",
-    "id": "1125-smith-incline-press",
-    "img": "m/dyn/donghyun/media/form-1125-smith-incline-press/step1.jpg"
    }
   ]
  },
