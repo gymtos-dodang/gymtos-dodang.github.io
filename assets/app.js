@@ -4618,7 +4618,8 @@
   function w2EditList(d, sel) {
     if (W2E_DAY !== sel) { W2E_DAY = sel; W2E_OPEN = -1; }
     var R = M.routine;
-    var h = '<p class="w2e-hint">세트 줄을 누르면 바로 고쳐요 · 카드를 <b>꾹</b> 눌러 끌면 순서·요일이 바뀌어요</p><div class="w2-list ed">';
+    var h = '<div class="w2e-recbar"><div><b>추천 루틴</b><span>누를 때마다 이날 종목을 랜덤으로 바꿔요 · 워밍업은 그대로</span></div><button type="button" data-w2a="shuffle">🎲 추천 루틴</button></div>' +
+      '<p class="w2e-hint">세트 줄을 누르면 바로 고쳐요 · 카드를 <b>꾹</b> 눌러 끌면 순서·요일이 바뀌어요</p><div class="w2-list ed">';
     h += d.items.map(function (it, i) {
       var open = i === W2E_OPEN, step = w2Step(it) || 5;
       var chips = it.sets.map(function (s) { return '<span><b>' + (typeof s[0] === "string" ? esc(s[0]) : s[0] + '회') + '</b>' + (s[1] == null ? (isCardio(it.name) ? '' : '맨몸') : s[1] + 'kg') + '</span>'; }).join("");
@@ -4641,6 +4642,29 @@
     h += '<button type="button" class="rtadd" data-w2a="add">+ 종목 추가</button>';
     if (d.cardio && R.cardio) h += '<div class="w2c cardio"><span class="w2t ico">' + img("treadmill", "icn", true) + '</span><div class="w2b"><h3><span>마무리 유산소 ' + R.cardio.minutes + '분</span></h3><p class="w2l">' + esc(R.cardio.options || "") + ' · "이날 정보"에서 켜고 꺼요</p></div></div>';
     return h + '</div>';
+  }
+  /* 추천 루틴 (2026-11-27 장동욱 "추천루틴 버튼 하나 만들어서 누르면 하체 루틴을 아예 랜덤으로"): 이날 종목을 같은 부위의 다른 종목으로 한 번에 바꿈.
+     워밍업·선행은 그대로(레그 익스텐션·이너/아웃타이 규칙), 메인·나머지만 바꿈 · 세트·구분은 자리 그대로 · 회원님이 했던 종목을 먼저(3번 중 2번) 뽑고 모자라면 종목 목록에서 · 무게는 ✓ 기록이 있으면 그 무게, 없으면 그대로 두고 확인하라고 알림 */
+  function w2eKeep(it) { return it.tag === "워밍업" || /이너타이|아웃타이/.test(it.name) || isCardio(it.name); }   /* 워밍업·이너/아웃타이 선행·유산소는 안 바꿈 */
+  function w2eShuffle(d) {
+    var m = w2DoneMap(), used = {}, n = 0, noKg = 0;
+    d.items.forEach(function (it) { if (w2eKeep(it)) used[it.name] = 1; });
+    var now = {}; d.items.forEach(function (it) { now[it.name] = 1; });
+    function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+    d.items.forEach(function (it, i) {
+      if (w2eKeep(it)) return;
+      var c = w2Cat(it.name); if (!c) { used[it.name] = 1; return; }
+      var all = []; RT_CAT.forEach(function (x) { if (x[0] === c) all = x[1].filter(function (nm) { return !used[nm] && !now[nm]; }); });
+      var done = Object.keys(m).filter(function (nm) { return !used[nm] && !now[nm] && w2Cat(nm) === c; });
+      var nm = done.length && (Math.random() < .67 || !all.length) ? pick(done) : all.length ? pick(all) : null;
+      if (!nm) { used[it.name] = 1; return; }
+      used[nm] = 1;
+      var o = m[nm] || {}, src = o.mine, out = { name: nm, en: (src && src.en) || rtEnOf(nm), tip: src ? src.tip || "" : "", sets: clone(it.sets) };
+      if (it.tag) out.tag = it.tag;
+      if (o.kg) out.sets = out.sets.map(function (x) { return [x[0], x[1] == null ? null : o.kg]; }); else noKg++;
+      d.items[i] = out; n++;
+    });
+    return { n: n, noKg: noKg };
   }
   function w2eNum(v) { v = String(v).trim().replace(",", "."); return v === "" || isNaN(+v) ? null : Math.max(0, Math.round(+v * 10) / 10); }
   function w2eMenu(d, dk, i) {
@@ -4687,6 +4711,12 @@
         if (!x) { rtItemSheet(dk, -1, null); return; }
         d.items.push(w2NewItem(x)); W2E_OPEN = d.items.length - 1; rtDirty(); attToast(x.name + " 넣었어요 · 세트를 확인해 주세요");
       }, true, w2Rec(d, cats));
+      return;
+    }
+    if (a === "shuffle") {
+      var r = w2eShuffle(d); W2E_OPEN = -1;
+      if (!r.n) { attToast("바꿀 수 있는 종목이 없어요"); return; }
+      rtDirty(); attToast("종목 " + r.n + "개를 바꿨어요" + (r.noKg ? " · 무게 확인이 필요한 종목 " + r.noKg + "개" : "") + " · 한 번 더 누르면 또 바뀌어요");
       return;
     }
     var it = d.items[i]; if (!it) return;

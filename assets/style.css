@@ -3157,7 +3157,9 @@ button.pump-ci { cursor: pointer; }
 .w2e-hint { margin: 10px 2px 8px; font-size: 12px; color: var(--sub); }
 .w2-list.ed .ex.w2e { display: block; background: var(--paper); border: 0; border-radius: 16px; padding: 10px; margin: 0; min-height: 0; box-shadow: none; }
 .w2-list.ed .ex.w2e.open { box-shadow: inset 0 0 0 2px var(--w2a); } .w2-list.ed .ex.w2e.rt-press { background: var(--tint); }
-.w2e-top { display: flex; align-items: center; gap: 9px; } .w2e-top .rtgrip { position: static; flex: none; } .w2e-top .w2t { width: 46px; height: 46px; } .w2e-top .w2t.ico .icn { width: 40px; height: 40px; }
+.w2e-top { display: flex; align-items: center; gap: 9px; } .w2e-top .rtgrip { position: static; flex: none; margin: 0 4px 0 6px; gap: 5px; } .w2e-top .rtgrip i { width: 16px; }
+.w2e-recbar { display: flex; align-items: center; gap: 10px; background: var(--paper); border-radius: 16px; padding: 10px 10px 10px 14px; margin-top: 10px; } .w2e-recbar > div { flex: 1; min-width: 0; display: grid; gap: 2px; } .w2e-recbar b { font-size: 14px; color: var(--ink); } .w2e-recbar span { font-size: 11px; color: var(--sub); }
+.w2e-recbar button { flex: none; min-height: 44px; padding: 0 14px; border: 0; border-radius: 14px; background: var(--w2a); color: #fff; font: 700 13px var(--font); cursor: pointer; } .w2e-top .w2t { width: 46px; height: 46px; } .w2e-top .w2t.ico .icn { width: 40px; height: 40px; }
 .w2e-more { flex: none; width: 44px; height: 44px; border: 0; border-radius: 12px; background: var(--tint); color: var(--ink); font: 900 20px var(--font); cursor: pointer; }
 .w2e-sets { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; width: 100%; border: 0; background: none; padding: 9px 0 0; margin: 0; font-family: var(--font); cursor: pointer; text-align: left; min-height: 44px; }
 .w2e-sets span { background: var(--tint); border-radius: 10px; padding: 6px 9px; font-size: 12px; color: var(--ink); } .w2e-sets span b { margin-right: 4px; font-weight: 900; }
