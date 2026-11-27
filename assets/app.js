@@ -6923,6 +6923,7 @@
       while (h && h !== v && h !== document.body) {
         var cs = getComputedStyle(h);
         if (cs.overflowX === "visible" && cs.overflowY === "visible" && cs.position !== "sticky" && cs.position !== "fixed") break;
+        if (/auto|scroll/.test(cs.overflowY) && h.scrollHeight > h.clientHeight + 2) break;   /* 세로로 스크롤되는 상자 안이면 그 상자에 붙여야 같이 스크롤됨(아이패드 대비) */
         h = h.parentElement;
       }
       h = h || v || document.body;
