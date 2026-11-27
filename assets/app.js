@@ -6895,15 +6895,20 @@
       return out;
     }
     function pkPick() {
-      if (card || tipEl) return;
+      if (card && !fab.classList.contains("pk-move")) return;
       var c = pkCands(), hs = c.filter(function (x) { return x.k === "hero"; }), ic = c.filter(function (x) { return x.k === "icon"; }), r = Math.random(), ch = null;
       if (r < .4 && hs.length) ch = pick(hs); else if (r < .8 && ic.length) ch = pick(ic); else if (r >= .8 && c.length && Math.random() < .5) ch = pick(c);
+      /* 2026-11-27 "페이지 넘길 때마다 순간이동, 난잡함 → 부드럽게": 한 번만(pkGo로 모아서) · 쏙 가라앉아 사라졌다가(.pk-move, .38초) 새 자리에서 천천히 쏙 올라옴 */
+      var gone = fab.classList.contains("pk-move") || !fab.isConnected || fab.classList.contains("pk-hide");
       fab.classList.add("pk-move");
       setTimeout(function () {
         PK = ch ? { m: "el", el: ch.el, fx: ch.k === "hero" ? .12 + Math.random() * .76 : .2 + Math.random() * .6 } : { m: "edge", y: 150 + Math.round(Math.random() * Math.max(40, window.innerHeight * .5 - 150)) };
-        pkPlace(); setTimeout(function () { fab.classList.remove("pk-move"); }, 30);
-      }, 220);
+        pkPlace();
+        requestAnimationFrame(function () { requestAnimationFrame(function () { fab.classList.remove("pk-move"); if (tipEl) pkNear(tipEl); if (card) pkNear(card); }); });
+      }, gone ? 0 : 380);
     }
+    var pkT = 0;
+    function pkGo(ms) { clearTimeout(pkT); pkT = setTimeout(pkPick, ms); }
     function pkPlace() {
       pkRaf = 0;
       if (PK.m !== "el") { if (fab.parentNode !== document.body) document.body.appendChild(fab); fab.classList.remove("pk-el", "pk-hide"); fab.style.left = fab.style.top = ""; fab.style.bottom = PK.y + "px"; return; }
@@ -6951,13 +6956,13 @@
     window.addEventListener("scroll", function () {
       if (PK.m === "el" && !pkRaf) pkRaf = requestAnimationFrame(function () { pkRaf = 0; pkVis(); });
       var op = card || tipEl; if (op && Math.abs(window.scrollY - (+op.getAttribute("data-sy") || 0)) > 60) { if (card) closeCard(); if (tipEl) { tipEl.remove(); tipEl = null; } }   /* 스크롤하면 떠 있던 창은 닫음 */
-      clearTimeout(pkST); pkST = setTimeout(function () { if (fab.classList.contains("pk-hide")) pkPick(); }, 800);
+      clearTimeout(pkST); pkST = setTimeout(function () { if (fab.classList.contains("pk-hide")) pkGo(0); }, 900);
     }, { passive: true });
     window.addEventListener("resize", function () { pkPlace(); });
-    window.addEventListener("hashchange", function () { setTimeout(pkPick, 750); });
-    setTimeout(pkPick, 1200);
-    setInterval(function () { if (!document.hidden && !card && !tipEl) pkPick(); }, 40000);
-    function pkLost() { if (fab.isConnected) return; PK = { m: "edge", y: PK.y || 210 }; pkPlace(); if (!card && !tipEl) setTimeout(pkPick, 300); }   /* 본문이 새로 그려져 같이 지워졌으면 다시 붙임 */
+    window.addEventListener("hashchange", function () { fab.classList.add("pk-move"); pkGo(700); });   /* 화면 바뀌면 먼저 쏙 숨고, 새 화면이 다 그려진 뒤 한 번만 나타남 */
+    pkGo(1200);
+    setInterval(function () { if (!document.hidden && !card && !tipEl) pkGo(0); }, 60000);   /* 말풍선·목록이 떠 있을 땐 자리 안 바꿈 */
+    function pkLost() { if (fab.isConnected) return; fab.classList.add("pk-move"); PK = { m: "edge", y: PK.y || 210 }; pkPlace(); if (!card && !tipEl) pkGo(650); }   /* 본문이 새로 그려져 같이 지워졌으면 다시 붙임 */
     (function () { var v = document.getElementById("view"); if (v && window.MutationObserver) new MutationObserver(function () { if (!fab.isConnected) pkLost(); }).observe(v, { childList: true, subtree: true }); })();
     setInterval(function () { if (document.hidden) return; if (!fab.isConnected) { pkLost(); return; } if (PK.m === "el" && !card && !tipEl) pkPlace(); }, 1500);   /* 사진이 늦게 떠서 칸이 밀려도 따라감 */
     function awayDays() {
@@ -7081,6 +7086,7 @@
     var tapN = 0, tapT = null, holdT = null, held = false, moodT = null, tipEl = null;
     function react(md, ms, say, act) {
       if (pumpOff()) return;
+      if (fab.classList.contains("pk-move")) pkGo(0);   /* 숨었다 나타나는 중에 말하면 바로 나타나서 말함 */
       fabSet(md);
       if (tipEl) { tipEl.remove(); tipEl = null; }
       if (say) {
