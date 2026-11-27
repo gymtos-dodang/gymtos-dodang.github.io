@@ -46,6 +46,14 @@
     for (var i = 0; i < fs.length; i++) if (!fs[i].simple && fs[i].primary_muscles && fs[i].primary_muscles.length) return fs[i];
     return null;
   }
+  /* 2026-11-27 운동 탭 리메이크 소식 */
+  function wnW2Day() { var tk = todayKey(), d = dayByKey(tk); if (d && d.items && d.items.length && !d.rest && !d.pick && !d.cardio_only) return tk;
+    var ks = ROT ? rotKeys() : ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]; for (var i = 0; i < ks.length; i++) { d = dayByKey(ks[i]); if (d && d.items && d.items.length && !d.rest && !d.pick && !d.cardio_only) return ks[i]; } return ""; }
+  function wnW2() { return WK2 && !!M.routine && !!wnW2Day(); }
+  function wnW2Today() { return wnW2() && wnW2Day() === todayKey() && !DEMO; }
+  function wnW2H() { var k = wnW2Day(); return k && k !== todayKey() ? "#routine-" + k : "#routine"; }
+  function wnW2Open() { return !!document.querySelector(".w2ov.w2d"); }
+  function wnW2Close() { var b = document.querySelector(".w2ov.w2d [data-w2x]"); if (b) b.click(); }
   function wnMuOpen() { return !!document.querySelector(".rtsheet .mu-map"); }
   function wnMuClose() { var b = document.querySelector(".rtsheet-bg .rts-x"); if (b && b.closest(".rtsheet-bg").querySelector(".mu-map")) b.click(); }
   function wnPump() { return !!document.querySelector(".pump-fab"); }   /* 2026-11-26 펌핑이 알림이 소식 */
@@ -57,6 +65,14 @@
   function wnEbOpen() { return !!document.querySelector(".ebsheet"); }
   function wnEbClose() { var b = document.querySelector(".ebsheet .ibs-x"); if (b) b.click(); }
   var WN = [
+    { id: "2026-11-27", t: "운동 탭 업데이트",
+      items: ["💪 운동 탭이 새로워졌어요 — 그날 운동이 종목 카드로 한눈에", "🎬 종목을 누르면 내 영상 · 처방 · 자극 부위 · 무게 기록이 한 곳에", "▶ '운동 시작'으로 세트 ✓ · 쉬는 시간 · 끝나면 오늘 요약", "✏️ 무게 · 횟수를 직접 고칠 수 있어요 (선생님도 같이 봐요)"],
+      steps: [
+        { get h() { return wnW2H(); }, need: wnW2, s: ".w2-hero", t: "💪 운동 탭이 새로워졌어요", b: "그날 할 운동이 한 장에 정리돼요.\n끝낸 종목 수와 진행 막대도 같이 보여요." },
+        { get h() { return wnW2H(); }, need: wnW2, s: ".w2-list .w2c", t: "🎬 종목 카드", b: "내 자세 영상이 있는 종목은 영상 컷이 보여요.\n세트 · 무게와 지난 기록까지 한 줄에!\n제가 한번 눌러 볼게요!" },
+        { get h() { return wnW2H(); }, need: wnW2, tap: ".w2-list .w2c .w2b", skipIf: wnW2Open, leave: wnW2Close, s: ".w2ov.w2d .w2-card", t: "👆 종목을 누르면 한 곳에", b: "내 영상 · 처방 · 자극 부위 · 무게 기록이 다 있어요.\n'무게 · 횟수 고치기'로 숫자를 직접 바꿀 수 있고\n선생님도 같이 봐요." },
+        { h: "#routine", need: wnW2Today, s: ".w2-go", t: "▶ 운동 시작", b: "세트를 끝낼 때마다 ✓ → 쉬는 시간을 재 줘요.\n다 끝나면 오늘 요약과 최고 기록이 나오고\n몸 상태를 선생님께 전할 수 있어요." }
+      ] },
     { id: "2026-11-26c", t: "펌핑이 알림이 업데이트",
       items: ["😈 오른쪽 아래 펌핑이가 빠진 걸 먼저 챙겨 줘요", "📸 식단 사진 · 🪞 눈바디 · 📊 인바디 · 🔥 이번 주 남은 운동을 말풍선으로 알려 줘요", "👆 펌핑이를 누르면 오늘 챙길 것 목록이 나와요", "🎉 출석 · 종목 ✓ · 새 배지 땐 응원도 해요"],
       steps: [
@@ -4646,7 +4662,8 @@
   /* 추천 루틴 (2026-11-27 장동욱 "추천루틴 버튼 하나 만들어서 누르면 하체 루틴을 아예 랜덤으로"): 이날 종목을 같은 부위의 다른 종목으로 한 번에 바꿈.
      워밍업·선행은 그대로(레그 익스텐션·이너/아웃타이 규칙), 메인·나머지만 바꿈 · 세트·구분은 자리 그대로 · 회원님이 했던 종목을 먼저(3번 중 2번) 뽑고 모자라면 종목 목록에서 · 무게는 ✓ 기록이 있으면 그 무게, 없으면 그대로 두고 확인하라고 알림 */
   function w2eKeep(it) { return it.tag === "워밍업" || /이너타이|아웃타이/.test(it.name) || isCardio(it.name); }   /* 워밍업·이너/아웃타이 선행·유산소는 안 바꿈 */
-  var W2E_BIG = { "가슴": /프레스/, "등": /풀다운|로우|친업/, "어깨": /프레스/, "하체": /스쿼트|레그프레스|핵프레스/, "엉덩이": /힙쓰러스트/ };
+  /* 메인 자리 = 무거운 종목 (2026-11-27 "메인종목은 웬만하면 무거운 종목들로") — 바벨·스미스·프레스 머신·큰 당기기. 고블릿 스쿼트·케이블·스트레이트 암 풀다운·어시스트 친업 같은 가벼운 종목은 뺌 */
+  var W2E_BIG = { "가슴": /벤치프레스|스미스|프레스 머신|덤벨\s?프레스/, "등": /^(?!.*스트레이트).*(풀다운|로우)/, "어깨": /프레스/, "하체": /핵스쿼트|스미스 스쿼트|레그프레스|핵프레스/, "엉덩이": /힙쓰러스트/ };
   function w2eShuffle(d) {
     var m = w2DoneMap(), used = {}, n = 0, noKg = 0;
     d.items.forEach(function (it) { if (w2eKeep(it)) used[it.name] = 1; });
@@ -6515,7 +6532,7 @@
       { c: 1, t: tourName() + "님, 환영해요! 👋", b: (SITE.trainer || "장동욱") + " 선생님과 함께하는 나만의 PT노트예요.\n어디에 뭐가 있는지 30초만 둘러볼까요?", ok: "둘러보기" },
       { s: "#attBtn", t: "운동 온 날엔 출석 도장 꾹", b: "헬스장에 온 날 여기를 꾹 누르면 출석이 찍혀요.\n출석이 쌓이면 배지와 월간 리포트가 생겨요." },
       { s: ".thero", t: "오늘 할 운동", b: "요일마다 오늘 할 운동이 여기 떠요.\n누르면 세트·무게까지 자세히 볼 수 있어요." },
-      { s: '.tabs a[data-tab="routine"]', t: "운동", b: "루틴과 자세 복습지가 한 곳에 있어요.\n한 종목이 끝나면 ✓를 눌러 기록해요." },
+      { s: '.tabs a[data-tab="routine"]', t: "운동", b: WK2 ? "종목을 누르면 내 영상 · 처방 · 기록이 한 곳에 있어요.\n'운동 시작'을 누르면 세트마다 ✓하며 따라가요." : "루틴과 자세 복습지가 한 곳에 있어요.\n한 종목이 끝나면 ✓를 눌러 기록해요." },
       { s: '.tabs a[data-tab="diet"]', t: "식단", b: M.diet ? "선생님이 짜 준 식단이 여기 있어요." : "식단을 받으면 여기서 볼 수 있어요." },
       { s: '.tabs a[data-tab="log"]', t: "기록", b: "✓한 운동 · 첫날 vs 오늘 · 근육 지도 · 인바디가\n여기 쌓여요." },
       { s: '.tabs a[data-tab="me"]', t: "나", b: "출석률 · 배지 · PT 여정을\n한눈에 볼 수 있어요." },
