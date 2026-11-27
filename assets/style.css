@@ -3197,7 +3197,7 @@ html.rt-editing .pump-fab, html.rt-editing .pump-tip { display: none !important;
 .pump-fab { transition: left .38s cubic-bezier(.3, 1.45, .5, 1), rotate .38s cubic-bezier(.3, 1.45, .5, 1), opacity .2s; }
 .pump-fab.pk-el { rotate: 0deg; width: 58px; height: 52px; animation: none; translate: 0 0; clip-path: inset(-20px -20px calc(100% - 30px) -20px);
   transition: clip-path .32s cubic-bezier(.3, 1.4, .5, 1), translate .32s cubic-bezier(.3, 1.4, .5, 1), opacity .2s; }
-.pump-fab.pk-el { position: absolute; }
+.pump-fab.pk-el { position: absolute; z-index: 5; }
 /* 2026-11-27 "숨을 때도 살짝씩 움직여 생동감 있게" — 숨어서도 고개 갸웃·두리번·쏙 올라왔다 쏙 들어감 */
 .pump-fab.pk-el svg { transform-origin: 50% 90%; animation: pkDuck 7s ease-in-out infinite; }
 @keyframes pkDuck {

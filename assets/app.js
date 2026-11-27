@@ -739,7 +739,7 @@
     }).join("");
     p.innerHTML = '<div class="pf-top"><b>먹이주머니</b><button type="button" class="pf-x" aria-label="닫기">✕</button></div>' +
       '<div class="pf-food' + (n && !COACH_MODE ? '' : ' empty') + (COACH_MODE ? ' coach' : '') + '">' + pfIcon(44) + '<b>' + (COACH_MODE ? '회원님 ' : '') + F + ' ' + n + '개</b><small>' + (COACH_MODE ? (PF ? '선생님 폰은 보기만 돼요 · 먹이는 회원님 폰에서' : '회원님이 아직 주머니를 안 열었어요') : n ? '꾹 누른 채로 끌어서 ' + petX().lab + '한테 뿌려요' : '운동하면 ' + jo(F, '이', '가') + ' 모여요!') + '</small></div>' +
-      '<div class="pf-how"><span>🏅 배지 +4</span><span>📊 인바디 +3</span><span>✅ 출석 +2</span><span>💪 종목 ✓ +2</span></div>' +
+      '<div class="pf-how"><span>🏅 배지 +4</span><span>📸 식단 기록 +4</span><span>🏁 오늘 운동 완료 +4</span><span>📊 인바디 +3</span><span>✅ 출석 +2</span><span>💪 종목 ✓ +1</span><span>😈 펌핑이 누르기 +1 (하루 1번)</span></div>' +
       (list ? '<div class="pf-pets">' + list + '</div>' : '') +
       '<p class="pf-note">많이 먹으면 레벨업! 친구마다 다른 치장이 생겨요</p>' +
       (COACH_MODE ? '' : '<button type="button" class="pf-hide">🏠 펫 집에 들여보내기 <small>⚙️ 설정에서 다시 꺼내요</small></button>');
@@ -6906,13 +6906,28 @@
     }
     function pkPlace() {
       pkRaf = 0;
-      if (PK.m !== "el") { fab.classList.remove("pk-el", "pk-hide"); fab.style.left = fab.style.top = ""; fab.style.bottom = PK.y + "px"; return; }
+      if (PK.m !== "el") { if (fab.parentNode !== document.body) document.body.appendChild(fab); fab.classList.remove("pk-el", "pk-hide"); fab.style.left = fab.style.top = ""; fab.style.bottom = PK.y + "px"; return; }
       var el = PK.el; if (!el || !el.isConnected) { PK = { m: "edge", y: 210 }; pkPlace(); return; }
       var r = el.getBoundingClientRect(), bar = document.querySelector(".bar"), bt = bar ? bar.getBoundingClientRect().bottom : 0, W = 58;
-      /* 2026-11-27 "스크롤하면 부자연스럽게" — fixed+스크롤 때마다 옮기던 걸 문서 기준 absolute(.pk-el)로: 페이지와 같이 저절로 스크롤됨 */
+      /* 2026-11-27 "스크롤하면 뒤늦게 따라옴"(2차) — 펌핑이를 숨는 칸과 같은 상자(잘리지 않는 가장 가까운 조상 pkHost) 안에 넣어서
+         브라우저가 본문이랑 한 덩어리로 스크롤하게 함 → 스크롤 중엔 자바스크립트로 안 옮김. 화면이 바뀌어 본문이 새로 그려지면 pkPick이 다시 붙임 */
+      var host = pkHost(el); if (fab.parentNode !== host) host.appendChild(fab);
+      var hr = host.getBoundingClientRect();
       fab.classList.add("pk-el"); fab.style.bottom = "";
-      fab.style.left = Math.round(r.left + window.scrollX + PK.fx * Math.max(0, r.width - W)) + "px"; fab.style.top = Math.round(r.top + window.scrollY - PK_V) + "px";
+      fab.style.left = Math.round(r.left - hr.left + host.scrollLeft - host.clientLeft + PK.fx * Math.max(0, r.width - W)) + "px";
+      fab.style.top = Math.round(r.top - hr.top + host.scrollTop - host.clientTop - PK_V) + "px";
       pkVis(r, bt);
+    }
+    function pkHost(el) {   /* el 위로 올라가며 overflow가 안 잘리는 첫 조상(없으면 #view) — 그 상자를 기준(relative)으로 */
+      var v = document.getElementById("view"), h = el.parentElement;
+      while (h && h !== v && h !== document.body) {
+        var cs = getComputedStyle(h);
+        if (cs.overflowX === "visible" && cs.overflowY === "visible" && cs.position !== "sticky" && cs.position !== "fixed") break;
+        h = h.parentElement;
+      }
+      h = h || v || document.body;
+      if (getComputedStyle(h).position === "static") h.style.position = "relative";
+      return h;
     }
     function pkVis(r, bt) {
       if (PK.m !== "el" || !PK.el) return;
@@ -6922,7 +6937,7 @@
     function pkNear(el) {   /* 말풍선·목록 창을 펌핑이 옆에 — 2026-11-27 "누르면 챙겨봤어요 칸에 가려진다" → 펌핑이(쏙 나온 모습까지)와 안 겹치게 위·아래 중 넓은 쪽, 모자라면 창 높이를 줄이고 안에서 스크롤 */
       el.style.maxHeight = ""; el.style.overflowY = "";
       var f = fab.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight, top, bot, x, TOPM = 64, BOTM = window.innerHeight - 84;
-      if (PK.m === "el" && !fab.classList.contains("pk-hide")) { top = f.top - 28; bot = f.top + PK_V; x = f.left; }
+      if (PK.m === "el" && !fab.classList.contains("pk-hide")) { var isOut = fab.classList.contains("is-out"); top = isOut ? f.top : f.top - 28; bot = isOut ? f.bottom : f.top + PK_V; x = f.left; }
       else { top = f.top; bot = f.bottom; x = 10; }
       var up = top - 10 - TOPM, dn = BOTM - (bot + 10), below, y;
       if (h <= up) { below = false; y = top - 10 - h; }
@@ -6941,7 +6956,9 @@
     window.addEventListener("hashchange", function () { setTimeout(pkPick, 750); });
     setTimeout(pkPick, 1200);
     setInterval(function () { if (!document.hidden && !card && !tipEl) pkPick(); }, 40000);
-    setInterval(function () { if (!document.hidden && PK.m === "el" && !card && !tipEl) pkPlace(); }, 1500);   /* 사진이 늦게 떠서 칸이 밀려도 따라감 */
+    function pkLost() { if (fab.isConnected) return; PK = { m: "edge", y: PK.y || 210 }; pkPlace(); if (!card && !tipEl) setTimeout(pkPick, 300); }   /* 본문이 새로 그려져 같이 지워졌으면 다시 붙임 */
+    (function () { var v = document.getElementById("view"); if (v && window.MutationObserver) new MutationObserver(function () { if (!fab.isConnected) pkLost(); }).observe(v, { childList: true, subtree: true }); })();
+    setInterval(function () { if (document.hidden) return; if (!fab.isConnected) { pkLost(); return; } if (PK.m === "el" && !card && !tipEl) pkPlace(); }, 1500);   /* 사진이 늦게 떠서 칸이 밀려도 따라감 */
     function awayDays() {
       var a = (attLoad() || []).slice().sort(), last = a[a.length - 1]; if (!last) return 0;
       var d = dayGap(last, ymd(new Date())); return d > 0 ? d : 0;
