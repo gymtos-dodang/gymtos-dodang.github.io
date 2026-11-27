@@ -3042,9 +3042,11 @@ button.pump-ci { cursor: pointer; }
 .w2-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 2px 2px 12px; }
 .w2-top h1 { margin: 0; font-size: 24px; font-weight: 900; color: var(--ink); }
 .w2-top span { font-size: 12px; color: var(--sub); font-weight: 500; text-align: right; }
-.w2-hero { background: var(--hero); color: #fff; border-radius: 20px; padding: 16px; display: grid; gap: 12px; margin-top: 12px; box-shadow: 0 14px 28px -18px var(--hero-sh, rgba(0,0,0,.4)); }
+.hero.w2-hero { border-radius: 24px; padding: 18px; display: grid; gap: 12px; margin-top: 12px; box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 18px 36px -20px var(--hero-sh, rgba(0,0,0,.4)); }
+.w2-lg { position: absolute; right: -14px; bottom: 58px; width: 190px; opacity: .1; pointer-events: none; z-index: -1; rotate: -6deg; }
+.w2f-top .w2-lg { bottom: 6px; right: -30px; width: 220px; }
 .w2-ht { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-.w2-ht small { font-size: 11px; font-weight: 700; color: var(--hero-eye); letter-spacing: .3px; }
+.w2-ht small { font-size: 11px; font-weight: 900; color: var(--hero-eye); letter-spacing: .6px; }
 .w2-ht h2 { margin: 2px 0; font-size: 22px; font-weight: 900; color: #fff; }
 .w2-ht p { margin: 0; font-size: 12px; color: var(--hero-sub); }
 .w2-hn { text-align: right; flex: none; } .w2-hn b { font-size: 22px; font-weight: 900; } .w2-hn b i { font-style: normal; font-size: 13px; font-weight: 500; color: var(--hero-sub); }
@@ -3063,8 +3065,11 @@ button.pump-ci { cursor: pointer; }
 .w2t b { font-size: 20px; font-weight: 900; line-height: 1; }
 .w2t.vid b { position: absolute; left: 0; top: 0; font-size: 11px; padding: 3px 6px; background: rgba(14,14,20,.72); border-radius: 0 0 8px 0; }
 .w2t.vid i { width: 22px; height: 22px; border-radius: 11px; background: rgba(14,14,20,.55); position: relative; }
+.w2t.ico { background: var(--tint); } .w2t.ico .icn { width: 46px; height: 46px; display: block; } .w2t.ico b { position: absolute; left: 0; top: 0; font-size: 11px; padding: 3px 6px; background: var(--primary); color: #fff; border-radius: 0 0 8px 0; z-index: 1; }
+.w2c.cardio .w2t.ico { background: var(--tint); }
+.w2c:active { background: var(--tint); } .w2c { transition: background .18s ease; }
 .w2t.vid i::after { content: ""; position: absolute; left: 8px; top: 6px; border: 5px solid transparent; border-left: 8px solid #fff; border-right: 0; }
-.w2c.done .w2t:not(.vid) { background-color: var(--good); } .w2c.cardio .w2t { background: var(--tint2); color: var(--ink); }
+
 .w2b { flex: 1; min-width: 0; display: grid; gap: 2px; }
 .w2b h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px; min-width: 0; } .w2b h3 > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; } .w2b h3 .tagc { flex: none; }
 .w2rx { margin: 0; font-size: 12px; font-weight: 500; color: var(--ink); } .w2rx em { font-style: normal; font-size: 10px; font-weight: 700; color: #5C3F00; background: var(--gold-bg); border-radius: 6px; padding: 1px 6px; margin-left: 2px; }
@@ -3076,14 +3081,24 @@ button.pump-ci { cursor: pointer; }
 .w2-forms { display: flex; justify-content: space-between; align-items: center; background: var(--paper); border-radius: 16px; padding: 14px; margin-top: 14px; text-decoration: none; color: var(--ink); min-height: 48px; box-sizing: border-box; }
 .w2-forms b { font-size: 14px; } .w2-forms span { font-size: 13px; color: var(--sub); font-weight: 700; }
 /* 겹쳐 뜨는 화면 */
-.w2ov { position: fixed; inset: 0; z-index: 90; background: var(--page); color: var(--ink); display: flex; flex-direction: column; opacity: 0; translate: 0 14px; transition: opacity .22s ease, translate .22s ease; padding-top: env(safe-area-inset-top); font-family: var(--font); }
+.w2ov { position: fixed; inset: 0; z-index: 90; background: var(--page); color: var(--ink); display: flex; flex-direction: column; opacity: 0; translate: 0 22px; transition: opacity .34s ease, translate .44s cubic-bezier(.22, 1, .36, 1); padding-top: env(safe-area-inset-top); font-family: var(--font); }
 .w2ov.on { opacity: 1; translate: 0 0; }
+/* 종목 화면: 아래에서 스르륵 올라오는 둥근 창 + 뒤는 어둡게 + 안쪽 칸이 차례로 떠오름 */
+.w2ov.w2d { top: calc(env(safe-area-inset-top) + 12px); padding-top: 0; border-radius: 28px 28px 0 0; overflow: hidden; opacity: 1; translate: 0 104%; box-shadow: 0 0 0 100vmax rgba(10, 10, 14, 0), 0 -18px 40px -22px rgba(0, 0, 0, .5); transition: translate .5s cubic-bezier(.22, 1, .36, 1), box-shadow .5s ease; }
+.w2ov.w2d.on { translate: 0 0; box-shadow: 0 0 0 100vmax rgba(10, 10, 14, .55), 0 -18px 40px -22px rgba(0, 0, 0, .5); }
+.w2-grab { width: 40px; height: 5px; border-radius: 3px; background: var(--muted); margin: 8px auto 0; flex: none; }
+.w2ov.intro .w2-body > *, .w2ov.intro .w2-foot, .w2ov.intro .w2-dh { animation: w2In .62s cubic-bezier(.22, 1, .36, 1) both; }
+.w2ov.intro .w2-dh { animation-delay: .06s; } .w2ov.intro .w2-body > :nth-child(1) { animation-delay: .12s; } .w2ov.intro .w2-body > :nth-child(2) { animation-delay: .19s; } .w2ov.intro .w2-body > :nth-child(3) { animation-delay: .26s; }
+.w2ov.intro .w2-body > :nth-child(4) { animation-delay: .33s; } .w2ov.intro .w2-body > :nth-child(n+5) { animation-delay: .4s; } .w2ov.intro .w2-foot { animation-delay: .36s; }
+@keyframes w2In { from { opacity: 0; translate: 0 18px; } to { opacity: 1; translate: 0 0; } }
+.w2ov.intro .w2-chart i { animation: w2Grow .7s .5s cubic-bezier(.22, 1, .36, 1) both; transform-origin: bottom; } @keyframes w2Grow { from { scale: 1 0; } to { scale: 1 1; } }
+@media (prefers-reduced-motion: reduce) { .w2ov, .w2ov.w2d { transition: opacity .2s ease; translate: 0 0; } .w2ov.intro * { animation: none !important; } }
 .w2-body { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 4px 16px 18px; display: flex; flex-direction: column; gap: 11px; } .w2-body > * { flex: none; }
 .w2-dh { display: flex; align-items: center; gap: 6px; padding: 8px 12px 8px 6px; }
 .w2-dh h2 { margin: 0; font-size: 19px; font-weight: 900; } .w2-dh small { font-size: 11px; color: var(--sub); }
 .w2-x { width: 44px; height: 44px; border: 0; background: none; display: flex; align-items: center; justify-content: center; cursor: pointer; flex: none; }
 .w2-x svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; color: var(--ink); }
-.w2-vid { position: relative; border-radius: 18px; overflow: hidden; background: #0E0E12; } .w2-vid video { display: block; width: 100%; max-height: 46vh; object-fit: contain; background: #0E0E12; }
+.w2-vid { position: relative; border-radius: 20px; overflow: hidden; background: #0E0E12; box-shadow: 0 16px 30px -20px rgba(0, 0, 0, .55); } .w2-vid video { display: block; width: 100%; max-height: 46vh; object-fit: contain; background: #0E0E12; }
 .w2-ang { position: absolute; left: 10px; bottom: 10px; display: flex; gap: 6px; }
 .w2-ang button { border: 0; border-radius: 10px; min-height: 34px; padding: 0 12px; font: 700 12px var(--font); background: rgba(40,40,48,.85); color: #fff; cursor: pointer; } .w2-ang button[aria-pressed="true"] { background: #fff; color: #1A1A1E; }
 .w2-full { position: absolute; right: 10px; bottom: 10px; font-size: 11px; font-weight: 700; color: #fff; background: rgba(40,40,48,.85); border-radius: 10px; padding: 9px 11px; text-decoration: none; }
@@ -3129,7 +3144,7 @@ button.pump-ci { cursor: pointer; }
 .w2s-rest button { border: 0; border-radius: 10px; min-height: 44px; padding: 0 12px; background: #3A3A42; color: #fff; font: 700 12px var(--font); cursor: pointer; flex: none; }
 .w2s .tagc { vertical-align: middle; }
 /* 끝 화면 */
-.w2f-top { background: var(--hero); color: #fff; padding: 26px 20px 22px; border-radius: 0 0 28px 28px; display: grid; gap: 6px; justify-items: center; text-align: center; margin-top: calc(-1 * env(safe-area-inset-top)); padding-top: calc(26px + env(safe-area-inset-top)); }
+.hero.w2f-top { padding: 26px 20px 22px; border-radius: 0 0 28px 28px; flex: none; display: grid; gap: 6px; justify-items: center; text-align: center; margin-top: calc(-1 * env(safe-area-inset-top)); padding-top: calc(26px + env(safe-area-inset-top)); }
 .w2f-ok { width: 64px; height: 64px; border-radius: 32px; background: var(--hero-go); display: flex; align-items: center; justify-content: center; } .w2f-ok svg { width: 30px; height: 30px; stroke: var(--hero-go-ink); }
 .w2f-top small { font-size: 12px; font-weight: 700; color: var(--hero-eye); } .w2f-top h2 { margin: 0; font-size: 25px; font-weight: 900; color: #fff; } .w2f-top p { margin: 0; font-size: 13px; color: var(--hero-sub); }
 .w2f .w2-body { padding-top: 14px; }
@@ -3362,6 +3377,7 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .cmp-ov .cmp-ctl .btn[aria-pressed="true"], :where(html:not([data-theme="light"])) .cmp-ov .cmp-ctl .btn[aria-pressed="true"]:hover { background: var(--paper); color: var(--ink); }
 :where(html:not([data-theme="light"])) .eb-tag.now { background: var(--seal); }
 :where(html:not([data-theme="light"])) .w2-coach { color: var(--ink); }
+:where(html:not([data-theme="light"])) .w2t.ico b { background: var(--seal); }
 :where(html:not([data-theme="light"])) .w2rx em { color: var(--ink); }
 :where(html:not([data-theme="light"])) .w2-list .exchk.w2k { border-color: var(--line); }
 :where(html:not([data-theme="light"])) .w2-ang button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
@@ -3701,6 +3717,7 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .cmp-ov .cmp-ctl .btn[aria-pressed="true"], :where(html[data-theme="dark"]) .cmp-ov .cmp-ctl .btn[aria-pressed="true"]:hover { background: var(--paper); color: var(--ink); }
 :where(html[data-theme="dark"]) .eb-tag.now { background: var(--seal); }
 :where(html[data-theme="dark"]) .w2-coach { color: var(--ink); }
+:where(html[data-theme="dark"]) .w2t.ico b { background: var(--seal); }
 :where(html[data-theme="dark"]) .w2rx em { color: var(--ink); }
 :where(html[data-theme="dark"]) .w2-list .exchk.w2k { border-color: var(--line); }
 :where(html[data-theme="dark"]) .w2-ang button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
