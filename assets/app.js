@@ -6887,7 +6887,7 @@
     function fresh() { var s = null; try { s = localStorage.getItem(LS_S); } catch (e) {} return s === ymd(new Date()); }
     function fabSet(md) {
       var dot = !COACH_MODE && !card && !fresh() && todo().length > 0;
-      fab.innerHTML = pumpFace(md || idle); fab.className = "pump-fab" + (md ? " is-" + md : "") + (dot ? " has-new" : "");
+      fab.innerHTML = pumpFace(md || idle); fab.className = "pump-fab" + (md ? " is-" + md : "") + (dot ? " has-new" : "") + (md || card ? " is-out" : "");   /* 2026-11-27 빼꼼: 반응·목록 열릴 때만 쏙 나옴 */
     }
     fabSet();
     function go(it) {

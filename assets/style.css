@@ -3863,3 +3863,16 @@ html[data-theme="dark"] .mu-z button.on { background: var(--ink); color: var(--p
 html[data-theme="dark"] .mu-bt { background: #3A3A42; }
 
 /* DARK-END */
+
+/* 2026-11-27 펌핑이 "빼꼼" 방식 — 오른쪽 아래 둥둥 버튼이 펫·먹이주머니와 겹쳐서, 왼쪽 화면 끝에 반쯤 숨어 고개만 빼꼼 내밀고 있다가
+   말풍선·반응·목록이 열릴 땐 쏙 나옴(.is-out). 말풍선·목록 창도 왼쪽으로. 가끔 살짝 더 내밀어 눈에 띄게(pumpPeek) */
+.pump-fab { right: auto; left: calc(-30px + env(safe-area-inset-left, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 210px); rotate: 22deg;
+  transition: left .38s cubic-bezier(.3, 1.45, .5, 1), rotate .38s cubic-bezier(.3, 1.45, .5, 1); animation: pumpPeek 6s ease-in-out infinite; }
+.pump-fab.is-out { left: calc(10px + env(safe-area-inset-left, 0px)); rotate: 0deg; animation: none; }
+.pump-fab.is-dizzy.is-out { animation: pumpSpin .5s ease-in-out 2; }
+@keyframes pumpPeek { 0%, 70%, 100% { translate: 0 0; } 78%, 88% { translate: 9px 0; } 83% { translate: 9px -2px; } }
+.pump-fab.has-new::after { right: 2px; }
+.pump-tip { right: auto; left: calc(14px + env(safe-area-inset-left, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 284px); }
+.pump-tip::after { right: auto; left: 26px; }
+.pump-card { right: auto; left: calc(14px + env(safe-area-inset-left, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 284px); }
+@media (prefers-reduced-motion: reduce) { .pump-fab { animation: none !important; transition: none; } }
