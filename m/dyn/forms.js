@@ -297,6 +297,8 @@ window.DYN = {
  },
  "염승완": {
   "forms": [
+   {"id": "1128-lateral-raise-machine", "dir": "/m/dyn/seungwan/media/form-1128-lateral-raise-machine/", "date": "2026. 11. 28 (토)", "exercise": "사이드 레터럴 레이즈 머신", "exercise_en": "Standing Lateral Raise Machine", "part": "어깨", "views": [{"label": "뒷모습", "file": "form"}, {"label": "측면", "file": "side"}], "targets": ["측면 삼각근 (옆 어깨)", "전면 삼각근 · 상부 승모근"], "benefit": "옆 어깨를 동그랗게 키워서 어깨가 넓어 보이게 해줘요. 기계가 길을 잡아줘서 끝까지 일정하게 자극이 들어가요", "key_point": "손이 아니라 팔꿈치로 들고, 어깨 높이에서 멈춘다!", "good_points": [{"title": "양팔을 같은 높이로 들었어요", "desc": "뒤에서 보면 양쪽 팔이 한쪽으로 기울지 않고 똑같이 올라갔어요"}, {"title": "어깨 높이까지만 들었어요", "desc": "팔을 귀 쪽으로 너무 올리지 않아서 승모근 말고 옆 어깨에 들어갔어요"}, {"title": "몸통이 흔들리지 않았어요", "desc": "옆에서 봐도 상체가 앞뒤로 출렁이지 않고 팔만 움직였어요"}], "primary_muscles": [{"name": "측면 삼각근", "where": "어깨 옆 동그란 부분"}], "secondary_muscles": "전면 삼각근 · 상부 승모근", "feel_good": "어깨 옆이 타는 듯 뻐근해요", "feel_stop": "목·승모근만 뻐근하거나, 어깨 안쪽이 찌릿해요", "steps": [{"title": "준비", "desc": "기구 옆에 바르게 서서 손잡이를 잡아요. 팔꿈치를 살짝 굽히고 어깨는 아래로 내려요", "chip": "숨 들이마시기", "media": "step1.jpg"}, {"title": "들어 올리기", "desc": "팔꿈치로 옆으로 크게! 어깨 높이까지 들고 위에서 1초 멈춰요", "chip": "1~2초 · 후~ 내쉬며", "media": "step2.webp", "loop": true}, {"title": "천천히 내리기", "desc": "무게에 끌려가지 말고 버티면서 처음 자리까지", "chip": "3초 · 들이마시며", "media": "step3.webp", "loop": true}], "do": ["어깨는 아래로 내린 채 시작", "팔꿈치가 손보다 먼저 올라가기", "어깨 높이에서 1초 멈추기"], "dont": ["어깨를 귀 쪽으로 으쓱하기", "몸을 흔들어 반동 쓰기", "팔을 어깨보다 높이 들기"], "also": ["스탠딩 사이드 레터럴 레이즈 머신", "레터럴 레이즈 머신"]},
+   {"id": "1128-cable-front-raise", "dir": "/m/dyn/seungwan/media/form-1128-cable-front-raise/", "date": "2026. 11. 28 (토)", "exercise": "케이블 프론트 레이즈", "exercise_en": "Cable Front Raise", "part": "어깨", "views": [{"label": "측면", "file": "form"}, {"label": "정면", "file": "front"}], "targets": ["전면 삼각근 (앞 어깨)", "측면 삼각근 · 윗가슴 · 상부 승모근"], "benefit": "케이블이 처음부터 끝까지 당겨 줘서 앞 어깨가 쉬지 않고 일해요. 앞 어깨가 채워지면 어깨가 둥글고 입체적으로 보여요", "key_point": "팔꿈치 살짝 굽힌 채, 어깨 높이까지만 반동 없이 올린다!", "good_points": [{"title": "어깨 높이에서 멈췄어요", "desc": "팔을 어깨 높이까지만 들어서 승모근 말고 앞 어깨에 정확히 들어갔어요"}, {"title": "상체를 세우고 했어요", "desc": "옆에서 보면 허리를 젖히지 않고 바르게 선 채 팔만 움직였어요"}, {"title": "천천히 내렸어요", "desc": "무게에 끌려가지 않고 버티면서 허벅지 앞까지 내려서 앞 어깨가 끝까지 일했어요"}], "primary_muscles": [{"name": "삼각근 전면", "where": "어깨 앞쪽"}], "secondary_muscles": "측면 삼각근 · 대흉근 상부 · 상부 승모근", "feel_good": "어깨 앞쪽이 타는 듯 뻐근해요", "feel_stop": "목·승모근만 뻐근하거나, 어깨 앞이 찌릿해요", "steps": [{"title": "준비", "desc": "케이블을 등 뒤 아래쪽에 두고 로프를 양손으로 잡아요. 발은 어깨 너비, 팔꿈치는 살짝 굽히고 손은 허벅지 앞", "chip": "숨 들이마시기", "media": "step1.jpg"}, {"title": "올리기", "desc": "팔꿈치 모양 그대로 앞으로 들어 어깨 높이까지! 몸을 젖히지 말고 앞 어깨로만", "chip": "1~2초 · 후~ 내쉬며", "media": "step2.webp", "loop": true}, {"title": "내리기", "desc": "버티면서 허벅지 앞까지 천천히. 무게에 끌려 내려가지 않아요", "chip": "2~3초 · 들이마시며", "media": "step3.webp", "loop": true}], "do": ["팔꿈치는 살짝 굽힌 채 고정", "어깨 높이까지만 들기", "배에 힘 주고 바르게 서기"], "dont": ["허리를 젖혀 반동 쓰기", "어깨를 귀 쪽으로 으쓱하기", "팔을 머리 위까지 들기"]},
    {
     "id": "1127-leg-press",
     "dir": "/m/dyn/seungwan/media/form-1127-leg-press/",
@@ -1322,6 +1324,7 @@ window.DYN = {
    }
   ],
   "notices": [
+   {"date": "2026. 11. 28", "title": "어깨 자세 복습지 2개가 올라왔어요", "body": "사이드 레터럴 레이즈 머신 · 케이블 프론트 레이즈! 오늘 수업 영상으로 만들었어요. 각도 버튼으로 두 방향 다 볼 수 있어요.", "link": "forms"},
    {
     "date": "2026. 11. 27",
     "title": "하체 자세 복습지 3개가 올라왔어요",

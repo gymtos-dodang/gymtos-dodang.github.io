@@ -820,6 +820,11 @@
     "member": "어순래",
     "id": "lateral-raise-machine",
     "img": "m/sunrae-c7yvid/media/form-lateral-raise-machine/step1.jpg"
+   },
+   {
+    "member": "염승완",
+    "id": "1128-lateral-raise-machine",
+    "img": "m/dyn/seungwan/media/form-1128-lateral-raise-machine/step1.jpg"
    }
   ]
  },
@@ -1246,6 +1251,17 @@
     "member": "최용민 · 고은성",
     "id": "one-arm-iso-row",
     "img": "m/yongmin-eunseong-1mwau5/media/form-one-arm-iso-row/step1.jpg"
+   }
+  ]
+ },
+ "케이블 프론트 레이즈": {
+  "part": "어깨",
+  "en": "Cable Front Raise",
+  "shots": [
+   {
+    "member": "염승완",
+    "id": "1128-cable-front-raise",
+    "img": "m/dyn/seungwan/media/form-1128-cable-front-raise/step1.jpg"
    }
   ]
  },

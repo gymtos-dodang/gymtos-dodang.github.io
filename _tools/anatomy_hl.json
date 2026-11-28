@@ -2452,5 +2452,31 @@
 "ham_bf": "S",
 "ham_st": "S"
 }
+},
+"m/dyn/seungwan/media/form-1128-cable-front-raise/anatomy.png": {
+"sex": "M",
+"front": {
+"delt_ant": "P",
+"delt_lat": "S",
+"pec_clav": "S",
+"trap_up": "S"
+},
+"back": {
+"delt_lat": "S",
+"trap_up": "S"
+}
+},
+"m/dyn/seungwan/media/form-1128-lateral-raise-machine/anatomy.png": {
+"sex": "M",
+"front": {
+"trap_up": "S",
+"delt_ant": "S",
+"delt_lat": "P"
+},
+"back": {
+"trap_up": "S",
+"delt_lat": "P",
+"supraspinatus": "S"
+}
 }
 }
