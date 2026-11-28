@@ -470,16 +470,24 @@
   /* 비하인드 넥프레스: 바가 머리 뒤로 지나감(몸 뒤에 그려서 머리가 바를 가림) */
   EX.behind_neck_press = ohp(function () { return []; }, function (P) {
     var y = P.haL[1] - 1; return [L("eq2", [[20, 4], [20, 93]], 2.6), L("eq2", [[80, 4], [80, 93]], 2.6), L("eq", [[14, y], [86, y]], 3.4), L("eq", [[14, y - 7], [14, y + 7]], 5), L("eq", [[86, y - 7], [86, y + 7]], 5)]; });
-  /* 몬스터 글루트 머신 (서경진님, 2026-11-28 장동욱 기구 사진 → "정면으로"): 앞모습 — 등받이에 앉아 한쪽 무릎을 가슴 쪽으로 든 자세에서, 발목 패드를 아래로 밀어 다리를 폄. 옆 레버 끝 원판이 따라 움직임 */
+  /* 몬스터 글루트 머신 (서경진님, 2026-11-28 장동욱 매장 사진 3차): 앞모습 — 높은 등받이·머리 받침 의자에 벨트 차고 앉음, 양 무릎 바깥에 세로 패드,
+     패드 아래로 휘어 내려간 레버 끝(발 앞 바닥)에 발목 롤러. 한쪽 다리로 무릎 바깥 패드를 밀어 바깥·뒤로 */
   EX.monster_glute = { t: .9,
-    p0: ext(mir(ext(FSIT, { elL: [31, 54], haL: [25, 62] })), { knR: [63, 54], ftR: [67, 72], toeR: [73, 73] }),
-    p1: { knR: [62, 80], ftR: [64, 92], toeR: [70, 93] },
-    bones: [FLEGS[0], FTORSO].concat(FARMS).concat([FLEGS[1]]),   /* 드는 다리(오른쪽)를 몸통 위에 그려 무릎이 보이게 */
-    hl: function (P) { return [{ dot: off(P.hipR, 2.5, -1), r: 5.8 }, { dot: off(P.hipL, -2.5, -1), r: 4.2, o: .55 }]; },
-    back: function (P) { var y = Math.min(P.ftR[1] - 2, 84);
-      return [{ k: "eq2", rect: [36.5, 22, 27, 52], r: 5 }, { k: "eq2", rect: [41, 11, 18, 10], r: 4 }, L("eq2", [[50, 80], [50, 93]], 3), L("eq2", [[34, 79.5], [66, 79.5]], 5), floor(14, 94),
-        L("eq2", [[22, 60], [22, 70]], 3.4), L("eq2", [[78, 60], [78, 70]], 3.4), L("eq", [[70, 78], [86, 78]], 3), L("eq", [[86, 78], [86, y]], 3), R("eq", [86, y], 6.8, 3.2)]; },
-    front: function (P) { var y = P.ftR[1] - 2, yp = Math.min(y, 84); return [L("eq", [[P.ftR[0] - 6, y], [P.ftR[0] + 6, y]], 4.6), L("eq", [[P.ftR[0] + 6, y], [86, yp]], 2.6)]; } };
+    p0: ext(mir(ext(FSIT, { knL: [38, 79], ftL: [38, 91], toeL: [32, 91], elL: [33, 54], haL: [31, 63] })), { knR: [62, 79], ftR: [62, 91], toeR: [68, 91] }),
+    p1: { knR: [73, 76], ftR: [77, 90], toeR: [83, 90] }, arcs: { knR: "hipR" }, bones: FRONT,
+    hl: function (P) { return [{ dot: off(P.hipR, 3, -1), r: 6 }, { dot: off(P.hipL, -3, -1), r: 4.2 }]; },
+    back: function (P) {
+      return [{ k: "eq2", rect: [38, 22, 24, 50], r: 5 }, { k: "eq2", rect: [41.5, 8, 17, 12], r: 4 }, { k: "eq2", rect: [34, 68, 32, 7], r: 3 },
+        L("eq2", [[50, 75], [50, 93]], 3), floor(10, 90),
+        L("eq2", [[21, 56], [21, 70]], 3), L("eq2", [[79, 56], [79, 70]], 3)];
+    },
+    front: function (P) {
+      function side(kn, ft, d) {   /* 무릎 바깥 세로 패드 + 아래로 휘어 발 앞으로 가는 레버 + 발목 롤러 */
+        var pd = off(kn, d * 7.5, -2), rl = [ft[0] + d * 2, 92];
+        return [L("eq2", [off(pd, 0, 8), off(rl, -d * 4, -6), rl], 2.6), L("eq", [off(pd, 0, -7), off(pd, 0, 6)], 6.5), L("eq", [off(rl, -4, 0), off(rl, 4, 0)], 4.2)];
+      }
+      return side(P.knL, P.ftL, -1).concat(side(P.knR, P.ftR, 1));
+    } };
   /* 힙쓰러스트 머신 (도당점 — 서경진·임애란·정미경님): 비스듬한 등판에 등을 대고, 골반 위 패드(레버)를 엉덩이로 밀어 올림. 바벨 힙쓰러스트(hip_thrust)와 나눔 */
   EX.hip_thrust_machine = ext(EX.hip_thrust, {
     fx: function (P) { P.pad = off(P.hip, 1, -7); P.ha = off(P.hip, -2, -9); P.el = off(mix(P.sh, P.ha, .5), -2, 5); },
