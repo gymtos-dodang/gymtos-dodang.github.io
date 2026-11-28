@@ -688,11 +688,18 @@
       if (b.o || ring) add(s, S.tile, 3.2);   /* 몸통 앞을 지나는 팔다리는 옅은 테두리로 구분 */
       add(s, S.fig);
     }
-    ex.bones.forEach(function (b) {
+    /* 2026-11-28 "다리 부분도": 다리(kn 들어간 뼈)도 몸통 위에 옅은 테두리로 — 몸통을 먼저 그리고 다리를 테두리와 함께 올림(적힌 순서는 다리끼리 그대로) */
+    function isLeg(b) { return b.pts && b.pts.some(function (k) { return /^kn/.test(k); }); }
+    var bones = ex.bones;
+    if (!custom) {
+      var tor = bones.filter(isTorso);
+      if (tor.length) bones = tor.concat(bones.filter(function (b) { return !isTorso(b) && isLeg(b); }), bones.filter(function (b) { return !isTorso(b) && !isLeg(b); }));
+    }
+    bones.forEach(function (b) {
       if (b.hlHere) { ex.hl(P).forEach(function (s) { add(s, s.f ? S.cut : S.hl, 0, true); }); hlDone = true; return; }
       if (!custom && seenTorso && isArm(b)) { late.push(b); return; }
       if (isTorso(b)) seenTorso = true;
-      draw(b);
+      draw(b, !custom && isLeg(b));
     });
     if (ex.headO) add({ dot: P.head, r: (ex.headR || 7.2) + 1.7 }, S.tile);
     add({ dot: P.head, r: ex.headR || 7.2 }, S.fig);
