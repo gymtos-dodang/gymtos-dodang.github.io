@@ -3273,14 +3273,16 @@ html[data-theme="dark"] .lg-seg button[aria-pressed="true"] { background: var(--
 .exrow .card-link .thumb { width: 100%; aspect-ratio: 4 / 5; }
 .exrow .card-link h3 { font-size: 14.5px; margin: 2px 0 0; } .exrow .card-link p { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .exrow .card-link .tagc { font-size: 10.5px; }
-.exlist { display: flex; flex-direction: column; background: var(--paper); border-radius: 16px; overflow: hidden; box-shadow: 0 0 0 1px rgba(20,20,30,.05); }
-.exr { display: flex; align-items: center; gap: 12px; padding: 11px 14px; text-decoration: none; color: var(--ink); border-top: 1px solid var(--line); min-height: 44px; }
-.exr:first-child { border-top: 0; } .exlist > [hidden] { display: none; }
-.exr-c { flex: 0 0 54px; height: 54px; border-radius: 13px; background: var(--tint); display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.exr-c .exr-i { width: 48px; height: 48px; display: block; object-fit: contain; }   /* 2026-11-28 "종목 사전 움직이는 아이콘으로" */
-.exr-t { flex: 1; min-width: 0; } .exr-t b { display: block; font-size: 14.5px; } .exr-t small { display: block; font-size: 12px; color: var(--sub); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.exr-tag { flex: none; font-style: normal; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 7px; color: var(--sub); box-shadow: inset 0 0 0 1px var(--line); }
-.exr-tag.on { background: var(--pink); color: #fff; box-shadow: none; }
+.exlist { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }   /* 2026-11-28 "운동 사전 너무 길다" → 부위 칩 + 3칸 격자 */
+.exlist > [hidden] { display: none; }
+.exr { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px 11px; border-radius: 16px; background: var(--paper); color: var(--ink); text-decoration: none; text-align: center; min-width: 0; box-shadow: 0 0 0 1px rgba(20,20,30,.05); }
+.exr.on { box-shadow: 0 0 0 1.5px var(--pink); }
+.exr-c { position: relative; width: 64px; height: 64px; border-radius: 16px; background: var(--tint); display: flex; align-items: center; justify-content: center; }
+.exr-c .exr-i { width: 56px; height: 56px; display: block; object-fit: contain; }
+.exr b { font-size: 12.5px; line-height: 1.3; word-break: keep-all; margin-top: 2px; }
+.exr small { font-size: 10.5px; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.exr-tag { position: absolute; top: -5px; right: -10px; font-style: normal; font-size: 9.5px; font-weight: 800; padding: 2px 6px; border-radius: 7px; background: var(--pink); color: #fff; }
+.exfc { margin: 0 0 10px; } .exfc.off { opacity: .45; }
 .exnone { text-align: center; color: var(--faint); font-size: 13px; margin: 14px 0; }
 .exnot { padding: 12px 14px; border-radius: 14px; background: var(--paper); border: 1px dashed var(--muted); font-size: 13px; line-height: 1.6; color: var(--sub); margin: 0 0 10px; } .exnot b { color: var(--ink); }
 .exhero { margin: 6px 0 14px; } .exhero small { font-size: 11px; font-weight: 800; letter-spacing: 2px; color: var(--pink); text-transform: uppercase; }

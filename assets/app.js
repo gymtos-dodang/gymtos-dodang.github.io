@@ -68,7 +68,7 @@
   function wnEbClose() { var b = document.querySelector(".ebsheet .ibs-x"); if (b) b.click(); }
   var WN = [
     { id: "2026-11-28", t: "자세 복습지 업데이트",
-      items: ["📖 자세 복습지에 종목 사전이 생겼어요 — 우리 매장 기구 종목을 다 볼 수 있어요", "🔎 종목 이름 · 근육으로 찾고, 부위별로 골라 보기", "🔁 기구를 누가 쓰고 있으면 '기구 사용 중이에요' → 비슷한 종목 추천", "✅ 오늘 루틴에서 그 종목만 오늘 하루 바꿀 수 있어요"],
+      items: ["📖 자세 복습지에 운동 사전이 생겼어요 — 우리 매장 기구 종목을 다 볼 수 있어요", "🔎 종목 이름 · 근육으로 찾고, 부위별로 골라 보기", "🔁 기구를 누가 쓰고 있으면 '기구 사용 중이에요' → 비슷한 종목 추천", "✅ 오늘 루틴에서 그 종목만 오늘 하루 바꿀 수 있어요"],
       steps: [
         { h: "#forms", s: ".exq", t: "🔎 종목 찾기", b: "종목 이름이나 근육(예: 광배근)으로 찾아요.\n아래 칩으로 부위별로도 골라 볼 수 있어요." },
         { h: "#forms", s: ".exlist", t: "📖 종목 사전", b: "우리 매장 기구로 할 수 있는 종목이 다 있어요.\n'복습지'는 내가 배운 종목, '사전'은 아직 안 배운 종목이에요." },
@@ -3714,40 +3714,55 @@
     return '<a class="card-link" data-cat="' + esc(formCats(f).join(" ")) + '" data-q="' + esc(fnorm(f.exercise + " " + (f.exercise_en || "") + " " + (f.also || []).join(" "))) + '" href="#form-' + esc(f.id) + '"><div class="thumb"><img src="' + esc(f.dir) + 'poster.jpg" alt="" loading="lazy"></div>' +
       '<div><span class="tagc">' + esc(f.part) + '</span>' + (formNew(f) && !COACH_MODE ? '<span class="fnew">NEW</span>' : '') + '<span class="fvw" data-fv="' + esc(f.id) + '">' + (DEMO ? '' : fvTag(f.id)) + '</span><h3>' + esc(f.exercise) + '</h3><p>' + esc(f.exercise_en) + ' · ' + esc(f.date) + '</p></div></a>';
   }
-  function renderForms() {   /* 2026-11-28 리메이크: 검색 + 부위 칩 + 내가 배운 종목(가로 줄) + 종목 사전(EXD) */
-    var h = wkSeg("forms") + '<section>' + head("", "자세 복습지", "내 영상 + 종목 사전");
-    h += '<label class="exq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span class="exsr">종목 찾기</span><input type="search" id="exq" placeholder="종목 이름·근육으로 찾기 (예: 풀다운)" autocomplete="off" enterkeyhint="search"></label>';
-    h += '<div class="fcat" role="tablist" aria-label="부위별 보기"><button type="button" role="tab" data-fc="" aria-selected="true">전체</button>' +
-      FCATS.map(function (c) { return '<button type="button" role="tab" data-fc="' + c[0] + '" aria-selected="false">' + c[0] + '</button>'; }).join("") + '</div>';
-    var fs = M.forms || [];
-    h += '<div class="exh" data-exh="row"><h3>내가 배운 종목 <b>' + fs.length + '</b></h3><small>수업 영상</small></div>';
-    h += fs.length ? '<div class="flist exrow">' + fs.map(formCard).join("") + '</div>' : '<div class="exnot">아직 배운 종목이 없어요. 수업에서 배운 자세가 내 영상으로 여기에 쌓여요.</div>';
-    var names = []; RT_CAT.forEach(function (c) { c[1].forEach(function (n) { if (EXD[n]) names.push(n); }); });
-    h += '<div class="exh"><h3>종목 사전</h3><small>우리 매장 기구 기준 · ' + names.length + '종목</small></div><div class="exlist">' + names.map(exRow).join("") + '</div><p class="exnone" hidden>찾는 종목이 없어요</p>';
+  function renderForms() {   /* 2026-11-28 리메이크: 검색 + 내가 배운 운동(부위 칩·두 줄 슬라이드) + 운동 사전(부위 칩·3칸 아이콘 격자) */
+    var h = wkSeg("forms") + '<section>' + head("", "자세 복습지", "내 영상 + 운동 사전");
+    h += '<label class="exq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span class="exsr">운동 찾기</span><input type="search" id="exq" placeholder="운동 이름·근육으로 찾기 (예: 풀다운)" autocomplete="off" enterkeyhint="search"></label>';
+    function chips(fs, cnt, all) {   /* 2026-11-28 "부위 카테고리를 넣어서 편하게" — 칸마다 따로 */
+      var cs = FCATS.map(function (c) { return c[0]; }).concat(["기타"]).filter(function (c) { return cnt[c]; });
+      return '<div class="fcat exfc" role="tablist" data-fs="' + fs + '">' + (all ? '<button type="button" role="tab" data-fc="" aria-selected="false">전체 <b>' + all + '</b></button>' : '') +
+        cs.map(function (c) { return '<button type="button" role="tab" data-fc="' + c + '" aria-selected="false">' + c + ' <b>' + cnt[c] + '</b></button>'; }).join("") + '</div>';
+    }
+    var fs = M.forms || [], c1 = {};
+    fs.forEach(function (f) { formCats(f).forEach(function (c) { c1[c] = (c1[c] || 0) + 1; }); });
+    h += '<div class="exh" data-exh="row"><h3>내가 배운 운동 <b>' + fs.length + '</b></h3><small>수업 영상</small></div>';
+    h += fs.length ? chips("row", c1, fs.length) + '<div class="flist exrow">' + fs.map(formCard).join("") + '</div>' : '<div class="exnot">아직 배운 운동이 없어요. 수업에서 배운 자세가 내 영상으로 여기에 쌓여요.</div>';
+    var names = [], c2 = {}; RT_CAT.forEach(function (c) { c[1].forEach(function (n) { if (EXD[n]) { names.push(n); c2[EXD_CAT[n]] = (c2[EXD_CAT[n]] || 0) + 1; } }); });
+    h += '<div class="exh"><h3>운동 사전</h3><small>우리 매장 기구 기준 · ' + names.length + '종목</small></div>' + chips("dict", c2, 0) +
+      '<div class="exlist">' + names.map(exRow).join("") + '</div><p class="exnone" hidden>찾는 운동이 없어요</p>';
     return h + '</section>' + remember();
   }
+  var EXFC_K = "ptnote:" + SLUG + ":exfc";
   function setupForms() {
-    var bar = view.querySelector(".fcat"), q = view.querySelector("#exq");
-    if (!bar) return;
-    var row = view.querySelector(".exrow"), rowH = view.querySelector('[data-exh="row"]'), none = view.querySelector(".exnone"), cur = "";
+    var q = view.querySelector("#exq"), row = view.querySelector(".exrow"), none = view.querySelector(".exnone");
+    var bars = { row: view.querySelector('.exfc[data-fs="row"]'), dict: view.querySelector('.exfc[data-fs="dict"]') }, cur = { row: "", dict: "" };
+    try { cur.row = localStorage.getItem(FCAT_K) || ""; cur.dict = localStorage.getItem(EXFC_K) || ""; } catch (e) {}
+    ["row", "dict"].forEach(function (k) {   /* 저장된 칩이 없으면: 배운 운동은 전체, 사전은 첫 부위 */
+      var b = bars[k]; if (!b) return;
+      if (!b.querySelector('[data-fc="' + cur[k] + '"]')) cur[k] = b.firstChild ? b.firstChild.getAttribute("data-fc") : "";
+    });
     function apply() {
       var t = fnorm(q ? q.value : ""), nr = 0, nl = 0;
-      Array.prototype.forEach.call(bar.children, function (b) { b.setAttribute("aria-selected", b.getAttribute("data-fc") === cur ? "true" : "false"); });
+      ["row", "dict"].forEach(function (k) { var b = bars[k]; if (!b) return; b.classList.toggle("off", !!t);
+        Array.prototype.forEach.call(b.children, function (x) { x.setAttribute("aria-selected", !t && x.getAttribute("data-fc") === cur[k] ? "true" : "false"); }); });
       Array.prototype.forEach.call(view.querySelectorAll(".exrow > a, .exlist > a"), function (a) {
-        var ok = (!cur || (" " + a.getAttribute("data-cat") + " ").indexOf(" " + cur + " ") >= 0) && (!t || (a.getAttribute("data-q") || "").indexOf(t) >= 0);
-        a.hidden = !ok; if (ok) { if (a.parentNode === row) nr++; else nl++; }
+        var k = a.parentNode === row ? "row" : "dict", c = cur[k];
+        var ok = t ? (a.getAttribute("data-q") || "").indexOf(t) >= 0 : (!c || (" " + a.getAttribute("data-cat") + " ").indexOf(" " + c + " ") >= 0);
+        a.hidden = !ok; if (ok) { if (k === "row") nr++; else nl++; }
       });
-      if (row) { row.hidden = !nr; if (rowH) rowH.hidden = !nr && !!(cur || t); }
-      if (none) none.hidden = !!(nl || nr);
+      if (row) row.hidden = !nr;
+      if (none) none.hidden = !!nl;
     }
-    bar.addEventListener("click", function (e) {
-      var b = e.target.closest("button[data-fc]"); if (!b) return;
-      cur = b.getAttribute("data-fc"); try { localStorage.setItem(FCAT_K, cur); } catch (x) {}
-      apply(); b.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+    ["row", "dict"].forEach(function (k) {
+      var b = bars[k]; if (!b) return;
+      b.addEventListener("click", function (e) {
+        var x = e.target.closest("button[data-fc]"); if (!x) return;
+        if (q && q.value) q.value = "";
+        cur[k] = x.getAttribute("data-fc"); try { localStorage.setItem(k === "row" ? FCAT_K : EXFC_K, cur[k]); } catch (y) {}
+        if (k === "row" && row) row.scrollLeft = 0;
+        apply(); x.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+      });
     });
     if (q) q.addEventListener("input", apply);
-    try { cur = localStorage.getItem(FCAT_K) || ""; } catch (e) {}
-    if (!bar.querySelector('[data-fc="' + cur + '"]')) cur = "";
     apply();
   }
 
@@ -5831,14 +5846,13 @@
   function exAltBtn(n, dict) {
     if (isCardio(n) || !exAlts(n).length) return "";
     var e = dict && exGet(n);
-    return '<div class="exbar">' + (e ? '<a class="exbar-d" href="' + exHref(n) + '">종목 사전</a>' : '') +
+    return '<div class="exbar">' + (e ? '<a class="exbar-d" href="' + exHref(n) + '">운동 사전</a>' : '') +
       '<button type="button" class="exbar-a" data-exalt="' + esc(n) + '">' + EX_SWAP_IC + '<span><b>기구 사용 중이에요</b><small>비슷한 종목으로 대신하기</small></span><i aria-hidden="true">›</i></button></div>';
   }
   function exRow(n) {
     var e = exGet(n), f = exFormOf(n);
-    return '<a class="exr" data-cat="' + esc(e.cat) + '" data-q="' + esc(fnorm(n + " " + e.en + " " + e.main + " " + e.gear)) + '" href="' + exHref(n) + '">' +
-      '<span class="exr-c">' + img(iconOf({ name: n }), "icn exr-i") + '</span><span class="exr-t"><b>' + esc(n) + '</b><small>' + esc(e.cat + " · " + e.main + " · " + e.gear) + '</small></span>' +
-      (f ? '<i class="exr-tag on">복습지</i>' : '<i class="exr-tag">사전</i>') + '</a>';
+    return '<a class="exr' + (f ? ' on' : '') + '" data-cat="' + esc(e.cat) + '" data-q="' + esc(fnorm(n + " " + e.en + " " + e.main + " " + e.gear + " " + e.cat)) + '" href="' + exHref(n) + '">' +
+      '<span class="exr-c">' + img(iconOf({ name: n }), "icn exr-i") + (f ? '<i class="exr-tag">복습지</i>' : '') + '</span><b>' + esc(n) + '</b><small>' + esc(e.main) + '</small></a>';   /* 2026-11-28 "너무 길다" → 3칸 격자 */
   }
   function renderEx(n) {
     var e = exGet(n), f = exFormOf(e.n);
