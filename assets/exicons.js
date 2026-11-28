@@ -29,6 +29,13 @@
       ridge(-(half + hi) / 2), ridge((half + hi) / 2)];
     function ridge(s) { var m = at(s); return L("eq2", [[m[0] + n[0] * h1 * .62, m[1] + n[1] * h1 * .62], [m[0] - n[0] * h1 * .62, m[1] - n[1] * h1 * .62]], .9); }
   }
+  /* 2026-11-28 장동욱 "발판·원판이 몸에 붙어 있다 — 다 신경 써": 발판은 발바닥 바깥쪽(무릎 반대편)에 딱 닿게, 몸 뒤(back)에 그림 */
+  function solePlate(P, len, w) {
+    var u = unit(P.ft, P.toe), n = [-u[1], u[0]], kd = [P.kn[0] - P.ft[0], P.kn[1] - P.ft[1]];
+    if (n[0] * kd[0] + n[1] * kd[1] > 0) n = [-n[0], -n[1]];
+    var c = off(mix(P.ft, P.toe, .4), n[0] * (4.5 + w / 2), n[1] * (4.5 + w / 2));
+    return L("eq", [off(c, -u[0] * len * .45, -u[1] * len * .45), off(c, u[0] * len * .55, u[1] * len * .55)], w);
+  }
   function grip(p, h) { return L("eq", [[p[0], p[1] - (h || 6)], [p[0], p[1] + (h || 6)]], 3.6); }
   function mir(o) {   /* 왼쪽(…L)만 적으면 오른쪽(…R)은 좌우 대칭으로 — 이미 있던 오른쪽 값도 항상 왼쪽을 따라감 */
     var r = {}, k;
@@ -179,7 +186,7 @@
   EX.wide_pulldown.back = function (P) {
     /* 매장 기구(사진 2026-11-16): 가운데 기둥 중간 높이 양쪽 축에서 지렛대 두 개가 X자로 엇갈려 올라가 손잡이, 축 아래쪽 연장에 원판 */
     var pl = [43, 50], pr = [57, 50];
-    var exL = [pr[0] + (pr[0] - P.haL[0]) * .32, pr[1] + (pr[1] - P.haL[1]) * .32], exR = [pl[0] + (pl[0] - P.haR[0]) * .32, pl[1] + (pl[1] - P.haR[1]) * .32];
+    var exL = [pr[0] + (pr[0] - P.haL[0]) * .1, pr[1] + (pr[1] - P.haL[1]) * .1], exR = [pl[0] + (pl[0] - P.haR[0]) * .1, pl[1] + (pl[1] - P.haR[1]) * .1];   /* 2026-11-28 원판이 팔에 붙어 보여서 축 가까이(몸통 뒤) */
     return [L("eq2", [[50, 50], [50, 93]], 3.2), L("eq2", [pl, pr], 3),
       L("eq", [exL, P.haL], 3.2), L("eq", [exR, P.haR], 3.2), D("eq2", pl, 2.6), D("eq2", pr, 2.6),
       R("eq", exL, 5.8, 3), R("eq", exR, 5.8, 3),
@@ -193,7 +200,7 @@
     back: function (P) { var pv = [24, 14], ex = [pv[0] + (pv[0] - P.ha[0]) * .2, pv[1] + (pv[1] - P.ha[1]) * .2];
       return seatEq(34, 66, false).concat([L("eq2", [[10, 5], [10, 93]], 3), L("eq2", [[22, 5], [22, 93]], 3), L("eq2", [[8, 5], [30, 5]], 3),
         L("eq", [ex, P.ha], 3.4), D("eq2", pv, 3), R("eq", ex, 6, 3)]); },
-    front: function (P) { return [L("eq2", [[48, 42], [48, 62]], 5.5), D("eq2", [51, 64], 4.5), L("eq", [off(P.ha, -3, -3), off(P.ha, 3, 3)], 4)]; } };
+    front: function (P) { return [L("eq2", [[48, 42], [48, 62]], 5.5), D("eq2", [51, 57.5], 4.2), L("eq", [off(P.ha, -3, -3), off(P.ha, 3, 3)], 4)]; } };
   EX.underhand_pulldown = pulldown({ elL: [37, 33], haL: [39, 19] }, { elL: [31, 58], haL: [39, 44] }, function (y) { return L("eq", [[28, y], [72, y]], 3.8); });
   /* 어시스트 친업(2026-11-11 최지훈님 영상): 앞모습 — 무릎 받침에 무릎 꿇고 머리 위 손잡이를 잡은 채, 몸을 끌어올려 턱이 손잡이 위로. 받침이 몸과 같이 올라감 */
   EX.assisted_chin_up = { t: .35,
@@ -385,7 +392,7 @@
     return { t: .85, p0: mir(ext(FSIT, ext(open1 ? close : open, { elL: [35, 54], haL: [37, 66] }))), p1: mir(open1 ? open : close), bones: FRONT,
       hl: function (P) { return inner ? [seg(P.hipL, P.knL, .3, .92, 8), seg(P.hipR, P.knR, .3, .92, 8)] : [{ dot: off(P.hipL, -3.5, 1), r: 5.4 }, { dot: off(P.hipR, 3.5, 1), r: 5.4 }]; },
       back: function () { return fseatEq(); },
-      front: function (P) { var s = inner ? 6 : -6; return [L("eq", [off(P.knL, s, -7), off(P.knL, s, 4)], 4.4), L("eq", [off(P.knR, -s, -7), off(P.knR, -s, 4)], 4.4)]; } };
+      front: function (P) { var s = inner ? 6 : -6; var y0 = inner ? 1 : -3, y1 = inner ? 8 : 5; return [L("eq", [off(P.knL, s * 1.15, y0), off(P.knL, s * 1.15, y1)], 4.4), L("eq", [off(P.knR, -s * 1.15, y0), off(P.knR, -s * 1.15, y1)], 4.4)]; } };   /* 패드는 무릎 옆에 딱 닿게(허벅지와 안 겹치게) */
   }
   EX.inner_thigh = thigh(false, true);
   EX.outer_thigh = EX.outer_thigh_pin = EX.outer_thigh_plate = thigh(true, false);
@@ -394,21 +401,21 @@
     fx: function (P) { P.toe = off(P.ft, -4.1, -5.7); P.pl = off(P.ft, 4.6, -3.3); },
     bones: [{ pts: ["sh", "el", "ha"], w: 7.5 }, { pts: ["sh", "hip"], w: 13 }, { pts: ["hip", "kn", "ft", "toe"], w: 9 }],
     hl: function (P) { return [seg(P.hip, P.kn, .1, .92, 9)]; },
-    back: function (P) { return [floor(6, 94), L("eq2", [[30, 93], [93, 47]], 3), L("eq2", [[12.5, 57.5], [33, 88]], 5.5), L("eq2", [[33, 89], [47, 86]], 5)]; },
-    front: function (P) { return [L("eq", [off(P.pl, -5.9, -8.1), off(P.pl, 5.9, 8.1)], 4.6)]; } };
+    back: function (P) { return [floor(6, 94), L("eq2", [[30, 93], [93, 47]], 3), L("eq2", [[12.5, 57.5], [33, 88]], 5.5), L("eq2", [[33, 89], [47, 86]], 5), solePlate(P, 20, 4.6)]; },
+    front: function () { return []; } };
   /* 핵프레스 (2026-11-13 매장 사진: 엠토처 HackPress 원판식) — 비스듬한 레일 위 캐리지(엉덩이 패드+등판+어깨 패드)에 기대 앉아,
      앞쪽 바닥 발판을 밀면 캐리지가 레일 따라 뒤·위로 올라감 */
   EX.hack_press = { t: .85,
     p0: { head: [35, 37], sh: [40, 50], hip: [56, 72], kn: [78, 63], ft: [72, 86], toe: [79, 84] },
     p1: { head: [20, 16], sh: [25, 29], hip: [41, 51], kn: [60, 65] },
-    fx: function (P) { P.el = off(P.sh, 9, 11); P.ha = off(P.hip, 7, -3); },
+    fx: function (P) { P.kn = ik(P.hip, P.ft, 23.8, 23.8, function (k1, k2) { return k1[1] < k2[1] ? k1 : k2; }).k; P.el = off(P.sh, 9, 11); P.ha = off(P.hip, 7, -3); },
     bones: SIDE,
     hl: function (P) { return [seg(P.hip, P.kn, .1, .92, 9)]; },
-    back: function (P) { var pc = off(P.hip, -15, -2);
+    back: function (P) { var u = unit(P.sh, P.hip), n = [-u[1], u[0]], pc = off(P.hip, -n[0] * -16 - u[0] * 4, -n[1] * -16 - u[1] * 4), sp = off(P.sh, -u[0] * 4.5 + n[0] * 6, -u[1] * 4.5 + n[1] * 6);
       return [floor(6, 94), L("eq2", [[58, 93], [10, 27]], 3.2), L("eq2", [[22, 93], [22, 44]], 3),
         L("eq2", [off(P.sh, -5.5, 4), off(P.hip, -5.5, 4)], 5.5), L("eq2", [off(P.hip, -3, 6), off(P.hip, 7, 11)], 5),
-        R("eq", pc, 6.8, 3.2), D("eq2", pc, 2.4)]; },
-    front: function (P) { return [L("eq", [[64, 91], [84, 86]], 4.6), L("eq", [off(P.sh, -2, -5), off(P.sh, 6, 0)], 4.8)]; } };
+        R("eq", pc, 6.8, 3.2), D("eq2", pc, 2.4), solePlate(P, 22, 4.6), L("eq", [off(sp, -n[0] * 4, -n[1] * 4), off(sp, n[0] * 4, n[1] * 4)], 4.8)]; },
+    front: function () { return []; } };
   /* 핵스쿼트 (2026-11-28 장동욱 사진 참고 "궤적 수정"): 비스듬한(약 38°) 등판에 등·어깨를 대고, 썰매가 레일 따라 비스듬히 오르내림.
      발은 앞쪽 기울어진 발판에 고정 → 앉으면 무릎이 가슴 쪽으로 높이 올라옴. 무릎은 매 순간 허벅지 21·정강이 27 길이로 계산(ik) */
   EX.hack_squat = { t: .5,
@@ -417,17 +424,18 @@
     fx: function (P) {
       P.kn = ik(P.hip, P.ft, 21, 27, function (k1, k2) { return k1[1] < k2[1] ? k1 : k2; }).k;
       P.el = off(P.sh, 9, 4); P.ha = off(P.sh, 6, -5);
-      P.pl = off(P.sh, -7, 2);
+      P.pl = off(P.hip, -0.62 * 15 + 0.78 * 2, 0.78 * 15 + 0.62 * 2);   /* 원판: 썰매 아래쪽 뿔(등판 뒤) — 몸과 안 겹치게 */
     },
     bones: SIDE,
     hl: function (P) { return [seg(P.hip, P.kn, .1, .92, 9), { dot: off(P.hip, -1, 1), r: 5.4 }]; },
     back: function (P) {
       var n = [-0.62, 0.78];
       return [floor(6, 94), L("eq2", [[68, 85], [16, 43.7]], 3), L("eq2", [[66, 84], [66, 93]], 3), L("eq2", [[86, 72], [86, 93]], 3),
-        L("eq2", [off(P.sh, n[0] * 6, n[1] * 6), off(P.hip, n[0] * 6, n[1] * 6)], 6), R("eq", P.pl, 6.5, 3.2)];
+        L("eq2", [off(P.sh, n[0] * 6, n[1] * 6), off(P.hip, n[0] * 6, n[1] * 6)], 6), R("eq", P.pl, 6.5, 3.2), D("eq2", P.pl, 2.4), solePlate(P, 22, 4.6)].concat((function () {
+        var u = [-0.78, -0.62], c = off(P.sh, 0.62 * 5 - 0.78 * 1, -0.78 * 5 - 0.62 * 1);   /* 어깨 패드: 어깨 위에 닿게, 몸 뒤에 */
+        return [L("eq", [off(c, u[0] * 4, u[1] * 4), off(c, -u[0] * 4, -u[1] * 4)], 5)]; })());
     },
-    front: function (P) { var u = [-0.78, -0.62], c = off(P.sh, 0.62 * 4, -0.78 * 4);
-      return [L("eq", [[79, 80], [90, 63]], 4.6), L("eq", [off(c, u[0] * 4, u[1] * 4), off(c, -u[0] * 4, -u[1] * 4)], 5)]; } };
+    front: function () { return []; } };
   function squat(arm, front, back) {
     return { t: .85, p0: SQ0, p1: SQ1, fx: arm, bones: SIDE,
       hl: function (P) { return [seg(P.hip, P.kn, .12, .92, 9)]; },
@@ -504,9 +512,9 @@
   /* 힙쓰러스트 머신 (도당점 — 서경진·임애란·정미경님): 비스듬한 등판에 등을 대고, 골반 위 패드(레버)를 엉덩이로 밀어 올림. 바벨 힙쓰러스트(hip_thrust)와 나눔 */
   EX.hip_thrust_machine = ext(EX.hip_thrust, {
     fx: function (P) { P.pad = off(P.hip, 1, -7); P.ha = off(P.hip, -2, -9); P.el = off(mix(P.sh, P.ha, .5), -2, 5); },
-    back: function (P) { var pv = [88, 80];
+    back: function (P) { var pv = [93, 80];
       return [floor(6, 94), L("eq2", [[6, 54], [30, 63]], 6), L("eq2", [[14, 60], [14, 93]], 3), L("eq2", [[26, 64], [26, 93]], 3), L("eq2", [[66, 92], [86, 92]], 4),
-        L("eq", [pv, P.pad], 3.2), D("eq2", pv, 3.2), R("eq", mix(pv, P.pad, .4), 6.5, 3.2)]; },
+        L("eq", [pv, P.pad], 3.2), D("eq2", pv, 3.2), R("eq", mix(pv, P.pad, .1), 5.6, 3)]; },   /* 원판은 축 가까이 — 다리와 안 겹치게 */
     front: function (P) { var n = perp(P.sh, P.hip); return [L("eq", [off(P.pad, -7, 1.5), off(P.pad, 7, -1.5)], 5.5)]; } });
   /* 바이킹 프레스 (이지환님): 서서 어깨 앞 손잡이를 위로 밀어 올리는 지렛대 머신(앞쪽 바닥 축) */
   EX.viking_press = { t: .85, p0: ext(stand(38), { head: [38, 17], sh: [38, 31], el: [47, 44], ha: [49, 29] }), p1: { el: [43, 17], ha: [47, 3] }, bones: SIDE,
