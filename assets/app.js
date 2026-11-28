@@ -5837,7 +5837,7 @@
   function exRow(n) {
     var e = exGet(n), f = exFormOf(n);
     return '<a class="exr" data-cat="' + esc(e.cat) + '" data-q="' + esc(fnorm(n + " " + e.en + " " + e.main + " " + e.gear)) + '" href="' + exHref(n) + '">' +
-      '<span class="exr-c">' + esc(e.cat) + '</span><span class="exr-t"><b>' + esc(n) + '</b><small>' + esc(e.main + " · " + e.gear) + '</small></span>' +
+      '<span class="exr-c">' + img(iconOf({ name: n }), "icn exr-i") + '</span><span class="exr-t"><b>' + esc(n) + '</b><small>' + esc(e.cat + " · " + e.main + " · " + e.gear) + '</small></span>' +
       (f ? '<i class="exr-tag on">복습지</i>' : '<i class="exr-tag">사전</i>') + '</a>';
   }
   function renderEx(n) {

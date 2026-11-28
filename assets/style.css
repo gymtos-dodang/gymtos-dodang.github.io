@@ -3266,16 +3266,17 @@ html[data-theme="dark"] .lg-seg button[aria-pressed="true"] { background: var(--
 .exsr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .exh { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 0 8px; } .exh[hidden] { display: none; }
 .exh h3 { margin: 0; font-size: 16px; font-weight: 800; } .exh h3 b { color: var(--pink); } .exh small { font-size: 12px; color: var(--faint); }
-.flist.exrow { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 2px 16px 8px; scroll-snap-type: x proximity; }
-.flist.exrow::-webkit-scrollbar { display: none; } .flist.exrow[hidden] { display: none; }
-.exrow .card-link { flex: 0 0 138px; display: flex; flex-direction: column; align-items: stretch; gap: 8px; padding: 8px; scroll-snap-align: start; }
+.flist.exrow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }   /* 2026-11-28 "내가 배운 종목 두 칸으로" */
+.flist.exrow[hidden] { display: none; }
+.exrow .card-link { display: flex; flex-direction: column; align-items: stretch; gap: 8px; padding: 8px; min-width: 0; }
 .exrow .card-link .thumb { width: 100%; aspect-ratio: 4 / 5; }
-.exrow .card-link h3 { font-size: 14px; margin: 2px 0 0; } .exrow .card-link p { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.exrow .card-link h3 { font-size: 14.5px; margin: 2px 0 0; } .exrow .card-link p { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .exrow .card-link .tagc { font-size: 10.5px; }
 .exlist { display: flex; flex-direction: column; background: var(--paper); border-radius: 16px; overflow: hidden; box-shadow: 0 0 0 1px rgba(20,20,30,.05); }
 .exr { display: flex; align-items: center; gap: 12px; padding: 11px 14px; text-decoration: none; color: var(--ink); border-top: 1px solid var(--line); min-height: 44px; }
 .exr:first-child { border-top: 0; } .exlist > [hidden] { display: none; }
-.exr-c { flex: 0 0 40px; height: 40px; border-radius: 11px; background: var(--tint); color: var(--pink-e); font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+.exr-c { flex: 0 0 54px; height: 54px; border-radius: 13px; background: var(--tint); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.exr-c .exr-i { width: 48px; height: 48px; display: block; object-fit: contain; }   /* 2026-11-28 "종목 사전 움직이는 아이콘으로" */
 .exr-t { flex: 1; min-width: 0; } .exr-t b { display: block; font-size: 14.5px; } .exr-t small { display: block; font-size: 12px; color: var(--sub); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .exr-tag { flex: none; font-style: normal; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 7px; color: var(--sub); box-shadow: inset 0 0 0 1px var(--line); }
 .exr-tag.on { background: var(--pink); color: #fff; box-shadow: none; }
