@@ -159,7 +159,7 @@
     "스미스 벤치프레스": "smith_bench_press", "스미스 클로즈그립 벤치프레스": "smith_bench_press",
     "스미스 벤트오버 로우": "smith_row", "스미스 숄더 프레스": "smith_shoulder_press", "바벨 숄더프레스": "barbell_shoulder_press", "덤벨 오버헤드 익스텐션": "overhead_ext",
     "스미스 슈러그": "smith_shrug", "인클라인 덤벨 컬": "incline_db_curl", "스파이더 컬": "spider_curl", "프리처 컬 머신": "preacher_curl_machine", "프리쳐컬 머신": "preacher_curl_machine", "덤벨 숄더 프레스": "shoulder_press", "랙 밴드 푸쉬업": "band_push_up",
-    "체스트 프레스 머신": "chest_press", "힙쓰러스트 머신": "hip_thrust", "몬스터 글루트 머신": "monster_glute", "케이블 힙 킥백": "cable_kickback", "힙 익스텐션": "back_extension", "바이킹 프레스": "viking_press", "뉴텍 아이소레터럴 로우": "iso_row", "뉴텍 원암 아이소레터럴 로우": "one_arm_iso_row", "굿모닝 아웃타이": "goodmorning_outer_thigh", "덤벨 사이드 레터럴 레이즈": "lateral_raise", "뉴텍 인클라인 프레스 머신": "incline_machine_press", "체스트프레스 머신": "chest_press", "플랫 덤벨 프레스": "db_bench_press", "인클라인 벤치 이두컬": "incline_db_curl", "프론트 로우": "front_row"
+    "체스트 프레스 머신": "chest_press", "힙쓰러스트 머신": "hip_thrust_machine", "몬스터 글루트 머신": "monster_glute", "케이블 힙 킥백": "cable_kickback", "힙 익스텐션": "back_extension", "바이킹 프레스": "viking_press", "뉴텍 아이소레터럴 로우": "iso_row", "뉴텍 원암 아이소레터럴 로우": "one_arm_iso_row", "굿모닝 아웃타이": "goodmorning_outer_thigh", "덤벨 사이드 레터럴 레이즈": "lateral_raise", "뉴텍 인클라인 프레스 머신": "incline_machine_press", "체스트프레스 머신": "chest_press", "플랫 덤벨 프레스": "db_bench_press", "인클라인 벤치 이두컬": "incline_db_curl", "프론트 로우": "front_row"
   };
   function iconSrc(key) { return BASE + "icons/" + THEME + "/" + key + ".png"; }
   function iconOf(it) {
