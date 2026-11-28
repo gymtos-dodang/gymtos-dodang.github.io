@@ -1160,6 +1160,22 @@
    }
   ]
  },
+ "굿모닝 아웃타이": {
+  "part": "엉덩이",
+  "en": "Good Morning Outer Thigh",
+  "shots": [
+   {
+    "member": "정미경",
+    "id": "1128-goodmorning-outer-thigh",
+    "img": "m/mikyung-7rq2vd/media/form-1128-goodmorning-outer-thigh/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "goodmorning-outer-thigh",
+    "img": "m/mikyung-7rq2vd/media/form-goodmorning-outer-thigh/step1.jpg"
+   }
+  ]
+ },
  "비하인드 넥프레스": {
   "part": "어깨",
   "en": "Behind Neck Press",
@@ -1190,17 +1206,6 @@
     "member": "정미경",
     "id": "seated-row",
     "img": "m/mikyung-7rq2vd/media/form-seated-row/step1.jpg"
-   }
-  ]
- },
- "굿모닝 아웃타이": {
-  "part": "엉덩이",
-  "en": "Good Morning Outer Thigh",
-  "shots": [
-   {
-    "member": "정미경",
-    "id": "goodmorning-outer-thigh",
-    "img": "m/mikyung-7rq2vd/media/form-goodmorning-outer-thigh/step1.jpg"
    }
   ]
  },
