@@ -4408,10 +4408,15 @@
     var ks = k0 == null && k1 == null ? (isCardio(it.name) ? "유산소" : "맨몸") : sameK ? k0 + "kg" : (k0 == null ? 0 : k0) + "→" + k1 + "kg";
     return n + "세트 · " + rs + " · " + ks;
   }
+  /* 2026-11-28 장동욱 "루틴 종목 아이콘을 영상으로 볼지 아이콘으로 볼지 선택 토글 + 움직이는 아이콘 다 부활" — 종목 목록 제목줄 [영상|아이콘](.w2-tg),
+     기기마다 저장 ptnote:<주소>:w2tile ("vid" 기본 · "ico"). 아이콘은 이제 멈춘 그림 말고 움직이는 SVG */
+  var W2T_K = "ptnote:" + RT_SLUG + ":w2tile";
+  function w2TMode() { try { return localStorage.getItem(W2T_K) === "ico" ? "ico" : "vid"; } catch (e) { return "vid"; } }
+  function w2TToggle() { var m = w2TMode(); return '<span class="w2-tg" role="group" aria-label="종목 그림 보기">' + [["vid", "영상"], ["ico", "아이콘"]].map(function (x) { return '<button type="button" data-w2tile="' + x[0] + '" aria-pressed="' + (m === x[0]) + '">' + x[1] + '</button>'; }).join("") + '</span>'; }
   function w2Tile(it, i) {
-    var f = itemForm(it);
+    var f = w2TMode() === "vid" ? itemForm(it) : null;
     return '<span class="w2t' + (f ? ' vid' : ' ico') + '"' + (f ? ' style="background-image:url(\'' + esc(f.dir) + 'poster.jpg\')"' : '') + '><b>' + (i + 1) + '</b>' +
-      (f ? '<i aria-hidden="true"></i>' : img(iconOf(it), "icn", true)) + '</span>';
+      (f ? '<i aria-hidden="true"></i>' : img(iconOf(it), "icn")) + '</span>';
   }
   function w2List(d, sel, ckD, tk) {
     var its = d.items, R = M.routine, today = ymd(new Date());
@@ -4427,7 +4432,7 @@
         '<p class="w2-hint">' + (DEMO ? '예시 화면이에요' : '운동 시작은 그날이 되면 열려요 · 종목을 눌러 미리 볼 수 있어요') + '</p>') + '</div>';
     if (R.key_point) h += '<div class="w2-kp"><small>KEY POINT</small><p>' + esc(R.key_point) + '</p></div>';
     if (COACH_MODE && (nEd || fl)) h += '<div class="w2-coach"><b>선생님만 보여요</b>' + (nEd ? '<span>회원님이 무게·횟수를 고친 종목 ' + nEd + '개 (카드에 표시)</span>' : '') + (fl ? '<span>이날 몸 상태: ' + W2_FEEL[fl] + '</span>' : '') + '</div>';
-    h += '<div class="w2-lh"><b>' + (sel === tk ? '오늘 종목' : dayName(sel) + ' 종목') + '</b><span>종목을 누르면 자세·기록까지 한 번에</span></div><div class="w2-list">';
+    h += '<div class="w2-lh"><b>' + (sel === tk ? '오늘 종목' : dayName(sel) + ' 종목') + '</b>' + w2TToggle() + '</div><div class="w2-list">';
     h += its.map(function (it, i) {
       var dn = !!ckD && lgDone(it.name, ckD), last = w2Last(it.name, ckD || today), ed = rxHit(it);
       return '<div class="w2c' + (dn ? ' done' : '') + (i === nxt && nd ? ' next' : '') + (it.tag === "메인" ? ' main' : '') + '" data-w2i="' + i + '" role="button" tabindex="0" aria-label="' + esc(it.name) + ' 자세히 보기">' + w2Tile(it, i) +
@@ -4435,7 +4440,7 @@
         '<p class="w2l">' + (last && last[1] ? '지난번 ' + lgMd(last[0]) + ' · ' + last[1] + 'kg' : esc(it.tip || "")) + '</p></div>' +
         (ckD ? '<button type="button" class="exchk w2k" data-chk="' + i + '" data-date="' + ckD + '" aria-pressed="' + dn + '" aria-label="' + esc(it.name) + ' 끝, 기록에 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg></button>' : '<span class="w2ar" aria-hidden="true">›</span>') + '</div>';
     }).join("");
-    if (card) h += '<div class="w2c cardio"><span class="w2t ico">' + img("treadmill", "icn", true) + '</span><div class="w2b"><h3><span>마무리 유산소 ' + card + '분</span></h3><p class="w2l">' + esc(R.cardio.options || "") + '</p></div></div>';
+    if (card) h += '<div class="w2c cardio"><span class="w2t ico">' + img("treadmill", "icn") + '</span><div class="w2b"><h3><span>마무리 유산소 ' + card + '분</span></h3><p class="w2l">' + esc(R.cardio.options || "") + '</p></div></div>';
     h += '</div>' + (R.note ? '<p class="note">' + esc(R.note) + '</p>' : '');
     return h;
   }
@@ -4641,6 +4646,8 @@
   }
   document.addEventListener("click", function (e) {
     if (!WK2 || !e.target.closest) return;
+    var tg = e.target.closest("[data-w2tile]");
+    if (tg) { try { localStorage.setItem(W2T_K, tg.getAttribute("data-w2tile")); } catch (x) {} rerender(); return; }
     var k = e.target.closest(".exchk.w2k"); if (k) { setTimeout(function () { if (!document.querySelector(".w2ov")) rerender(); }, 450); return; }
     var sel = view.getAttribute("data-day"), g = e.target.closest("[data-w2go]");
     if (g) { if (g.getAttribute("data-w2go") === "done") w2Done(sel); else w2Session(sel); return; }
@@ -4720,7 +4727,7 @@
         '<button type="button" class="w2e-sets" data-w2a="open" data-i="' + i + '" aria-expanded="' + open + '">' + chips + '<i>' + (open ? '접기' : '고치기') + '</i></button>' + ed + '</div>';
     }).join("");
     h += '<button type="button" class="rtadd" data-w2a="add">+ 종목 추가</button>';
-    if (d.cardio && R.cardio) h += '<div class="w2c cardio"><span class="w2t ico">' + img("treadmill", "icn", true) + '</span><div class="w2b"><h3><span>마무리 유산소 ' + R.cardio.minutes + '분</span></h3><p class="w2l">' + esc(R.cardio.options || "") + ' · "이날 정보"에서 켜고 꺼요</p></div></div>';
+    if (d.cardio && R.cardio) h += '<div class="w2c cardio"><span class="w2t ico">' + img("treadmill", "icn") + '</span><div class="w2b"><h3><span>마무리 유산소 ' + R.cardio.minutes + '분</span></h3><p class="w2l">' + esc(R.cardio.options || "") + ' · "이날 정보"에서 켜고 꺼요</p></div></div>';
     return h + '</div>';
   }
   /* 추천 루틴 (2026-11-27 장동욱 "추천루틴 버튼 하나 만들어서 누르면 하체 루틴을 아예 랜덤으로"): 이날 종목을 같은 부위의 다른 종목으로 한 번에 바꿈.

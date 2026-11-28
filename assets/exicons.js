@@ -473,19 +473,20 @@
   /* 몬스터 글루트 머신 (서경진님, 2026-11-28 장동욱 매장 사진 3차): 앞모습 — 높은 등받이·머리 받침 의자에 벨트 차고 앉음, 양 무릎 바깥에 세로 패드,
      패드 아래로 휘어 내려간 레버 끝(발 앞 바닥)에 발목 롤러. 한쪽 다리로 무릎 바깥 패드를 밀어 바깥·뒤로 */
   EX.monster_glute = { t: .9,   /* 2026-11-28 "넓히는 구간 짝짝이·근육 범위 좌우 다름" → 양쪽 다리를 mir로 똑같이 벌림(좌우 대칭·같은 궤적), 자극 부위도 양쪽 같은 크기 */
-    p0: mir(ext(FSIT, { knL: [40, 80], ftL: [40, 91], toeL: [34, 91], elL: [33, 54], haL: [31, 63] })),
+    p0: mir(ext(FSIT, { knL: [40, 80], ftL: [40, 91], toeL: [34, 91], elL: [30, 50], haL: [22, 56] })),
     p1: mir({ knL: [29, 78], ftL: [27, 91], toeL: [21, 91] }), bones: FRONT,
     hl: function (P) { return [{ dot: off(P.hipL, -3, -1), r: 5.6 }, { dot: off(P.hipR, 3, -1), r: 5.6 }]; },
     back: function (P) {
       return [{ k: "eq2", rect: [38, 22, 24, 50], r: 5 }, { k: "eq2", rect: [41.5, 8, 17, 12], r: 4 }, { k: "eq2", rect: [34, 68, 32, 7], r: 3 },
-        L("eq2", [[50, 75], [50, 93]], 3), floor(10, 90)];
+        L("eq2", [[50, 75], [50, 93]], 3), floor(10, 90),
+        L("eq2", [off(P.haL, 0, 2), [P.haL[0], 66]], 3.2), L("eq2", [off(P.haR, 0, 2), [P.haR[0], 66]], 3.2), D("eq", [P.haL[0], P.haL[1] - 7.5], 2.2), D("eq", [P.haR[0], P.haR[1] - 7.5], 2.2)];   /* 의자 옆 세로 손잡이 기둥 */
     },
     front: function (P) {
       function side(kn, ft, d) {   /* 무릎 바깥 세로 패드 + 아래로 휘어 발 앞으로 가는 레버 + 발목 롤러 (d = -1 왼쪽, 1 오른쪽 — 같은 식으로 좌우 대칭) */
         var pd = off(kn, d * 7, -2), rl = [ft[0] + d * 3, 92];
         return [L("eq2", [off(pd, 0, 7), rl], 2.4), L("eq", [off(pd, 0, -7), off(pd, 0, 6)], 6), L("eq", [off(rl, -3.5, 0), off(rl, 3.5, 0)], 4)];
       }
-      return side(P.knL, P.ftL, -1).concat(side(P.knR, P.ftR, 1));
+      return side(P.knL, P.ftL, -1).concat(side(P.knR, P.ftR, 1)).concat([grip(P.haL, 5), grip(P.haR, 5)]);   /* 손잡이(양쪽 같은 높이) */
     } };
   /* 힙쓰러스트 머신 (도당점 — 서경진·임애란·정미경님): 비스듬한 등판에 등을 대고, 골반 위 패드(레버)를 엉덩이로 밀어 올림. 바벨 힙쓰러스트(hip_thrust)와 나눔 */
   EX.hip_thrust_machine = ext(EX.hip_thrust, {

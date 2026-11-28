@@ -3254,6 +3254,11 @@ html:has(.pfbag, .xsheet, .ibs-card, .bgpop-wrap, .npop-wrap, .frpop, .tour.on, 
 html[data-theme="dark"] .lg-seg { background: var(--card2); }
 html[data-theme="dark"] .lg-seg button[aria-pressed="true"] { background: var(--paper); }
 
+/* 2026-11-28 루틴 종목 그림 [영상|아이콘] 토글 (w2TToggle) */
+.w2-tg { display: inline-flex; background: #ECE7E7; border-radius: 99px; padding: 3px; gap: 2px; flex: none; }
+.w2-tg button { border: 0; border-radius: 99px; min-height: 30px; padding: 0 12px; background: transparent; color: var(--faint); font: 700 12px var(--font); cursor: pointer; white-space: nowrap; }
+.w2-tg button[aria-pressed="true"] { background: #fff; color: var(--primary); font-weight: 900; box-shadow: 0 1px 3px rgba(26, 26, 30, .12); }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }
@@ -3490,6 +3495,10 @@ html:where(:not([data-theme="light"]))[data-skin="sheep"] .stamp::after { backgr
 :where(html:not([data-theme="light"])) .pump-off-b { border-top-color: var(--line); }
 :where(html:not([data-theme="light"])) .pump-bug-t { border-color: var(--line); }
 :where(html:not([data-theme="light"])) .pump-bug-r button { border-color: var(--line); }
+:where(html:not([data-theme="light"])) .lg-seg { background: var(--card2); }
+:where(html:not([data-theme="light"])) .lg-seg button[aria-pressed="true"] { background: var(--paper); }
+:where(html:not([data-theme="light"])) .w2-tg { background: var(--card2); }
+:where(html:not([data-theme="light"])) .w2-tg button[aria-pressed="true"] { background: var(--paper); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html:not([data-theme="light"]) 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html:not([data-theme="light"]) {
@@ -3837,6 +3846,10 @@ html:where([data-theme="dark"])[data-skin="sheep"] .stamp::after { background: c
 :where(html[data-theme="dark"]) .pump-off-b { border-top-color: var(--line); }
 :where(html[data-theme="dark"]) .pump-bug-t { border-color: var(--line); }
 :where(html[data-theme="dark"]) .pump-bug-r button { border-color: var(--line); }
+:where(html[data-theme="dark"]) .lg-seg { background: var(--card2); }
+:where(html[data-theme="dark"]) .lg-seg button[aria-pressed="true"] { background: var(--paper); }
+:where(html[data-theme="dark"]) .w2-tg { background: var(--card2); }
+:where(html[data-theme="dark"]) .w2-tg button[aria-pressed="true"] { background: var(--paper); }
 /* 손으로 쓴 다크 규칙 (_tools/dark_src.css) */
 /* 다크모드 손으로 쓴 규칙 — 앞머리 html[data-theme="dark"] 는 make_dark.py가 html 선택자로 바꿈 (2026-11-18) */
 html[data-theme="dark"] {
