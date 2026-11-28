@@ -452,6 +452,55 @@
     hl: function (P) { return [seg(P.sh, P.hip, .42, 1, 13)]; },
     back: function () { return [floor(6, 94)]; }, front: function () { return []; } };
 
+  /* ---------- 2026-11-28 장동욱 "프론트레이즈 아이콘 만들고 겹치는 아이콘들 수정" — 다른 종목이 한 그림을 같이 쓰던 것 나눔 ---------- */
+  /* 케이블 프론트 레이즈 (염승완님): 옆모습 — 등 뒤 낮은 도르래 로프를 잡고, 팔을 편 채 허벅지 앞에서 어깨 높이까지 앞으로 */
+  EX.cable_front_raise = { t: .8, p0: ext(stand(40), { ha: [44, 62] }), p1: { ha: [74, 28] }, arcs: { ha: "sh" },
+    fx: function (P) { P.el = off(mix(P.sh, P.ha, .5), 0, 1); }, bones: SIDE,
+    hl: function (P) { return [{ dot: off(P.sh, 2, 1), r: 5.8 }]; },
+    back: function (P) { return [floor(8, 90), L("eq2", [[12, 6], [12, 93]], 3.5), L("eq2", [[14, 89], P.ha], 2), D("eq2", [14, 89], 3.2)]; },
+    front: function (P) { var n = perp(P.sh, P.ha); return [L("eq", [[P.ha[0] - n[0] * 5, P.ha[1] - n[1] * 5], [P.ha[0] + n[0] * 5, P.ha[1] + n[1] * 5]], 3.6)]; } };
+  /* 해머 컬: 덤벨 컬과 같지만 손바닥이 마주 보게(세워 잡기) — 옆에서 덤벨 끝(원판)이 동그랗게 보임 + 아래팔까지 자극 */
+  EX.hammer_curl = ext(EX.db_curl, {
+    hl: function (P) { return [seg(P.sh, P.el, .25, 1, 7.5), seg(P.el, P.ha, .05, .55, 6.5)]; },
+    front: function (P) { return [R("eq", P.ha, 6.2, 3.2), D("eq", P.ha, 2.6)]; } });
+  /* 숄더 프레스 머신: 덤벨 대신 양옆 기둥 지렛대 손잡이를 밀어 올림 */
+  EX.shoulder_press_machine = ohp(function (P) { return [grip(P.haL, 5), grip(P.haR, 5)]; }, function (P) {
+    return [L("eq2", [[16, 4], [16, 93]], 3), L("eq2", [[84, 4], [84, 93]], 3), L("eq2", [[16, 6], [84, 6]], 3),
+      L("eq", [[16, 56], P.haL], 3.2), L("eq", [[84, 56], P.haR], 3.2), D("eq2", [16, 56], 3), D("eq2", [84, 56], 3)]; });
+  /* 비하인드 넥프레스: 바가 머리 뒤로 지나감(몸 뒤에 그려서 머리가 바를 가림) */
+  EX.behind_neck_press = ohp(function () { return []; }, function (P) {
+    var y = P.haL[1] - 1; return [L("eq2", [[20, 4], [20, 93]], 2.6), L("eq2", [[80, 4], [80, 93]], 2.6), L("eq", [[14, y], [86, y]], 3.4), L("eq", [[14, y - 7], [14, y + 7]], 5), L("eq", [[86, y - 7], [86, y + 7]], 5)]; });
+  /* 몬스터 글루트 머신 (서경진님): 가슴 패드에 엎드려 한쪽 무릎은 받침에, 반대 다리 발바닥으로 패드를 뒤·위로 밀어 올림 */
+  EX.monster_glute = { t: .9,
+    p0: { head: [17, 39], sh: [28, 45], hip: [52, 52], kn: [50, 74], ft: [72, 75], toe: [75, 69], el: [27, 60], ha: [23, 70], kn2: [50, 74], ft2: [70, 80] },
+    p1: { kn2: [72, 45], ft2: [92, 52] }, arcs: { kn2: "hip", ft2: "kn2" },
+    bones: [{ pts: ["hip", "kn", "ft", "toe"], w: 9, o: 1 }, { pts: ["sh", "hip"], w: 13 }, { pts: ["hip", "kn2", "ft2"], w: 9 }, { pts: ["sh", "el", "ha"], w: 7.5 }],
+    hl: function (P) { return [{ dot: off(P.hip, 1, -2), r: 6.2 }]; },
+    back: function (P) { return [floor(6, 94), L("eq2", [[24, 55.5], [44, 57.5]], 6), L("eq2", [[36, 58], [36, 93]], 3), L("eq2", [[44, 80], [78, 80]], 6), L("eq2", [[62, 81], [62, 93]], 3),
+      L("eq2", [[18, 72], [18, 93]], 3), L("eq", [[14, 70], [26, 70]], 3.6)]; },
+    front: function (P) { var n = perp(P.kn2, P.ft2), c = off(P.ft2, unit(P.kn2, P.ft2)[0] * 2, unit(P.kn2, P.ft2)[1] * 2); return [L("eq", [[c[0] - n[0] * 6, c[1] - n[1] * 6], [c[0] + n[0] * 6, c[1] + n[1] * 6]], 4.4)]; } };
+  /* 바이킹 프레스 (이지환님): 서서 어깨 앞 손잡이를 위로 밀어 올리는 지렛대 머신(앞쪽 바닥 축) */
+  EX.viking_press = { t: .85, p0: ext(stand(38), { head: [38, 17], sh: [38, 31], el: [47, 44], ha: [49, 29] }), p1: { el: [43, 17], ha: [47, 3] }, bones: SIDE,
+    hl: function (P) { return [{ dot: off(P.sh, 1, 0), r: 6 }]; },
+    back: function (P) { var pv = [86, 88], pl = mix(pv, P.ha, .3); return [floor(10, 94), L("eq", [pv, P.ha], 3.4), D("eq2", pv, 3.4), R("eq", pl, 6.5, 3.2), L("eq2", [[78, 93], [94, 93]], 4)]; },
+    front: function (P) { return [L("eq", [off(P.ha, -4, 0), off(P.ha, 4, 0)], 4)]; } };
+  /* 뉴텍 아이소레터럴 로우 (최용민·고은성님): 가슴 패드에 기대 앉아, 앞 위 축에서 내려온 손잡이를 가슴 높이에서 옆구리로 */
+  function isoRow(one) {
+    var p0 = { head: [38, 24], sh: [35, 39], hip: [31, 66], kn: [50, 65], ft: [47, 88], toe: [55, 89], el: [50, 45], ha: [66, 45] };
+    if (one) { p0.el2 = [44, 50]; p0.ha2 = [46, 38]; }
+    return { t: .9, p0: p0, p1: { head: [33, 22], sh: [31, 37], el: [17, 47], ha: [36, 45] },
+      bones: (one ? [{ pts: ["sh", "el2", "ha2"], w: 7.5, o: 1 }] : []).concat(SIDE),
+      hl: function (P) { return [seg(P.sh, P.hip, .06, .58, 13)]; },
+      back: function (P) { var pv = [74, 8], pl = off(mix(pv, P.ha, .55), 8, 0);
+        return [floor(8, 94), L("eq2", [[35, 76], [35, 93]], 3), L("eq2", [[22, 73.5], [45, 73.5]], 5), L("eq2", [[45, 62], [48, 93]], 3), L("eq2", [[45.5, 33], [45.5, 60]], 5.5),
+          L("eq2", [[74, 8], [80, 93]], 3.5), L("eq2", [[56, 8], [78, 8]], 3), L("eq", [pv, P.ha], 3.4), D("eq2", pv, 3.4), R("eq", pl, 6.5, 3.4)]; },
+      front: function (P) { return [grip(P.ha, 5)]; } };
+  }
+  EX.iso_row = isoRow(false);
+  EX.one_arm_iso_row = isoRow(true);
+  /* 굿모닝 아웃타이 (정미경님): 아웃타이 머신에 앉아 상체를 앞으로 숙인 채 벌리기 — 엉덩이 윗쪽까지 */
+  EX.goodmorning_outer_thigh = ext(EX.outer_thigh, { p0: mir(ext(EX.outer_thigh.p0, { head: [50, 45], shL: [39, 55], elL: [32, 62], haL: [36, 71] })) });
+
   /* ---------- 유산소 (2026-11-19 장동욱 "천국의 계단·마이마운틴·스텝밀·경사 걷기 아이콘이 기본 그림이다 → 이름에 맞게 + 움직이게") ----------
      loop:1 = 한 방향으로 계속 도는 움직임(걷기·페달). ex.at(t)가 0~1 순간의 자세를 바로 돌려줌, dur = 한 바퀴 초 */
   function ik(H, F, a, b, pick) {   /* 엉덩이(어깨) H → 발(손) F 까지 두 마디 길이 a·b 로 무릎(팔꿈치) 자리. pick(k1,k2) 가 고름 */

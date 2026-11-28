@@ -153,13 +153,13 @@
     "아웃타이": "outer_thigh", "고블릿 스쿼트": "goblet_squat", "핵스쿼트": "hack_squat", "스미스 스쿼트": "smith_squat",
     "레그프레스": "leg_press", "핵프레스": "hack_press", "라잉 레그컬": "lying_leg_curl", "힙쓰러스트": "hip_thrust", "덤벨 RDL": "db_rdl",
     "백 익스텐션": "back_extension", "사이드 레터럴 레이즈": "lateral_raise", "레터럴 레이즈": "lateral_raise",
-    "사이드 레터럴 레이즈 머신": "lateral_raise_standing", "케이블 프론트 레이즈": "lateral_raise", "레터럴 레이즈 머신": "lateral_raise_standing", "머신 레터럴 레이즈": "lateral_raise_standing",
-    "스탠딩 사이드 레터럴 레이즈 머신": "lateral_raise_standing", "시티드 레터럴 레이즈": "seated_lateral_raise", "시티드 사이드 레터럴 레이즈": "seated_lateral_raise", "숄더 프레스 머신": "shoulder_press", "숄더 프레스": "shoulder_press", "비하인드 넥프레스": "shoulder_press",
-    "덤벨 컬": "db_curl", "해머 컬": "db_curl", "덤벨 슈러그": "shrug", "플랭크": "plank",
+    "사이드 레터럴 레이즈 머신": "lateral_raise_standing", "케이블 프론트 레이즈": "cable_front_raise", "레터럴 레이즈 머신": "lateral_raise_standing", "머신 레터럴 레이즈": "lateral_raise_standing",
+    "스탠딩 사이드 레터럴 레이즈 머신": "lateral_raise_standing", "시티드 레터럴 레이즈": "seated_lateral_raise", "시티드 사이드 레터럴 레이즈": "seated_lateral_raise", "숄더 프레스 머신": "shoulder_press_machine", "숄더 프레스": "shoulder_press_machine", "비하인드 넥프레스": "behind_neck_press",
+    "덤벨 컬": "db_curl", "해머 컬": "hammer_curl", "덤벨 슈러그": "shrug", "플랭크": "plank",
     "스미스 벤치프레스": "smith_bench_press", "스미스 클로즈그립 벤치프레스": "smith_bench_press",
     "스미스 벤트오버 로우": "smith_row", "스미스 숄더 프레스": "smith_shoulder_press", "바벨 숄더프레스": "barbell_shoulder_press", "덤벨 오버헤드 익스텐션": "overhead_ext",
     "스미스 슈러그": "smith_shrug", "인클라인 덤벨 컬": "incline_db_curl", "스파이더 컬": "spider_curl", "프리처 컬 머신": "preacher_curl_machine", "프리쳐컬 머신": "preacher_curl_machine", "덤벨 숄더 프레스": "shoulder_press", "랙 밴드 푸쉬업": "band_push_up",
-    "체스트 프레스 머신": "chest_press", "힙쓰러스트 머신": "hip_thrust", "몬스터 글루트 머신": "cable_kickback", "케이블 힙 킥백": "cable_kickback", "힙 익스텐션": "back_extension"
+    "체스트 프레스 머신": "chest_press", "힙쓰러스트 머신": "hip_thrust", "몬스터 글루트 머신": "monster_glute", "케이블 힙 킥백": "cable_kickback", "힙 익스텐션": "back_extension", "바이킹 프레스": "viking_press", "뉴텍 아이소레터럴 로우": "iso_row", "뉴텍 원암 아이소레터럴 로우": "one_arm_iso_row", "굿모닝 아웃타이": "goodmorning_outer_thigh", "덤벨 사이드 레터럴 레이즈": "lateral_raise", "뉴텍 인클라인 프레스 머신": "incline_machine_press", "체스트프레스 머신": "chest_press", "플랫 덤벨 프레스": "db_bench_press", "인클라인 벤치 이두컬": "incline_db_curl", "프론트 로우": "front_row"
   };
   function iconSrc(key) { return BASE + "icons/" + THEME + "/" + key + ".png"; }
   function iconOf(it) {
