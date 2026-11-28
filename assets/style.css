@@ -3266,7 +3266,8 @@ html[data-theme="dark"] .lg-seg button[aria-pressed="true"] { background: var(--
 .exsr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .exh { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 0 8px; } .exh[hidden] { display: none; }
 .exh h3 { margin: 0; font-size: 16px; font-weight: 800; } .exh h3 b { color: var(--pink); } .exh small { font-size: 12px; color: var(--faint); }
-.flist.exrow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }   /* 2026-11-28 "내가 배운 종목 두 칸으로" */
+.flist.exrow { display: grid; grid-auto-flow: column; grid-template-columns: none; grid-template-rows: repeat(2, auto); grid-auto-columns: 138px; gap: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 2px 16px 8px; scroll-padding-inline: 16px; scroll-snap-type: x proximity; }   /* 2026-11-28 "두 줄 만들고 옆으로 슬라이드" */
+.flist.exrow::-webkit-scrollbar { display: none; } .exrow .card-link { scroll-snap-align: start; }
 .flist.exrow[hidden] { display: none; }
 .exrow .card-link { display: flex; flex-direction: column; align-items: stretch; gap: 8px; padding: 8px; min-width: 0; }
 .exrow .card-link .thumb { width: 100%; aspect-ratio: 4 / 5; }
