@@ -742,6 +742,16 @@
     "member": "최지훈",
     "id": "standing-face-pull",
     "img": "m/jihun-g9kgdo/media/form-standing-face-pull/step1.jpg"
+   },
+   {
+    "member": "김지수",
+    "id": "face-pull",
+    "img": "m/jisu-480xne/media/form-face-pull/step1.jpg"
+   },
+   {
+    "member": "정미경",
+    "id": "face-pull",
+    "img": "m/mikyung-7rq2vd/media/form-face-pull/step1.jpg"
    }
   ]
  },
@@ -1098,22 +1108,6 @@
     "member": "김지수",
     "id": "1125-barbell-shoulder-press",
     "img": "m/jisu-480xne/media/form-1125-barbell-shoulder-press/step1.jpg"
-   }
-  ]
- },
- "페이스풀": {
-  "part": "등",
-  "en": "Face Pull",
-  "shots": [
-   {
-    "member": "김지수",
-    "id": "face-pull",
-    "img": "m/jisu-480xne/media/form-face-pull/step1.jpg"
-   },
-   {
-    "member": "정미경",
-    "id": "face-pull",
-    "img": "m/mikyung-7rq2vd/media/form-face-pull/step1.jpg"
    }
   ]
  },
