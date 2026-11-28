@@ -3259,6 +3259,60 @@ html[data-theme="dark"] .lg-seg button[aria-pressed="true"] { background: var(--
 .w2-tg button { border: 0; border-radius: 99px; min-height: 30px; padding: 0 12px; background: transparent; color: var(--faint); font: 700 12px var(--font); cursor: pointer; white-space: nowrap; }
 .w2-tg button[aria-pressed="true"] { background: #fff; color: var(--primary); font-weight: 900; box-shadow: 0 1px 3px rgba(26, 26, 30, .12); }
 
+/* 2026-11-28 자세 복습지 리메이크 — 종목 사전(#forms·#ex-) + 기구 사용 중이에요(대체 종목 exAlt) */
+.exq { display: flex; align-items: center; gap: 8px; height: 46px; padding: 0 14px; margin: 0 0 10px; background: var(--paper); border-radius: 14px; box-shadow: 0 0 0 1px rgba(20,20,30,.06); }
+.exq svg { width: 18px; height: 18px; fill: none; stroke: var(--faint); stroke-width: 2.2; stroke-linecap: round; flex: none; }
+.exq input { flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 16px; color: var(--ink); outline: none; -webkit-appearance: none; }
+.exsr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.exh { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 0 8px; } .exh[hidden] { display: none; }
+.exh h3 { margin: 0; font-size: 16px; font-weight: 800; } .exh h3 b { color: var(--pink); } .exh small { font-size: 12px; color: var(--faint); }
+.flist.exrow { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 2px 16px 8px; scroll-snap-type: x proximity; }
+.flist.exrow::-webkit-scrollbar { display: none; } .flist.exrow[hidden] { display: none; }
+.exrow .card-link { flex: 0 0 138px; display: flex; flex-direction: column; align-items: stretch; gap: 8px; padding: 8px; scroll-snap-align: start; }
+.exrow .card-link .thumb { width: 100%; aspect-ratio: 4 / 5; }
+.exrow .card-link h3 { font-size: 14px; margin: 2px 0 0; } .exrow .card-link p { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.exrow .card-link .tagc { font-size: 10.5px; }
+.exlist { display: flex; flex-direction: column; background: var(--paper); border-radius: 16px; overflow: hidden; box-shadow: 0 0 0 1px rgba(20,20,30,.05); }
+.exr { display: flex; align-items: center; gap: 12px; padding: 11px 14px; text-decoration: none; color: var(--ink); border-top: 1px solid var(--line); min-height: 44px; }
+.exr:first-child { border-top: 0; } .exlist > [hidden] { display: none; }
+.exr-c { flex: 0 0 40px; height: 40px; border-radius: 11px; background: var(--tint); color: var(--pink-e); font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+.exr-t { flex: 1; min-width: 0; } .exr-t b { display: block; font-size: 14.5px; } .exr-t small { display: block; font-size: 12px; color: var(--sub); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.exr-tag { flex: none; font-style: normal; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 7px; color: var(--sub); box-shadow: inset 0 0 0 1px var(--line); }
+.exr-tag.on { background: var(--pink); color: #fff; box-shadow: none; }
+.exnone { text-align: center; color: var(--faint); font-size: 13px; margin: 14px 0; }
+.exnot { padding: 12px 14px; border-radius: 14px; background: var(--paper); border: 1px dashed var(--muted); font-size: 13px; line-height: 1.6; color: var(--sub); margin: 0 0 10px; } .exnot b { color: var(--ink); }
+.exhero { margin: 6px 0 14px; } .exhero small { font-size: 11px; font-weight: 800; letter-spacing: 2px; color: var(--pink); text-transform: uppercase; }
+.exhero h1 { margin: 4px 0 0; font-size: 26px; font-weight: 900; letter-spacing: -.5px; line-height: 1.25; }
+.exchips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; } .exchips span { font-size: 12px; padding: 5px 10px; border-radius: 9px; background: var(--paper); color: var(--sub); box-shadow: 0 0 0 1px var(--line); }
+.exchips span.on { background: var(--tint); color: var(--pink-e); font-weight: 700; box-shadow: none; }
+.exmine { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 16px; background: var(--paper); text-decoration: none; color: var(--ink); margin: 0 0 10px; box-shadow: 0 0 0 1px rgba(20,20,30,.05); }
+.exmine .thumb { flex: 0 0 64px; height: 80px; border-radius: 10px; overflow: hidden; background: #0A0A0B; } .exmine .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.exmine b { display: block; font-size: 15px; } .exmine small { display: block; font-size: 12px; color: var(--sub); margin-top: 2px; } .exmine > span:nth-child(2) { flex: 1; } .exmine i { font-style: normal; font-size: 22px; color: var(--faint); }
+.exbar { display: flex; gap: 8px; margin: 12px 0; }
+.exbar-d { flex: 0 0 auto; display: flex; align-items: center; padding: 0 14px; min-height: 52px; border-radius: 14px; background: var(--paper); color: var(--ink); font-size: 13.5px; font-weight: 700; text-decoration: none; box-shadow: 0 0 0 1px var(--line); }
+.exbar-a { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 14px; border: 0; border-radius: 14px; background: var(--pink); color: #fff; font: inherit; text-align: left; cursor: pointer; }
+.exbar-a svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.exbar-a span { flex: 1; min-width: 0; } .exbar-a b { display: block; font-size: 14.5px; } .exbar-a small { display: block; font-size: 11.5px; opacity: .85; } .exbar-a i { font-style: normal; font-size: 20px; opacity: .8; }
+.exwhat { margin: 0; font-size: 14px; line-height: 1.7; color: var(--ink); }
+.exfeel { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.exfeel > div { padding: 10px 12px; border-radius: 12px; font-size: 13px; line-height: 1.5; } .exfeel b { display: block; font-size: 12px; margin-bottom: 2px; }
+.exfeel .ok { background: var(--good-tint); color: var(--good); } .exfeel .no { background: var(--bad-tint); color: var(--bad); }
+.exsteps { list-style: none; counter-reset: exs; margin: 0; padding: 0; } .exsteps li { counter-increment: exs; display: flex; gap: 12px; align-items: flex-start; padding: 11px 0; border-top: 1px solid var(--line); font-size: 14px; line-height: 1.55; }
+.exsteps li:first-child { border-top: 0; } .exsteps li::before { content: "0" counter(exs); flex: 0 0 28px; height: 28px; border-radius: 8px; background: var(--pink); color: #fff; font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+.exsw-note { margin: 0; font-size: 12.5px; font-weight: 700; color: var(--pink); }
+.w2ov.exalt { z-index: 95; } .w2ov.exalt .w2-body { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+.exa { padding: 14px; border-radius: 16px; background: var(--paper); box-shadow: 0 0 0 1px var(--line); }
+.exa-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; } .exa-h b { font-size: 16px; }
+.exa-h .lv { flex: none; font-style: normal; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 7px; background: #5B6170; color: #fff; }
+.exa-h .lv.l0 { background: var(--pink); } .exa-h .lv.l1 { background: var(--pink-e); } .exa-h .lv.bk { background: var(--good); }
+.exa-c { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; } .exa-c span { font-size: 11.5px; padding: 3px 8px; border-radius: 7px; background: var(--page); color: var(--sub); }
+.exa-c span.lr { background: var(--good-tint); color: var(--good); font-weight: 700; }
+.exa p { margin: 8px 0 0; font-size: 12.5px; color: var(--sub); line-height: 1.5; }
+.exa-b { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.exa-b a, .exa-b button { min-height: 44px; border-radius: 12px; font: inherit; font-size: 13.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; text-decoration: none; cursor: pointer; }
+.exa-b a { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); } .exa-b button { border: 0; background: var(--pink); color: #fff; }
+.exa-note { margin: 2px 0 0; font-size: 12px; color: var(--faint); text-align: center; line-height: 1.5; }
+
 /* DARK-BEGIN (make_dark.py가 만듦 — 직접 고치지 말 것) */
 @media (prefers-color-scheme: dark) {
 :where(html:not([data-theme="light"])) .num { background: var(--seal); }

@@ -41,6 +41,8 @@
   var BN = [];
   try { BN = JSON.parse(localStorage.getItem("ptnote:bn") || "[]") || []; } catch (e) { BN = []; }
   /* 업데이트 소식 데이터 (2026-11-20 — 2026-11-20 "업데이트 소식이랑 공지 합치기": 공지 목록에도 '업데이트' 공지로 같이 들어감 nBuild, 쓰는 법은 스킬 pt-update-tour·아래 업데이트 소식 칸) */
+  function wnExOpen() { return !!document.querySelector(".w2ov.exalt"); }   /* 2026-11-28 종목 사전 소식 */
+  function wnExClose() { Array.prototype.forEach.call(document.querySelectorAll(".w2ov.exalt"), function (o) { w2Close(o); }); }
   function wnMuForm() {   /* 2026-11-22 근육 위치 소식 — 회원님 복습지 중 자극 부위가 있는 첫 복습지 */
     var fs = (typeof M !== "undefined" && M && M.forms) || [];
     for (var i = 0; i < fs.length; i++) if (!fs[i].simple && fs[i].primary_muscles && fs[i].primary_muscles.length) return fs[i];
@@ -65,6 +67,14 @@
   function wnEbOpen() { return !!document.querySelector(".ebsheet"); }
   function wnEbClose() { var b = document.querySelector(".ebsheet .ibs-x"); if (b) b.click(); }
   var WN = [
+    { id: "2026-11-28", t: "자세 복습지 업데이트",
+      items: ["📖 자세 복습지에 종목 사전이 생겼어요 — 우리 매장 기구 종목을 다 볼 수 있어요", "🔎 종목 이름 · 근육으로 찾고, 부위별로 골라 보기", "🔁 기구를 누가 쓰고 있으면 '기구 사용 중이에요' → 비슷한 종목 추천", "✅ 오늘 루틴에서 그 종목만 오늘 하루 바꿀 수 있어요"],
+      steps: [
+        { h: "#forms", s: ".exq", t: "🔎 종목 찾기", b: "종목 이름이나 근육(예: 광배근)으로 찾아요.\n아래 칩으로 부위별로도 골라 볼 수 있어요." },
+        { h: "#forms", s: ".exlist", t: "📖 종목 사전", b: "우리 매장 기구로 할 수 있는 종목이 다 있어요.\n'복습지'는 내가 배운 종목, '사전'은 아직 안 배운 종목이에요." },
+        { h: "#ex-" + encodeURIComponent("와이드 풀다운"), s: ".exbar-a", t: "🔁 기구 사용 중이에요", b: "하려던 기구를 누가 쓰고 있으면 이 버튼!\n선생님이 고른 비슷한 종목을 알려 줘요.\n제가 한번 눌러 볼게요!" },
+        { h: "#ex-" + encodeURIComponent("와이드 풀다운"), tap: ".exbar-a", skipIf: wnExOpen, leave: wnExClose, s: ".exalt .exa", t: "👆 비슷한 순서로 3개", b: "같은 근육 · 매장 기구로 골랐어요.\n오늘 루틴에 있는 종목이면 '오늘 루틴에서 바꾸기'로\n오늘만 바꿀 수 있어요. 원래 루틴은 그대로예요." }
+      ] },
     { id: "2026-11-27", t: "운동 탭 업데이트",
       items: ["💪 운동 탭이 새로워졌어요 — 그날 운동이 종목 카드로 한눈에", "🎬 종목을 누르면 내 영상 · 처방 · 자극 부위 · 무게 기록이 한 곳에", "▶ '운동 시작'으로 세트 ✓ · 쉬는 시간 · 끝나면 오늘 요약", "✏️ 무게 · 횟수를 직접 고칠 수 있어요 (선생님도 같이 봐요)"],
       steps: [
@@ -980,7 +990,14 @@
   function mvGet() { if (MV_LS === null) { MV_LS = "ptnote:" + SLUG + ":mv"; try { MV = JSON.parse(localStorage.getItem(MV_LS) || "null"); } catch (e) {} } return MV; }
   function wkMon(d) { d = d || new Date(); return ymd(new Date(d.getFullYear(), d.getMonth(), d.getDate() - (d.getDay() + 6) % 7)); }
   function mvMap() { mvGet(); return (!ROT && MV && MV.w === wkMon() && MV.m) || {}; }
-  function dayByKey(k) {
+  function dayByKey(k) {   /* 2026-11-28 오늘만 바꾼 종목(TSW, 종목 사전 '기구 사용 중이에요') 적용 */
+    var d = dayByKey0(k), s = d && !RT_EDIT && d.items && tswMap(k);
+    if (!s) return d;
+    var o = {}; for (var x in d) o[x] = d[x];
+    o.items = d.items.map(function (it) { var to = s[it.name]; if (!to) return it; var n = {}; for (var y in it) n[y] = it[y]; n.name = to; n.swapFrom = it.name; delete n.form; delete n.en; delete n.tip; return n; });
+    return o;
+  }
+  function dayByKey0(k) {
     var raw = dayByKeyRaw(k);
     if (ROT || RT_EDIT || isRotKey(k)) return raw;
     var src = mvMap()[k];
@@ -1429,7 +1446,7 @@
   function attCall(q) {
     return fetch(ATT_API + "?m=" + encodeURIComponent(SLUG) + (q || ""), { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw new Error("save"); mlFlag(j); ebFlag(j); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); dbServer(j.kv); lgServer(j.kv); rxServer(j.kv); flServer(j.kv); bgServer(j.kv); pfServer(j.kv); mvServer(j.kv); fvServer(j.kv); rkServer(j.kv); pumpServer(j.kv); } return j; });
+      .then(function (j) { if (!j || !j.ok) throw new Error("save"); mlFlag(j); ebFlag(j); attApply(j.days); if ("routine" in j) rtServer(j.routine); if ("bnotices" in j) bnServer(j.bnotices); if ("kv" in j) { grServer(j.kv); dbServer(j.kv); lgServer(j.kv); rxServer(j.kv); flServer(j.kv); bgServer(j.kv); pfServer(j.kv); mvServer(j.kv); tswServer(j.kv); fvServer(j.kv); rkServer(j.kv); pumpServer(j.kv); } return j; });
   }
   function attSync() {
     if (!ATT_API) return;
@@ -3694,39 +3711,44 @@
     return out.length ? out : ["기타"];
   }
   function formCard(f) {
-    return '<a class="card-link" data-cat="' + esc(formCats(f).join(" ")) + '" href="#form-' + esc(f.id) + '"><div class="thumb"><img src="' + esc(f.dir) + 'poster.jpg" alt="" loading="lazy"></div>' +
+    return '<a class="card-link" data-cat="' + esc(formCats(f).join(" ")) + '" data-q="' + esc(fnorm(f.exercise + " " + (f.exercise_en || "") + " " + (f.also || []).join(" "))) + '" href="#form-' + esc(f.id) + '"><div class="thumb"><img src="' + esc(f.dir) + 'poster.jpg" alt="" loading="lazy"></div>' +
       '<div><span class="tagc">' + esc(f.part) + '</span>' + (formNew(f) && !COACH_MODE ? '<span class="fnew">NEW</span>' : '') + '<span class="fvw" data-fv="' + esc(f.id) + '">' + (DEMO ? '' : fvTag(f.id)) + '</span><h3>' + esc(f.exercise) + '</h3><p>' + esc(f.exercise_en) + ' · ' + esc(f.date) + '</p></div></a>';
   }
-  function renderForms() {
-    var h = wkSeg("forms") + '<section>' + head("", "자세 복습지", "수업에서 배운 자세를 영상으로 다시 봐요");
-    if (M.forms.length) {
-      var cnt = {}; M.forms.forEach(function (f) { formCats(f).forEach(function (c) { cnt[c] = (cnt[c] || 0) + 1; }); });
-      var cats = FCATS.map(function (c) { return c[0]; }).concat(["기타"]).filter(function (c) { return cnt[c]; });
-      if (cats.length > 1) {
-        h += '<div class="fcat" role="tablist" aria-label="부위별 보기"><button type="button" role="tab" data-fc="" aria-selected="true">전체 <b>' + M.forms.length + '</b></button>' +
-          cats.map(function (c) { return '<button type="button" role="tab" data-fc="' + c + '" aria-selected="false">' + c + ' <b>' + cnt[c] + '</b></button>'; }).join("") + '</div>';
-      }
-      h += '<div class="flist">' + M.forms.map(formCard).join("") + '</div>';
-    } else h += '<div class="panel empty"><h3>아직 복습지가 없어요</h3><p>수업에서 배운 자세가 여기에 쌓여요</p></div>';
+  function renderForms() {   /* 2026-11-28 리메이크: 검색 + 부위 칩 + 내가 배운 종목(가로 줄) + 종목 사전(EXD) */
+    var h = wkSeg("forms") + '<section>' + head("", "자세 복습지", "내 영상 + 종목 사전");
+    h += '<label class="exq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span class="exsr">종목 찾기</span><input type="search" id="exq" placeholder="종목 이름·근육으로 찾기 (예: 풀다운)" autocomplete="off" enterkeyhint="search"></label>';
+    h += '<div class="fcat" role="tablist" aria-label="부위별 보기"><button type="button" role="tab" data-fc="" aria-selected="true">전체</button>' +
+      FCATS.map(function (c) { return '<button type="button" role="tab" data-fc="' + c[0] + '" aria-selected="false">' + c[0] + '</button>'; }).join("") + '</div>';
+    var fs = M.forms || [];
+    h += '<div class="exh" data-exh="row"><h3>내가 배운 종목 <b>' + fs.length + '</b></h3><small>수업 영상</small></div>';
+    h += fs.length ? '<div class="flist exrow">' + fs.map(formCard).join("") + '</div>' : '<div class="exnot">아직 배운 종목이 없어요. 수업에서 배운 자세가 내 영상으로 여기에 쌓여요.</div>';
+    var names = []; RT_CAT.forEach(function (c) { c[1].forEach(function (n) { if (EXD[n]) names.push(n); }); });
+    h += '<div class="exh"><h3>종목 사전</h3><small>우리 매장 기구 기준 · ' + names.length + '종목</small></div><div class="exlist">' + names.map(exRow).join("") + '</div><p class="exnone" hidden>찾는 종목이 없어요</p>';
     return h + '</section>' + remember();
   }
   function setupForms() {
-    var bar = view.querySelector(".fcat"), list = view.querySelector(".flist");
-    if (!bar || !list) return;
-    function apply(c, save) {
-      var ok = false;
-      Array.prototype.forEach.call(bar.children, function (b) { var on = b.getAttribute("data-fc") === c; if (on) ok = true; b.setAttribute("aria-selected", on ? "true" : "false"); });
-      if (!ok) { c = ""; bar.children[0].setAttribute("aria-selected", "true"); }
-      Array.prototype.forEach.call(list.children, function (a) { a.hidden = !!c && (" " + a.getAttribute("data-cat") + " ").indexOf(" " + c + " ") < 0; });
-      if (save) { try { localStorage.setItem(FCAT_K, c); } catch (e) {} }
+    var bar = view.querySelector(".fcat"), q = view.querySelector("#exq");
+    if (!bar) return;
+    var row = view.querySelector(".exrow"), rowH = view.querySelector('[data-exh="row"]'), none = view.querySelector(".exnone"), cur = "";
+    function apply() {
+      var t = fnorm(q ? q.value : ""), nr = 0, nl = 0;
+      Array.prototype.forEach.call(bar.children, function (b) { b.setAttribute("aria-selected", b.getAttribute("data-fc") === cur ? "true" : "false"); });
+      Array.prototype.forEach.call(view.querySelectorAll(".exrow > a, .exlist > a"), function (a) {
+        var ok = (!cur || (" " + a.getAttribute("data-cat") + " ").indexOf(" " + cur + " ") >= 0) && (!t || (a.getAttribute("data-q") || "").indexOf(t) >= 0);
+        a.hidden = !ok; if (ok) { if (a.parentNode === row) nr++; else nl++; }
+      });
+      if (row) { row.hidden = !nr; if (rowH) rowH.hidden = !nr && !!(cur || t); }
+      if (none) none.hidden = !!(nl || nr);
     }
     bar.addEventListener("click", function (e) {
       var b = e.target.closest("button[data-fc]"); if (!b) return;
-      apply(b.getAttribute("data-fc"), true);
-      b.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+      cur = b.getAttribute("data-fc"); try { localStorage.setItem(FCAT_K, cur); } catch (x) {}
+      apply(); b.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
     });
-    var c0 = ""; try { c0 = localStorage.getItem(FCAT_K) || ""; } catch (e) {}
-    apply(c0, false);
+    if (q) q.addEventListener("input", apply);
+    try { cur = localStorage.getItem(FCAT_K) || ""; } catch (e) {}
+    if (!bar.querySelector('[data-fc="' + cur + '"]')) cur = "";
+    apply();
   }
 
   /* ---------------- 복습지 상세 */
@@ -3973,6 +3995,7 @@
       '<div class="benefit">' + esc(f.benefit) + '</div></div></div>' +
       '<div class="keypoint"><small>KEY POINT</small><p>' + esc(f.key_point) + '</p></div></div>';
 
+    h += exAltBtn(f.exercise, 1);   /* 2026-11-28 종목 사전 · 기구 사용 중이에요(대체 종목) */
     h += '<section>' + head("01", "오늘 내 자세", "영상으로 확인해요") +
       /* 2026-11-19 "영상 측면 추가" — data.js 복습지에 views:[{label:"정면",file:"form"},{label:"측면",file:"side"}] 넣으면 영상 위에 바꾸기 버튼(.vw-seg). 파일은 <file>.mp4·<file>.webp·<file>-poster.jpg(form은 poster.jpg) */
       (f.views && f.views.length > 1 ? '<div class="vw-seg" role="group" aria-label="영상 방향">' + f.views.map(function (w, i) {
@@ -4508,6 +4531,7 @@
     function html() {
       var h = '<div class="w2-grab" aria-hidden="true"></div><div class="w2-dh"><button type="button" class="w2-x" data-w2x aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div><h2>' + esc(it.name) + ' ' + tagChip(it.tag) + '</h2><small>' + esc(dayName(sel)) + ' · ' + no + '번째 종목' + (it.en ? ' · ' + esc(it.en) : '') + '</small></div></div><div class="w2-body">';
       h += f ? w2Video(f, vi) : '<div class="w2-novid">' + img(iconOf(it)) + '<p>아직 내 자세 영상이 없어요<br><small>수업 때 찍으면 여기에 내 영상이 들어와요</small></p></div>';
+      h += (it.swapFrom ? '<p class="exsw-note">오늘만 바꾼 종목 · 원래 ' + esc(it.swapFrom) + '</p>' : '') + exAltBtn(it.swapFrom || it.name, 1);   /* 2026-11-28 기구 사용 중이에요 */
       h += '<div class="w2-card"><div class="w2-ch"><b>' + (ckD === today ? '오늘 처방' : '처방') + '</b>' + (R0().note ? '<span>' + esc(R0().note) + '</span>' : '') + '</div>' + sets() +
         (it.tip || (f && f.key_point) ? '<div class="w2-tip"><b>선생님 한마디</b>' + esc(f && f.key_point ? f.key_point : it.tip) + '</div>' : '') + '</div>';
       if (f) h += '<div class="w2-card"><div class="w2-ch"><b>자극 부위</b></div><div class="w2-mu"><img src="' + esc(f.dir) + 'anatomy.png" alt="자극 부위 인체 그림" loading="lazy" onerror="this.remove()"><div>' +
@@ -5688,6 +5712,200 @@
   ];
   var RT_CAT_EN = { "러닝머신": "Treadmill", "경사 걷기": "Incline Walk", "사이클": "Cycle", "스텝밀": "Stair Climber", "천국의 계단": "Stairmaster", "마이마운틴": "My Mountain", "일립티컬": "Elliptical", "로잉머신": "Rowing Machine", "인터벌 러닝": "Interval Run", "스미스 벤트오버 로우": "Smith Bent-over Row", "뉴텍 버티컬 풀다운": "Vertical Pulldown", "시티드 레터럴 레이즈": "Seated Lateral Raise", "백 익스텐션": "Back Extension", "스미스 벤치프레스": "Smith Bench Press" };
   function rtEnOf(n) { return RT_EN[n] || RT_CAT_EN[n] || ""; }
+  /* ---- 종목 사전 + 대체 종목 (2026-11-28 장동욱 "자세복습지 항목 리메이크 — 종목 사전 + 자세 복습지 + 그 종목을 다른 사람이 하고 있으면 비슷한 종목으로 대체 추천", 시안 보고 "이대로 가보자")
+     EXD[이름] = "주동근|보조근(-=없음)|기구|한 줄 설명|성공 느낌|STOP 느낌|단계1;단계2;단계3|대체1,대체2,대체3"
+     대체 종목은 Claude가 비슷한 순서로 골라 둠("그 종목을 못 할 것 같으면 최대한 비슷한 종목으로 너가 골라서"): 같은 근육 → 같은 움직임 방향 → 매장 기구 순.
+     화면: #forms = 검색·부위 칩 + 내가 배운 종목(복습지 카드 가로 줄) + 종목 사전 목록 · #ex-<이름> = 사전 화면(배웠으면 내 복습지 카드)
+           복습지·사전·종목 자세히 창의 "기구 사용 중이에요" → exAlt 창(대체 3개, 배운 종목 표시)
+     "오늘 루틴에서 바꾸기" = 오늘만 이름을 바꿈 — 창고 mw:<주소>:tsw {d:날짜,k:요일,s:{원래:바꾼},at}, dayByKey가 그날 그 요일에만 적용(다음 날이면 저절로 원래대로).
+     선생님 보기(PT통합노트에서 회원 노트를 열면)에도 같은 창고 값으로 바뀐 종목 + "오늘만 바꾼 종목 · 원래 OO"가 보임. 새 종목을 넣으면 EXD에 한 줄 추가 */
+  var EXD = {
+    "벤치프레스": "대흉근|전면 삼각근 · 삼두|바벨 · 벤치|누워서 바벨을 가슴 위로 밀어 가슴 전체를 키우는 기본 종목이에요.|가슴 가운데가 꽉 차요|어깨 앞이 찝히거나 손목이 꺾여요|날개뼈를 모으고 바를 어깨너비보다 조금 넓게 잡아요;명치 쪽으로 천천히 내려요 (2초 · 들이쉬며);가슴으로 밀어 올려요 (1초 · 후~)|스미스 벤치프레스,플랫 덤벨프레스,뉴텍 체스트 프레스 머신",
+    "플랫 덤벨프레스": "대흉근|전면 삼각근 · 삼두|덤벨 · 벤치|덤벨 두 개로 미는 벤치프레스라 가슴을 더 깊게 늘릴 수 있어요.|가슴이 길게 늘었다 모여요|어깨가 앞으로 말려요|덤벨을 가슴 옆에 두고 날개뼈를 모아요;팔꿈치를 45도로 벌리며 내려요 (2초);가슴 위로 모으며 밀어요 (1초 · 후~)|벤치프레스,스미스 벤치프레스,뉴텍 체스트 프레스 머신",
+    "인클라인 덤벨 프레스": "대흉근 윗부분|전면 삼각근 · 삼두|덤벨 · 경사 벤치|등받이를 세워 쇄골 아래 윗가슴을 채우는 종목이에요.|쇄골 아래가 꽉 차요|어깨 앞만 아파요|등받이 30~45도, 날개뼈를 모아요;윗가슴 옆으로 내려요 (2초);위로 모으며 밀어요 (1초 · 후~)|스미스 인클라인 프레스,인클라인 프레스 머신,플랫 덤벨프레스",
+    "스미스 벤치프레스": "대흉근|전면 삼각근 · 삼두|스미스 머신|레일을 따라 움직여 균형 걱정 없이 가슴에 집중하는 벤치프레스예요.|가슴 가운데가 꽉 차요|어깨 앞이 찝혀요|바가 명치 위로 오게 벤치를 맞춰요;천천히 가슴까지 내려요 (2초);가슴으로 밀어 올려요 (1초 · 후~)|벤치프레스,뉴텍 체스트 프레스 머신,플랫 덤벨프레스",
+    "스미스 인클라인 프레스": "대흉근 윗부분|전면 삼각근 · 삼두|스미스 · 경사 벤치|경사 벤치에서 스미스로 윗가슴을 미는 종목이에요.|쇄골 아래가 차요|어깨 앞만 아파요|바가 쇄골 아래로 오게 벤치를 맞춰요;윗가슴까지 내려요 (2초);밀어 올려요 (1초 · 후~)|인클라인 프레스 머신,인클라인 덤벨 프레스,스미스 벤치프레스",
+    "인클라인 프레스 머신": "대흉근 윗부분|전면 삼각근 · 삼두|머신 · 등받이 45도|비스듬히 위로 미는 머신이라 윗가슴을 안전하게 채워요.|쇄골 아래가 차요|어깨가 들려요|손잡이가 가슴 위쪽 높이에 오게 의자를 맞춰요;가슴을 내밀고 위로 밀어요 (1초 · 후~);가슴이 늘 때까지 천천히 돌아와요 (2초)|스미스 인클라인 프레스,인클라인 덤벨 프레스,뉴텍 체스트 프레스 머신",
+    "체스트 프레스 머신": "대흉근|전면 삼각근 · 삼두|머신|앉아서 앞으로 미는 머신이라 처음 가슴 운동에 좋아요.|가슴이 모이며 차요|어깨가 앞으로 나가요|손잡이가 가슴 가운데 높이로 오게 의자를 맞춰요;등을 붙이고 앞으로 밀어요 (1초 · 후~);가슴이 늘 때까지 돌아와요 (2초)|뉴텍 체스트 프레스 머신,스미스 벤치프레스,케이블 체스트 프레스",
+    "뉴텍 체스트 프레스 머신": "대흉근|전면 삼각근 · 삼두|뉴텍 원판식|원판을 꽂아 앞으로 미는 머신이라 무거운 무게도 안정적으로 밀어요.|가슴이 모이며 차요|어깨가 앞으로 나가요|손잡이가 가슴 가운데 높이로 오게 의자를 맞춰요;등을 붙이고 앞으로 밀어요 (1초 · 후~);가슴이 늘 때까지 돌아와요 (2초)|체스트 프레스 머신,스미스 벤치프레스,플랫 덤벨프레스",
+    "펙덱 플라이": "대흉근 안쪽|전면 삼각근|펙덱 머신|팔을 껴안듯 모아 가슴 안쪽을 조이는 종목이에요.|가슴 가운데가 쥐어짜져요|어깨 앞이 당겨요|팔꿈치를 살짝 굽히고 어깨 높이로 맞춰요;크게 안듯 모아요 (1초 · 후~);가슴이 늘 때까지 천천히 벌려요 (2초)|케이블 체스트 프레스,플랫 덤벨프레스,체스트 프레스 머신",
+    "케이블 체스트 프레스": "대흉근|전면 삼각근 · 삼두|케이블 · 서서|서서 케이블을 앞으로 밀어 끝까지 가슴에 힘이 들어가요.|가슴이 끝까지 조여요|허리가 꺾여요|한 발 앞으로 내딛고 배에 힘을 줘요;앞으로 모으며 밀어요 (1초 · 후~);가슴이 늘 때까지 돌아와요 (2초)|체스트 프레스 머신,펙덱 플라이,뉴텍 체스트 프레스 머신",
+    "랙 밴드 푸쉬업": "대흉근|삼두 · 코어|랙 · 밴드|밴드 도움을 받아 몸으로 하는 푸쉬업이에요.|가슴과 팔 뒤가 차요|허리가 처져요|손은 어깨너비보다 조금 넓게, 몸은 일자로;가슴까지 내려가요 (2초);밀어 올라와요 (1초 · 후~)|체스트 프레스 머신,케이블 체스트 프레스,스미스 벤치프레스",
+    "랫풀다운": "광배근|대원근 · 이두|케이블 풀다운|위에서 바를 가슴 쪽으로 당겨 등을 넓히는 기본 종목이에요.|겨드랑이 아래 옆구리가 조여요|팔뚝만 아파요|무릎 패드에 다리를 고정하고 가슴을 들어요;팔꿈치를 옆구리로 끌어내려요 (1초 · 후~);천천히 팔을 펴 올려요 (2초)|와이드 풀다운,뉴텍 버티컬 풀다운,어시스트 친업",
+    "와이드 풀다운": "광배근|대원근 · 이두|원판식 풀다운 머신|손잡이를 넓게 잡고 끌어내려 등 바깥쪽(날개)을 넓혀요.|겨드랑이 아래가 꽉 조여요|팔뚝만 아프거나 어깨 앞이 찝혀요|허벅지 패드에 고정하고 가슴을 살짝 들어요;팔꿈치를 옆구리로 꽂듯 내려요 (1초 · 후~);버티며 팔을 끝까지 펴 올려요 (2초)|랫풀다운,뉴텍 버티컬 풀다운,어시스트 친업",
+    "클로즈그립 랫풀다운": "광배근 아래쪽|대원근 · 이두|케이블 · 좁은 손잡이|좁게 잡아 등 아래쪽까지 길게 당겨요.|등 아래쪽이 조여요|허리가 뒤로 꺾여요|좁은 손잡이를 잡고 가슴을 들어요;명치 쪽으로 당겨요 (1초 · 후~);길게 늘리며 올려요 (2초)|언더그립 랫풀다운,뉴텍 버티컬 풀다운,랫풀다운",
+    "언더그립 랫풀다운": "광배근 아래쪽|이두 · 대원근|케이블 · 손바닥 내 쪽|손바닥이 나를 보게 잡아 등 아래와 팔 앞까지 같이 써요.|등 아래와 팔 앞이 차요|팔로만 당겨요|손바닥이 나를 보게 어깨너비로 잡아요;가슴 아래로 당겨요 (1초 · 후~);천천히 올려요 (2초)|클로즈그립 랫풀다운,어시스트 친업,뉴텍 버티컬 풀다운",
+    "어시스트 친업": "광배근|이두 · 대원근|어시스트 머신|무릎 패드의 도움으로 턱걸이를 연습하는 종목이에요.|등이 몸을 끌어올려요|어깨가 귀로 올라가요|무릎을 패드에 대고 손잡이를 잡아요;가슴을 손잡이 쪽으로 올려요 (1초 · 후~);천천히 내려와 팔을 펴요 (2초)|랫풀다운,언더그립 랫풀다운,뉴텍 버티컬 풀다운",
+    "뉴텍 버티컬 풀다운": "광배근|대원근 · 이두|뉴텍 원판식|수직으로 끌어내려 등 아래쪽까지 길게 써요.|등 아래쪽이 늘었다 조여요|허리가 뒤로 꺾여요|가슴을 들고 손잡이를 잡아요;팔꿈치를 갈비뼈 쪽으로 내려요 (1초 · 후~);천천히 올리며 등을 늘려요 (2초)|와이드 풀다운,랫풀다운,클로즈그립 랫풀다운",
+    "뉴텍 시티드 로우 머신": "광배근 · 능형근|후면 삼각근 · 이두|뉴텍 원판식 · 가슴 패드|가슴을 패드에 대고 뒤로 당겨 등 두께를 만들어요.|날개뼈 사이가 모여요|허리를 뒤로 젖혀 당겨요|가슴을 패드에 붙여요;팔꿈치를 뒤로 보내 날개뼈를 모아요 (1초 · 후~);앞으로 늘려요 (2초)|프론트 로우 머신,케이블 시티드 로우,해머스트렝스 로우로우",
+    "뉴텍 엠토처 시티드 로우": "광배근 · 능형근|이두|엠토처 원판식|가슴 패드 없이 발판에 발을 대고 앉아 당기는 로우예요.|등 가운데가 조여요|허리가 굽어요|발판에 발을 대고 가슴을 세워요;배꼽 쪽으로 당겨요 (1초 · 후~);등을 늘리며 돌아와요 (2초)|해머스트렝스 로우로우,케이블 시티드 로우,뉴텍 시티드 로우 머신",
+    "케이블 시티드 로우": "광배근 · 능형근|이두|케이블|앉아서 케이블을 배꼽 쪽으로 당기는 등 두께 운동이에요.|등 가운데가 조여요|허리로 당겨요|무릎을 살짝 굽히고 가슴을 세워요;배꼽 쪽으로 당겨요 (1초 · 후~);어깨를 앞으로 늘려요 (2초)|뉴텍 엠토처 시티드 로우,언더그립 시티드 로우,해머스트렝스 로우로우",
+    "언더그립 시티드 로우": "광배근 아래쪽|이두|케이블 · 일자바|손바닥이 위를 보게 잡아 등 아래쪽을 더 써요.|등 아래가 조여요|팔로만 당겨요|일자바를 손바닥 위로 잡아요;배꼽으로 당겨요 (1초 · 후~);늘리며 돌아와요 (2초)|케이블 시티드 로우,뉴텍 엠토처 시티드 로우,클로즈그립 랫풀다운",
+    "해머스트렝스 로우로우": "광배근 · 승모근 중부|이두|원판식 로우 머신|발판에 발을 대고 양손을 옆구리 쪽으로 당기는 로우예요.|옆구리 뒤가 조여요|허리를 젖혀요|가슴을 세우고 손잡이를 잡아요;옆구리로 당겨요 (1초 · 후~);천천히 늘려요 (2초)|뉴텍 엠토처 시티드 로우,케이블 시티드 로우,뉴텍 시티드 로우 머신",
+    "프론트 로우 머신": "광배근 · 능형근|후면 삼각근|Torque 원판식 · 가슴 패드|가슴을 패드에 대고 앞 높은 곳의 손잡이를 끌어당겨요.|날개뼈 사이가 모여요|어깨가 들려요|가슴을 패드에 붙여요;가슴 쪽으로 당겨요 (1초 · 후~);팔을 펴며 늘려요 (2초)|뉴텍 시티드 로우 머신,티바로우 머신,케이블 시티드 로우",
+    "티바로우 머신": "광배근 · 승모근 중부|후면 삼각근 · 이두|티바 머신|가슴 패드에 기대 당겨 등 두께를 키워요.|등 가운데가 두껍게 차요|허리가 굽어요|가슴을 패드에 대요;배 쪽으로 당겨요 (1초 · 후~);천천히 내려요 (2초)|프론트 로우 머신,뉴텍 시티드 로우 머신,스미스 벤트오버 로우",
+    "원암 덤벨 로우": "광배근|능형근 · 이두|덤벨 · 벤치|한 팔씩 당겨 좌우 균형을 맞춰요.|옆구리 뒤가 조여요|몸이 돌아가요|벤치에 손과 무릎을 대고 등은 일자로;골반 쪽으로 당겨요 (1초 · 후~);늘리며 내려요 (2초)|케이블 시티드 로우,해머스트렝스 로우로우,스미스 벤트오버 로우",
+    "스미스 벤트오버 로우": "광배근 · 승모근 중부|척추기립근 · 이두|스미스|숙인 자세로 바를 배 쪽으로 당겨요.|등 전체가 차요|허리가 아파요|무릎을 살짝 굽히고 상체를 숙여 등은 일자로;배꼽으로 당겨요 (1초 · 후~);천천히 내려요 (2초)|티바로우 머신,원암 덤벨 로우,케이블 시티드 로우",
+    "스트레이트 암 풀다운": "광배근|대원근|케이블|팔을 편 채로 내려 광배근만 따로 써요.|겨드랑이 아래가 조여요|팔 뒤만 써요|팔을 거의 펴고 상체를 살짝 숙여요;허벅지 쪽으로 내려요 (1초 · 후~);머리 위로 늘려요 (2초)|케이블 풀오버,클로즈그립 랫풀다운,랫풀다운",
+    "케이블 풀오버": "광배근|대원근 · 삼두 긴 쪽|케이블|머리 위에서 허벅지까지 크게 내려 광배근을 길게 써요.|겨드랑이 아래가 길게 늘었다 조여요|허리가 꺾여요|로프를 잡고 상체를 살짝 숙여요;크게 원을 그리며 내려요 (1초 · 후~);머리 위로 늘려요 (2초)|스트레이트 암 풀다운,클로즈그립 랫풀다운,랫풀다운",
+    "덤벨 슈러그": "승모근 상부|-|덤벨|어깨를 귀 쪽으로 올려 목 옆 승모근을 키워요.|목 옆이 조여요|목을 돌리거나 앞으로 빼요|덤벨을 몸 옆에 들고 서요;어깨를 귀 쪽으로 올려요 (1초);천천히 내려요 (2초)|스미스 슈러그,티바로우 머신",
+    "스미스 슈러그": "승모근 상부|-|스미스|레일을 따라 바를 들어 무겁게 슈러그해요.|목 옆이 조여요|팔로 당겨요|바를 허벅지 앞에 들고 서요;어깨를 귀 쪽으로 올려요 (1초);천천히 내려요 (2초)|덤벨 슈러그,티바로우 머신",
+    "백 익스텐션": "척추기립근|대둔근 · 햄스트링|백 익스텐션 벤치|허리 뒤와 엉덩이를 튼튼하게 해요.|허리 양옆과 엉덩이가 차요|허리를 과하게 꺾어요|골반을 패드 끝에 걸쳐요;상체를 숙여 내려가요 (2초);몸이 일자가 될 때까지 올라와요 (1초 · 후~)|힙 익스텐션,덤벨 RDL,스미스 벤트오버 로우",
+    "숄더 프레스 머신": "전면 · 측면 삼각근|삼두|머신|앉아서 위로 밀어 어깨를 둥글게 만들어요.|어깨 앞과 옆이 차요|허리가 뜨거나 목이 움츠러들어요|손잡이가 어깨 높이로 오게 의자를 맞춰요;머리 위로 밀어요 (1초 · 후~);귀 높이까지 내려요 (2초)|덤벨 숄더 프레스,스미스 숄더 프레스,바벨 숄더프레스",
+    "비하인드 넥프레스": "측면 · 전면 삼각근|삼두|바벨 · 스미스|머리 뒤에서 밀어 어깨 옆을 써요. 어깨가 유연할 때만 해요.|어깨 옆이 차요|어깨 뒤가 찌릿해요|바를 넓게 잡고 등을 세워요;귀 뒤까지 천천히 내려요 (2초);위로 밀어요 (1초 · 후~)|스미스 숄더 프레스,숄더 프레스 머신,덤벨 숄더 프레스",
+    "덤벨 숄더 프레스": "전면 · 측면 삼각근|삼두|덤벨 · 벤치|덤벨을 머리 위로 밀어 어깨를 키워요.|어깨가 둥글게 차요|허리가 꺾여요|등받이를 세우고 덤벨을 귀 옆에 둬요;위로 모으며 밀어요 (1초 · 후~);귀 높이까지 내려요 (2초)|숄더 프레스 머신,바벨 숄더프레스,스미스 숄더 프레스",
+    "바벨 숄더프레스": "전면 삼각근|측면 삼각근 · 삼두|바벨 · 벤치|벤치에 앉아 바벨을 머리 위로 미는 종목이에요.|어깨 앞이 차요|허리가 꺾여요|바를 쇄골 앞에 두고 등을 세워요;머리 위로 밀어요 (1초 · 후~);쇄골까지 내려요 (2초)|스미스 숄더 프레스,덤벨 숄더 프레스,숄더 프레스 머신",
+    "스미스 숄더 프레스": "전면 · 측면 삼각근|삼두|스미스 · 벤치|레일을 따라 위로 밀어 균형 걱정 없이 어깨에 집중해요.|어깨 앞과 옆이 차요|허리가 꺾여요|바가 턱 앞에 오게 벤치를 맞춰요;머리 위로 밀어요 (1초 · 후~);턱 높이까지 내려요 (2초)|바벨 숄더프레스,숄더 프레스 머신,덤벨 숄더 프레스",
+    "사이드 레터럴 레이즈 머신": "측면 삼각근|승모근 상부|스탠딩 머신|서서 긴 손잡이를 옆으로 들어 어깨 옆을 넓혀요.|어깨 옆이 타요|목 옆(승모근)만 올라가요|패드에 몸을 붙이고 서요;팔꿈치로 옆으로 들어요 (1초 · 후~);천천히 내려요 (2초)|시티드 레터럴 레이즈,사이드 레터럴 레이즈,숄더 프레스 머신",
+    "사이드 레터럴 레이즈": "측면 삼각근|승모근 상부|덤벨|덤벨을 옆으로 들어 어깨를 넓혀요.|어깨 옆이 타요|목 옆만 올라가요|덤벨을 몸 옆에, 상체를 살짝 숙여요;팔꿈치로 어깨 높이까지 들어요 (1초 · 후~);천천히 내려요 (2초)|사이드 레터럴 레이즈 머신,시티드 레터럴 레이즈,숄더 프레스 머신",
+    "시티드 레터럴 레이즈": "측면 삼각근|승모근 상부|덤벨 · 벤치|앉아서 반동 없이 옆으로 들어 어깨 옆만 써요.|어깨 옆이 타요|몸을 흔들어요|벤치에 앉아 덤벨을 옆에 둬요;어깨 높이까지 들어요 (1초 · 후~);천천히 내려요 (2초)|사이드 레터럴 레이즈 머신,사이드 레터럴 레이즈,숄더 프레스 머신",
+    "케이블 프론트 레이즈": "전면 삼각근|윗가슴|케이블|앞으로 들어 어깨 앞을 따로 써요.|어깨 앞이 차요|허리 반동으로 들어요|케이블을 다리 사이로 잡아요;눈높이까지 들어요 (1초 · 후~);천천히 내려요 (2초)|덤벨 숄더 프레스,바벨 숄더프레스,숄더 프레스 머신",
+    "시티드 페이스풀": "후면 삼각근|능형근 · 회전근|케이블 · 앉아서|얼굴 쪽으로 당겨 어깨 뒤를 키우고 굽은 자세를 잡아요.|어깨 뒤가 조여요|팔로만 당겨요|로프를 잡고 가슴을 세워요;얼굴 쪽으로 벌리며 당겨요 (1초 · 후~);천천히 펴요 (2초)|스탠딩 페이스풀,리버스 펙덱,프론트 로우 머신",
+    "스탠딩 페이스풀": "후면 삼각근|능형근 · 회전근|케이블 · 서서|서서 얼굴 쪽으로 당겨 어깨 뒤와 자세를 잡아요.|어깨 뒤가 조여요|허리로 당겨요|로프를 눈높이에 맞춰요;얼굴 쪽으로 벌리며 당겨요 (1초 · 후~);천천히 펴요 (2초)|시티드 페이스풀,리버스 펙덱,프론트 로우 머신",
+    "리버스 펙덱": "후면 삼각근|능형근|펙덱 머신|펙덱에 반대로 앉아 팔을 뒤로 벌려 어깨 뒤를 써요.|어깨 뒤가 타요|목 옆만 써요|가슴을 패드에 대고 손잡이는 어깨 높이로;팔을 옆으로 벌려요 (1초 · 후~);천천히 모아요 (2초)|시티드 페이스풀,스탠딩 페이스풀,프론트 로우 머신",
+    "덤벨 컬": "이두|전완근|덤벨|덤벨을 들어 올려 팔 앞을 키워요.|팔 앞이 차요|어깨가 앞으로 나와요|팔꿈치를 옆구리에 고정해요;들어 올려요 (1초 · 후~);천천히 내려요 (2초)|해머 컬,프리처 컬 머신,인클라인 덤벨 컬",
+    "해머 컬": "이두 · 상완근|전완근|덤벨|엄지가 위를 보게 잡아 팔 앞과 팔뚝을 같이 써요.|팔 앞 바깥쪽이 차요|몸을 흔들어요|손바닥이 서로 마주 보게 잡아요;들어 올려요 (1초 · 후~);천천히 내려요 (2초)|덤벨 컬,프리처 컬 머신,스파이더 컬",
+    "인클라인 덤벨 컬": "이두(길게)|전완근|덤벨 · 경사 벤치|팔을 뒤로 늘인 채 컬해서 이두를 길게 써요.|팔 앞이 길게 늘었다 조여요|어깨가 앞으로 나와요|등받이 45~60도, 팔을 늘어뜨려요;들어 올려요 (1초 · 후~);끝까지 늘려 내려요 (2초)|덤벨 컬,스파이더 컬,프리처 컬 머신",
+    "스파이더 컬": "이두(짧게)|전완근|덤벨 · 경사 벤치|엎드려 팔을 늘어뜨리고 컬해 이두 끝까지 조여요.|팔 앞이 꽉 조여요|반동으로 들어요|벤치에 가슴을 대고 엎드려요;끝까지 말아 올려요 (1초 · 후~);천천히 내려요 (2초)|프리처 컬 머신,덤벨 컬,인클라인 덤벨 컬",
+    "프리처 컬 머신": "이두|전완근|머신|팔을 패드에 고정해 반동 없이 이두를 써요.|팔 앞이 차요|팔꿈치가 패드에서 들려요|겨드랑이를 패드에 붙여요;말아 올려요 (1초 · 후~);끝까지 펴요 (2초)|스파이더 컬,덤벨 컬,해머 컬",
+    "케이블 푸쉬다운": "삼두|-|케이블|케이블을 아래로 밀어 팔 뒤를 써요.|팔 뒤가 차요|팔꿈치가 벌어지거나 움직여요|팔꿈치를 옆구리에 고정해요;아래로 쭉 펴요 (1초 · 후~);명치까지 올려요 (2초)|오버헤드 익스텐션,덤벨 오버헤드 익스텐션",
+    "오버헤드 익스텐션": "삼두(길게)|-|케이블|머리 위로 펴서 삼두 긴 쪽까지 늘려요.|팔 뒤가 길게 늘었다 조여요|팔꿈치가 벌어져요|등을 돌려 서서 로프를 머리 뒤로;앞으로 쭉 펴요 (1초 · 후~);머리 뒤로 늘려요 (2초)|덤벨 오버헤드 익스텐션,케이블 푸쉬다운",
+    "덤벨 오버헤드 익스텐션": "삼두(길게)|-|덤벨|덤벨 하나를 머리 위로 들고 펴서 팔 뒤를 늘려요.|팔 뒤가 길게 늘었다 조여요|허리가 꺾여요|덤벨을 두 손으로 머리 위에 들어요;머리 뒤로 내려요 (2초);위로 쭉 펴요 (1초 · 후~)|오버헤드 익스텐션,케이블 푸쉬다운",
+    "레그 익스텐션": "대퇴사두|-|머신|무릎을 펴서 허벅지 앞만 따로 써요.|허벅지 앞이 타요|무릎이 찌릿해요|무릎이 기계 축에 오게 맞춰요;끝까지 펴고 1초 버텨요 (후~);천천히 내려요 (2초)|핵프레스,레그프레스,핵스쿼트",
+    "이너타이": "내전근|-|이너타이 머신|다리를 모아 허벅지 안쪽을 써요.|허벅지 안쪽이 조여요|허리가 떠요|패드를 무릎 안쪽에 대요;다리를 모아요 (1초 · 후~);천천히 벌려요 (2초)|고블릿 스쿼트,레그프레스",
+    "아웃타이 머신": "중둔근|대둔근|아웃타이 머신|다리를 바깥으로 밀어 엉덩이 옆을 써요.|엉덩이 옆이 타요|허벅지 바깥만 써요|상체를 살짝 숙이고 앉아요;바깥으로 밀어요 (1초 · 후~);천천히 모아요 (2초)|플레이트 아웃타이,케이블 힙 킥백,몬스터 글루트 머신",
+    "플레이트 아웃타이": "중둔근|대둔근|원판식 아웃타이|원판식 기구로 다리를 바깥으로 밀어 엉덩이 옆을 써요.|엉덩이 옆이 타요|허벅지 바깥만 써요|등을 붙이고 앉아요;바깥으로 밀어요 (1초 · 후~);천천히 모아요 (2초)|아웃타이 머신,케이블 힙 킥백,몬스터 글루트 머신",
+    "레그프레스": "대퇴사두 · 대둔근|햄스트링|원판식|기대 앉아 발판을 밀어 하체 전체를 써요.|허벅지와 엉덩이가 차요|허리가 패드에서 떨어져요|발을 어깨너비로 발판 가운데에 둬요;무릎을 가슴 쪽으로 내려요 (2초);발 전체로 밀어요 (1초 · 후~)|핵프레스,핵스쿼트,스미스 스쿼트",
+    "핵프레스": "대퇴사두|대둔근|엠토처 원판식|비스듬한 레일에 기대 발판을 밀어 허벅지 앞을 집중해서 키워요.|허벅지 앞이 타요|무릎 안쪽이 찌릿해요|발을 어깨너비로 발판 가운데에 둬요;깊게 내려가요 (2초);발 전체로 밀어 올려요 (1초 · 후~)|핵스쿼트,레그프레스,스미스 스쿼트",
+    "핵스쿼트": "대퇴사두|대둔근|핵스쿼트 머신|어깨 패드에 기대 앉았다 일어나 허벅지 앞을 써요.|허벅지 앞이 차요|무릎이 안으로 모여요|어깨를 패드에 대고 발은 어깨너비로;깊게 앉아요 (2초);밀고 일어나요 (1초 · 후~)|핵프레스,레그프레스,스미스 스쿼트",
+    "스미스 스쿼트": "대퇴사두 · 대둔근|코어|스미스|레일을 따라 균형 걱정 없이 스쿼트해요.|허벅지와 엉덩이가 차요|허리가 굽어요|바를 등 위에, 발은 살짝 앞으로;엉덩이를 뒤로 빼며 앉아요 (2초);밀고 일어나요 (1초 · 후~)|핵스쿼트,레그프레스,고블릿 스쿼트",
+    "고블릿 스쿼트": "대퇴사두 · 대둔근|코어|덤벨|덤벨을 가슴에 안고 앉아 하체와 자세를 같이 익혀요.|허벅지와 엉덩이가 차요|무릎이 안으로 모여요|덤벨을 가슴에, 발은 어깨너비로;팔꿈치가 무릎 사이로 오게 앉아요 (2초);밀고 일어나요 (1초 · 후~)|스미스 스쿼트,레그프레스,핵프레스",
+    "라잉 레그컬": "햄스트링|종아리|머신|엎드려 다리를 접어 허벅지 뒤를 써요.|허벅지 뒤가 조여요|엉덩이가 들려요|무릎을 패드 끝에 맞추고 엎드려요;발목을 엉덩이 쪽으로 접어요 (1초 · 후~);천천히 펴요 (2초)|덤벨 RDL,백 익스텐션",
+    "덤벨 RDL": "햄스트링 · 대둔근|척추기립근|덤벨|엉덩이를 뒤로 빼며 숙여 허벅지 뒤를 길게 늘려요.|허벅지 뒤가 길게 늘어나요|허리가 굽어요|덤벨을 허벅지 앞에, 무릎은 살짝;엉덩이를 뒤로 빼며 숙여요 (2초);엉덩이를 밀며 일어나요 (1초 · 후~)|라잉 레그컬,백 익스텐션,힙 익스텐션",
+    "힙쓰러스트 머신": "대둔근|햄스트링|머신|등을 기대고 골반을 밀어 올려 엉덩이를 키워요.|엉덩이가 꽉 조여요|허리가 꺾여요|등을 패드에, 벨트는 골반 위에;골반을 밀어 올리고 1초 조여요 (후~);천천히 내려요 (2초)|몬스터 글루트 머신,힙 익스텐션,케이블 힙 킥백",
+    "몬스터 글루트 머신": "대둔근|중둔근 · 햄스트링|원판식|벨트를 차고 앉아 레버를 밀어 엉덩이를 써요.|엉덩이 아래가 조여요|허리가 떠요|벨트를 차고 등을 붙여요;레버를 밀어요 (1초 · 후~);천천히 돌아와요 (2초)|힙쓰러스트 머신,힙 익스텐션,케이블 힙 킥백",
+    "케이블 힙 킥백": "대둔근|중둔근|케이블|한 다리씩 뒤로 차서 엉덩이를 조여요.|엉덩이가 조여요|허리로 차요|발목에 스트랩, 상체를 살짝 숙여요;뒤로 차며 조여요 (1초 · 후~);천천히 돌아와요 (2초)|힙 익스텐션,힙쓰러스트 머신,아웃타이 머신",
+    "힙 익스텐션": "대둔근|햄스트링|머신|다리를 뒤로 밀어 엉덩이를 써요.|엉덩이가 조여요|허리가 꺾여요|패드에 몸을 붙여요;다리를 뒤로 밀어요 (1초 · 후~);천천히 돌아와요 (2초)|케이블 힙 킥백,힙쓰러스트 머신,몬스터 글루트 머신",
+    "플랭크": "복근|코어 전체|맨몸|팔꿈치로 버티며 몸통 힘을 길러요.|배가 단단해요|허리가 아파요|팔꿈치는 어깨 아래, 몸은 일자로;배에 힘을 주고 버텨요;숨은 천천히 계속 쉬어요|백 익스텐션"
+  };
+  /* 복습지·루틴에 다른 이름으로 적힌 것 → EXD 이름 */
+  var EXD_ALIAS = { "리버스 펙덱 플라이": "리버스 펙덱", "힙쓰러스트": "힙쓰러스트 머신", "로우로우": "해머스트렝스 로우로우", "해머 로우로우": "해머스트렝스 로우로우", "레그 프레스": "레그프레스",
+    "스미스 인클라인": "스미스 인클라인 프레스", "펙덱": "펙덱 플라이", "체스트프레스": "체스트 프레스 머신", "뉴텍 인클라인 프레스 머신": "인클라인 프레스 머신", "엠토처 시티드 로우": "뉴텍 엠토처 시티드 로우",
+    "뉴텍 엠토처 시티드로우": "뉴텍 엠토처 시티드 로우", "뉴텍 체스트 프레스": "뉴텍 체스트 프레스 머신", "시티드 로우 머신": "뉴텍 시티드 로우 머신", "페이스풀": "스탠딩 페이스풀", "레터럴 머신": "사이드 레터럴 레이즈 머신",
+    "고블렛 스쿼트": "고블릿 스쿼트", "레그컬": "라잉 레그컬", "케이블 푸시다운": "케이블 푸쉬다운", "와이드 랫풀다운": "와이드 풀다운", "버티컬 풀다운": "뉴텍 버티컬 풀다운" };
+  var EXD_CAT = {}; RT_CAT.forEach(function (c) { c[1].forEach(function (n) { EXD_CAT[n] = c[0]; }); });
+  var EXD_N = {}; Object.keys(EXD).forEach(function (n) { EXD_N[fnorm(n)] = n; }); Object.keys(EXD_ALIAS).forEach(function (n) { EXD_N[fnorm(n)] = EXD_ALIAS[n]; });
+  function exKey(n) {
+    n = String(n || "").replace(/\s*\(.*\)\s*$/, "");
+    if (EXD[n]) return n;
+    var k = EXD_N[fnorm(n)]; if (k) return k;
+    var f = itemForm({ name: n });
+    if (f) { var nm = [f.exercise].concat(f.also || []); for (var i = 0; i < nm.length; i++) if (EXD_N[fnorm(nm[i])]) return EXD_N[fnorm(nm[i])]; }
+    return "";
+  }
+  function exGet(n) {
+    var k = exKey(n); if (!k) return null;
+    var p = EXD[k].split("|");
+    return { n: k, main: p[0], sub: p[1] === "-" ? "" : p[1], gear: p[2], what: p[3], ok: p[4], stop: p[5], steps: p[6].split(";"), alts: p[7] ? p[7].split(",") : [], cat: EXD_CAT[k] || "", en: rtEnOf(k) };
+  }
+  function exFormOf(n) {   /* 이 종목 복습지(배운 종목) — 이름·also·별명이 같으면 */
+    var f = itemForm({ name: n }); if (f) return f;
+    var k = exKey(n); if (!k) return null;
+    var fs = M.forms || [];
+    for (var i = 0; i < fs.length; i++) if (exKey(fs[i].exercise) === k) return fs[i];
+    return null;
+  }
+  function exAlts(n) {
+    var e = exGet(n), out = e ? e.alts.slice() : [];
+    if (!out.length && !isCardio(n)) {   /* 사전에 없는 종목(복습지만 있는 새 종목) → 같은 부위에서 배운 종목 먼저 */
+      var c = w2Cat(n), cand = [];
+      RT_CAT.forEach(function (x) { if (x[0] === c) cand = x[1].slice(); });
+      cand = cand.filter(function (y) { return fnorm(y) !== fnorm(n) && w2Same(n, y); });
+      cand.sort(function (a, b) { return (exFormOf(a) ? 0 : 1) - (exFormOf(b) ? 0 : 1); });
+      out = cand;
+    }
+    return out.slice(0, 3);
+  }
+  function exHref(n) { return "#ex-" + encodeURIComponent(exKey(n) || n); }
+  var EX_SWAP_IC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4L3 8l4 4"/><path d="M3 8h14"/><path d="M17 20l4-4-4-4"/><path d="M21 16H7"/></svg>';
+  function exAltBtn(n, dict) {
+    if (isCardio(n) || !exAlts(n).length) return "";
+    var e = dict && exGet(n);
+    return '<div class="exbar">' + (e ? '<a class="exbar-d" href="' + exHref(n) + '">종목 사전</a>' : '') +
+      '<button type="button" class="exbar-a" data-exalt="' + esc(n) + '">' + EX_SWAP_IC + '<span><b>기구 사용 중이에요</b><small>비슷한 종목으로 대신하기</small></span><i aria-hidden="true">›</i></button></div>';
+  }
+  function exRow(n) {
+    var e = exGet(n), f = exFormOf(n);
+    return '<a class="exr" data-cat="' + esc(e.cat) + '" data-q="' + esc(fnorm(n + " " + e.en + " " + e.main + " " + e.gear)) + '" href="' + exHref(n) + '">' +
+      '<span class="exr-c">' + esc(e.cat) + '</span><span class="exr-t"><b>' + esc(n) + '</b><small>' + esc(e.main + " · " + e.gear) + '</small></span>' +
+      (f ? '<i class="exr-tag on">복습지</i>' : '<i class="exr-tag">사전</i>') + '</a>';
+  }
+  function renderEx(n) {
+    var e = exGet(n), f = exFormOf(e.n);
+    var h = '<a class="back" href="#forms">← 자세 복습지</a><div class="exhero"><small>' + esc(e.en || "EXERCISE") + '</small><h1>' + esc(e.n) + '</h1><div class="exchips">' +
+      '<span class="on">주동근 · ' + esc(e.main) + '</span>' + (e.sub ? '<span>보조 · ' + esc(e.sub) + '</span>' : '') + '<span>' + esc(e.gear) + '</span></div></div>';
+    h += f ? '<a class="exmine" href="#form-' + esc(f.id) + '"><span class="thumb"><img src="' + esc(f.dir) + 'poster.jpg" alt="" loading="lazy"></span><span><b>내 복습지 보기</b><small>' + esc(f.date) + ' 수업 영상 · 잘한 점 · O/X</small></span><i aria-hidden="true">›</i></a>'
+      : '<div class="exnot">아직 수업에서 배우지 않은 종목이에요. ' + esc(SITE.trainer || "선생님") + ' 선생님과 배우면 <b>내 영상으로 된 복습지</b>가 여기에 생겨요.</div>';
+    h += exAltBtn(e.n);
+    h += '<section>' + head("", "이런 운동이에요", "") + '<p class="exwhat">' + esc(e.what) + '</p>' +
+      '<div class="exfeel"><div class="ok"><b>이 느낌이면 성공</b>' + esc(e.ok) + '</div><div class="no"><b>이 느낌이면 STOP</b>' + esc(e.stop) + '</div></div></section>';
+    h += '<section>' + head("", "동작 3단계", "처음엔 가벼운 무게로 감부터") + '<ol class="exsteps">' + e.steps.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join("") + '</ol></section>';
+    return h + remember();
+  }
+  /* 오늘만 바꾸기 */
+  var TSW_LS = "ptnote:" + SLUG + ":tsw", TSW = null;
+  try { TSW = JSON.parse(localStorage.getItem(TSW_LS) || "null"); } catch (e) {}
+  function tswMap(k) { return TSW && TSW.d === ymd(new Date()) && TSW.k === k && TSW.s || null; }
+  function tswSet(k, from, to) {
+    var t = ymd(new Date());
+    if (!TSW || TSW.d !== t || TSW.k !== k) TSW = { d: t, k: k, s: {} };
+    if (!to || to === from) delete TSW.s[from]; else TSW.s[from] = to;
+    TSW.at = Date.now();
+    try { localStorage.setItem(TSW_LS, JSON.stringify(TSW)); } catch (e) {}
+    if (ATT_API && !DEMO && !COACH_MODE) rtPost({ a: "kv_set", k: "mw:" + SLUG + ":tsw", v: TSW }).catch(function () {});
+  }
+  function tswServer(kv) {
+    var v = kv && kv["mw:" + SLUG + ":tsw"];
+    if (!v || typeof v !== "object" || !v.s || typeof v.s !== "object") return;
+    if (!TSW || (v.at || 0) > (TSW.at || 0)) { TSW = v; try { localStorage.setItem(TSW_LS, JSON.stringify(v)); } catch (e) {} }
+  }
+  var EX_LV = ["가장 비슷", "비슷", "대신 가능"], EX_TIP = ["평소 무게 그대로 시작해도 괜찮아요", "처음엔 평소 무게의 80%로 시작해요", "느낌이 조금 달라요 · 평소의 70%로 자세 먼저"];
+  function exAlt(n) {
+    var tk = todayKey(), d = dayByKey(tk), cur = null, k0 = exKey(n), fn = fnorm(n);
+    ((d && !d.rest && d.items) || []).forEach(function (it) {
+      if (cur) return;
+      if (fnorm(it.name) === fn || (it.swapFrom && fnorm(it.swapFrom) === fn) || (k0 && (exKey(it.name) === k0 || exKey(it.swapFrom) === k0))) cur = it;
+    });
+    var orig = cur ? (cur.swapFrom || cur.name) : n, base = cur && cur.swapFrom ? cur.swapFrom : n;
+    var can = !!cur && !DEMO && !COACH_MODE, alts = exAlts(base).filter(function (a) { return !cur || fnorm(a) !== fnorm(cur.name); });
+    if (cur && cur.swapFrom) alts.unshift(cur.swapFrom);
+    function card(a, i) {
+      var e = exGet(a), f = exFormOf(a), back = cur && cur.swapFrom === a;
+      return '<div class="exa"><div class="exa-h"><b>' + esc(a) + '</b><i class="lv' + (back ? ' bk' : i === 0 ? ' l0' : i === 1 ? ' l1' : '') + '">' + (back ? '원래 종목' : EX_LV[Math.min(i, 2)]) + '</i></div>' +
+        '<div class="exa-c">' + (e ? '<span>' + esc(e.main) + '</span><span>' + esc(e.gear) + '</span>' : '') + (f ? '<span class="lr">배운 종목</span>' : '') + '</div>' +
+        (back ? '' : '<p>' + EX_TIP[Math.min(i, 2)] + '</p>') +
+        '<div class="exa-b"><a href="' + (f ? '#form-' + esc(f.id) : exHref(a)) + '">' + (f ? '내 복습지 보기' : '자세 보기') + '</a>' +
+        (can ? '<button type="button" data-exsw="' + esc(a) + '">' + (back ? '원래대로 되돌리기' : '오늘 루틴에서 바꾸기') + '</button>' : '') + '</div></div>';
+    }
+    var i0 = cur && cur.swapFrom ? -1 : 0;
+    var html = '<div class="w2-grab" aria-hidden="true"></div><div class="w2-dh"><button type="button" class="w2-x" data-w2x aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div><h2>' + esc(cur ? cur.name : n) + ' 대신</h2><small>같은 근육 · 우리 매장 기구 · 비슷한 순서로 골랐어요</small></div></div>' +
+      '<div class="w2-body">' + alts.map(function (a, i) { return card(a, i + i0); }).join("") +
+      '<p class="exa-note">' + (can ? '오늘만 바뀌고 원래 루틴은 그대로예요 · 바꾼 종목은 선생님도 볼 수 있어요' : cur ? '선생님 보기에서는 바꿀 수 없어요' : '오늘 루틴에 없는 종목이라 자세만 볼 수 있어요') + '</p></div>';
+    var ov = w2Open("w2d exalt", html);
+    ov.addEventListener("click", function (e) {
+      if (e.target.closest("[data-w2x]")) { w2Close(ov); return; }
+      var b = e.target.closest("[data-exsw]"); if (!b) return;
+      var to = b.getAttribute("data-exsw");
+      tswSet(tk, orig, to === orig ? null : to);
+      Array.prototype.forEach.call(document.querySelectorAll(".w2ov"), function (o) { w2Close(o); });
+      attToast(to === orig ? "원래 종목으로 되돌렸어요" : "오늘만 " + orig + " → " + to);
+      setTimeout(rerender, 380);
+    });
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-exalt]");
+    if (b) { e.preventDefault(); exAlt(b.getAttribute("data-exalt")); }
+  });
   function rtMine() {   /* 이 회원님 루틴에 이미 있는 종목 (이름별 첫 번째) */
     var seen = {}, out = [];
     ((M.routine && M.routine.days) || []).forEach(function (d) { (d.items || []).forEach(function (it) { if (it.name && !seen[it.name]) { seen[it.name] = 1; out.push(it); } }); });
@@ -7234,6 +7452,11 @@
     var html, tab = "home", after = null, scrollDay = false, jumpTo = null;
     if (!hsh || hsh === "home") { html = renderHome(); }
     else if (hsh === "forms") { html = renderForms(); tab = "forms"; after = setupForms; }
+    else if (hsh.indexOf("ex-") === 0) {   /* 2026-11-28 종목 사전 */
+      var exn = ""; try { exn = decodeURIComponent(hsh.slice(3)); } catch (e) {}
+      if (exGet(exn)) html = renderEx(exn); else { html = renderForms(); after = setupForms; }
+      tab = "forms";
+    }
     else if (hsh.indexOf("form-") === 0) {
       var f = findForm(hsh.slice(5));
       html = f ? renderForm(f) : renderForms(); tab = "forms"; if (f) after = setupPlayer;
