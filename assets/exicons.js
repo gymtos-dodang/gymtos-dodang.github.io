@@ -334,33 +334,33 @@
   EX.lateral_raise_machine = EX.lateral_raise_standing;                  /* 예전 이름(앉는 머신)도 같은 그림으로 통합 */
 
   /* ---------- 팔 ---------- */
-  EX.db_curl = { t: .7, p0: ext(stand(40), { el: [42, 45], ha: [44, 63] }), p1: { ha: [55, 32.5] }, arcs: { ha: "el" }, bones: SIDE,
+  EX.db_curl = { hlTop: 1, t: .7, p0: ext(stand(40), { el: [42, 45], ha: [44, 63] }), p1: { ha: [55, 32.5] }, arcs: { ha: "el" }, bones: SIDE,
     hl: function (P) { return [seg(P.sh, P.el, .25, 1, 7.5)]; },
     back: function () { return [floor(20, 70)]; },
     front: function (P) { return db(P.ha, perp(P.el, P.ha), 8); } };
-  EX.incline_db_curl = { t: .75, p0: ext(INC, { el: [36, 60], ha: [37, 76] }), p1: { ha: [49, 49] }, arcs: { ha: "el" }, bones: SIDE,
+  EX.incline_db_curl = { hlTop: 1, t: .75, p0: ext(INC, { el: [36, 60], ha: [37, 76] }), p1: { ha: [49, 49] }, arcs: { ha: "el" }, bones: SIDE,
     hl: function (P) { return [seg(P.sh, P.el, .25, 1, 7.5)]; },
     back: function () { return inclineEq(); },
     front: function (P) { return db(P.ha, perp(P.el, P.ha), 7.5); } };
   /* 스파이더 컬 (2026-11-16 염승완님): 인클라인 벤치에 가슴을 대고 엎드려, 벤치 끝으로 늘어뜨린 팔을 감아 올림 */
-  EX.spider_curl = { t: .75,
+  EX.spider_curl = { hlTop: 1, t: .75,
     p0: { head: [66, 30], sh: [56, 40], hip: [36, 58], kn: [28, 74], ft: [22, 90], toe: [29, 91], el: [57, 57], ha: [57, 73] },
     p1: { ha: [70, 47.5] }, arcs: { ha: "el" }, bones: SIDE,
     hl: function (P) { return [seg(P.sh, P.el, .25, 1, 7.5)]; },
     back: function () { return [floor(10, 90), L("eq2", [[39, 67], [54, 53]], 5.5), L("eq2", [[46, 62], [44, 92]], 3), L("eq2", [[32, 92], [58, 92]], 3.5)]; },
     front: function (P) { return db(P.ha, perp(P.el, P.ha), 7.5); } };
   /* 프리처 컬 머신 (2026-11-17 염승완님): 앉아서 위팔을 비스듬한 패드에 올리고, 기계 손잡이를 감아 올림 */
-  EX.preacher_curl_machine = { t: .75,
+  EX.preacher_curl_machine = { hlTop: 1, t: .75,
     p0: { head: [40, 22], sh: [36, 36], hip: [30, 64], kn: [50, 66], ft: [52, 89], toe: [60, 90], el: [55, 54], ha: [69, 66] },
     p1: { ha: [52, 38] }, arcs: { ha: "el" }, bones: SIDE,
     hl: function (P) { return [seg(P.sh, P.el, .3, 1, 7.5)]; },
     back: function (P) { return seatEq(30, 64, false).concat([L("eq", [[45, 50], [60, 63]], 8), L("eq2", [[58, 62], [62, 93]], 3), L("eq2", [[55, 54], [76, 52]], 3)]); },
     front: function (P) { return [L("eq", [P.ha, [76, 52]], 3), L("eq", [off(P.ha, 0, -4), off(P.ha, 0, 4)], 4)]; } };
-  EX.cable_pushdown = { t: .85, p0: ext(stand(38), { el: [41, 45], ha: [54, 37] }), p1: { ha: [46, 60] }, arcs: { ha: "el" }, bones: SIDE,
+  EX.cable_pushdown = { hlTop: 1, t: .85, p0: ext(stand(38), { el: [41, 45], ha: [54, 37] }), p1: { ha: [46, 60] }, arcs: { ha: "el" }, bones: SIDE,
     hl: function (P) { return [seg(P.sh, P.el, .2, 1, 7.5)]; },
     back: function (P) { return [floor(18, 86), L("eq2", [[78, 6], [78, 93]], 3.5), L("eq2", [[62, 8], [78, 8]], 3), L("eq2", [[62, 8], P.ha], 2), D("eq2", [62, 8], 3.2)]; },
     front: function (P) { var n = perp(P.el, P.ha); return [L("eq", [[P.ha[0] - n[0] * 5.5, P.ha[1] - n[1] * 5.5], [P.ha[0] + n[0] * 5.5, P.ha[1] + n[1] * 5.5]], 3.6)]; } };
-  EX.overhead_ext = { t: .85,
+  EX.overhead_ext = { hlTop: 1, t: .85,
     p0: { head: [42, 33], sh: [42, 48], hip: [42, 74], kn: [61, 75], ft: [62, 90], toe: [70, 91], el: [47, 31], ha: [34, 38] }, p1: { ha: [49, 15] }, arcs: { ha: "el" },
     bones: [{ pts: ["hip", "kn", "ft", "toe"], w: 9 }, { pts: ["sh", "hip"], w: 13 }, { pts: ["sh", "el", "ha"], w: 7.5 }],
     hl: function (P) { return [seg(P.sh, P.el, .25, 1, 7.5)]; },
@@ -678,15 +678,28 @@
     }
     ex.back(P).forEach(addEq);
     var hlDone = false;
+    /* 2026-11-28 장동욱 "인클라인 프레스 머신처럼 모든 아이콘 몸이랑 팔이 구분되게": 몸통 다음에 적힌 팔(ha 들어간 뼈)은
+       자극 부위·머리까지 그린 뒤 맨 위에 옅은 테두리와 함께 그림(incline_machine_press 방식). 몸통보다 먼저 적힌 팔(몸 뒤쪽 팔)·hlHere 종목·armUnder 종목은 그대로 */
+    var custom = ex.armUnder || ex.bones.some(function (b) { return b.hlHere; }), seenTorso = false, late = [];
+    function isTorso(b) { return b.poly || (b.pts && b.pts.length === 2 && b.pts[0] === "sh" && b.pts[1] === "hip"); }
+    function isArm(b) { return b.pts && b.pts.some(function (k) { return /^ha/.test(k); }); }
+    function draw(b, ring) {
+      var s = b.poly ? { poly: b.poly.map(function (k) { return P[k]; }), w: b.w } : { line: b.pts.map(function (k) { return P[k]; }), w: b.w };
+      if (b.o || ring) add(s, S.tile, 3.2);   /* 몸통 앞을 지나는 팔다리는 옅은 테두리로 구분 */
+      add(s, S.fig);
+    }
     ex.bones.forEach(function (b) {
       if (b.hlHere) { ex.hl(P).forEach(function (s) { add(s, s.f ? S.cut : S.hl, 0, true); }); hlDone = true; return; }
-      var s = b.poly ? { poly: b.poly.map(function (k) { return P[k]; }), w: b.w } : { line: b.pts.map(function (k) { return P[k]; }), w: b.w };
-      if (b.o) add(s, S.tile, 3.2);   /* 몸통 앞을 지나는 팔다리는 옅은 테두리로 구분 */
-      add(s, S.fig);
+      if (!custom && seenTorso && isArm(b)) { late.push(b); return; }
+      if (isTorso(b)) seenTorso = true;
+      draw(b);
     });
     if (ex.headO) add({ dot: P.head, r: (ex.headR || 7.2) + 1.7 }, S.tile);
     add({ dot: P.head, r: ex.headR || 7.2 }, S.fig);
-    if (!hlDone) ex.hl(P).forEach(function (s) { add(s, s.f ? S.cut : S.hl, 0, true); });   /* f: 근섬유 결(옅은 선). 자극 부위 테두리는 옷 같다고 해서 뺌(2026-11-18) */
+    var hls = hlDone ? [] : ex.hl(P), dots = late.length ? hls.filter(function (s) { return s.dot || ex.hlTop; }) : [];   /* hlTop: 팔 운동(이두·삼두) — 팔 위 자극 부위도 팔 위에 */   /* 어깨·엉덩이 같은 동그란 자극 부위는 팔 위에 다시 그려 가려지지 않게 */
+    hls.forEach(function (s) { if (dots.indexOf(s) < 0) add(s, s.f ? S.cut : S.hl, 0, true); });
+    late.forEach(function (b) { draw(b, true); });
+    dots.forEach(function (s) { add(s, s.f ? S.cut : S.hl, 0, true); });   /* f: 근섬유 결(옅은 선). 자극 부위 테두리는 옷 같다고 해서 뺌(2026-11-18) */
     ex.front(P).forEach(addEq);
     return out;
   }
