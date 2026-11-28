@@ -409,12 +409,25 @@
         L("eq2", [off(P.sh, -5.5, 4), off(P.hip, -5.5, 4)], 5.5), L("eq2", [off(P.hip, -3, 6), off(P.hip, 7, 11)], 5),
         R("eq", pc, 6.8, 3.2), D("eq2", pc, 2.4)]; },
     front: function (P) { return [L("eq", [[64, 91], [84, 86]], 4.6), L("eq", [off(P.sh, -2, -5), off(P.sh, 6, 0)], 4.8)]; } };
-  EX.hack_squat = { t: .15,
-    p0: { head: [26, 28], sh: [30, 42], hip: [39, 68], kn: [59, 67], ft: [66, 86], toe: [74, 83] }, p1: { head: [34, 10], sh: [38, 24], hip: [47, 50], kn: [56, 68] },
-    fx: function (P) { P.el = off(P.sh, 9, 7); P.ha = off(P.sh, 7, -3); }, bones: SIDE,
-    hl: function (P) { return [seg(P.hip, P.kn, .1, .92, 9)]; },
-    back: function (P) { return [floor(8, 92), L("eq2", [[9, 82], [33, 10]], 3), L("eq2", [off(P.sh, -7.5, 2.5), off(P.hip, -7.5, 2.5)], 5.5), L("eq", [[57, 93], [79, 84]], 4.6)]; },
-    front: function (P) { return [L("eq", [off(P.sh, -5, -8), off(P.sh, 5, -10)], 4.6)]; } };
+  /* 핵스쿼트 (2026-11-28 장동욱 사진 참고 "궤적 수정"): 비스듬한(약 38°) 등판에 등·어깨를 대고, 썰매가 레일 따라 비스듬히 오르내림.
+     발은 앞쪽 기울어진 발판에 고정 → 앉으면 무릎이 가슴 쪽으로 높이 올라옴. 무릎은 매 순간 허벅지 21·정강이 27 길이로 계산(ik) */
+  EX.hack_squat = { t: .5,
+    p0: { hip: [58, 63], sh: [37, 46.3], head: [27.6, 38.9], ft: [84, 71], toe: [87.5, 65], kn: [72, 47] },
+    p1: { hip: [43, 51], sh: [22, 34.5], head: [12.6, 27] },
+    fx: function (P) {
+      P.kn = ik(P.hip, P.ft, 21, 27, function (k1, k2) { return k1[1] < k2[1] ? k1 : k2; }).k;
+      P.el = off(P.sh, 9, 4); P.ha = off(P.sh, 6, -5);
+      P.pl = off(P.sh, -7, 2);
+    },
+    bones: SIDE,
+    hl: function (P) { return [seg(P.hip, P.kn, .1, .92, 9), { dot: off(P.hip, -1, 1), r: 5.4 }]; },
+    back: function (P) {
+      var n = [-0.62, 0.78];
+      return [floor(6, 94), L("eq2", [[68, 85], [16, 43.7]], 3), L("eq2", [[66, 84], [66, 93]], 3), L("eq2", [[86, 72], [86, 93]], 3),
+        L("eq2", [off(P.sh, n[0] * 6, n[1] * 6), off(P.hip, n[0] * 6, n[1] * 6)], 6), R("eq", P.pl, 6.5, 3.2)];
+    },
+    front: function (P) { var u = [-0.78, -0.62], c = off(P.sh, 0.62 * 4, -0.78 * 4);
+      return [L("eq", [[79, 80], [90, 63]], 4.6), L("eq", [off(c, u[0] * 4, u[1] * 4), off(c, -u[0] * 4, -u[1] * 4)], 5)]; } };
   function squat(arm, front, back) {
     return { t: .85, p0: SQ0, p1: SQ1, fx: arm, bones: SIDE,
       hl: function (P) { return [seg(P.hip, P.kn, .12, .92, 9)]; },
